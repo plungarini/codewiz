@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "code-whiz-ai": {
+      "hosting": {
+        "code-whiz-ai": [
+          "code-whiz-ai"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "code-whiz-ai"
+  }
+}
