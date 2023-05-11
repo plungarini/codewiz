@@ -6,7 +6,11 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+
+    "deploySupabase": "yarn updateSecrets && yarn sb-aiSearch",
+    "sb-aiSearch": "npx supabase functions deploy ai-search --project-ref rbikifjpcodmtsgggpbk",
+    "updateSecrets": "npx supabase secrets set --env-file ./supabase/.env"
   },
   "private": true,
   "dependencies": {
@@ -21,9 +25,8 @@
     "@angular/router": "^16.0.0",
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/line-clamp": "^0.4.4",
-    "jsdom": "^22.0.0",
     "rxjs": "~7.8.0",
-    "showdown": "^2.1.0",
+    "supabase": "^1.57.6",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },

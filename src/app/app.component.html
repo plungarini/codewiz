@@ -1,19 +1,58 @@
-<div class="pt-24">
-	<div class="w-full max-w-5xl mx-auto">
-		<h2>CodeWhiz AI</h2>
+<div
+  class="pt-24 px-4 h-full max-h-full max-w-full overflow-x-hidden overflow-y-auto"
+>
+  <div class="w-full max-w-5xl mx-auto">
+    <h2>CodeWhiz AI</h2>
 
-		<form [formGroup]="form" (ngSubmit)="parse()" class="flex flex-row items-end w-full mt-6 space-x-4">
-			<div class="flex-1">
-				<p class="mb-2">Category Name:</p>
-				<input formControlName="category" type="text" name="catName" placeholder="Type something..." class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-			</div>
-			<div class="flex-1">
-				<p class="mb-2">Docs page URL:</p>
-				<input formControlName="url" type="text" name="catName" placeholder="Type something..." class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-			</div>
-			<div>
-				<button type="submit" class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 rounded-md shadow-xl text-zinc-900 hover:bg-teal-400 hover:shadow-2xl">Fetch</button>
-			</div>
-		</form>
-	</div>
+    <form
+      [formGroup]="form"
+      (ngSubmit)="parse()"
+      class="flex flex-row items-end w-full mt-6 space-x-4"
+    >
+      <div class="flex-1">
+        <p class="mb-2">Category Name:</p>
+        <input
+          formControlName="category"
+          type="text"
+          name="catName"
+          placeholder="Type something..."
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div class="flex-1">
+        <p class="mb-2">Docs page URL:</p>
+        <input
+          formControlName="url"
+          type="text"
+          name="catName"
+          placeholder="Type something..."
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          [disabled]="buttonLoading"
+          class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 rounded-md shadow-xl text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+        >
+          Fetch
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-8" *ngIf="result">
+      <div class="flex flex-row items-center w-full justify-between">
+        <p class="font-semibold text-zinc-50">Result:</p>
+        <button
+          type="button"
+          (click)="loadEmbeddings()"
+          [disabled]="buttonLoadingEmbeddings"
+          class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50 rounded-md shadow-xl text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+        >
+          Generate Embeddings
+        </button>
+      </div>
+      <p class="mt-2 whitespace-pre-wrap">{{ result }}</p>
+    </div>
+  </div>
 </div>

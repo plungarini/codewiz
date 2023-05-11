@@ -1,4 +1,4 @@
-/* eslint-disable quotes */
+/* eslint-disable */
 
 module.exports = {
   root: true,
@@ -22,16 +22,14 @@ module.exports = {
   ignorePatterns: [
     "/lib/**/*", // Ignore built files.
   ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-  ],
+  plugins: ["@typescript-eslint", "import"],
   rules: {
-		"quotes": ["error", "single"],
-		"indent": 0,
-		"no-tabs": 0,
-		"max-len": 0,
-		"object-curly-spacing": ["error", "always"],
+    quotes: ["error", "single"],
+    indent: 0,
+    "no-tabs": 0,
+    "max-len": 0,
+    "object-curly-spacing": ["error", "always"],
     "import/no-unresolved": 0,
+    "operator-linebreak": 0,
   },
 };

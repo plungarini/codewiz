@@ -1,30 +1,43 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { Converter } from 'showdown';
+
+type fetchPageData = {
+  page_link: string;
+  body_selector: string;
+  excluded_selectors: string[];
+};
+
+type generateEmbeddingData = {
+  title: string;
+  link: string;
+  content: string;
+  id: string;
+};
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class HtmlToMdService {
+  constructor(private functions: Functions) {}
 
-	private showdown = new Converter();
-
-	constructor(
-		private http: HttpClient,
-		private functions: Functions,
-	) { }
-
-	async fetchPage(url: string): Promise<void> {
-		const getSitemapLinks = httpsCallable<string, string>(this.functions, 'scrapePage', { timeout: 540 * 1000 });
-		const { data } = await getSitemapLinks(url);
-		console.log(data);
-		
-    /* const { window } = new JSDOM(html);
-    return window.document; */
+  async fetchPage(
+    data: fetchPageData
+  ): Promise<{ markdown: string; page_title: string }> {
+    const scrapePage = httpsCallable<
+      fetchPageData,
+      { markdown: string; page_title: string }
+    >(this.functions, 'scrapePage', { timeout: 540 * 1000 });
+    const { data: res } = await scrapePage(data);
+    return res;
   }
-	
-	private parseHtml(html: string): string {
-		return this.showdown.makeMarkdown(html);
-	}
+
+  async generateEmbedding(data: generateEmbeddingData): Promise<void> {
+    const scrapePage = httpsCallable<generateEmbeddingData, boolean>(
+      this.functions,
+      'createEmbedding',
+      { timeout: 540 * 1000 }
+    );
+    const { data: res } = await scrapePage(data);
+    console.log(`Generated embedding?`, res);
+  }
 }
