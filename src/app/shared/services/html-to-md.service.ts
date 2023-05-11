@@ -11,7 +11,7 @@ type generateEmbeddingData = {
   title: string;
   link: string;
   content: string;
-  id: string;
+  id: number;
 };
 
 @Injectable({

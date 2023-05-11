@@ -1,7 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import * as functions from 'firebase-functions';
+import { error, warn } from 'firebase-functions/logger';
 import { Configuration, OpenAIApi } from 'openai';
-import { warn } from 'firebase-functions/logger';
 
 const MAX_CHARS = 30_000;
 
@@ -20,12 +19,24 @@ const openAiTokenSanitizer = (
     return [input];
   }
 
-  const titleIndex = input.indexOf('\n==', MAX_CHARS - 5_000 * charsMultiplier);
-  if (titleIndex > MAX_CHARS) {
+	const splitIndex = (): number => {
+		const section = input.indexOf('\n======', MAX_CHARS - 5_000 * charsMultiplier);
+		if (section >= 0) return section;
+
+		const miniSection = input.indexOf('\n-------', MAX_CHARS - 5_000 * charsMultiplier);
+		if (miniSection >= 0) return miniSection;
+
+		const title = input.indexOf('\n##', MAX_CHARS - 5_000 * charsMultiplier);
+		if (title >= 0) return title;
+
+		return 0;
+	};
+
+  if (splitIndex() > MAX_CHARS) {
     return openAiTokenSanitizer(input, charsMultiplier + 1, tries + 1);
   }
 
-  const sections = [input.slice(0, titleIndex), input.slice(titleIndex + 1)];
+  const sections = [input.slice(0, splitIndex()), input.slice(splitIndex() + 1)];
 
   if (sections[1].length > MAX_CHARS) {
     const sections2 = openAiTokenSanitizer(sections[1]);
@@ -33,7 +44,7 @@ const openAiTokenSanitizer = (
     sections.push(...sections2);
   }
 
-  functions.logger.warn('Finished Token Sanitizer');
+  warn('Finished Token Sanitizer');
 
   return sections;
 };
@@ -51,7 +62,7 @@ export const elaborateEmbeddings = async (req: {
   warn(supabasePublicUrl, supabaseServiceRoleKey, openaiKey);
 
   if (!supabasePublicUrl || !supabaseServiceRoleKey || !openaiKey) {
-    return functions.logger.error(
+    return error(
       'Environment variables SUPABASE_PUBLIC_URL, SUPABASE_SERVICE_ROLE_KEY, and OPENAI_KEY are required: skipping embeddings generation'
     );
   }
@@ -112,7 +123,7 @@ export const elaborateEmbeddings = async (req: {
       });
 
       if (embeddingResponse.status !== 200) {
-        functions.logger.error(embeddingResponse.data);
+        error(embeddingResponse.data);
         throw new Error(JSON.stringify(embeddingResponse.data));
       }
 
@@ -140,16 +151,16 @@ export const elaborateEmbeddings = async (req: {
         throw insertPageSectionError;
       }
     }
-  } catch (error) {
+  } catch (err) {
     // TODO: decide how to better handle failed embeddings
-    functions.logger.error(
+    error(
       `Failed to generate embeddings for '${
         req.id
       }' page section starting with '${req.content.slice(0, 40)}...'`
     );
-    functions.logger.error(error);
+    error(err);
 
-    throw error;
+    throw err;
   }
 
   return true;

@@ -33,11 +33,14 @@ export class AppComponent {
 
   async loadEmbeddings(): Promise<void> {
     this.buttonLoadingEmbeddings = true;
-    try {
+		try {
+			const url = this.form.controls.url.value;
+			const id = Date.now();
+
       await this.htmlToMd.generateEmbedding({
         content: this.result,
-        id: this.form.controls.url.value,
-        link: this.form.controls.url.value,
+        id,
+        link: url,
         title: this.form.controls.page_title.value,
       });
     } catch (error) {
@@ -68,5 +71,5 @@ export class AppComponent {
 
     this.cdRef.detectChanges();
     this.buttonLoading = false;
-  }
+	}
 }

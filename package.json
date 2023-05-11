@@ -7,7 +7,6 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-
     "deploySupabase": "yarn updateSecrets && yarn sb-aiSearch",
     "sb-aiSearch": "npx supabase functions deploy ai-search --project-ref rbikifjpcodmtsgggpbk",
     "updateSecrets": "npx supabase secrets set --env-file ./supabase/.env"

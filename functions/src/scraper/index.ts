@@ -72,7 +72,7 @@ export const scrapeDocumentedPage = async (data: {
       data
     );
 
-    const converter = new Turndown({});
+    const converter = new Turndown({ });
     markdown = converter.turndown(scrape.html).trim();
     pageTitle = scrape.page_title.trim();
     host = scrape.host.trim();
