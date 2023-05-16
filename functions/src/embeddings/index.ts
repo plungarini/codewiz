@@ -4,47 +4,29 @@ import { Configuration, OpenAIApi } from 'openai';
 
 const MAX_CHARS = 30_000;
 
-const openAiTokenSanitizer = (
-  input: string,
-  charsMultiplier = 1,
-  tries = 1
-): string[] => {
-  if (tries > 3) {
-    throw new Error(
-      'OpenAi Token Sanitizer has done too many tries... Can\'t find a valid title to split the section.'
-    );
+const openAiTokenSanitizer = (input: string): string[] => {
+  const sections: string[] = [];
+
+  while (input.length > MAX_CHARS) {
+    let splitIndex = input.lastIndexOf('\n##', MAX_CHARS);
+
+    if (splitIndex === -1) {
+      splitIndex = input.lastIndexOf('\n======', MAX_CHARS);
+    }
+
+    if (splitIndex === -1) {
+      splitIndex = input.lastIndexOf('\n-------', MAX_CHARS);
+    }
+
+    if (splitIndex === -1) {
+      splitIndex = MAX_CHARS;
+    }
+
+    sections.push(input.slice(0, splitIndex));
+    input = input.slice(splitIndex);
   }
 
-  if (input.length < MAX_CHARS) {
-    return [input];
-  }
-
-	const splitIndex = (): number => {
-		const section = input.indexOf('\n======', MAX_CHARS - 5_000 * charsMultiplier);
-		if (section >= 0) return section;
-
-		const miniSection = input.indexOf('\n-------', MAX_CHARS - 5_000 * charsMultiplier);
-		if (miniSection >= 0) return miniSection;
-
-		const title = input.indexOf('\n##', MAX_CHARS - 5_000 * charsMultiplier);
-		if (title >= 0) return title;
-
-		return 0;
-	};
-
-  if (splitIndex() > MAX_CHARS) {
-    return openAiTokenSanitizer(input, charsMultiplier + 1, tries + 1);
-  }
-
-  const sections = [input.slice(0, splitIndex()), input.slice(splitIndex() + 1)];
-
-  if (sections[1].length > MAX_CHARS) {
-    const sections2 = openAiTokenSanitizer(sections[1]);
-    sections.splice(1, 1);
-    sections.push(...sections2);
-  }
-
-  warn('Finished Token Sanitizer');
+  sections.push(input);
 
   return sections;
 };
