@@ -2,52 +2,53 @@ import { createClient } from '@supabase/supabase-js';
 import { error, warn } from 'firebase-functions/logger';
 import { Configuration, OpenAIApi } from 'openai';
 
-const MAX_CHARS = 30_000;
+const MAX_CHARS = 10_000;
+const MIN_SECTION_LENGTH = 5;
 
-const openAiTokenSanitizer = (
-  input: string,
-  charsMultiplier = 1,
-  tries = 1
-): string[] => {
-  if (tries > 3) {
-    throw new Error(
-      'OpenAi Token Sanitizer has done too many tries... Can\'t find a valid title to split the section.'
-    );
+const splitInput = (input: string): string[] => {
+  const sections: string[] = [];
+  let currentSection = '';
+
+  while (input.length > 0) {
+    const splitIndex = input.lastIndexOf('##') || input.lastIndexOf('======') || input.lastIndexOf('-------');
+
+    if (splitIndex !== -1 && input.length > MAX_CHARS) {
+      const newSection = input.slice(splitIndex);
+      const totalLength = currentSection.length + newSection.length;
+
+      if (totalLength > MAX_CHARS) {
+        if (currentSection.length > MIN_SECTION_LENGTH) sections.unshift(currentSection);
+        currentSection = newSection;
+        input = input.slice(0, splitIndex);
+      } else {
+        currentSection = newSection + currentSection;
+        input = input.slice(0, splitIndex);
+      }
+    } else {
+      if (currentSection.length > MIN_SECTION_LENGTH) sections.unshift(currentSection);
+      if (input.length > MIN_SECTION_LENGTH) sections.unshift(input);
+      currentSection = '';
+      input = '';
+    }
   }
 
+  sections.forEach((section) => {
+    if (section.length > MAX_CHARS) throw new Error('One of the sections is too long.');
+  });
+
+  warn('Sections:', sections.length, sections.map((v, i) => `[Section ${i + 1}: ${v.length} chars]`));
+  return sections;
+};
+
+const openAiTokenSanitizer = (input: string): string[] => {
   if (input.length < MAX_CHARS) {
+    warn(`Input length (${input.length}) is less than MAX_CHARS (${MAX_CHARS})`);
     return [input];
   }
 
-	const splitIndex = (): number => {
-		const section = input.indexOf('\n======', MAX_CHARS - 5_000 * charsMultiplier);
-		if (section >= 0) return section;
-
-		const miniSection = input.indexOf('\n-------', MAX_CHARS - 5_000 * charsMultiplier);
-		if (miniSection >= 0) return miniSection;
-
-		const title = input.indexOf('\n##', MAX_CHARS - 5_000 * charsMultiplier);
-		if (title >= 0) return title;
-
-		return 0;
-	};
-
-  if (splitIndex() > MAX_CHARS) {
-    return openAiTokenSanitizer(input, charsMultiplier + 1, tries + 1);
-  }
-
-  const sections = [input.slice(0, splitIndex()), input.slice(splitIndex() + 1)];
-
-  if (sections[1].length > MAX_CHARS) {
-    const sections2 = openAiTokenSanitizer(sections[1]);
-    sections.splice(1, 1);
-    sections.push(...sections2);
-  }
-
-  warn('Finished Token Sanitizer');
-
-  return sections;
+  return splitInput(input);
 };
+
 
 export const elaborateEmbeddings = async (req: {
   title: string;
@@ -59,57 +60,52 @@ export const elaborateEmbeddings = async (req: {
   const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const openaiKey = process.env.OPENAI_KEY;
 
-  warn(supabasePublicUrl, supabaseServiceRoleKey, openaiKey);
-
   if (!supabasePublicUrl || !supabaseServiceRoleKey || !openaiKey) {
     return error(
       'Environment variables SUPABASE_PUBLIC_URL, SUPABASE_SERVICE_ROLE_KEY, and OPENAI_KEY are required: skipping embeddings generation'
     );
   }
 
-  warn(1);
+	const supabase = createClient(supabasePublicUrl, supabaseServiceRoleKey);
 
-  const supabase = createClient(supabasePublicUrl, supabaseServiceRoleKey);
-
-  warn(2);
-
-  // Check for existing page in DB and compare checksums
+  // Check for existing page in DB
   const { error: fetchPageError, data: existingPage } = await supabase
     .from('page')
-    .select()
-    .filter('id', 'eq', req.id)
+    .select('id, path, createdAt')
+		.filter('path', 'eq', req.link)
     .limit(1)
-    .maybeSingle();
+		.maybeSingle();
 
   if (fetchPageError) {
     throw fetchPageError;
-  }
-
-  warn(3);
+	}
 
   // Create/update page record.
+	const pageRecord = {
+		id: req.id,
+		path: req.link,
+		title: decodeURIComponent(req.title),
+		createdAt: existingPage?.createdAt || new Date(),
+		updatedAt: new Date(),
+	};
+
+	warn('pageRecord', pageRecord);
   const { error: upsertPageError, data: page } = await supabase
     .from('page')
-    .upsert({
-      id: req.id,
-      createdAt: existingPage?.createdAt || new Date(),
-      updatedAt: new Date(),
-      link: req.link,
-      title: decodeURIComponent(req.title),
-    })
+		.upsert(pageRecord)
     .select()
     .limit(1)
-    .single();
+		.single();
 
-  if (upsertPageError) {
+	if (upsertPageError) {
+		error('upsertPageError', upsertPageError.code, upsertPageError.hint, upsertPageError.details);
     throw upsertPageError;
-  }
+	}
 
-  warn(4);
-
-  try {
+	try {
     const configuration = new Configuration({ apiKey: openaiKey });
     const openai = new OpenAIApi(configuration);
+		warn('Configuring OpenAI - COMPLETED');
 
     const sanitizedInput = openAiTokenSanitizer(req.content);
 
@@ -120,34 +116,36 @@ export const elaborateEmbeddings = async (req: {
       const embeddingResponse = await openai.createEmbedding({
         model: 'text-embedding-ada-002',
         input: sanInput,
-      });
+			});
 
-      if (embeddingResponse.status !== 200) {
+			if (embeddingResponse.status !== 200) {
         error(embeddingResponse.data);
         throw new Error(JSON.stringify(embeddingResponse.data));
-      }
+			}
 
       const [responseData] = embeddingResponse.data.data;
 
       const { error: insertPageSectionError } = await supabase
         .from('page_section')
         .upsert({
-          uuid:
+          id:
             sanitizedInput.length < 2
-              ? page.id.toString()
-              : `${page.id}_${i + 1}`,
-          page_id: page.id,
+              ? `${page.id}[1]`
+              : `${page.id}[${i + 1}]`,
+          path: page.path,
           content: sanInput,
           token_count: embeddingResponse.data.usage.total_tokens,
-          embedding: responseData.embedding,
+					embedding: responseData.embedding,
+					section: i + 1,
           createdAt: existingPage?.createdAt || new Date(),
           updatedAt: new Date(),
         })
         .select()
         .limit(1)
-        .single();
+				.single();
 
-      if (insertPageSectionError) {
+			if (insertPageSectionError) {
+				error('upsertPageError', insertPageSectionError.code, insertPageSectionError.hint, insertPageSectionError.details);
         throw insertPageSectionError;
       }
     }

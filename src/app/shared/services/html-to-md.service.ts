@@ -11,7 +11,7 @@ type generateEmbeddingData = {
   title: string;
   link: string;
   content: string;
-  id: number;
+  id: string;
 };
 
 @Injectable({
@@ -40,4 +40,14 @@ export class HtmlToMdService {
     const { data: res } = await scrapePage(data);
     console.log(`Generated embedding?`, res);
   }
+
+	async fetchGitRepo(): Promise<void> {
+		const scrapePage = httpsCallable<void, void>(
+      this.functions,
+      'githubFetcher',
+      { timeout: 540 * 1000 }
+    );
+		const { data: res } = await scrapePage();
+		console.log('Scrape git repo completed');
+	}
 }

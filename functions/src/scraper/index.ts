@@ -67,14 +67,14 @@ export const scrapeDocumentedPage = async (data: {
           if (el) el.remove();
         }
 
-        return { html: body.innerHTML, page_title: document.title, host: location.origin };
+        return { html: body.innerHTML, host: location.origin };
       },
       data
     );
 
     const converter = new Turndown({ });
     markdown = converter.turndown(scrape.html).trim();
-    pageTitle = scrape.page_title.trim();
+    pageTitle = await page.evaluate(() => document.title);
     host = scrape.host.trim();
 
     // Regular expression to match relative links

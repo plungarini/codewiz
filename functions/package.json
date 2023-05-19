@@ -1,5 +1,6 @@
 {
   "name": "functions",
+  "license": "MIT",
   "scripts": {
     "lint": "eslint --fix --ext .js,.ts .",
     "build": "tsc",
@@ -16,6 +17,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@supabase/supabase-js": "^2.21.0",
+    "axios": "^1.4.0",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^4.4.0",
     "openai": "^3.2.1",
