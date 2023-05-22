@@ -136,9 +136,11 @@ export const elaborateEmbeddings = async (req: {
 
     const sanitizedInput = openAiTokenSanitizer(req.content);
 
-    for (let i = 0; i < sanitizedInput.length; i++) {
+		for (let i = 0; i < sanitizedInput.length; i++) {
+			const normInput = sanitizedInput[i];
+
       // OpenAI recommends replacing newlines with spaces for best results (specific to embeddings)
-      const sanInput = sanitizedInput[i].replace(/\n/g, ' ');
+      const sanInput = normInput.replace(/\n/g, ' ');
 
       const embeddingResponse = await openai.createEmbedding({
         model: 'text-embedding-ada-002',
@@ -159,8 +161,9 @@ export const elaborateEmbeddings = async (req: {
             sanitizedInput.length < 2
               ? `${req.id}[1]`
               : `${req.id}[${i + 1}]`,
-          path: req.link,
-          content: sanInput,
+					path: req.link,
+					title: req.title,
+          content: normInput,
           token_count: embeddingResponse.data.usage.total_tokens,
 					embedding: responseData.embedding,
 					section: i + 1,

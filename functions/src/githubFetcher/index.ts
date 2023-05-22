@@ -120,12 +120,16 @@ const checkApiLimit = async () => {
 		}
 };
 
-export const githubFolderFetcher = async () => {
+export const githubFolderFetcher = async (req: {
+	author: string;
+	folder: string;
+}) => {
 	const requestsLimit = await checkApiLimit();
 	warn(requestsLimit);
+	warn('Request', req);
 
-	const author = 'angular/angular';
-	const folder = 'aio/content/guide';
+	const author = req.author;
+	const folder = req.folder;
 	const paths = folder.split('/');
 
 	try {

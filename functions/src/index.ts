@@ -47,11 +47,12 @@ export const githubFetcher = FFN.runWith({
   timeoutSeconds: 60,
 }).https.onCall(async (req) => {
   /**
-   * title: string;
+	 * author: string;
+	 * folder: string;
    */
   warn('request', req);
 	try {
-		return await githubFolderFetcher();
+		return await githubFolderFetcher(req);
 	} catch (err) {
 		error(err);
 		return err;
