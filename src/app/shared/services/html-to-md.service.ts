@@ -8,11 +8,24 @@ type fetchPageData = {
 };
 
 type generateEmbeddingData = {
+	author: string
   title: string;
   link: string;
   content: string;
   id: string;
 };
+
+type fetchGitRepoData = {
+	author: string;
+	folder: string;
+}
+
+type fetchGitRepoRes = {
+	name: string;
+	content: string;
+	title: string;
+	path: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -37,17 +50,33 @@ export class HtmlToMdService {
       'createEmbedding',
       { timeout: 540 * 1000 }
     );
-    const { data: res } = await scrapePage(data);
-    console.log(`Generated embedding?`, res);
+		const { data: res } = await scrapePage(data);
+		if (typeof res !== 'boolean') throw new Error(`Skipping generation for file: ${data.id}`)
+    console.log(`Generated embedding?`, res && typeof res === 'boolean');
   }
 
-	async fetchGitRepo(): Promise<void> {
-		const scrapePage = httpsCallable<void, void>(
+	async fetchGitRepo(data: fetchGitRepoData): Promise<fetchGitRepoRes[]> {
+		const scrapePage = httpsCallable<fetchGitRepoData, fetchGitRepoRes[]>(
       this.functions,
       'githubFetcher',
       { timeout: 540 * 1000 }
-    );
-		const { data: res } = await scrapePage();
-		console.log('Scrape git repo completed');
+		);
+		try {
+			const { data: res } = await scrapePage(data);
+			console.log(res);
+
+			if (typeof res === 'object') {
+				if (Array.isArray(res)) {
+					return res;
+				} else {
+					return [];
+				}
+			} else {
+				return []
+			}
+		} catch (error) {
+			console.log(error);
+			throw error;
+		}
 	}
 }

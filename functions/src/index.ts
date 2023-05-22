@@ -43,7 +43,7 @@ export const createEmbedding = FFN.runWith({
 });
 
 export const githubFetcher = FFN.runWith({
-  memory: '128MB',
+  memory: '256MB',
   timeoutSeconds: 60,
 }).https.onCall(async (req) => {
   /**

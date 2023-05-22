@@ -1,16 +1,18 @@
-import { createClient } from '@supabase/supabase-js';
+import { SupabaseClient, createClient } from '@supabase/supabase-js';
 import { error, warn } from 'firebase-functions/logger';
 import { Configuration, OpenAIApi } from 'openai';
 
-const MAX_CHARS = 10_000;
+const MAX_CHARS = 25_000;
 const MIN_SECTION_LENGTH = 5;
 
 const splitInput = (input: string): string[] => {
   const sections: string[] = [];
-  let currentSection = '';
+	let currentSection = '';
+
+	const getSplitIndex = (s: string) => s.lastIndexOf('##') || s.lastIndexOf('======') || s.lastIndexOf('-------');
 
   while (input.length > 0) {
-    const splitIndex = input.lastIndexOf('##') || input.lastIndexOf('======') || input.lastIndexOf('-------');
+    const splitIndex = getSplitIndex(input);
 
     if (splitIndex !== -1 && input.length > MAX_CHARS) {
       const newSection = input.slice(splitIndex);
@@ -32,8 +34,17 @@ const splitInput = (input: string): string[] => {
     }
   }
 
-  sections.forEach((section) => {
-    if (section.length > MAX_CHARS) throw new Error('One of the sections is too long.');
+	sections.forEach((section) => {
+		const splitIndex2 = getSplitIndex(section);
+		if (section.length > MAX_CHARS) {
+			if (splitIndex2 > 0) {
+				sections.push(section.substring(0, splitIndex2), section.substring(splitIndex2));
+				return;
+			}
+			warn(`Split index found? ${splitIndex2} - Length: ${section.length} - MAX_CHARS: ${MAX_CHARS}`);
+			warn(section);
+			throw new Error('One of the sections is too long.');
+		}
   });
 
   warn('Sections:', sections.length, sections.map((v, i) => `[Section ${i + 1}: ${v.length} chars]`));
@@ -49,8 +60,22 @@ const openAiTokenSanitizer = (input: string): string[] => {
   return splitInput(input);
 };
 
+const checkTableExists = async (supabase: SupabaseClient, tableName: string) => {
+  const { data, error } = await supabase
+    .from(tableName)
+		.select('id')
+		.limit(1);
+
+	if (error && error.code === '42P01') {
+		return false;
+	} else {
+		return data?.length || -1 > 0;
+	}
+};
+
 
 export const elaborateEmbeddings = async (req: {
+	author: string;
   title: string;
   link: string;
   content: string;
@@ -59,47 +84,49 @@ export const elaborateEmbeddings = async (req: {
   const supabasePublicUrl = process.env.SUPABASE_PUBLIC_URL;
   const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const openaiKey = process.env.OPENAI_KEY;
+	const email = process.env.SUPABASE_ADMIN_EMAIL;
+	const password = process.env.SUPABASE_ADMIN_PASSW;
 
-  if (!supabasePublicUrl || !supabaseServiceRoleKey || !openaiKey) {
+  if (!supabasePublicUrl || !supabaseServiceRoleKey || !openaiKey || !email || !password) {
     return error(
-      'Environment variables SUPABASE_PUBLIC_URL, SUPABASE_SERVICE_ROLE_KEY, and OPENAI_KEY are required: skipping embeddings generation'
+      'Environment variables SUPABASE_PUBLIC_URL, SUPABASE_SERVICE_ROLE_KEY, OPENAI_KEY, ADMIN_EMAIL and ADMIN_PASSW are required: skipping embeddings generation'
     );
-  }
+	}
+
+	const author = req.author.split('/').pop();
+	if (!author) throw new Error(`Author field is required. Currently it's ${author}`);
 
 	const supabase = createClient(supabasePublicUrl, supabaseServiceRoleKey);
 
-  // Check for existing page in DB
-  const { error: fetchPageError, data: existingPage } = await supabase
-    .from('page')
-    .select('id, path, createdAt')
-		.filter('path', 'eq', req.link)
-    .limit(1)
-		.maybeSingle();
 
-  if (fetchPageError) {
-    throw fetchPageError;
+	/*
+	// Sign up
+	const signup = await supabase.auth.signUp({ email, password });
+	warn('User signed up:', signup.data.user);
+	if (signup.error || !signup.data.user) {
+		error(signup.error);
+		throw signup.error;
+	} */
+
+	/*
+
+	// Sign in to the admin account
+	const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+
+	if (signInError) {
+		error('signInError', signInError.cause, signInError.message, signInError.name);
+		throw signInError;
 	}
 
-  // Create/update page record.
-	const pageRecord = {
-		id: req.id,
-		path: req.link,
-		title: decodeURIComponent(req.title),
-		createdAt: existingPage?.createdAt || new Date(),
-		updatedAt: new Date(),
-	};
+	*/
 
-	warn('pageRecord', pageRecord);
-  const { error: upsertPageError, data: page } = await supabase
-    .from('page')
-		.upsert(pageRecord)
-    .select()
-    .limit(1)
-		.single();
-
-	if (upsertPageError) {
-		error('upsertPageError', upsertPageError.code, upsertPageError.hint, upsertPageError.details);
-    throw upsertPageError;
+	const tableExists = await checkTableExists(supabase, author);
+	if (!tableExists) {
+		const { error: err } = await supabase.rpc('create_embeddings_table', { author });
+		if (err) {
+			error(err);
+			throw new Error('Error in create_embeddings_table.');
+		}
 	}
 
 	try {
@@ -126,18 +153,17 @@ export const elaborateEmbeddings = async (req: {
       const [responseData] = embeddingResponse.data.data;
 
       const { error: insertPageSectionError } = await supabase
-        .from('page_section')
+        .from(author)
         .upsert({
           id:
             sanitizedInput.length < 2
-              ? `${page.id}[1]`
-              : `${page.id}[${i + 1}]`,
-          path: page.path,
+              ? `${req.id}[1]`
+              : `${req.id}[${i + 1}]`,
+          path: req.link,
           content: sanInput,
           token_count: embeddingResponse.data.usage.total_tokens,
 					embedding: responseData.embedding,
 					section: i + 1,
-          createdAt: existingPage?.createdAt || new Date(),
           updatedAt: new Date(),
         })
         .select()

@@ -12,53 +12,118 @@ const isFulfilled = <T, >(p:PromiseSettledResult<T>): p is PromiseFulfilledResul
 const isRejected = <T, >(p:PromiseSettledResult<T>): p is PromiseRejectedResult => p.status === 'rejected';
 
 const axios = new Axios({
-	baseURL: 'https://api.github.com/repos/',
-	headers: { Accept: 'application/json' },
+	headers: {
+		Accept: 'application/json',
+		Authorization: `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`,
+	},
 });
 
 const getRecentCommitTree = async (author: string): Promise<string | undefined> => {
-	const { data: commits } = await axios.get(`${author}/commits`);
+	try {
+		const { data: commits } = await axios.get(`https://api.github.com/repos/${author}/commits`);
 
-	if (!commits) throw new Error('Unable to retrieve commits');
-	const normCommits = JSON.parse(commits);
-	if (!normCommits) throw new Error('Unable to parse commits');
+		if (!commits) throw new Error('Unable to retrieve commits');
+		const normCommits = JSON.parse(commits);
+		if (!normCommits) throw new Error('Unable to parse commits');
 
-	if (normCommits.length <= 0 || !normCommits[0]) throw new Error('Unable to parse commits');
+		if (normCommits.length <= 0 || !normCommits[0]) throw new Error('Unable to parse commits');
 
-	const tree = normCommits[0].commit?.tree?.url;
-	warn('Tree', tree);
-	return tree;
+		const tree = normCommits[0].commit?.tree?.url;
+		return tree;
+	} catch (err) {
+		error(err);
+		throw err;
+	}
 };
 
-const getTreeFiles = async (treeUrl: string): Promise<TreeFile[]> => {
-	const { data: files } = await axios.get(treeUrl);
+const getTreeFiles = async (treeUrl: string, filter: 'tree' | 'blob'): Promise<TreeFile[]> => {
+	try {
+		const { data: files } = await axios.get(treeUrl);
 
-	if (!files) throw new Error('Unable to retrieve tree files');
-	const normFiles = JSON.parse(files);
-	if (normFiles?.tree.length <= 0) throw new Error('Unable to parse tree files');
+		if (!files) throw new Error('Unable to retrieve tree files');
+		const normFiles = JSON.parse(files);
+		if (normFiles?.tree.length <= 0) throw new Error('Unable to parse tree files');
 
-	const tree = normFiles.tree as TreeFile[];
-	warn('Tree files', tree);
-	return tree ? tree.filter((file) => file.type === 'tree') : [];
+		const tree = normFiles.tree as TreeFile[];
+		return tree ? tree.filter((file) => file.type === filter) : [];
+	} catch (err) {
+		error(err);
+		throw err;
+	}
 };
 
-const getMarkdown = async (fileUrl: string): Promise<{ name: string, content: string }> => {
-	const { data: file } = await axios.get(fileUrl);
-	const fileName = fileUrl.split('/').pop();
+const elaborateTitle = (input: string, fileName: string): string => {
+	const regex = /^#\s*(.+)/;
+	const match = input.match(regex);
+	let title = '';
 
-	if (!fileName) throw new Error(`Canot find file name for url ${fileUrl}`);
-	if (!file) throw new Error('Unable to retrieve markdown file');
-	const normFile = JSON.parse(file);
-	if (normFile?.content) throw new Error('Unable to parse markdown file');
-
-	const buff = Buffer.from(normFile.content, 'base64');
-	const decoded = buff.toString('utf8');
-	if (decoded) throw new Error('Unable to parse markdown file');
-	return { name: fileName, content: decoded };
+	if (match && match[1]) {
+		title = match[1];
+		console.log(title);
+	} else {
+		const normTitle = fileName.replaceAll('-', ' ').replaceAll('_', ' ');
+		title = normTitle[0].toUpperCase() + normTitle.substring(1);
+	}
+	return title;
 };
 
+const getMarkdown = async (fileUrl: string, fileName: string): Promise<{ name: string, content: string, title: string, path: string }> => {
+	try {
+		const { data: file } = await axios.get(fileUrl);
+		warn('Downloading file ' + fileName);
+
+		if (!file) throw new Error('Unable to retrieve markdown file.');
+		const normFile = JSON.parse(file);
+		if (!normFile?.content) throw new Error('Unable to parse markdown file because content is undefined.');
+
+		const buff = Buffer.from(normFile.content, 'base64');
+		const decoded = buff.toString('utf8');
+		if (!decoded) throw new Error('Unable to parse markdown file, decoded value is undefined.');
+
+		const title = elaborateTitle(decoded, fileName);
+
+		return {
+			name: fileName.replace('.md', ''),
+			content: decoded,
+			path: fileUrl,
+			title,
+		};
+	} catch (err) {
+		error(err);
+		throw err;
+	}
+};
+
+const checkApiLimit = async () => {
+	try {
+				const response = await axios.get('https://api.github.com/users/octocat');
+
+				const limit = parseInt(response.headers['x-ratelimit-limit']);
+				const remaining = parseInt(response.headers['x-ratelimit-remaining']);
+				const reset = parseInt(response.headers['x-ratelimit-reset']);
+
+				if (Number.isNaN(limit) || Number.isNaN(remaining) || Number.isNaN(reset)) {
+						// Invalid headers, unable to determine rate limit
+						return -1;
+		}
+
+		const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+				const remainingTime = Math.max(reset - currentTime, 0); // Remaining time in seconds
+
+				const remainingMinutes = Math.ceil(remainingTime / 60); // Remaining time in minutes
+
+
+				return `${remaining}/${limit} - Remaining time: ${remainingMinutes} mins`;
+		} catch (err) {
+		error(err);
+		throw err;
+		}
+};
 
 export const githubFolderFetcher = async () => {
+	const requestsLimit = await checkApiLimit();
+	warn(requestsLimit);
+
 	const author = 'angular/angular';
 	const folder = 'aio/content/guide';
 	const paths = folder.split('/');
@@ -67,35 +132,34 @@ export const githubFolderFetcher = async () => {
 		const tree = await getRecentCommitTree(author);
 		if (!tree) throw new Error('Unable to get recent commit tree.');
 
-		let treeFiles = await getTreeFiles(tree);
+		let treeFiles = await getTreeFiles(tree, 'tree');
 
 		for (let i = 0; i < paths.length; i++) {
 			const path = paths[i];
 			const file = treeFiles.find((file) => file.path === path);
 			if (!file) throw new Error('Check that folder path is correct.');
-			treeFiles = await getTreeFiles(file.url);
+			treeFiles = await getTreeFiles(
+				file.url,
+				i === (paths.length - 1) ? 'blob' : 'tree' // If last folder, filter for files.
+			);
 		}
 
-		const promises: Promise<{ name: string, content: string }>[] = [];
+		const promises: Promise<{ name: string, content: string, title: string, path: string }>[] = [];
 
 		for (let i = 0; i < treeFiles.length; i++) {
 			const file = treeFiles[i];
-
-			// TODO: Remove this. Only for test purposes.
-			if (i > 4) break;
-
-			if (!file || !file.url) continue;
-			promises.push(getMarkdown(file.url));
+			if (!file || !file.url || !file.path.includes('.md')) continue;
+			promises.push(getMarkdown(file.url, file.path));
 		}
 
 		const results = await Promise.allSettled(promises);
 		const values = results.filter(isFulfilled).map((res) => res.value);
 		const rejected = results.filter(isRejected).map((res) => res.reason);
-		warn(values);
-		error(`${rejected.length} requests failed.`, rejected);
+		warn(`${values.length} requests succeded.`, values);
+		if (rejected.length > 0) error(`${rejected.length} requests failed.`, rejected);
 		return values;
 	} catch (err) {
 		error(err);
-		throw new Error(typeof err === 'string' ? err : JSON.stringify(err));
+		throw err;
 	}
 };

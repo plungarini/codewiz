@@ -90,5 +90,37 @@
       </div>
       <p class="mt-2 whitespace-pre-wrap">{{ result }}</p>
     </div>
+
+    <div class="mt-8" *ngIf="repoFiles">
+      <div class="flex flex-row items-center justify-between w-full mb-4">
+        <p class="font-semibold text-zinc-50">Result:</p>
+      </div>
+      
+			<div *ngFor="let item of repoFiles" class="flex flex-row items-center justify-between px-4 py-2 my-1 rounded-md bg-zinc-800">
+				<div class="flex flex-row items-center space-x-2">
+					<p class="pt-0 mt-0 font-semibold text-zinc-300">{{item.title}}</p>
+					<p class="pt-0 mt-0 text-sm text-zinc-500">{{item.name}}</p>
+				</div>
+
+				<div class="flex flex-row items-center space-x-4">
+					<p class="pt-0 mt-0 text-sm text-zinc-400" *ngIf="getExpectedSections(item.content.length) as sections">
+						{{item.content.length}} characters
+						<span *ngIf="sections > 1" class="text-xs text-zinc-500"> ({{sections}} sections)</span>
+					</p>
+	
+					<p
+						*ngIf="item.status"
+						[ngClass]="{
+							'text-teal-400': item.status === 'success',
+							'text-red-400': item.status === 'failed',
+							'text-amber-400': item.status === 'loading',
+						}"
+						class="pt-0 mt-0 text-sm"
+					>
+						{{item.status}}
+					</p>
+				</div>
+			</div>
+    </div>
   </div>
 </div>

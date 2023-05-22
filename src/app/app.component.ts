@@ -35,12 +35,27 @@ export class AppComponent {
       nonNullable: true,
       validators: [Validators.required],
     }),
-  });
+	});
+	
+	repoFiles: {
+		name: string;
+		title: string;
+		content: string;
+		path: string;
+		status?: 'loading' | 'success' | 'failed';
+	}[] = [
+		{ name: 'asd.md', title: 'Asd how to hello world', content: 'Asd how to hello world', status: 'loading', path: 'asd/asd' }
+	];
 
   constructor(
     private htmlToMd: HtmlToMdService,
     private cdRef: ChangeDetectorRef
-  ) {}
+	) { }
+	
+	getExpectedSections(chars: number): number {
+		const MAX_CHARS = 20_000;
+		return Math.ceil(chars / MAX_CHARS);
+	}
 
   async loadEmbeddings(): Promise<void> {
     this.buttonLoadingEmbeddings = true;
@@ -51,8 +66,10 @@ export class AppComponent {
 				.replace('https://', '');
 			const urlSections = normUrl.split('/');
 			const id = `${urlSections[0]}/${urlSections[urlSections.length - 1]}`;
+			const author = 'angular/angular';
 
-      await this.htmlToMd.generateEmbedding({
+			await this.htmlToMd.generateEmbedding({
+				author,
         content: this.result,
         id,
         link: url,
@@ -67,23 +84,77 @@ export class AppComponent {
 	
 	async fetchRepo(): Promise<void> {
 		if (!this.scrapeRepoform.value.author || !this.scrapeRepoform.value.folder) return console.error('All fields required');
+		const cacheFiles = localStorage.getItem('repoFiles');
+
+		if (!!cacheFiles) {
+			const parsedCacheFiles = JSON.parse(cacheFiles);
+			if (parsedCacheFiles.length > 0) {
+				this.repoFiles = parsedCacheFiles;
+				console.log('Loaded from cache.');
+				this.parseRepoFiles();
+				return;
+			}
+		}
 
 		this.buttonLoading = true;
+		this.repoFiles = [];
+		this.result = '';
 		try {
-      await this.htmlToMd.fetchGitRepo();
+			this.repoFiles = await this.htmlToMd.fetchGitRepo({
+				author: this.scrapeRepoform.value.author,
+				folder: this.scrapeRepoform.value.folder,
+			});
+			localStorage.setItem('repoFiles', JSON.stringify(this.repoFiles));
+			this.cdRef.detectChanges();
+			this.buttonLoading = false;
+			this.parseRepoFiles();
     } catch (error) {
       this.buttonLoading = false;
       console.error(error);
     }
+	}
 
-    this.cdRef.detectChanges();
-    this.buttonLoading = false;
+	async parseRepoFiles() {
+		if (!this.scrapeRepoform.value.author) return console.error('Author field is required');
+
+		for (let i = 0; i < this.repoFiles.length; i++) {
+			const file = this.repoFiles[i];
+			if (file.status && file.status === 'success') continue;
+			file.status = 'loading';
+			this.cdRef.detectChanges();
+			const id = file.name.replace('.md', '').replaceAll(' ', '_').toLowerCase();
+			try {
+				await this.htmlToMd.generateEmbedding({
+					author: this.scrapeRepoform.value.author,
+					content: file.content,
+					link: file.path,
+					title: file.title,
+					id
+				});
+				file.status = 'success';
+				this.cdRef.detectChanges();
+			} catch (error) {
+				file.status = 'failed';
+				this.cdRef.detectChanges();
+				console.error(error);
+				continue;
+			}
+		}
+
+		const success = this.repoFiles.filter((f) => f.status === 'success').length;
+		const failed = this.repoFiles.filter((f) => f.status === 'failed').length;
+
+		localStorage.setItem('repoFiles', JSON.stringify(this.repoFiles));
+
+		console.log(`✨ Finished - ${success}/${failed} - Saved to local storage`)
 	}
 
   async parse(): Promise<void> {
     if (!this.scrapeUrlform.value.category || !this.scrapeUrlform.value.url) return console.error('All fields required');
 
-    this.buttonLoading = true;
+		this.buttonLoading = true;
+		this.repoFiles = [];
+		this.result = '';
     try {
       const parsed = await this.htmlToMd.fetchPage({
         page_link: this.scrapeUrlform.value.url,
