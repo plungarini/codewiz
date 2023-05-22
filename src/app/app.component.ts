@@ -115,17 +115,22 @@ export class AppComponent {
 	}
 
 	async parseRepoFiles() {
-		if (!this.scrapeRepoform.value.author) return console.error('Author field is required');
+		const author = this.scrapeRepoform.value.author;
+		const folder = this.scrapeRepoform.value.folder;
+		if (!author || !folder) return console.error('Author field is required');
 
 		for (let i = 0; i < this.repoFiles.length; i++) {
 			const file = this.repoFiles[i];
 			if (file.status && file.status === 'success') continue;
 			file.status = 'loading';
 			this.cdRef.detectChanges();
-			const id = file.name.replace('.md', '').replaceAll(' ', '_').toLowerCase();
+			const id = `${author}/${folder}/${file.name
+				.replace('.md', '')
+				.replaceAll(' ', '_')
+				.toLowerCase()}`;
 			try {
 				await this.htmlToMd.generateEmbedding({
-					author: this.scrapeRepoform.value.author,
+					author: author,
 					content: file.content,
 					link: file.path,
 					title: file.title,
@@ -142,11 +147,14 @@ export class AppComponent {
 		}
 
 		const success = this.repoFiles.filter((f) => f.status === 'success').length;
-		const failed = this.repoFiles.filter((f) => f.status === 'failed').length;
+		const failed = this.repoFiles.filter((f) => f.status === 'failed');
 
-		localStorage.setItem('repoFiles', JSON.stringify(this.repoFiles));
+		localStorage.removeItem('repoFiles');
+		if (failed.length > 0) {
+			localStorage.setItem('repoFiles', JSON.stringify(failed))
+		};
 
-		console.log(`✨ Finished - ${success}/${failed} - Saved to local storage`)
+		console.log(`✨ Finished - ${success}/${failed.length} - Saved to local storage`)
 	}
 
   async parse(): Promise<void> {

@@ -18,6 +18,21 @@ const axios = new Axios({
 	},
 });
 
+/* const getLastModifiedFile = async (author: string, path: string) => {
+	const encodedPath = encodeURIComponent(path);
+	try {
+		const { data } = await axios.get(`https://api.github.com/repos/${author}/commits?path=${encodedPath}&page=1&per_page=1`);
+		if (!data) throw new Error('Unable to retrieve file for last-modified');
+		const normFile = JSON.parse(data);
+		if (normFile?.at(0)) throw new Error('Unable to parse file for last-modified');
+		const date = normFile[0].commit?.committer?.date as string | undefined;
+		return date || '';
+	} catch (err) {
+		error(err);
+		throw err;
+	}
+}; */
+
 const getRecentCommitTree = async (author: string): Promise<string | undefined> => {
 	try {
 		const { data: commits } = await axios.get(`https://api.github.com/repos/${author}/commits`);
@@ -67,7 +82,7 @@ const elaborateTitle = (input: string, fileName: string): string => {
 	return title;
 };
 
-const getMarkdown = async (fileUrl: string, fileName: string): Promise<{ name: string, content: string, title: string, path: string }> => {
+const getMarkdown = async (fileUrl: string, fileName: string, folder: string): Promise<{ name: string, content: string, title: string, path: string }> => {
 	try {
 		const { data: file } = await axios.get(fileUrl);
 		warn('Downloading file ' + fileName);
@@ -96,28 +111,28 @@ const getMarkdown = async (fileUrl: string, fileName: string): Promise<{ name: s
 
 const checkApiLimit = async () => {
 	try {
-				const response = await axios.get('https://api.github.com/users/octocat');
+		const response = await axios.get('https://api.github.com/users/octocat');
 
-				const limit = parseInt(response.headers['x-ratelimit-limit']);
-				const remaining = parseInt(response.headers['x-ratelimit-remaining']);
-				const reset = parseInt(response.headers['x-ratelimit-reset']);
+		const limit = parseInt(response.headers['x-ratelimit-limit']);
+		const remaining = parseInt(response.headers['x-ratelimit-remaining']);
+		const reset = parseInt(response.headers['x-ratelimit-reset']);
 
-				if (Number.isNaN(limit) || Number.isNaN(remaining) || Number.isNaN(reset)) {
-						// Invalid headers, unable to determine rate limit
-						return -1;
+		if (Number.isNaN(limit) || Number.isNaN(remaining) || Number.isNaN(reset)) {
+			// Invalid headers, unable to determine rate limit
+			return -1;
 		}
 
 		const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
-				const remainingTime = Math.max(reset - currentTime, 0); // Remaining time in seconds
+			const remainingTime = Math.max(reset - currentTime, 0); // Remaining time in seconds
 
-				const remainingMinutes = Math.ceil(remainingTime / 60); // Remaining time in minutes
+			const remainingMinutes = Math.ceil(remainingTime / 60); // Remaining time in minutes
 
 
-				return `${remaining}/${limit} - Remaining time: ${remainingMinutes} mins`;
-		} catch (err) {
+			return `${remaining}/${limit} - Remaining time: ${remainingMinutes} mins`;
+	} catch (err) {
 		error(err);
 		throw err;
-		}
+	}
 };
 
 export const githubFolderFetcher = async (req: {
@@ -128,8 +143,8 @@ export const githubFolderFetcher = async (req: {
 	warn(requestsLimit);
 	warn('Request', req);
 
-	const author = req.author;
-	const folder = req.folder;
+	const author = req.author.replace(/^\/|\/$/g, '');
+	const folder = req.folder.replace(/^\/|\/$/g, '');
 	const paths = folder.split('/');
 
 	try {
@@ -153,7 +168,7 @@ export const githubFolderFetcher = async (req: {
 		for (let i = 0; i < treeFiles.length; i++) {
 			const file = treeFiles[i];
 			if (!file || !file.url || !file.path.includes('.md')) continue;
-			promises.push(getMarkdown(file.url, file.path));
+			promises.push(getMarkdown(file.url, file.path, folder));
 		}
 
 		const results = await Promise.allSettled(promises);

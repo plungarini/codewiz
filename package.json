@@ -1,7 +1,7 @@
 {
   "name": "code-whiz-ai",
   "version": "0.0.0",
-	"license": "MIT",
+  "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -30,6 +30,7 @@
     "@tailwindcss/forms": "^0.5.3",
     "@tailwindcss/line-clamp": "^0.4.4",
     "rxjs": "~7.8.0",
+    "sse.js": "^0.6.1",
     "supabase": "^1.57.6",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
