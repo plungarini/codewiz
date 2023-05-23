@@ -18,6 +18,7 @@ type generateEmbeddingData = {
 type fetchGitRepoData = {
 	author: string;
 	folder: string;
+	relativeLinksHost: string;
 }
 
 type fetchGitRepoRes = {

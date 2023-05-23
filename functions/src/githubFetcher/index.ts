@@ -82,7 +82,7 @@ const elaborateTitle = (input: string, fileName: string): string => {
 	return title;
 };
 
-const getMarkdown = async (fileUrl: string, fileName: string, folder: string): Promise<{ name: string, content: string, title: string, path: string }> => {
+const getMarkdown = async (fileUrl: string, fileName: string, host: string): Promise<{ name: string, content: string, title: string, path: string }> => {
 	try {
 		const { data: file } = await axios.get(fileUrl);
 		warn('Downloading file ' + fileName);
@@ -92,10 +92,15 @@ const getMarkdown = async (fileUrl: string, fileName: string, folder: string): P
 		if (!normFile?.content) throw new Error('Unable to parse markdown file because content is undefined.');
 
 		const buff = Buffer.from(normFile.content, 'base64');
-		const decoded = buff.toString('utf8');
+		let decoded = buff.toString('utf8');
 		if (!decoded) throw new Error('Unable to parse markdown file, decoded value is undefined.');
 
 		const title = elaborateTitle(decoded, fileName);
+
+		// Regular expression to match relative links
+    const relativeLinkRegex = /\[([^\]]+)\]\((?!https?:\/\/)([^)]+)\)/g;
+    // Replace relative links with absolute links
+    decoded = decoded.replace(relativeLinkRegex, `[$1](${host}/$2)`);
 
 		return {
 			name: fileName.replace('.md', ''),
@@ -138,6 +143,7 @@ const checkApiLimit = async () => {
 export const githubFolderFetcher = async (req: {
 	author: string;
 	folder: string;
+	relativeLinksHost: string;
 }) => {
 	const requestsLimit = await checkApiLimit();
 	warn(requestsLimit);
@@ -168,7 +174,7 @@ export const githubFolderFetcher = async (req: {
 		for (let i = 0; i < treeFiles.length; i++) {
 			const file = treeFiles[i];
 			if (!file || !file.url || !file.path.includes('.md')) continue;
-			promises.push(getMarkdown(file.url, file.path, folder));
+			promises.push(getMarkdown(file.url, file.path, req.relativeLinksHost));
 		}
 
 		const results = await Promise.allSettled(promises);

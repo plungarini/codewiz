@@ -77,7 +77,7 @@ const checkTableExists = async (supabase: SupabaseClient, tableName: string) => 
 export const elaborateEmbeddings = async (req: {
 	author: string;
   title: string;
-  link: string;
+	link: string;
   content: string;
   id: string;
 }) => {

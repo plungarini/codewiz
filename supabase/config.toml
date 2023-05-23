@@ -47,7 +47,7 @@ additional_redirect_urls = ["https://localhost:3000"]
 # week).
 jwt_expiry = 3600
 # Allow/disallow new user signups to your project.
-enable_signup = true
+enable_signup = false
 
 [auth.email]
 # Allow/disallow new user signups via email to your project.
