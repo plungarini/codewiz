@@ -210,7 +210,8 @@ serve(async (req) => {
             - Always provide the source and hyperlinks if available.
           `}
           ${oneLine`
-            - Provide short, concise answers by default unless explicitly asked for more details.
+            - Provide brief, concise answers by default and avoid excessive details.
+						Set a maximum response length of two or three sentences, if possible.
           `}
           ${oneLine`
             - Output as markdown.
