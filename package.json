@@ -8,12 +8,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploySupabase": "yarn updateSecrets && yarn sb-aiSearch && yarn sb-clippySearch && yarn sb-ogImages && yarn sb-search && yarn sb-searchV2",
+    "deploySupabase": "yarn updateSecrets && yarn sb-aiSearch && yarn sb-search",
     "sb-aiSearch": "npx supabase functions deploy ai-docs --project-ref rbikifjpcodmtsgggpbk",
-    "sb-clippySearch": "npx supabase functions deploy clippy-search --project-ref rbikifjpcodmtsgggpbk",
-    "sb-ogImages": "npx supabase functions deploy og-images --project-ref rbikifjpcodmtsgggpbk",
     "sb-search": "npx supabase functions deploy search --project-ref rbikifjpcodmtsgggpbk",
-    "sb-searchV2": "npx supabase functions deploy search-v2 --project-ref rbikifjpcodmtsgggpbk",
     "updateSecrets": "npx supabase secrets set --env-file ./supabase/.env"
   },
   "private": true,
