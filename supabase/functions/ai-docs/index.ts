@@ -148,8 +148,11 @@ serve(async (req) => {
     let contextText = ''
 
     for (let i = 0; i < pageSections.length; i++) {
-      const pageSection = pageSections[i]
-      const content = `# ${pageSection.title.trim()}:\n${pageSection.content.trim()}`
+			const pageSection = pageSections[i];
+			const title = `# ${pageSection.title.trim()}`;
+			const content = pageSection.content.includes(title) ?
+				pageSection.content.trim() :
+				`# ${pageSection.title.trim()}:\n${pageSection.content.trim()}`;
       const encoded = tokenizer.encode(content)
       tokenCount += encoded.length
 
@@ -245,7 +248,7 @@ serve(async (req) => {
       model,
       messages: completionMessages,
       max_tokens: 1024,
-      temperature: 0,
+      temperature: 0.75,
       stream: !!stream,
     }
 
