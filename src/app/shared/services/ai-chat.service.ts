@@ -12,7 +12,7 @@ export class AiChatService {
 		private zone: NgZone
 	) { }
 
-	createQuery(query: string, timeoutSeconds = 60): Observable<string> {
+	createQuery(repo: string, query: string, timeoutSeconds = 60): Observable<string> {
 		return new Observable((observer) => {
 			const closeStream = () => {
 				ev.close();
@@ -20,6 +20,12 @@ export class AiChatService {
 			}
 
 			let result = '';
+
+			if (!repo) {
+				observer.error('The repository is invalid.');
+				closeStream();
+				return;
+			};
 
 			if (!query) {
 				observer.error('The query is invalid.');
@@ -35,7 +41,7 @@ export class AiChatService {
 						Authorization: `Bearer ${environment.supabase.anonKey}`,
 						'Content-Type': 'application/json',
 					},
-					payload: JSON.stringify({ query, onlyPrompt: false, stream: true }),
+					payload: JSON.stringify({ messages: [{ role: 'user', content: query }], repo, onlyPrompt: false, stream: true }),
 				}
 			);
 

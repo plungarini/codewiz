@@ -122,5 +122,18 @@
 				</div>
 			</div>
     </div>
+
+		<div>
+			<p class="mb-2">Ask something to the AI:</p>
+        <input
+          [formControl]="aiSearchControl"
+          type="text"
+          name="aiSearchControl"
+          placeholder="Type something..."
+					(keypress)="createQuery($event)"
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+				<p class="whitespace-pre-wrap">{{aiQuery}}</p>
+		</div>
   </div>
 </div>

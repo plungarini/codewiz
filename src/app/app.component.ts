@@ -1,5 +1,7 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { catchError, finalize, of } from 'rxjs';
+import { AiChatService } from './shared/services/ai-chat.service';
 import { HtmlToMdService } from './shared/services/html-to-md.service';
 
 @Component({
@@ -7,8 +9,10 @@ import { HtmlToMdService } from './shared/services/html-to-md.service';
   templateUrl: './app.component.html',
   styles: [],
 })
-export class AppComponent {
-  result: string = '';
+export class AppComponent implements OnInit {
+	result: string = '';
+	aiQuery: string = '';
+	gettingQuery = false;
   buttonLoading: boolean = false;
   buttonLoadingEmbeddings: boolean = false;
   scrapeUrlform = new FormGroup({
@@ -36,6 +40,8 @@ export class AppComponent {
       validators: [Validators.required],
     }),
 	});
+
+	aiSearchControl = new FormControl('', [Validators.required]);
 	
 	repoFiles: {
 		name: string;
@@ -43,14 +49,44 @@ export class AppComponent {
 		content: string;
 		path: string;
 		status?: 'loading' | 'success' | 'failed';
-	}[] = [
-		{ name: 'asd.md', title: 'Asd how to hello world', content: 'Asd how to hello world', status: 'loading', path: 'asd/asd' }
-	];
+	}[] = [];
 
   constructor(
     private htmlToMd: HtmlToMdService,
-    private cdRef: ChangeDetectorRef
+		private cdRef: ChangeDetectorRef,
+		private ai: AiChatService,
 	) { }
+
+	ngOnInit(): void {
+	}
+
+	createQuery(event?: KeyboardEvent) {
+		if (event?.key !== 'Enter') return;
+
+		const query = this.aiSearchControl.value;
+		if (this.gettingQuery) return;
+
+		this.gettingQuery = true;
+		this.aiQuery = '';
+		if (!query) throw new Error('Invalid query.')
+		this.ai.createQuery('angular/angular', query)
+			.pipe(
+				catchError((err, obs) => {
+					console.error(err);
+					// this.cdRef.detectChanges();
+					return of(undefined);
+				}),
+				finalize(() => {
+					this.gettingQuery = false;
+					return of(undefined);
+				})
+			)
+			.subscribe((val) => {
+				if (!val) return;
+				this.aiQuery = val;
+				this.cdRef.detectChanges();
+			});
+	}
 	
 	getExpectedSections(chars: number): number {
 		const MAX_CHARS = 20_000;
@@ -103,6 +139,7 @@ export class AppComponent {
 			this.repoFiles = await this.htmlToMd.fetchGitRepo({
 				author: this.scrapeRepoform.value.author,
 				folder: this.scrapeRepoform.value.folder,
+				relativeLinksHost: 'https://angular.io'
 			});
 			localStorage.setItem('repoFiles', JSON.stringify(this.repoFiles));
 			this.cdRef.detectChanges();
