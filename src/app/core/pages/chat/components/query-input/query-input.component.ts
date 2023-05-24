@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -14,6 +14,9 @@ import { FormControl, Validators } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class QueryInputComponent {
+
+	@Output() onQuery = new EventEmitter<string>();
+	@ViewChild('textArea') textAreaComponent: ElementRef<HTMLDivElement> | undefined;
 
 	textInput = new FormControl('', {
 		nonNullable: true,
@@ -60,12 +63,19 @@ export class QueryInputComponent {
 	}
 
 	submitMessage(): void {
-		// TODO: Send query
-		console.log('submitMessage');
+		if (!this.textInput.valid || !this.textInput.value) return;
+		this.onQuery.emit(this.textInput.value.trim());
+		this.resetTextInput();
 	}
 
 	trackBy(index: number): number {
 		return index;
+	}
+
+	private resetTextInput(): void {
+		if (this.textAreaComponent)
+			this.textAreaComponent.nativeElement.innerHTML = '';
+		this.textInput.setValue('');
 	}
 
 }

@@ -1,1 +1,7 @@
-<!-- TODO: Messages -->
+<!-- TODO: Messages styling -->
+<ng-container *ngFor="let msg of chat">
+	<div class="py-2 border-y border-zinc-600">
+		<p class="font-semibold">From: {{msg.role}}</p>
+		<p class="whitespace-pre-wrap">{{msg.content}}</p>
+	</div>
+</ng-container>

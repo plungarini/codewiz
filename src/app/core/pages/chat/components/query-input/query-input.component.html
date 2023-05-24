@@ -4,7 +4,9 @@
 		<div
 			(input)="handleDummyInputChange($event)"
 			(keypress)="handleKeypress($event)"
+			#textArea
 			contenteditable="true"
+			contenteditable="plaintext-only"
 			name="query"
 			id="query"
 			class="relative block w-full px-4 py-2.5 text-base border-0 rounded-md outline-none h-fit bg-zinc-950 placeholder:text-zinc-600 focus:border-0 focus:ring-0 text-zinc-50"

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { catchError, finalize, of } from 'rxjs';
+import { AiChatRepo } from './shared/models/ai-chat.model';
 import { AiChatService } from './shared/services/ai-chat.service';
 import { HtmlToMdService } from './shared/services/html-to-md.service';
 
@@ -69,7 +70,7 @@ export class AppComponent implements OnInit {
 		this.gettingQuery = true;
 		this.aiQuery = '';
 		if (!query) throw new Error('Invalid query.')
-		this.ai.createQuery('angular/angular', query)
+		this.ai.createQuery(AiChatRepo.Angular, query)
 			.pipe(
 				catchError((err, obs) => {
 					console.error(err);
