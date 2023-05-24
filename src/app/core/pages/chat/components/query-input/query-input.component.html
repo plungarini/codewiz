@@ -1,6 +1,6 @@
 <div class="flex flex-row">
 
-	<div contenteditable="false" class="relative w-full">
+	<div contenteditable="false" class="relative w-full rounded-md shadow-2xl bg-zinc-950 py-2.5">
 		<div
 			(input)="handleDummyInputChange($event)"
 			(keypress)="handleKeypress($event)"
@@ -9,7 +9,7 @@
 			contenteditable="plaintext-only"
 			name="query"
 			id="query"
-			class="relative block w-full px-4 py-2.5 text-base border-0 rounded-md outline-none h-fit bg-zinc-950 placeholder:text-zinc-600 focus:border-0 focus:ring-0 text-zinc-50"
+			class="relative block w-full px-4 overflow-y-auto text-base border-0 outline-none max-h-52 h-fit focus:border-0 focus:ring-0 text-zinc-50"
 		></div>
 		<ng-container *ngIf="!textInput.value">
 			<p class="absolute top-2.5 pt-0 mt-0 pointer-events-none text-zinc-600 left-4 pl-[0.05rem]">Ask something...</p>

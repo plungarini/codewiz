@@ -5,6 +5,7 @@ import { ChatRoutingModule } from './chat-routing.module';
 import { ChatComponent } from './chat.component';
 import { QueryInputComponent } from './components/query-input/query-input.component';
 import { MessagesComponent } from './components/messages/messages.component';
+import { StatusComponent } from './components/status/status.component';
 
 
 
@@ -12,7 +13,8 @@ import { MessagesComponent } from './components/messages/messages.component';
 	declarations: [
 		ChatComponent,
     QueryInputComponent,
-    MessagesComponent
+    MessagesComponent,
+    StatusComponent
   ],
   imports: [
 		CommonModule,
