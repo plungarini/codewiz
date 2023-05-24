@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
-import { filter, interval, map, Observable, startWith, switchMap, tap } from 'rxjs';
+import { filter, interval, map, Observable, startWith, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
 import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator } from '../models/ai-chat/ai-chat-status.model';
@@ -11,7 +11,6 @@ import { AiChatMessage, AiChatMessageRole, AiChatRepo, AiChatRequestData } from 
 })
 export class AiChatService {
 	private statusUrl = 'https://status.openai.com/api/v2/summary.json';
-	private previousStatus: AiChatStatusIndicator = AiChatStatusIndicator.None;
 
 	constructor(
 		private zone: NgZone,
@@ -48,11 +47,7 @@ export class AiChatService {
 				}
 
 				return { ...res, incidents: [normIncident] } as AiChatStatus;
-			}),
-
-			filter((res) => res.status.indicator !== this.previousStatus),
-
-			tap((res) => this.previousStatus = res.status.indicator)
+			})
 		);
 	}
 

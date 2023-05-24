@@ -15,7 +15,7 @@ type ClientStatus = {
   styles: [
     `
       :host {
-        @apply w-full max-w-md mx-auto px-6 pointer-events-none;
+        @apply w-fit max-w-md mx-auto px-6 pointer-events-none pt-6;
       }
     `
   ],
@@ -23,15 +23,33 @@ type ClientStatus = {
 })
 export class StatusComponent {
 	private previousIndicator: AiChatStatusIndicator = AiChatStatusIndicator.None;
+	indicators = AiChatStatusIndicator;
+	show = false;
+	hideDelay = 5000;
 
-	@Input() setStatus(value: ClientStatus) {
+	@Input('status') set setStatus(value: ClientStatus) {
 		if (!value) return;
 		this.status = value;
+
+		const isSameIndicator = this.status.indicator === this.previousIndicator;
+		const isOperational = this.status.indicator === AiChatStatusIndicator.None;
+		if (isOperational && !isSameIndicator) {
+			setTimeout(() => {
+				this.show = false;
+				this.cdRef.detectChanges();
+			}, this.hideDelay);
+		}
+
+		if (!isSameIndicator && !this.show) {
+			this.show = true;
+		}
+
+		this.previousIndicator = this.status.indicator;
 		this.cdRef.detectChanges();
 	}
 
 	private defaultStatus: ClientStatus = {
-		title: 'OpenAI\'s API are operational',
+		title: 'OpenAI\'s APIs are online',
 		message: '',
 		link: 'https://status.openai.com/',
 		indicator: AiChatStatusIndicator.None,
@@ -43,7 +61,6 @@ export class StatusComponent {
 		private cdRef: ChangeDetectorRef,
 	) {
 		this.status = this.defaultStatus;
-		this.cdRef.detectChanges();
 	}
 
 }
