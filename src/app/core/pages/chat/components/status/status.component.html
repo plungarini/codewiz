@@ -1,39 +1,41 @@
-<a
-	[ngClass]="{
-		'opacity-0 pointer-events-none -translate-y-4': !show,
-		'opacity-100 pointer-events-auto -translate-y-0': show,
-	}"
-	[href]="status.link"
-	target="_blank"
-	class="flex flex-row items-center px-3 py-1 transition-all duration-300 -translate-y-4 shadow-lg opacity-0 pointer-events-auto group bg-zinc-950 rounded-xl"
->
-	<span class="relative flex w-2 h-2">
-		<span
-			[ngClass]="{
-				'bg-teal-400': status.indicator === indicators.None,
-				'bg-yellow-400': status.indicator === indicators.Minor,
-				'bg-amber-500': status.indicator === indicators.Major,
-				'bg-red-400': status.indicator === indicators.Critical,
-			}"
-			[ngStyle]="{'animation-iteration-count': show ? null : 5}"
-			class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping"></span>
-		<span
-			[ngClass]="{
-				'bg-teal-400': status.indicator === indicators.None,
-				'bg-yellow-400': status.indicator === indicators.Minor,
-				'bg-amber-500': status.indicator === indicators.Major,
-				'bg-red-400': status.indicator === indicators.Critical,
-			}"
-			class="relative inline-flex w-2 h-2 rounded-full"></span>
-	</span>
-
-	<div class="max-w-full px-2">
-		<p *ngIf="status.title" class="pt-0 -mt-0.5 text-xs inline-block truncate group-hover:mt-0.5 group-hover:whitespace-normal max-w-full transition-all">
-			<span *ngIf="status.title" class="font-medium text-zinc-100">{{status.title}}</span>
-			<span *ngIf="status.title && status.message" class="font-medium text-zinc-100">:</span>
-			<span *ngIf="status.message" class="font-medium text-zinc-400">
-				{{status.message}}
-			</span>
-		</p>
-	</div>
-</a>
+<div class="max-w-md px-6 mx-auto pointer-events-none w-fit">
+	<a
+		[ngClass]="{
+			'opacity-0 pointer-events-none -translate-y-4': !show,
+			'opacity-100 pointer-events-auto -translate-y-0': show,
+		}"
+		[href]="status.link"
+		target="_blank"
+		class="flex flex-row items-center px-2 py-0.5 transition-all duration-300 -translate-y-4 rounded-full shadow-lg opacity-0 pointer-events-auto group bg-zinc-950/80 backdrop-blur"
+	>
+		<span class="relative flex w-2.5 h-2.5">
+			<span
+				[ngClass]="{
+					'bg-teal-400': status.indicator === indicators.None,
+					'bg-yellow-400': status.indicator === indicators.Minor,
+					'bg-amber-500': status.indicator === indicators.Major,
+					'bg-red-400': status.indicator === indicators.Critical,
+				}"
+				[ngStyle]="{'animation-iteration-count': show ? 5 : 1}"
+				class="absolute inline-flex w-full h-full rounded-full opacity-75 animate-ping"></span>
+			<span
+				[ngClass]="{
+					'bg-teal-400': status.indicator === indicators.None,
+					'bg-yellow-400': status.indicator === indicators.Minor,
+					'bg-amber-500': status.indicator === indicators.Major,
+					'bg-red-400': status.indicator === indicators.Critical,
+				}"
+				class="relative inline-flex w-2.5 h-2.5 rounded-full"></span>
+		</span>
+	
+		<div class="max-w-full px-2">
+			<p *ngIf="status.title" class="inline-block max-w-full pt-0 text-xs truncate transition-all group-hover:whitespace-normal">
+				<span *ngIf="status.title" class="font-medium text-zinc-100">{{status.title}}</span>
+				<span *ngIf="status.title && status.message" class="font-medium text-zinc-100">:</span>
+				<span *ngIf="status.message" class="font-medium text-zinc-400">
+					{{status.message}}
+				</span>
+			</p>
+		</div>
+	</a>
+</div>

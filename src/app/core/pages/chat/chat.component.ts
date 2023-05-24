@@ -1,17 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { catchError, finalize, of, Subscription } from 'rxjs';
-import { AiChatStatusIndicator } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
+import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageRole, AiChatRepo } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
-
-
-type ClientStatus = {
-	title: string,
-	message: string,
-	link: string,
-	indicator: AiChatStatusIndicator,
-}
 
 @Component({
   templateUrl: './chat.component.html',
@@ -29,7 +21,7 @@ export class ChatComponent implements OnDestroy {
 	private selectedRepo: AiChatRepo = AiChatRepo.Angular;
 	gettingQuery = false;
 	chat: AiChatMessage[] = [];
-	status: ClientStatus = {
+	status: ClientOpenaiStatus = {
 		title: 'OpenAI\'s APIs are online',
 		message: '',
 		link: 'https://status.openai.com/',
@@ -43,13 +35,7 @@ export class ChatComponent implements OnDestroy {
 		private cdRef: ChangeDetectorRef
 	) {
 		this.statusSubscription = this.ai.getStatus().subscribe((s) => {
-			const newStatus = {
-				indicator: s.status.indicator || AiChatStatusIndicator.None,
-				title: s.incidents[0]?.name || AiChatStatusIndicator.None ? '' : 'Unable to detect OpenAI status',
-				message: s.incidents[0]?.incident_updates[0].body || AiChatStatusIndicator.None ? '' : 'Click here to visit the status webpage.',
-				link: s.incidents[0]?.shortlink || AiChatStatusIndicator.None ? '' : 'https://status.openai.com/',
-			};
-			this.status = newStatus;
+			this.status = s;
 			console.warn('New openai status', this.status);
 			this.cdRef.detectChanges();
 		})

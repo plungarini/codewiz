@@ -16,7 +16,15 @@ export enum AiChatStatusIndicator {
 	Critical = 'critical', // red
 }
 
-export interface AiChatStatus {
+
+export type ClientOpenaiStatus = {
+	title: string,
+	message: string,
+	link: string,
+	indicator: AiChatStatusIndicator,
+}
+
+export type AiChatStatus = {
   components: Component[];
   incidents: Incident[];
   scheduled_maintenances: any[];
@@ -26,14 +34,14 @@ export interface AiChatStatus {
 	};
 }
 
-interface Component {
+type Component = {
   name: string;
   status: AiChatComponentStatus;
   created_at: string;
   updated_at: string;
 }
 
-interface Incident {
+type Incident = {
   name: string;
   AiChatIncidentStatus: string;
   created_at: string;
@@ -47,7 +55,7 @@ interface Incident {
   components: IncidentComponent[];
 }
 
-interface IncidentUpdate {
+type IncidentUpdate = {
   status: AiChatIncidentStatus;
   body: string;
   created_at: string;
@@ -56,12 +64,12 @@ interface IncidentUpdate {
   affected_components: AffectedComponent[];
 }
 
-interface AffectedComponent {
+type AffectedComponent = {
   name: string;
   new_status: AiChatComponentStatus;
 }
 
-interface IncidentComponent {
+type IncidentComponent = {
   name: string;
   status: AiChatComponentStatus;
 }

@@ -1,13 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
-import { AiChatStatusIndicator } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
-
-
-type ClientStatus = {
-	title: string,
-	message: string,
-	link: string,
-	indicator: AiChatStatusIndicator,
-}
+import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
 
 @Component({
   selector: 'app-status',
@@ -15,7 +7,7 @@ type ClientStatus = {
   styles: [
     `
       :host {
-        @apply w-fit max-w-md mx-auto px-6 pointer-events-none pt-6;
+        @apply absolute top-4 left-0 w-full;
       }
     `
   ],
@@ -27,7 +19,7 @@ export class StatusComponent {
 	show = false;
 	hideDelay = 5000;
 
-	@Input('status') set setStatus(value: ClientStatus) {
+	@Input('status') set setStatus(value: ClientOpenaiStatus) {
 		if (!value) return;
 		this.status = value;
 
@@ -48,14 +40,14 @@ export class StatusComponent {
 		this.cdRef.detectChanges();
 	}
 
-	private defaultStatus: ClientStatus = {
+	private defaultStatus: ClientOpenaiStatus = {
 		title: 'OpenAI\'s APIs are online',
 		message: '',
 		link: 'https://status.openai.com/',
 		indicator: AiChatStatusIndicator.None,
 	}
 
-	status: ClientStatus;
+	status: ClientOpenaiStatus;
 
 	constructor(
 		private cdRef: ChangeDetectorRef,

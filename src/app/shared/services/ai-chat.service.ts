@@ -3,7 +3,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { filter, interval, map, Observable, startWith, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
-import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator } from '../models/ai-chat/ai-chat-status.model';
+import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator, ClientOpenaiStatus } from '../models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageRole, AiChatRepo, AiChatRequestData } from '../models/ai-chat/ai-chat.model';
 
 @Injectable({
@@ -17,7 +17,7 @@ export class AiChatService {
 		private http: HttpClient,
 	) { }
 
-	getStatus(mins = 5): Observable<AiChatStatus> {
+	getStatus(mins = 5): Observable<ClientOpenaiStatus> {
 		return interval(mins * 60 * 1000).pipe(
 			startWith(0),
 			switchMap(() => this.http.get<AiChatStatus>(this.statusUrl)),
@@ -30,10 +30,21 @@ export class AiChatService {
 					i.components.filter((c) => c.name === 'API')[0].status !== AiChatComponentStatus.Operational // Filter only API issues with status !== operational
 				);
 
-				if (!filteredIncidents || filteredIncidents.length <= 0) return {
-					...res,
-					status: { indicator: AiChatStatusIndicator.None }
-				} as AiChatStatus;
+				if (!filteredIncidents || filteredIncidents.length <= 0) {
+					const status = {
+						...res,
+						status: { indicator: AiChatStatusIndicator.None }
+					} as AiChatStatus;
+
+					const newStatus = {
+						indicator: status.status.indicator || AiChatStatusIndicator.None,
+						title: status.incidents[0]?.name || AiChatStatusIndicator.None ? 'OpenAI\'s APIs are online' : 'Unable to detect OpenAI status',
+						message: status.incidents[0]?.incident_updates[0].body || AiChatStatusIndicator.None ? '' : 'Click here to visit the status webpage.',
+						link: status.incidents[0]?.shortlink || 'https://status.openai.com/',
+					};
+
+					return newStatus;
+				}
 
 				const recentIncident = filteredIncidents.sort((a, b) =>
 					new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
@@ -46,7 +57,16 @@ export class AiChatService {
 					)
 				}
 
-				return { ...res, incidents: [normIncident] } as AiChatStatus;
+				const status = { ...res, incidents: [normIncident] } as AiChatStatus;
+
+				const newStatus = {
+					indicator: status.status.indicator || AiChatStatusIndicator.None,
+					title: status.incidents[0]?.name || AiChatStatusIndicator.None ? 'OpenAI\'s APIs are online' : 'Unable to detect OpenAI status',
+					message: status.incidents[0]?.incident_updates[0].body || AiChatStatusIndicator.None ? '' : 'Click here to visit the status webpage.',
+					link: status.incidents[0]?.shortlink || 'https://status.openai.com/',
+				};
+
+				return newStatus;
 			})
 		);
 	}
