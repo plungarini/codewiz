@@ -2,6 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
+import { AiChatMessageRole, AiChatRepo, AiChatRequestData } from '../models/ai-chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AiChatService {
 		private zone: NgZone
 	) { }
 
-	createQuery(repo: string, query: string, timeoutSeconds = 60): Observable<string> {
+	createQuery(repo: AiChatRepo, query: string, timeoutSeconds = 60): Observable<string> {
 		return new Observable((observer) => {
 			const closeStream = () => {
 				ev.close();
@@ -33,6 +34,13 @@ export class AiChatService {
 				return;
 			};
 
+			const data: AiChatRequestData = {
+				messages: [{ role: AiChatMessageRole.User, content: query }],
+				repo: repo,
+				onlyPrompt: false,
+				stream: true,
+			}
+
 			const ev = new SSE(
 				`https://${environment.supabase.projectRef}.functions.supabase.co/ai-docs`,
 				{
@@ -41,7 +49,7 @@ export class AiChatService {
 						Authorization: `Bearer ${environment.supabase.anonKey}`,
 						'Content-Type': 'application/json',
 					},
-					payload: JSON.stringify({ messages: [{ role: 'user', content: query }], repo, onlyPrompt: false, stream: true }),
+					payload: JSON.stringify(data),
 				}
 			);
 
