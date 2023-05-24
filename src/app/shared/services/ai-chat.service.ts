@@ -15,12 +15,21 @@ export class AiChatService {
 
 	createQuery(repo: AiChatRepo, query: string, timeoutSeconds = 60): Observable<string> {
 		return new Observable((observer) => {
+			let result = '';
+			let sinceLastRes = new Date().getTime() / 1000; // In seconds
+
+			const timeoutCheckInterval = setInterval(() => {
+				const now = new Date().getTime() / 1000;
+				if ((sinceLastRes - now) < timeoutSeconds) return;
+				observer.error(`Timeout Error: Request Timed Out (>${timeoutSeconds}s). Please try again later.`)
+				closeStream();
+			}, 5000);
+
 			const closeStream = () => {
 				ev.close();
+				clearInterval(timeoutCheckInterval);
 				observer.complete();
 			}
-
-			let result = '';
 
 			if (!repo) {
 				observer.error('The repository is invalid.');
@@ -63,6 +72,7 @@ export class AiChatService {
 					const message = completionResponse.choices[0].delta.content;
 					if (message) {
 						result += message;
+						sinceLastRes = new Date().getTime() / 1000;
 						observer.next(result);
 					}
 				})
@@ -76,10 +86,6 @@ export class AiChatService {
 			}
 
 			ev.stream();
-
-			setTimeout(() => {
-				closeStream();
-			}, timeoutSeconds * 1000);
 		})
 
 	}
