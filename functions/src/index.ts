@@ -1,8 +1,8 @@
 import * as functions from 'firebase-functions';
 import { error, warn } from 'firebase-functions/logger';
-import { elaborateEmbeddings } from './embeddings';
-import { githubFolderFetcher } from './githubFetcher';
-import { scrapeDocumentedPage } from './scraper';
+import { elaborateEmbeddings } from './functions/embeddings';
+import { githubFolderFetcher } from './functions/githubFetcher';
+import { scrapeDocumentedPage } from './functions/scraper';
 
 const FFN = functions.region('europe-west2');
 
@@ -58,3 +58,4 @@ export const githubFetcher = FFN.runWith({
 		return err;
 	}
 });
+
