@@ -7,7 +7,7 @@ import {
 	ChatCompletionRequestMessageRoleEnum,
 	Configuration,
 	CreateChatCompletionRequest,
-	OpenAIApi,
+	OpenAIApi
 } from 'https://esm.sh/openai@3.2.1'
 import { ApplicationError, UserError } from '../common/errors.ts'
 import { getChatRequestTokenCount, getMaxTokenCount, tokenizer } from '../common/tokenizer.ts'
@@ -25,6 +25,8 @@ interface Message {
 interface RequestData {
 	repo: string;
 	messages: Message[];
+	onlyPrompt: boolean;
+	stream: boolean;
 }
 
 const openAiKey = Deno.env.get('OPENAI_KEY')
@@ -67,8 +69,8 @@ serve(async (req) => {
       throw new UserError('Missing messages in request data')
     }
 
-    // Intentionally log the messages
-    console.log({ messages })
+    // Intentionally log the request data
+    console.log({ requestData })
 
     // TODO: better sanitization
     const contextMessages: ChatCompletionRequestMessage[] = messages.map(({ role, content }) => {
