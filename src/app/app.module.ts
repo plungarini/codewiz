@@ -8,6 +8,7 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MarkdownModule } from 'ngx-markdown';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -26,7 +27,8 @@ import { AppComponent } from './app.component';
 		provideFunctions(() => getFunctions(undefined, 'europe-west2')),
 		
 		ReactiveFormsModule,
-		HttpClientModule
+		HttpClientModule,
+		MarkdownModule.forRoot(),
   ],
   providers: [
     ScreenTrackingService,UserTrackingService

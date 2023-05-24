@@ -47,7 +47,6 @@ export class ChatComponent implements OnDestroy {
 
 	createQuery(query: string): void {
 		if (!query) return console.error('Query is required.');
-		console.log('Getting reply from query: ' + query);
 
 		// TODO: Save query to Database
 		const userQuery: AiChatMessage = {

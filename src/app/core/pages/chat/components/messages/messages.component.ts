@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
-import { AiChatMessage } from 'src/app/shared/models/ai-chat.model';
+import { AiChatMessage } from 'src/app/shared/models/ai-chat/ai-chat.model';
 
 @Component({
   selector: 'app-messages',
