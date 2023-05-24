@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { catchError, finalize, of } from 'rxjs';
-import { AiChatMessage, AiChatMessageRole, AiChatRepo } from 'src/app/shared/models/ai-chat.model';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { catchError, finalize, of, Subscription } from 'rxjs';
+import { AiChatStatusIndicator } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
+import { AiChatMessage, AiChatMessageRole, AiChatRepo } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
 @Component({
@@ -14,31 +15,73 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChatComponent {
+export class ChatComponent implements OnDestroy {
 
 	private selectedRepo: AiChatRepo = AiChatRepo.Angular;
 	gettingQuery = false;
 	chat: AiChatMessage[] = [];
+	status = {
+		title: 'OpenAI\'s API are operational',
+		message: '',
+		link: 'https://status.openai.com/',
+		indicator: AiChatStatusIndicator.None,
+	}
+
+	statusSubscription: Subscription;
 
 	constructor(
 		private ai: AiChatService,
 		private cdRef: ChangeDetectorRef
-	) { }
+	) {
+		this.statusSubscription = this.ai.getStatus().subscribe((s) => {
+			const newStatus = {
+				indicator: s.status.indicator || AiChatStatusIndicator.None,
+				title: s.incidents[0].name || 'Unable to detect OpenAI status',
+				message: s.incidents[0].incident_updates[0].body || 'Click here to visit the status webpage.',
+				link: s.incidents[0].shortlink || 'https://status.openai.com/',
+			};
+			this.status = newStatus;
+			console.warn('New openai status', this.status);
+			this.cdRef.detectChanges();
+		})
+	}
 
+	ngOnDestroy(): void {
+		this.statusSubscription.unsubscribe();
+	}
 
 	createQuery(query: string): void {
 		if (!query) return console.error('Query is required.');
 		console.log('Getting reply from query: ' + query);
-		const lastMsgIndex = this.chat.length;
+
+		// TODO: Save query to Database
+		const userQuery: AiChatMessage = {
+			role: AiChatMessageRole.User,
+			content: query,
+			// timestamp etc...
+		}
+		this.chat.push(userQuery);
+		this.chat = [...this.chat]
+
+		const newMsgIndex = this.chat.length;
 		this.gettingQuery = true;
 		this.cdRef.detectChanges();
 
-		this.ai.createQuery(
-			this.selectedRepo,
-			query
-		).pipe(
+		this.ai.createQuery(this.selectedRepo, [...this.chat])
+			.pipe(
 				catchError((err) => {
-					console.error(err);
+					const parsedErr = err.data ? JSON.parse(err.data) : { message: '', debug: undefined };
+					this.chat[newMsgIndex] = {
+						role: AiChatMessageRole.Assistant,
+						content: '',
+						error: {
+							debug: parsedErr?.debug,
+							message: parsedErr?.message,
+						}
+					};
+					this.chat = [...this.chat];
+					console.log(this.chat[newMsgIndex]);
+					this.cdRef.detectChanges();
 					return of(undefined);
 				}),
 				finalize(() => {
@@ -49,11 +92,12 @@ export class ChatComponent {
 			)
 			.subscribe((val) => {
 				if (!val) return;
-				this.chat[lastMsgIndex] = {
+				this.chat[newMsgIndex] = {
 					role: AiChatMessageRole.Assistant,
 					content: val,
 				};
 				this.chat = [...this.chat];
+				// TODO: Save response to Database
 				this.cdRef.detectChanges();
 			});
 	}

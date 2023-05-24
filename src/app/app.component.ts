@@ -1,7 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { catchError, finalize, of } from 'rxjs';
-import { AiChatRepo } from './shared/models/ai-chat.model';
 import { AiChatService } from './shared/services/ai-chat.service';
 import { HtmlToMdService } from './shared/services/html-to-md.service';
 
@@ -59,34 +57,6 @@ export class AppComponent implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-	}
-
-	createQuery(event?: KeyboardEvent) {
-		if (event?.key !== 'Enter') return;
-
-		const query = this.aiSearchControl.value;
-		if (this.gettingQuery) return;
-
-		this.gettingQuery = true;
-		this.aiQuery = '';
-		if (!query) throw new Error('Invalid query.')
-		this.ai.createQuery(AiChatRepo.Angular, query)
-			.pipe(
-				catchError((err, obs) => {
-					console.error(err);
-					// this.cdRef.detectChanges();
-					return of(undefined);
-				}),
-				finalize(() => {
-					this.gettingQuery = false;
-					return of(undefined);
-				})
-			)
-			.subscribe((val) => {
-				if (!val) return;
-				this.aiQuery = val;
-				this.cdRef.detectChanges();
-			});
 	}
 	
 	getExpectedSections(chars: number): number {

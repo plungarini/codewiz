@@ -1,7 +1,15 @@
 <!-- TODO: Messages styling -->
-<ng-container *ngFor="let msg of chat">
-	<div class="py-2 border-y border-zinc-600">
-		<p class="font-semibold">From: {{msg.role}}</p>
-		<p class="whitespace-pre-wrap">{{msg.content}}</p>
-	</div>
-</ng-container>
+<div class="mr-4">
+	<ng-container *ngFor="let msg of chat">
+		<div *ngIf="!msg.error; else error" class="py-2 border-y border-zinc-600">
+			<p class="font-semibold">From: {{msg.role}}</p>
+			<p class="whitespace-pre-wrap">{{msg.content}}</p>
+		</div>
+		<ng-template #error>
+			<div class="py-2 border-y border-zinc-600">
+				<p class="font-semibold">From: {{msg.role}}</p>
+				<p class="text-red-400 whitespace-pre-wrap">{{msg.error?.debug?.message}}</p>
+			</div>
+		</ng-template>
+	</ng-container>
+</div>
