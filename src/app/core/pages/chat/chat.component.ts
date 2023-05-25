@@ -86,7 +86,6 @@ export class ChatComponent implements OnDestroy {
 			)
 			.subscribe((val) => {
 				if (!val) return;
-				console.log('Raw output', val)
 				this.chat[newMsgIndex] = {
 					role: AiChatMessageRole.Assistant,
 					content: val,
