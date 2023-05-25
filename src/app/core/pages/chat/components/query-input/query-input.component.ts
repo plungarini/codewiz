@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -24,7 +24,7 @@ export class QueryInputComponent {
 	});
 
 	constructor(
-		// private cdRef: ChangeDetectorRef,
+		private cdRef: ChangeDetectorRef,
 	) { }
 
 	handleDummyInputChange(event: Event): void {
@@ -66,6 +66,7 @@ export class QueryInputComponent {
 		if (!this.textInput.valid || !this.textInput.value) return;
 		this.onQuery.emit(this.textInput.value.trim());
 		this.resetTextInput();
+		this.cdRef.detectChanges();
 	}
 
 	trackBy(index: number): number {
