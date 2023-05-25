@@ -15,13 +15,13 @@ import { StatusComponent } from './components/status/status.component';
 		ChatComponent,
     QueryInputComponent,
     MessagesComponent,
-    StatusComponent
+    StatusComponent,
   ],
   imports: [
 		CommonModule,
 		ChatRoutingModule,
 		ReactiveFormsModule,
 		MarkdownModule.forChild(),
-  ]
+  ],
 })
 export class ChatModule { }

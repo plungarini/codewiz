@@ -5,7 +5,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styles: [
     `
       :host {
-        @apply flex flex-row justify-between h-full px-4;
+				max-width: 100vw;
+
+        @apply flex flex-row h-full px-4 overflow-hidden;
       }
     `
   ],

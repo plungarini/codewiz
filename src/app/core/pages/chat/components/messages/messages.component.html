@@ -1,19 +1,29 @@
 <!-- TODO: Messages styling -->
 
 <ng-template #buttonTemplate>
-  <button (click)="onCopyToClipboard($event)">...</button>
+  <button (click)="onCopyToClipboard($event)"><p>COPY</p></button>
 </ng-template>
 
-<div class="mr-4">
+<div class="px-4 overflow-y-auto">
+	<!-- <p class="font-semibold">From: User</p>
+		 <markdown
+			[data]="'This is the output code:\n\n\`\`\`typescript\nlet lorem = Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi vel justo sed risus suscipit dictum. Nam tincidunt, turpis nec aliquet tincidunt, metus arcu tempus odio, vel volutpat lorem velit id enim.\`\`\`\n\nThis string is exactly 132 characters long, but you can easily add more Lorem Ipsum text to reach the maximum of 300 characters.'"
+			ngPreserveWhitespaces
+			clipboard
+			[clipboardButtonTemplate]="buttonTemplate"
+		></markdown> -->
 	<ng-container *ngFor="let msg of chat">
-		<div *ngIf="!msg.error; else error" class="py-2 border-b border-zinc-600">
+		<div *ngIf="!msg.error; else error" class="block w-full max-w-full py-2 border-b border-zinc-600">
 			<p class="font-semibold">From: {{msg.role}}</p>
 			<markdown
 				[data]="msg.content"
+				[lineNumbers]="true"
 				ngPreserveWhitespaces
 				clipboard
+				[disableSanitizer]="msg.role === msgRoles.Assistant"
 				[clipboardButtonTemplate]="buttonTemplate"
-			></markdown>
+				class="block w-full max-w-full"
+			><!-- {{msg.content}} --></markdown>
 		</div>
 		<ng-template #error>
 			<div class="py-2 border-y border-zinc-600">

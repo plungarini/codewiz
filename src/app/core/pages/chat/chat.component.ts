@@ -10,8 +10,8 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   styles: [
     `
       :host {
-        display: block;
-      }
+				@apply w-full max-h-full overflow-hidden p-6;
+			}
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -86,6 +86,7 @@ export class ChatComponent implements OnDestroy {
 			)
 			.subscribe((val) => {
 				if (!val) return;
+				console.log('Raw output', val)
 				this.chat[newMsgIndex] = {
 					role: AiChatMessageRole.Assistant,
 					content: val,
