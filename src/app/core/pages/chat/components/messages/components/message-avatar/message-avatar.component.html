@@ -1,0 +1,20 @@
+<ng-container [ngSwitch]="role">
+
+	<ng-container *ngSwitchCase="roles.User">
+		<div *ngIf="!!name || !!img" class="flex items-center justify-center w-6 h-6 border rounded-full border-zinc-600">
+			<ng-container *ngIf="name && !img">
+				<p class="text-sm font-medium text-zinc-50">{{name[0]}}</p>
+			</ng-container>
+			<ng-container *ngIf="img">
+		
+			</ng-container>
+		</div>
+	</ng-container>
+
+	<ng-container *ngSwitchCase="roles.Assistant">
+		<div *ngIf="role === roles.Assistant" class="flex items-center justify-center w-6 h-6 border rounded-full border-zinc-600">
+		</div>
+	</ng-container>
+
+	
+</ng-container>
