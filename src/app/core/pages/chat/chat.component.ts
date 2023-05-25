@@ -10,7 +10,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   styles: [
     `
       :host {
-				@apply w-full max-h-full overflow-hidden p-6;
+				@apply w-full max-h-full overflow-hidden;
 			}
     `
   ],
