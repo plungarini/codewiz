@@ -7,7 +7,7 @@ import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models
   styles: [
     `
       :host {
-        @apply absolute top-4 left-0 w-full;
+        @apply absolute top-4 left-0 w-full z-50;
       }
     `
   ],
