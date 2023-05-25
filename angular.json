@@ -37,7 +37,8 @@
 							"node_modules/clipboard/dist/clipboard.min.js"
 						],
 						"allowedCommonJsDependencies": [
-							"sse.js"
+							"sse.js",
+							"highlight.js"
 						]
           },
           "configurations": {
