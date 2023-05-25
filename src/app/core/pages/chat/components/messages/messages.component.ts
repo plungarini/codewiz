@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { MarkdownService } from 'ngx-markdown';
 import { AiChatMessage } from 'src/app/shared/models/ai-chat/ai-chat.model';
 
 @Component({
@@ -22,8 +23,24 @@ export class MessagesComponent {
 	};
 
 	constructor(
-		private cdRef: ChangeDetectorRef
-	) { }
+		private cdRef: ChangeDetectorRef,
+		private markdownService: MarkdownService,
+	) {
+		this.markdownService.renderer.code = (code, lang, isEscaped) => {
+			return ``
+		}
+	}
+
+	/* 
+		this.markdownService.renderer.heading = (text: string, level: number) => {
+      const escapedText = text.toLowerCase().replace(/[^\w]+/g, '-');
+      return '<h' + level + '>' +
+               '<a name="' + escapedText + '" class="anchor" href="#' + escapedText + '">' +
+                 '<span class="header-link"></span>' +
+               '</a>' + text +
+             '</h' + level + '>';
+    };
+	*/
 
 	chat: AiChatMessage[] = [];
 
