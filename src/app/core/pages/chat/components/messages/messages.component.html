@@ -1,9 +1,19 @@
 <!-- TODO: Messages styling -->
+
+<ng-template #buttonTemplate>
+  <button (click)="onCopyToClipboard($event)">...</button>
+</ng-template>
+
 <div class="mr-4">
 	<ng-container *ngFor="let msg of chat">
 		<div *ngIf="!msg.error; else error" class="py-2 border-b border-zinc-600">
 			<p class="font-semibold">From: {{msg.role}}</p>
-			<p class="whitespace-pre-wrap">{{msg.content}}</p>
+			<markdown
+				[data]="msg.content"
+				ngPreserveWhitespaces
+				clipboard
+				[clipboardButtonTemplate]="buttonTemplate"
+			></markdown>
 		</div>
 		<ng-template #error>
 			<div class="py-2 border-y border-zinc-600">

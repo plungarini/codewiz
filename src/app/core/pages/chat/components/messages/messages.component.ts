@@ -27,4 +27,8 @@ export class MessagesComponent {
 
 	chat: AiChatMessage[] = [];
 
+	onCopyToClipboard(event: any): void {
+		console.log('Copied', event)
+	}
+
 }
