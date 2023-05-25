@@ -1,21 +1,26 @@
-<div class="flex flex-row">
+<div class="w-full h-24 opacity-0 pointer-events-none"></div>
+<div class="absolute left-0 w-full pt-16 pointer-events-none bottom-24 bg-gradient-to-b from-transparent to-zinc-900"></div>
 
-	<div contenteditable="false" class="relative w-full rounded-md shadow-2xl bg-zinc-950 py-2.5">
-		<div
-			(input)="handleDummyInputChange($event)"
-			(keypress)="handleKeypress($event)"
-			#textArea
-			contenteditable="true"
-			contenteditable="plaintext-only"
-			name="query"
-			id="query"
-			class="relative block w-full px-4 overflow-y-auto text-base border-0 outline-none max-h-52 h-fit focus:border-0 focus:ring-0 text-zinc-50"
-		></div>
-		<ng-container *ngIf="!textInput.value">
-			<p class="absolute top-2.5 pt-0 mt-0 pointer-events-none text-zinc-600 left-4 pl-[0.05rem]">Ask something...</p>
-		</ng-container>
+<div class="absolute bottom-0 left-0 flex flex-row w-full">
+
+	<div class="w-full mb-4">
+		<div contenteditable="false" class="relative w-full max-w-3xl mx-auto rounded-md shadow-2xl bg-zinc-950 py-2.5">
+			<div
+				(input)="handleDummyInputChange($event)"
+				(keypress)="handleKeypress($event)"
+				#textArea
+				contenteditable="true"
+				contenteditable="plaintext-only"
+				name="query"
+				id="query"
+				class="relative block w-full px-4 overflow-y-auto text-base border-0 outline-none max-h-52 h-fit focus:border-0 focus:ring-0 text-zinc-50"
+			></div>
+			<ng-container *ngIf="!textInput.value">
+				<p class="absolute top-2.5 pt-0 mt-0 pointer-events-none text-zinc-600 left-4 pl-[0.05rem]">Ask something...</p>
+			</ng-container>
+		</div>
+
+		<p class="max-w-3xl mx-auto mt-3 text-xs font-medium text-center pointer-events-none text-zinc-500">CodeWhizAi is experimental and may produce incorrect answers. Always verify the output before executing.</p>
 	</div>
 	
 </div>
-
-<p class="max-w-full mt-3 text-xs font-medium text-center pointer-events-none text-zinc-500">CodeWhizAi is experimental and may produce incorrect answers. Always verify the output before executing.</p>
