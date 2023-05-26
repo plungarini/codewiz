@@ -1,11 +1,13 @@
-<div class="relative flex flex-col justify-between h-full max-h-full p-6 overflow-x-hidden overflow-y-auto">
+<div class="relative">
 	<app-status
 		[status]="status"
 	></app-status>
 
-	<app-messages
-		[chat]="chat"
-	></app-messages>
+	<div class="h-screen max-h-screen pt-6 overflow-x-hidden overflow-y-auto">
+		<app-messages
+			[chat]="chat"
+		></app-messages>
+	</div>
 	
 	<app-query-input
 		(onQuery)="createQuery($event)"

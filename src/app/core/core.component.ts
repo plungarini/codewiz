@@ -7,7 +7,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       :host {
 				max-width: 100vw;
 
-        @apply flex flex-row h-full px-4 overflow-hidden;
+        @apply flex flex-row h-full overflow-hidden;
       }
     `
   ],

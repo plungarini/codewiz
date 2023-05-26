@@ -7,7 +7,7 @@ import { FormControl, Validators } from '@angular/forms';
   styles: [
     `
       :host {
-				@apply block relative w-full;
+				@apply absolute bottom-0 left-0 w-full;
       }
     `
   ],

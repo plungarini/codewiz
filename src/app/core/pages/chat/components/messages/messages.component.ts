@@ -8,7 +8,7 @@ import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/
   templateUrl: './messages.component.html',
 	styles: [`
 		:host {
-			@apply block overflow-x-hidden overflow-y-visible pb-44 max-h-full relative w-full;
+			@apply block pb-44 relative w-full overflow-y-visible;
 		}
 	`],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -44,13 +44,13 @@ export class MessagesComponent {
 					<div class="w-full px-2.5 py-2 bg-zinc-700 rounded-t-lg">
 						<p class="text-zinc-300 -mt-[0.2rem] text-sm">${lang || 'Code Snippet'}</p>
 					</div>
-					<pre class="whitespace-pre overflow-x-auto"><code class="hljs ${klass} !bg-zinc-950 rounded-b-lg break-words min-w-full flex w-full max-w-full">${highlighted}</code></pre>
+					<pre class="whitespace-pre overflow-x-auto"><code class="hljs ${klass} !bg-zinc-950 rounded-b-lg break-words min-w-full flex w-full selection:bg-sky-900/90 selection:text-sky-400 max-w-full">${highlighted}</code></pre>
 				</div>
 			`;
 		}
 		this.markdownService.renderer.codespan = (code) => {
 			const highlighted = hljs.highlightAuto(code).value;
-			return `<code class="hljs !bg-zinc-950 rounded-md selection:bg-fuchsia-300 selection:text-fuchsia-900 leading-5 my-[0.1rem] break-words whitespace-pre-wrap inline-flex max-w-full">${highlighted}</code>`;
+			return `<code class="hljs !bg-zinc-950 rounded-md selection:bg-sky-400/90 selection:text-sky-800 leading-5 my-[0.1rem] break-words whitespace-pre-wrap inline-flex max-w-full">${highlighted}</code>`;
 		}
 		this.markdownService.renderer.paragraph = (text) => {
 			return `<p class="mt-4 first-of-type:mt-0 whitespace-pre-wrap">${text}</p>`;
