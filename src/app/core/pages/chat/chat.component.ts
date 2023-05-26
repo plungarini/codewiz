@@ -76,6 +76,7 @@ export class ChatComponent implements OnDestroy {
 					this.chat = [...this.chat];
 					console.log(this.chat[newMsgIndex]);
 					this.cdRef.detectChanges();
+					this.pingStatus();
 					return of(undefined);
 				}),
 				finalize(() => {
@@ -96,4 +97,10 @@ export class ChatComponent implements OnDestroy {
 			});
 	}
 
+	private async pingStatus(): Promise<void> {
+		const s = await this.ai.getStatusPromise();
+		this.status = s;
+		console.warn('New openai status', this.status);
+		this.cdRef.detectChanges();
+	}
 }
