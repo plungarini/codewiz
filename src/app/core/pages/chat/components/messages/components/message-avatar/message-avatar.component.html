@@ -1,18 +1,50 @@
 <ng-container [ngSwitch]="role">
 
 	<ng-container *ngSwitchCase="roles.User">
-		<div *ngIf="!!name || !!img" class="flex items-center justify-center w-6 h-6 border rounded-full border-zinc-600">
+		<div *ngIf="!!name || !!img" class="relative flex items-center justify-center w-6 h-6 border rounded-full border-zinc-600">
 			<ng-container *ngIf="name && !img">
-				<p class="text-sm font-medium text-zinc-50">{{name[0]}}</p>
+				<p class="sr-only">{{name}}</p>
+				<p class="p-0 m-0 text-sm font-medium leading-3 select-none text-zinc-50">{{name[0]}}</p>
 			</ng-container>
 			<ng-container *ngIf="img">
+				<p class="sr-only">{{name}}</p>
 		
 			</ng-container>
 		</div>
 	</ng-container>
 
 	<ng-container *ngSwitchCase="roles.Assistant">
-		<div *ngIf="role === roles.Assistant" class="flex items-center justify-center w-6 h-6 border rounded-full border-zinc-600">
+		<div *ngIf="role === roles.Assistant" class="flex items-center justify-center w-7 h-7 -mx-0.5">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" class="w-full h-full overflow-visible">
+					<defs>
+						<radialGradient #radialGradient id="gradient-{{id}}">
+							<stop offset="10%" stop-color="#3b82f6"/>
+							<stop offset="80%" stop-color="#8B5CF6"/>
+						</radialGradient>
+						<linearGradient #linearGradient id="gradient-{{id + 1}}" x1="0" y1="0" x2="1" y2="1">
+							<stop offset="0%" stop-color="#8B5CF6"/>
+							<stop offset="50%" stop-color="#ec4899"/>
+							<stop offset="100%" stop-color="#f59e0b"/>
+						</linearGradient>
+						<mask id="mask__logo" maskUnits="userSpaceOnUse" x="0" y="0">
+							<circle cx="40" cy="40" r="30" [attr.fill]="'url(#gradient-' + (id) + ')'"/>
+						</mask>
+					</defs>
+					<circle class="logo-circle" cx="40" cy="40" r="30" [attr.fill]="'url(#gradient-' + (id + 1) + ')'" mask="url(#mask__logo)"/>
+					<circle
+						class="transition-all duration-300 aura-circle"
+						cx="40"
+						cy="40"
+						r="35"
+						[attr.stroke]="'url(#gradient-' + (id + 1) + ')'"
+						stroke-width="10"
+						fill="none"
+						[ngClass]="{
+							'stop-aura-anim': !animate,
+							'aura-anim': animate
+						}"
+					/>
+				</svg>
 		</div>
 	</ng-container>
 
