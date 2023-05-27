@@ -128,6 +128,9 @@ export class AiChatService {
 	createQuery(repo: AiChatRepo, messages: AiChatMessage[], timeoutSeconds = 30): Observable<string> {
 		return new Observable((observer) => {
 			let result = '';
+			let finishReason = '';
+			const pageSections: { content: string; id: string; title: string; }[] = [];
+			
 			let sinceLastRes = new Date().getTime() / 1000; // In seconds
 
 			const timeoutCheckInterval = setInterval(() => {
@@ -188,17 +191,28 @@ export class AiChatService {
 
 			ev.onmessage = (event) => {
 				this.zone.run(() => {
+					
 					if (event.data === '[DONE]') {
 						closeStream();
 						return;
 					}
-					const completionResponse = JSON.parse(event.data)
-					const message = completionResponse.choices[0].delta.content;
+					
+					const completionResponse = JSON.parse(event.data);
+					const choices = completionResponse.choices[0];
+					const message = choices?.delta?.content;
 					if (message) {
 						result += message;
 						sinceLastRes = new Date().getTime() / 1000;
 						observer.next(result);
 					}
+
+					if (choices.finish_reason) {
+						finishReason = choices.finish_reason;
+					}
+
+					if (completionResponse.page_sections) {
+						pageSections.push(...completionResponse.page_sections);
+					};
 				})
 			}
 
@@ -221,6 +235,5 @@ export class AiChatService {
 
 			ev.stream();
 		})
-
 	}
 }
