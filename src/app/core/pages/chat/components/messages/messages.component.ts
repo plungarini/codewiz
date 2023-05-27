@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, Renderer2 } from '@angular/core';
 import hljs from 'highlight.js';
 import { MarkdownService } from 'ngx-markdown';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
+import { codeBlockAndHeader, codeBlockPlain, codespan } from './md-blocks/index.md';
 
 @Component({
   selector: 'app-messages',
@@ -26,34 +27,28 @@ export class MessagesComponent {
 	constructor(
 		private cdRef: ChangeDetectorRef,
 		private markdownService: MarkdownService,
+		private renderer: Renderer2
 	) {
 		this.markdownService.renderer.code = (code, lang, isEscaped) => {
 			const highlighted = hljs.highlightAuto(code, lang ? [lang] : []).value;
 			const klass = lang ? `${lang} ` : '';
 
 			if (!lang) {
-				return `
-					<div class="w-full my-3 relative group">
-						<pre><code class="hljs ${klass} !bg-zinc-950 rounded-lg break-words min-w-full whitespace-pre-wrap flex w-full max-w-full">${highlighted}</code></pre>
-					</div>
-				`;
+				return codeBlockPlain(klass, highlighted);
 			}
 
-			return  `
-				<div class="w-full my-3 relative group">
-					<div class="w-full px-2.5 py-2 bg-zinc-700 rounded-t-lg">
-						<p class="text-zinc-300 -mt-[0.2rem] text-sm">${lang || 'Code Snippet'}</p>
-					</div>
-					<pre class="whitespace-pre overflow-x-auto"><code class="hljs ${klass} !bg-zinc-950 rounded-b-lg break-words min-w-full flex w-full selection:bg-sky-900/90 selection:text-sky-400 max-w-full">${highlighted}</code></pre>
-				</div>
-			`;
+			return codeBlockAndHeader(lang, klass, highlighted);
 		}
 		this.markdownService.renderer.codespan = (code) => {
 			const highlighted = hljs.highlightAuto(code).value;
-			return `<code class="hljs !bg-zinc-950 rounded-md selection:bg-sky-400/90 selection:text-sky-800 leading-5 my-[0.1rem] break-words whitespace-pre-wrap inline-flex max-w-full">${highlighted}</code>`;
+			return codespan(highlighted);
 		}
 		this.markdownService.renderer.paragraph = (text) => {
 			return `<p class="mt-4 first-of-type:mt-0 whitespace-pre-wrap">${text}</p>`;
+		}
+		this.markdownService.renderer.text = (string) => {
+			const textNode = this.renderer.createText(string);
+  		return textNode.textContent;
 		}
 	}
 

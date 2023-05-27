@@ -30,7 +30,7 @@ export class QueryInputComponent {
 	handleDummyInputChange(event: Event): void {
 		const div = event.target as HTMLDivElement;
 		if (!div) return;
-		this.textInput.setValue(div.innerHTML || '');
+		this.textInput.setValue(div.innerText || '');
 	}
 
 	handleKeypress(event: KeyboardEvent): void {

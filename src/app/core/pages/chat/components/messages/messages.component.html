@@ -14,7 +14,6 @@
 	</button>
 </ng-template>
 
-<!-- overflow-hidden -->
 <div class="max-w-5xl px-4 mx-auto">
 	<ng-container *ngFor="let msg of chat">
 		<div *ngIf="!msg.error; else error" class="flex flex-row w-full py-3 space-x-4">
@@ -29,14 +28,19 @@
 					'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant
 				}"
 				class="overflow-hidden">
-				<markdown
-					[data]="msg.content"
-					ngPreserveWhitespaces
-					clipboard
-					[disableSanitizer]="msg.role === msgRoles.Assistant"
-					[clipboardButtonTemplate]="buttonTemplate"
-					class="block w-full max-w-full markdown"
-				></markdown>
+				<ng-container *ngIf="msg.role === msgRoles.Assistant; else isUser">
+					<markdown
+						[data]="msg.content"
+						ngPreserveWhitespaces
+						clipboard
+						[disableSanitizer]="msg.role === msgRoles.Assistant"
+						[clipboardButtonTemplate]="buttonTemplate"
+						class="block w-full max-w-full markdown"
+					></markdown>
+				</ng-container>
+				<ng-template #isUser>
+					<p class="whitespace-pre-wrap">{{msg.content}}</p>
+				</ng-template>
 			</div>
 		</div>
 		<ng-template #error>
