@@ -3,6 +3,7 @@ import { error, warn } from 'firebase-functions/logger';
 import { elaborateEmbeddings } from './functions/embeddings';
 import { githubFolderFetcher } from './functions/githubFetcher';
 import { scrapeDocumentedPage } from './functions/scraper';
+import { calculateTokens } from './functions/tiktoken';
 
 const FFN = functions.region('europe-west2');
 
@@ -59,3 +60,21 @@ export const githubFetcher = FFN.runWith({
 	}
 });
 
+export const calculateOpenaiTokens = FFN.runWith({
+  memory: '256MB',
+  timeoutSeconds: 60,
+}).https.onRequest(async (req, res) => {
+  /**
+	 * uid: string,
+	 * model: supportModelType,
+	 * messages: AiChatMessage[],
+   */
+  warn('request', req);
+	try {
+		const result = calculateTokens(req.body);
+		res.send(200).json(result);
+	} catch (err) {
+		error(err);
+		res.send(400);
+	}
+});

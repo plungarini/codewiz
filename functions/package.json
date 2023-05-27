@@ -20,6 +20,7 @@
     "axios": "^1.4.0",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^4.4.0",
+    "gpt-tokens": "^1.0.7",
     "openai": "^3.2.1",
     "puppeteer": "16.2.0",
     "turndown": "^7.1.2"
