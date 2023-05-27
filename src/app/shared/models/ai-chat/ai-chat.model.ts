@@ -15,15 +15,19 @@ type AiChatMessageError = {
 	}
 }
 
-export type AiChatMessage = {
+export interface AiChatMessage extends AiChatMessageReqItem  {
+	completed: boolean;
+	error?: AiChatMessageError;
+}
+
+type AiChatMessageReqItem = {
 	role: AiChatMessageRole;
 	content: string;
-	error?: AiChatMessageError
 }
 
 export type AiChatRequestData = {
 	repo: AiChatRepo;
-	messages: AiChatMessage[];
+	messages: AiChatMessageReqItem[];
 	onlyPrompt: boolean;
 	stream: boolean;
 }
