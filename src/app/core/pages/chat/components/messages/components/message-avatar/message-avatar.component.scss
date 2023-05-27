@@ -2,16 +2,16 @@
 	@apply block;
 
 	.aura-circle {
-		filter: blur(10px);
-		opacity: 0.5;
+		filter: blur(20px);
+		opacity: 0.9;
 		transform-origin: center;
 		transform: scale(0.8);
 		animation: aura-rotate 3s ease-in-out;
-		transition: opacity 0.5s ease-in-out;
+		transition: opacity 1s ease-in-out;
 	}
 
 	.stop-color-transition {
-		transition: stop-color 0.5s ease-in-out;
+		transition: stop-color 0.7s ease-in-out;
 	}
 
 	.aura-circle.stop-aura-anim {
@@ -25,13 +25,13 @@
 
 	@keyframes aura-rotate {
 		0% {
-			transform: rotate(0deg) scale(0.8);
+			transform: rotate(0deg) scale(0.6);
 		}
 		50% {
 			transform: rotate(180deg) scale(0.9);
 		}
 		100% {
-			transform: rotate(360deg) scale(0.8);
+			transform: rotate(360deg) scale(0.6);
 		}
 	}
 }

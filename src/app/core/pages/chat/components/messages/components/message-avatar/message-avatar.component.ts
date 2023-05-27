@@ -1,27 +1,23 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 
 @Component({
 	selector: 'app-message-avatar',
 	templateUrl: './message-avatar.component.html',
 	styleUrls: ['./message-avatar.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+	changeDetection: ChangeDetectionStrategy.Default
 })
-export class MessageAvatarComponent {
+export class MessageAvatarComponent implements AfterViewInit {
 
 	@ViewChild('radialGradient') radialGradient: ElementRef | undefined;
 	@ViewChild('linearGradient') linearGradient: ElementRef | undefined;
 	
 	@Input() name: string = '';
-	@Input() role: AiChatMessageRole = AiChatMessageRole.User;
+	@Input() role: AiChatMessageRole = AiChatMessageRole.Assistant;
 	@Input() img: string = '';
 	@Input() set stopAnim(value: boolean) {
-		if (!value && !this.animate)
-			this.startAura();
-		else if (!value) return;
-
-		this.animate = true;
-		this.cdRef.detectChanges();
+		if (!value) return;
+		this.animate = false;
 	}
 
 	roles = AiChatMessageRole;
@@ -29,9 +25,12 @@ export class MessageAvatarComponent {
 	id: number;
 
 	constructor(
-		private cdRef: ChangeDetectorRef,
 	) {
 		this.id = new Date().getTime();
+	}
+
+	ngAfterViewInit(): void {
+		this.startAura();
 	}
 
 	startAura(): void {
@@ -39,8 +38,7 @@ export class MessageAvatarComponent {
 		const radialGradient = this.radialGradient?.nativeElement;
 
 		if (!linearGradient || !radialGradient || this.role !== this.roles.Assistant || this.animate) return;
-		console.log('animation started')
-
+		
 		this.animate = true;
 		linearGradient.children[0].setAttribute('stop-color', this.getRandomAuraColor());
 		linearGradient.children[0].classList.add('stop-color-transition');
@@ -52,7 +50,6 @@ export class MessageAvatarComponent {
 		radialGradient.children[0].classList.add('stop-color-transition');
 		radialGradient.children[1].setAttribute('stop-color', this.getRandomAuraColor());
 		radialGradient.children[1].classList.add('stop-color-transition');
-		this.cdRef.detectChanges();
 	}
 
 	private getRandomAuraColor() {
