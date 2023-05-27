@@ -4,7 +4,7 @@ import { filter, interval, lastValueFrom, map, Observable, startWith, switchMap 
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
 import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator, ClientOpenaiStatus } from '../models/ai-chat/ai-chat-status.model';
-import { AiChatMessage, AiChatMessageRole, AiChatRepo, AiChatRequestData } from '../models/ai-chat/ai-chat.model';
+import { AiChatMessage, AiChatMessageRole, AiChatRepo, AiChatRequestData, AiChatResponseData } from '../models/ai-chat/ai-chat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -125,11 +125,11 @@ export class AiChatService {
 		);
 	}
 
-	createQuery(repo: AiChatRepo, chat: AiChatMessage[], timeoutSeconds = 30): Observable<string> {
+	createQuery(repo: AiChatRepo, chat: AiChatMessage[], timeoutSeconds = 30): Observable<AiChatResponseData> {
 		return new Observable((observer) => {
 			let result = '';
-			let finishReason = '';
-			const pageSections: { content: string; id: string; title: string; }[] = [];
+			let finishReason: "stop" | "lenght" | undefined = undefined;
+			const pageSections: { id: string; title: string; }[] = [];
 			
 			let sinceLastRes = new Date().getTime() / 1000; // In seconds
 			const normMessages = chat
@@ -212,7 +212,11 @@ export class AiChatService {
 					if (message) {
 						result += message;
 						sinceLastRes = new Date().getTime() / 1000;
-						observer.next(result);
+						observer.next({
+							completion: result,
+							pageSections,
+							finishReason
+						});
 					}
 
 					if (choices.finish_reason) {

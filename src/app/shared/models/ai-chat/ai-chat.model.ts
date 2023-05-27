@@ -31,3 +31,14 @@ export type AiChatRequestData = {
 	onlyPrompt: boolean;
 	stream: boolean;
 }
+
+export type PageSection = {
+	id: string;
+	title: string;
+};
+
+export type AiChatResponseData = {
+	completion: string;
+	pageSections: PageSection[];
+	finishReason?: 'stop' | 'lenght';
+}

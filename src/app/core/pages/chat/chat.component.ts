@@ -100,9 +100,9 @@ export class ChatComponent implements OnDestroy {
 			)
 			.subscribe((val) => {
 				if (!val) return;
-				backupResult = val;
+				backupResult = val.completion;
 
-				this.chat[newMsgIndex].content = val;
+				this.chat[newMsgIndex].content = val.completion;
 
 				this.onMessageScroll();
 				
