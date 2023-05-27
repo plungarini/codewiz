@@ -51,56 +51,61 @@ export class ChatComponent implements OnDestroy {
 
 	createQuery(query: string): void {
 		if (!query) return console.error('Query is required.');
+		if (this.gettingQuery) return console.error('Another query is already running...');
 
 		// TODO: Save query to Database
 		const userQuery: AiChatMessage = {
 			role: AiChatMessageRole.User,
 			content: query,
+			completed: false,
 			// timestamp etc...
 		}
-		this.chat.push(userQuery);
-		this.chat = [...this.chat]
+		const assistantRes: AiChatMessage = {
+			role: AiChatMessageRole.Assistant,
+			content: '',
+			completed: false,
+			// timestamp etc...
+		}
+		this.chat.push(userQuery, assistantRes);
 
 		this.onMessageScroll(true);
 
-		const newMsgIndex = this.chat.length;
+		const newMsgIndex = this.chat.length - 1;
 		this.gettingQuery = true;
 		this.cdRef.detectChanges();
 
+		let backupResult = '';
 		this.ai.createQuery(this.selectedRepo, [...this.chat])
 			.pipe(
 				catchError((err) => {
 					const parsedErr = err.data ? JSON.parse(err.data) : { message: '', debug: undefined };
-					this.chat[newMsgIndex] = {
-						role: AiChatMessageRole.Assistant,
-						content: '',
-						error: {
-							debug: parsedErr?.debug,
-							message: parsedErr?.message,
-						}
+					this.chat[newMsgIndex].content = backupResult;
+					this.chat[newMsgIndex].completed = true;
+					this.chat[newMsgIndex].error = {
+						debug: parsedErr?.debug,
+						message: parsedErr?.message,
 					};
-					this.chat = [...this.chat];
-					console.log(this.chat[newMsgIndex]);
+
 					this.cdRef.detectChanges();
+					console.error(parsedErr);
 					this.pingStatus();
 					return of(undefined);
 				}),
 				finalize(() => {
 					this.gettingQuery = false;
+					this.chat[newMsgIndex].completed = true;
 					this.cdRef.detectChanges();
 					return of(undefined);
 				})
 			)
 			.subscribe((val) => {
 				if (!val) return;
-				this.chat[newMsgIndex] = {
-					role: AiChatMessageRole.Assistant,
-					content: val,
-				};
-				this.chat = [...this.chat];
+				backupResult = val;
+
+				this.chat[newMsgIndex].content = val;
 
 				this.onMessageScroll();
-
+				
 				// TODO: Save response to Database
 				this.cdRef.detectChanges();
 			});

@@ -125,13 +125,26 @@ export class AiChatService {
 		);
 	}
 
-	createQuery(repo: AiChatRepo, messages: AiChatMessage[], timeoutSeconds = 30): Observable<string> {
+	createQuery(repo: AiChatRepo, chat: AiChatMessage[], timeoutSeconds = 30): Observable<string> {
 		return new Observable((observer) => {
 			let result = '';
 			let finishReason = '';
 			const pageSections: { content: string; id: string; title: string; }[] = [];
 			
 			let sinceLastRes = new Date().getTime() / 1000; // In seconds
+			const normMessages = chat
+				.map(m => ({ role: m.role, content: m.content }));
+			
+			// If last chat message is from Assistant, removes it
+			if (normMessages[normMessages.length - 1].role === AiChatMessageRole.Assistant) {
+				normMessages.pop();
+			}
+
+			const closeStream = () => {
+				ev?.close();
+				clearInterval(timeoutCheckInterval);
+				observer.complete();
+			}
 
 			const timeoutCheckInterval = setInterval(() => {
 				const now = new Date().getTime() / 1000;
@@ -143,17 +156,12 @@ export class AiChatService {
 						"type": "client_error",
 					}
 				}
+				console.warn('TIMEOUT')
 				observer.error({
 					data: JSON.stringify(err),
 				})
 				closeStream();
 			}, 500);
-
-			const closeStream = () => {
-				ev.close();
-				clearInterval(timeoutCheckInterval);
-				observer.complete();
-			}
 
 			if (!repo) {
 				observer.error('The repository is invalid.');
@@ -162,17 +170,18 @@ export class AiChatService {
 			};
 
 			if (
-				messages.length <= 0 ||
-				!messages[messages.length - 1].content ||
-				messages[messages.length - 1].role !== AiChatMessageRole.User
+				normMessages.length <= 0 ||
+				!normMessages[normMessages.length - 1].content ||
+				normMessages[normMessages.length - 1].role !== AiChatMessageRole.User
 			) {
-				observer.error(`The query is invalid: ${JSON.stringify(messages)}`);
+				observer.error(`The query is invalid: ${JSON.stringify(normMessages)}`);
 				closeStream();
 				return;
 			};
 
 			const data: AiChatRequestData = {
-				messages, repo,
+				messages: normMessages,
+				repo,
 				onlyPrompt: false,
 				stream: true,
 			}
@@ -217,6 +226,7 @@ export class AiChatService {
 			}
 
 			ev.onerror = (event: any) => {
+				console.log('error', event);
 				this.zone.run(() => {
 					const err = {
 						"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
