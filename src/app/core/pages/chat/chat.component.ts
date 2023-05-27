@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
-import { catchError, finalize, of, Subscription } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
+import { animationFrameScheduler, catchError, finalize, of, Subscription } from 'rxjs';
 import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageRole, AiChatRepo } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
@@ -18,9 +18,13 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 })
 export class ChatComponent implements OnDestroy {
 
+	@ViewChild('mainChatContainer', { static: true }) mainChatContainer: ElementRef<HTMLDivElement> | undefined;
+
 	private selectedRepo: AiChatRepo = AiChatRepo.Angular;
 	gettingQuery = false;
+	autoscroll: boolean = true;
 	chat: AiChatMessage[] = [];
+
 	status: ClientOpenaiStatus = {
 		title: 'OpenAI\'s APIs are online',
 		message: '',
@@ -32,7 +36,7 @@ export class ChatComponent implements OnDestroy {
 
 	constructor(
 		private ai: AiChatService,
-		private cdRef: ChangeDetectorRef
+		private cdRef: ChangeDetectorRef,
 	) {
 		this.statusSubscription = this.ai.getStatus().subscribe((s) => {
 			this.status = s;
@@ -56,6 +60,8 @@ export class ChatComponent implements OnDestroy {
 		}
 		this.chat.push(userQuery);
 		this.chat = [...this.chat]
+
+		this.onMessageScroll(true);
 
 		const newMsgIndex = this.chat.length;
 		this.gettingQuery = true;
@@ -92,6 +98,9 @@ export class ChatComponent implements OnDestroy {
 					content: val,
 				};
 				this.chat = [...this.chat];
+
+				this.onMessageScroll();
+
 				// TODO: Save response to Database
 				this.cdRef.detectChanges();
 			});
@@ -103,4 +112,24 @@ export class ChatComponent implements OnDestroy {
 		console.warn('New openai status', this.status);
 		this.cdRef.detectChanges();
 	}
+
+	private onMessageScroll(bypass = false) {
+		if (!this.mainChatContainer) return;
+		const element = this.mainChatContainer.nativeElement;
+
+    // Check if the user has scrolled to the bottom
+		const offset = 25;
+		const autoscroll = element.scrollHeight - element.scrollTop <= element.clientHeight + offset;
+
+    // If the user has scrolled to the bottom, automatically scroll to the new message
+		if (autoscroll || bypass) {
+			const sub = animationFrameScheduler.schedule(() => {
+				this.mainChatContainer?.nativeElement.scroll({
+					top: element.scrollHeight,
+					behavior: 'smooth'
+				});
+				sub.unsubscribe();
+			})
+    }
+  }
 }

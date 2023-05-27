@@ -3,7 +3,10 @@
 		[status]="status"
 	></app-status>
 
-	<div class="h-screen max-h-screen pt-6 overflow-x-hidden overflow-y-auto">
+	<div
+		class="h-screen max-h-screen pt-6 overflow-x-hidden overflow-y-auto"
+		#mainChatContainer
+	>
 		<app-messages
 			[chat]="chat"
 		></app-messages>
