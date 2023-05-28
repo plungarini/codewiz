@@ -1,0 +1,65 @@
+<div
+	[ngClass]="{
+		'-translate-y-2 opacity-0': !show,
+		'-translate-y-0 opacity-100': show,
+	}"
+	class="flex flex-row items-center justify-between w-full mt-2 space-x-2 transition-all duration-500"
+>
+	<!-- Discover articles -->
+	<ng-container *ngIf="msg.pageSections as sections">
+		<button
+			*ngIf="sections.length > 0"
+			[disabled]="sections.length <= 0"
+			(click)="showPageSections()"
+			class="inline-flex flex-row items-center space-x-2 transition-all duration-300 opacity-100 cursor-pointer shrink-0 grow-0 disabled:opacity-0 disabled:cursor-default disabled:pointer-events-none text-zinc-600 hover:text-zinc-200"
+		>
+			<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M13.7855 3.00003C14.344 3.00003 14.8782 3.2277 15.2644 3.63051L19.0561 7.5798C19.422 7.96121 19.6273 8.47007 19.6273 8.99937V17.1645C19.6418 19.2195 18.0238 20.9163 15.9699 21C15.9699 21 8.07419 21 8.04403 20.999C5.9716 20.9533 4.32825 19.237 4.37398 17.1645V6.65743C4.42263 4.61808 6.09419 2.99224 8.13451 3.00003H13.7855Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M14.2686 3.0625V5.95514C14.2676 7.36693 15.4108 8.51211 16.8226 8.51601H19.5615" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M12.9628 12.2383L15.1004 14.3759L12.9297 16.5456" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M10.6288 10.2266L8.49121 12.3642L10.6619 14.5339" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+	
+			<ng-container *ngIf="msg.content as content">
+				<ng-container *ngIf="sections.length as sectionsLen">
+					<p
+						*ngIf="content.length > 20"
+						class="-mt-[0.08rem] text-xs font-medium tracking-wide text-zinc-600"
+					>
+						{{ sectionsLen }} page{{ sectionsLen > 1 ? 's' : ''}}
+					</p>
+				</ng-container>
+			</ng-container>		
+		</button>
+	</ng-container>
+	
+
+	<!-- Placeholder for space -->
+	<div *ngIf="!msg.pageSections || msg.pageSections.length <= 0"></div>
+
+	<ng-container>
+		<div *ngIf="msg.content.length > 5" class="flex flex-row space-x-2 shrink-0 grow-0">
+			<!-- Like Button -->
+			<button class="transition-all duration-300 cursor-pointer text-zinc-600 hover:text-zinc-200">
+				<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M5.14396 8.77344L4.91331 8.77344C4.25073 8.77344 3.91944 8.77344 3.66547 8.90034C3.43237 9.01681 3.24337 9.20581 3.1269 9.43891C3 9.69288 3 10.0242 3 10.6868L3 18.3922C3 19.0547 3 19.386 3.1269 19.64C3.24337 19.8731 3.43237 20.0621 3.66547 20.1786C3.91944 20.3055 4.25072 20.3055 4.9133 20.3055L4.91331 20.3055L5.14395 20.3055L5.14397 20.3055C6.13784 20.3055 6.63477 20.3055 7.01572 20.1151C7.36537 19.9404 7.64887 19.6569 7.82358 19.3073C8.01393 18.9263 8.01393 18.4294 8.01393 17.4355L8.01393 11.6434C8.01393 10.6495 8.01393 10.1526 7.82358 9.77165C7.64887 9.42199 7.36537 9.1385 7.01572 8.96379C6.63477 8.77344 6.13783 8.77344 5.14396 8.77344Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M5.35742 17.9007L5.35742 17.8906" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M8.01367 18.803L10.8201 19.9657C11.0801 20.0734 11.21 20.1272 11.3443 20.1654C11.4686 20.2007 11.5956 20.226 11.724 20.2409C11.8626 20.257 12.0033 20.257 12.2847 20.257L16.6923 20.257C17.3294 20.257 17.648 20.257 17.9445 20.1804C18.2184 20.1095 18.4777 19.9909 18.7104 19.83C18.9623 19.6559 19.1706 19.4149 19.5873 18.9328L20.0681 18.3766C20.4093 17.9819 20.5799 17.7845 20.7022 17.562C20.8153 17.3561 20.8977 17.1349 20.9467 16.9052C20.9997 16.6568 20.9997 16.3959 20.9997 15.8742L20.9997 13.6367C20.9997 12.4219 20.9997 11.8145 20.7671 11.3489C20.5536 10.9216 20.2071 10.5751 19.7797 10.3616C19.3141 10.1289 18.7067 10.1289 17.492 10.1289L13.897 10.1289" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M8.01367 9.97907C9.38652 9.97907 11.4694 8.53086 12.2801 4.88532C12.384 4.41795 12.4967 3.95583 12.9924 3.76833C13.3334 3.63935 13.781 3.70626 14.1307 3.77815C15.4653 4.05249 16.4955 5.71985 14.983 10.0793" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</button>
+		
+			<!-- Dislike Button -->
+			<button class="transition-all duration-300 cursor-pointer text-zinc-600 hover:text-zinc-200">
+				<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M18.856 15.2266H19.0867C19.7493 15.2266 20.0806 15.2266 20.3345 15.0997C20.5676 14.9832 20.7566 14.7942 20.8731 14.5611C21 14.3071 21 13.9758 21 13.3132V5.60784C21 4.94526 21 4.61397 20.8731 4.36C20.7566 4.1269 20.5676 3.9379 20.3345 3.82143C20.0806 3.69453 19.7493 3.69453 19.0867 3.69453H19.0867H18.856H18.856C17.8622 3.69453 17.3652 3.69453 16.9843 3.88488C16.6346 4.05959 16.3511 4.34308 16.1764 4.69274C15.9861 5.07369 15.9861 5.57063 15.9861 6.5645V12.3566C15.9861 13.3505 15.9861 13.8474 16.1764 14.2284C16.3511 14.578 16.6346 14.8615 16.9843 15.0362C17.3652 15.2266 17.8622 15.2266 18.856 15.2266Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M18.6426 6.09935V6.10938" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M15.9863 5.197L13.1799 4.03434C12.9199 3.92664 12.79 3.87279 12.6557 3.83463C12.5314 3.7993 12.4044 3.77404 12.276 3.7591C12.1374 3.74296 11.9967 3.74296 11.7153 3.74296H7.3077C6.67056 3.74296 6.35199 3.74296 6.05553 3.81964C5.78161 3.89049 5.52232 4.00909 5.28959 4.16999C5.03771 4.34412 4.82937 4.58514 4.41272 5.06715L3.93191 5.62338C3.59071 6.0181 3.42012 6.21546 3.29779 6.43803C3.18467 6.64386 3.10229 6.86514 3.05327 7.09483C3.00026 7.34321 3.00026 7.60408 3.00026 8.12582V10.3633C3.00026 11.5781 3.00026 12.1855 3.2329 12.6511C3.44644 13.0784 3.79293 13.4249 4.22029 13.6384C4.68589 13.8711 5.29326 13.8711 6.508 13.8711H10.103" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M15.9863 14.0209C14.6135 14.0209 12.5306 15.4691 11.7199 19.1147C11.616 19.582 11.5033 20.0442 11.0076 20.2317C10.6666 20.3607 10.219 20.2937 9.86934 20.2219C8.53469 19.9475 7.50449 18.2802 9.01697 13.9207" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</button>
+		</div>
+	</ng-container>
+</div>
+
+

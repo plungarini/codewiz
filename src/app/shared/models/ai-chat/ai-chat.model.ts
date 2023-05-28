@@ -15,8 +15,15 @@ type AiChatMessageError = {
 	}
 }
 
+type AiChatPageSection = {
+	title: string;
+	id: string;
+}
+
 export interface AiChatMessage extends AiChatMessageReqItem  {
 	completed: boolean;
+	pageSections?: AiChatPageSection[];
+	showPageSections?: boolean;
 	error?: AiChatMessageError;
 }
 

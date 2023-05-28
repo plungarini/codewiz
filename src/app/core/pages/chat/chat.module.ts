@@ -8,6 +8,8 @@ import { MessagesComponent } from './components/messages/messages.component';
 import { QueryInputComponent } from './components/query-input/query-input.component';
 import { StatusComponent } from './components/status/status.component';
 import { MessageAvatarComponent } from './components/messages/components/message-avatar/message-avatar.component';
+import { MessageToolbarComponent } from './components/messages/components/message-toolbar/message-toolbar.component';
+import { PagesectionsSelectorComponent } from './components/messages/components/pagesections-selector/pagesections-selector.component';
 
 
 
@@ -18,6 +20,8 @@ import { MessageAvatarComponent } from './components/messages/components/message
     MessagesComponent,
     StatusComponent,
     MessageAvatarComponent,
+    MessageToolbarComponent,
+    PagesectionsSelectorComponent,
   ],
   imports: [
 		CommonModule,

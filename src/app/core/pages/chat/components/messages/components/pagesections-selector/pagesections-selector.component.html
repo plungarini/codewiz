@@ -1,0 +1,26 @@
+<div
+	*ngIf="pageSections"
+	class="block w-full max-w-full -mb-1.5 overflow-x-auto overflow-y-visible no-scrollbar"
+>
+	<div class="flex flex-row items-center px-2 py-2 space-x-2 flex-nowrap">
+
+		<div (click)="close()" class="flex items-center justify-center w-5 h-5 -mt-1 transition-all duration-300 border rounded-full shadow cursor-pointer select-none shrink-0 border-zinc-600 text-zinc-400 bg-zinc-950 hover:bg-zinc-900/50 hover:text-zinc-200 hover:border-zinc-400">
+			<svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</div>
+
+		<div *ngFor="let page of pageSections">
+			<a
+				[href]="page.id"
+				target="_blank"
+				[title]="page.title"
+				class="px-2 py-1 border select-none rounded-md cursor-pointer bg-zinc-950 hover:bg-zinc-900/50 shadow-zinc-950 transition-all duration-300 shadow-md hover:shadow-white/5 border-zinc-600 text-sm whitespace-nowrap max-w-[10rem] truncate inline-block text-zinc-400"
+			>
+				{{page.title}}
+			</a>
+		</div>
+
+	</div>
+</div>

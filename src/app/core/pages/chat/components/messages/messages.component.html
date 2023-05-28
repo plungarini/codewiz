@@ -15,19 +15,10 @@
 </ng-template>
 
 <div class="max-w-5xl px-4 mx-auto">
-	<ng-container *ngFor="let msg of chat">
-		<!-- 
-
-			[ngClass]="{
-				'translate-y-3 opacity-0': !msg.content,
-				'translate-y-0 opacity-100': msg.content
-			}"
-			transition-all duration-700 translate-y-3 opacity-0
-		 -->
+	<ng-container *ngFor="let msg of chat; let i = index">
 		<div
 			*ngIf="!msg.error; else error"
-			
-			class="flex flex-row w-full py-3 space-x-4 "
+			class="relative flex flex-row w-full py-3 space-x-4"
 		>
 			<app-message-avatar
 				name="Pietro Lungarini"
@@ -37,27 +28,54 @@
 				class="block w-fit"
 			></app-message-avatar>
 			
-			<div
-				[ngClass]="{
-					'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant,
-					'translate-y-3 opacity-0': !msg.content,
-					'translate-y-0 opacity-100': msg.content
-				}"
-				class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0">
-				<ng-container *ngIf="msg.role === msgRoles.Assistant; else isUser">
-					<markdown
-						[data]="msg.content"
-						ngPreserveWhitespaces
-						clipboard
-						[disableSanitizer]="msg.role === msgRoles.Assistant"
-						[clipboardButtonTemplate]="buttonTemplate"
-						class="block w-full max-w-full markdown"
-					></markdown>
-				</ng-container>
-				<ng-template #isUser>
-					<p class="whitespace-pre-wrap">{{msg.content}}</p>
-				</ng-template>
+			<div>
+				<div
+					[ngClass]="{
+						'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant,
+						'translate-y-3 opacity-0': !msg.content,
+						'translate-y-0 opacity-100': msg.content
+					}"
+					#msgContentDiv
+					class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0">
+					<ng-container *ngIf="msg.role === msgRoles.Assistant; else isUser">
+						<markdown
+							[data]="msg.content"
+							ngPreserveWhitespaces
+							clipboard
+							[disableSanitizer]="msg.role === msgRoles.Assistant"
+							[clipboardButtonTemplate]="buttonTemplate"
+							class="block w-full max-w-full markdown"
+						></markdown>
+					</ng-container>
+					<ng-template #isUser>
+						<p class="whitespace-pre-wrap">{{msg.content}}</p>
+					</ng-template>
+				</div>
+	
+				<app-message-toolbar
+					*ngIf="msg.role === msgRoles.Assistant && msg.content.length > 0"
+					[show]="msg.role === msgRoles.Assistant && msg.content.length > 0 && !msg.showPageSections"
+					[msg]="{
+						content: msg.content,
+						role: msg.role,
+						completed: msg.completed,
+						error: msg.error,
+						pageSections: msg.pageSections
+					}"
+					(onShowPageSections)="togglePageSections(i, true)"
+				></app-message-toolbar>
+
+				<app-pagesections-selector
+					[pageSections]="msg.pageSections"
+					[ngClass]="{
+						'translate-y-2 opacity-0 pointer-events-none': !msg.showPageSections,
+						'translate-y-0 opacity-100 pointer-events-auto': msg.showPageSections,
+					}"
+					(onClose)="togglePageSections(i, false)"
+					class="transition-all duration-500 no-scrollbar"
+				></app-pagesections-selector>
 			</div>
+
 		</div>
 		<ng-template #error>
 			<div class="py-2 border-y border-zinc-600">
