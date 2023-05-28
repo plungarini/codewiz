@@ -156,7 +156,6 @@ export class AiChatService {
 						"type": "client_error",
 					}
 				}
-				console.warn('TIMEOUT')
 				observer.error({
 					data: JSON.stringify(err),
 				})

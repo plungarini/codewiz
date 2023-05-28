@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import hljs from 'highlight.js';
 import { MarkdownService } from 'ngx-markdown';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
@@ -12,7 +12,7 @@ import { codeBlockAndHeader, codeBlockPlain, codespan } from './md-blocks/index.
 			@apply block pb-44 relative w-full overflow-y-visible;
 		}
 	`],
-  changeDetection: ChangeDetectionStrategy.Default
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MessagesComponent {
 
@@ -23,11 +23,13 @@ export class MessagesComponent {
 
 	@Input('chat') set setChat(value: AiChatMessage[]) {
 		if (!value || value?.length < 0) return;
-		this.chat = value;
+		this.chat = [...value];
+		this.cdRef.detectChanges();
 	};
 
 	constructor(
 		private markdownService: MarkdownService,
+		private cdRef: ChangeDetectorRef
 	) {
 		this.markdownService.renderer.code = (code, lang, isEscaped) => {
 			const highlighted = hljs.highlightAuto(code, lang ? [lang] : []).value;
@@ -47,6 +49,11 @@ export class MessagesComponent {
 
 	onCopyToClipboard(event: MouseEvent): void {
 		console.log('Copied', event)
+	}
+
+	togglePageSections(i: number, value: boolean): void {
+		this.chat[i].showPageSections = value;
+		this.cdRef.detectChanges();
 	}
 
 }

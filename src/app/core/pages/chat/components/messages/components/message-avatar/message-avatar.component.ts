@@ -21,7 +21,7 @@ export class MessageAvatarComponent implements AfterViewInit {
 	}
 
 	roles = AiChatMessageRole;
-	animate = false;
+	animate = true;
 	id: number;
 
 	constructor(
