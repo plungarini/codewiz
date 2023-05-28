@@ -8,10 +8,30 @@
 // Scrollbar
 html,
 ul {
-  ::-webkit-scrollbar-track {
-    border-color: hsla(0, 0%, 100%, 0.05) !important;
+	.no-scrollbar::-webkit-scrollbar-thumb {
+		display: none !important;
+		border: 0px;
+		border-radius: 0px;
+		background-color: transparent !important;
+
+		&:hover {
+			background-color: transparent !important;
+		}
+	}
+	.no-scrollbar::-webkit-scrollbar-corner {
+		display: none !important;
+		background-color: transparent !important;
+    border-left: 0px;
+    border-top: 0px;
+	}
+	.no-scrollbar::-webkit-scrollbar {
+		display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+    background-color: transparent !important;
   }
-  ::-webkit-scrollbar-thumb {
+
+  :not(.no-scrollbar)::-webkit-scrollbar-thumb {
     min-width: 3rem !important;
     min-height: 3rem !important;
     border: 0.4rem solid transparent !important;
@@ -25,43 +45,19 @@ ul {
       background-color: rgba(255, 255, 255, 0.4) !important;
     }
   }
-  ::-webkit-scrollbar-corner {
+  :not(.no-scrollbar)::-webkit-scrollbar-corner {
     background-color: transparent !important;
-    border-left: 1px solid hsla(0, 0%, 100%, 0.05) !important; //light rgba(0, 0, 0, 0.1)
+    border-left: 1px solid hsla(0, 0%, 100%, 0.05) !important;
     border-top: 1px solid hsla(0, 0%, 100%, 0.05) !important;
   }
-  ::-webkit-scrollbar {
+  :not(.no-scrollbar)::-webkit-scrollbar {
     width: 1.2rem !important;
     height: 1.2rem !important;
     background-color: transparent !important;
   }
 
-  &::-webkit-scrollbar-track {
+  &:not(.no-scrollbar)::-webkit-scrollbar-track {
     border-color: hsla(0, 0%, 100%, 0.05) !important;
-  }
-  &::-webkit-scrollbar-thumb {
-    min-width: 3rem !important;
-    min-height: 3rem !important;
-    border: 0.4rem solid transparent !important;
-    -moz-background-clip: content !important;
-    -webkit-background-clip: content !important;
-    background-clip: content-box !important;
-    border-radius: 1rem !important;
-    background-color: rgba(255, 255, 255, 0.25) !important;
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.4) !important;
-    }
-  }
-  &::-webkit-scrollbar-corner {
-    background-color: transparent !important;
-    border-left: 1px solid hsla(0, 0%, 100%, 0.05) !important; //light rgba(0, 0, 0, 0.1)
-    border-top: 1px solid hsla(0, 0%, 100%, 0.05) !important;
-  }
-  &::-webkit-scrollbar {
-    width: 1.2rem !important;
-    height: 1.2rem !important;
-    background-color: transparent !important;
   }
 }
 
