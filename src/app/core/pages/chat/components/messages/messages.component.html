@@ -16,26 +16,34 @@
 
 <div class="max-w-5xl px-4 mx-auto">
 	<ng-container *ngFor="let msg of chat">
-		<div
-			*ngIf="!msg.error; else error"
+		<!-- 
+
 			[ngClass]="{
 				'translate-y-3 opacity-0': !msg.content,
 				'translate-y-0 opacity-100': msg.content
 			}"
-			class="flex flex-row w-full py-3 space-x-4 transition-all duration-700 translate-y-3 opacity-0"
+			transition-all duration-700 translate-y-3 opacity-0
+		 -->
+		<div
+			*ngIf="!msg.error; else error"
+			
+			class="flex flex-row w-full py-3 space-x-4 "
 		>
 			<app-message-avatar
 				name="Pietro Lungarini"
 				[role]="msg.role"
 				[stopAnim]="msg.completed"
+				[ngClass]="{ 'pt-2.5': msg.role === msgRoles.Assistant }"
 				class="block w-fit"
 			></app-message-avatar>
 			
 			<div
 				[ngClass]="{
-					'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant
+					'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant,
+					'translate-y-3 opacity-0': !msg.content,
+					'translate-y-0 opacity-100': msg.content
 				}"
-				class="overflow-hidden">
+				class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0">
 				<ng-container *ngIf="msg.role === msgRoles.Assistant; else isUser">
 					<markdown
 						[data]="msg.content"
