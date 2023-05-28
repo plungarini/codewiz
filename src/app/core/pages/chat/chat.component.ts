@@ -72,6 +72,7 @@ export class ChatComponent implements OnDestroy {
 
 		const newMsgIndex = this.chat.length - 1;
 		this.gettingQuery = true;
+		this.chat = [...this.chat]
 		this.cdRef.detectChanges();
 
 		let backupResult = '';
@@ -86,6 +87,7 @@ export class ChatComponent implements OnDestroy {
 						message: parsedErr?.message,
 					};
 
+					this.chat = [...this.chat]
 					this.cdRef.detectChanges();
 					console.error(parsedErr);
 					this.pingStatus();
@@ -94,6 +96,7 @@ export class ChatComponent implements OnDestroy {
 				finalize(() => {
 					this.gettingQuery = false;
 					this.chat[newMsgIndex].completed = true;
+					this.chat = [...this.chat]
 					this.cdRef.detectChanges();
 					return of(undefined);
 				})
@@ -103,10 +106,19 @@ export class ChatComponent implements OnDestroy {
 				backupResult = val.completion;
 
 				this.chat[newMsgIndex].content = val.completion;
+				
+				const pageSections = this.chat[newMsgIndex].pageSections;
+				if (
+					(!pageSections || pageSections.length <= 0) &&
+					val.pageSections.length > 0
+				) {
+					this.chat[newMsgIndex].pageSections = val.pageSections;
+				}
 
 				this.onMessageScroll();
 				
 				// TODO: Save response to Database
+				this.chat = [...this.chat]
 				this.cdRef.detectChanges();
 			});
 	}
