@@ -7,7 +7,7 @@ import { AiChatMessage } from 'src/app/shared/models/ai-chat/ai-chat.model';
   styles: [
     `
       :host {
-        @apply absolute bottom-0 left-0 px-8 w-full max-w-full;
+        @apply absolute bottom-0 left-0 pl-8 w-full max-w-full;
       }
     `
   ],
@@ -22,6 +22,7 @@ export class PagesectionsSelectorComponent {
 			return { id: url, title: s.title };
 		});
 	};
+	@Input() show: boolean = false;
 	@Input() hostUrl: string = 'https://angular.io/'; // TODO
 	@Input() replaceUrl: string = 'angular/angular/aio/content/'; // TODO
 	@Input() replaceStrings: { s: string, r: string }[] = [

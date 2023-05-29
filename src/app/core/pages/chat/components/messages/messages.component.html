@@ -71,6 +71,7 @@
 						'translate-y-2 opacity-0 pointer-events-none': !msg.showPageSections,
 						'translate-y-0 opacity-100 pointer-events-auto': msg.showPageSections,
 					}"
+					[show]="!!msg.showPageSections"
 					(onClose)="togglePageSections(i, false)"
 					class="transition-all duration-500 no-scrollbar"
 				></app-pagesections-selector>
