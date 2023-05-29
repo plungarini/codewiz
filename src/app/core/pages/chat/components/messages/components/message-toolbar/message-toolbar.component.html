@@ -8,8 +8,8 @@
 	<!-- Discover articles -->
 	<ng-container *ngIf="msg.pageSections as sections">
 		<button
-			*ngIf="sections.length > 0"
-			[disabled]="sections.length <= 0"
+			*ngIf="sections.length > 0 && containerWidth > 90"
+			[disabled]="sections.length <= 0 && containerWidth > 90"
 			(click)="showPageSections()"
 			class="inline-flex flex-row items-center space-x-2 transition-all duration-300 opacity-100 cursor-pointer shrink-0 grow-0 disabled:opacity-0 disabled:cursor-default disabled:pointer-events-none text-zinc-600 hover:text-zinc-200"
 		>
@@ -20,16 +20,14 @@
 				<path d="M10.6288 10.2266L8.49121 12.3642L10.6619 14.5339" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
 			</svg>
 	
-			<ng-container *ngIf="msg.content as content">
-				<ng-container *ngIf="sections.length as sectionsLen">
-					<p
-						*ngIf="content.length > 20"
-						class="-mt-[0.08rem] text-xs font-medium tracking-wide text-zinc-600"
-					>
-						{{ sectionsLen }} page{{ sectionsLen > 1 ? 's' : ''}}
-					</p>
-				</ng-container>
-			</ng-container>		
+			<ng-container *ngIf="sections.length as sectionsLen">
+				<p
+					*ngIf="containerWidth > 145"
+					class="-mt-[0.08rem] text-xs font-medium tracking-wide text-zinc-600"
+				>
+					{{ sectionsLen }} page{{ sectionsLen > 1 ? 's' : ''}}
+				</p>
+			</ng-container>
 		</button>
 	</ng-container>
 	
@@ -38,7 +36,7 @@
 	<div *ngIf="!msg.pageSections || msg.pageSections.length <= 0"></div>
 
 	<ng-container>
-		<div *ngIf="msg.content.length > 5" class="flex flex-row space-x-2 shrink-0 grow-0">
+		<div *ngIf="containerWidth > 70" class="flex flex-row space-x-2 shrink-0 grow-0">
 			<!-- Like Button -->
 			<button class="transition-all duration-300 cursor-pointer text-zinc-600 hover:text-zinc-200">
 				<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

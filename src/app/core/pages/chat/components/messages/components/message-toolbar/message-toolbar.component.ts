@@ -22,6 +22,7 @@ export class MessageToolbarComponent {
 		this.cdRef.detectChanges();
 	};
 	@Input() show: boolean = false;
+	@Input() containerWidth: number = 0;
 
 	@Output() onShowPageSections = new EventEmitter();
 

@@ -62,6 +62,7 @@
 						error: msg.error,
 						pageSections: msg.pageSections
 					}"
+					[containerWidth]="msgContentDiv.clientWidth"
 					(onShowPageSections)="togglePageSections(i, true)"
 				></app-message-toolbar>
 
