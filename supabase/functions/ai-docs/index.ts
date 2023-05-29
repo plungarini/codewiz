@@ -210,14 +210,14 @@ serve(async (req) => {
 						- Respond using the same language as the question.
 					`}
 					${oneLine`
-						- Always provide the source and hyperlinks if available.
+						- Always provide the source of your answer and hyperlinks if available.
 					`}
 					${oneLine`
 						- Provide brief, concise answers by default and avoid excessive details.
 						Set a maximum response length of two or three sentences, if possible.
 					`}
 					${oneLine`
-						- Output as markdown.
+						- Output as markdown, you can use any markdown element you want.
 					`}
 					${oneLine`
 						- Always include code snippets if available with the right language formatting.
