@@ -7,7 +7,7 @@ import { AiChatMessage } from 'src/app/shared/models/ai-chat/ai-chat.model';
   styles: [
     `
       :host {
-        @apply absolute bottom-0 left-0 pl-8 w-full max-w-full;
+        @apply absolute bottom-0 left-0 pl-8 pr-[2.6rem] w-full max-w-full;
       }
     `
   ],
