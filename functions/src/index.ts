@@ -68,13 +68,22 @@ export const calculateOpenaiTokens = FFN.runWith({
 	 * uid: string,
 	 * model: supportModelType,
 	 * messages: AiChatMessage[],
+	 * authorization: string,
    */
-  warn('request', req);
+	warn('request', req.body);
+
+	const key = process.env.EXTERNAL_FUNCTIONS_KEY;
+	if (!key) {
+		res.status(501);
+	} else if (key !== req.body.authorization) {
+		res.status(401);
+	}
+
 	try {
 		const result = calculateTokens(req.body);
-		res.send(200).json(result);
+		res.status(200).json(result);
 	} catch (err) {
 		error(err);
-		res.send(400);
+		res.status(400);
 	}
 });

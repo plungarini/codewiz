@@ -273,18 +273,26 @@ serve(async (req) => {
 		// Calculate openai tokens
 		fetch('https://europe-west2-code-whiz-ai.cloudfunctions.net/calculateOpenaiTokens', {
 			headers: {
-				Authorization: `Bearer ${firebaseKey}`,
 				'Content-Type': 'application/json',
+				'Accept': 'application/json',
 			},
 			method: 'POST',
 			body: JSON.stringify({
 				uid: 'asd',
 				model: completionOptions.model,
-				messages: completionOptions.messages
+				messages: completionOptions.messages,
+				authorization: firebaseKey,
 			}),
 		}).then(async (res) => {
-			console.warn('calculateOpenaiTokens()', res)
-			console.warn(await res.json())
+			try {
+				const { usedTokens, usedUSD } = await res.json();
+				if (!usedTokens || !usedUSD) return console.error('usedTokens or usedUSD are undefined', { usedTokens, usedUSD });
+				console.warn({ usedTokens, usedUSD });				
+			} catch (error) {
+				console.error('calculateOpenaiTokens()', error);
+			}
+		}).catch((err) => {
+			console.error('calculateOpenaiTokens()', err);
 		})
 
 		const originalStream = response.body;
