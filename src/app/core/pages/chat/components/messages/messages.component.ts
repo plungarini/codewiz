@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
-import hljs from 'highlight.js';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, Renderer2 } from '@angular/core';
 import { MarkdownService } from 'ngx-markdown';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
-import { codeBlockAndHeader, codeBlockPlain, codespan } from './md-blocks/index.md';
+
 
 @Component({
   selector: 'app-messages',
@@ -29,21 +28,13 @@ export class MessagesComponent {
 
 	constructor(
 		private markdownService: MarkdownService,
-		private cdRef: ChangeDetectorRef
+		private cdRef: ChangeDetectorRef,
+		private renderer: Renderer2
 	) {
-		this.markdownService.renderer.code = (code, lang, isEscaped) => {
-			const highlighted = hljs.highlightAuto(code, lang ? [lang] : []).value;
-			if (!lang) {
-				return codeBlockPlain(highlighted);
-			}
-			return codeBlockAndHeader(lang, highlighted);
-		}
-		this.markdownService.renderer.codespan = (code) => {
-			const highlighted = hljs.highlightAuto(code).value;
-			return codespan(highlighted);
-		}
-		this.markdownService.renderer.paragraph = (text) => {
-			return `<p class="mt-4 first-of-type:mt-0 whitespace-pre-wrap">${text}</p>`;
+		this.markdownService.renderer.html = (html) => {
+			const p = this.renderer.createElement('p') as HTMLParagraphElement;
+			p.innerText = html;
+			return p.outerHTML;
 		}
 	}
 
