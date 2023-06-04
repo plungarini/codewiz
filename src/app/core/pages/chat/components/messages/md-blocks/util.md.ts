@@ -1,8 +1,4 @@
-export const unescapeHtml = (htmlStr: string) => {
-	htmlStr = htmlStr.replace(/&lt;/g , "<");	 
-	htmlStr = htmlStr.replace(/&gt;/g , ">");  
-	htmlStr = htmlStr.replace(/&quot;/g , "\"");  
-	htmlStr = htmlStr.replace(/&#39;/g , "\'");
+export const unescapeAmp = (htmlStr: string) => {
 	htmlStr = htmlStr.replace(/&amp;/g , "&");
 	return htmlStr;
 }

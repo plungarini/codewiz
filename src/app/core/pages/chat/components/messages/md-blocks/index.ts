@@ -15,18 +15,24 @@ import { MarkedOptions, MarkedRenderer } from 'ngx-markdown';
 
 // function that returns `MarkedOptions` with renderer override
 export function markedOptionsFactory(): MarkedOptions {
-  const renderer = new MarkedRenderer();
+	const renderer = new MarkedRenderer();
+	const possibleLangs = ['ts', 'js', 'html', 'xml', 'css', 'scss', 'saas', 'python', 'php', 'java', 'ruby'];
 
-  renderer.code = (code, lang, isEscaped) => {
-		const highlighted = hljs.highlightAuto(code, lang ? [lang] : []).value;
-		if (!lang) {
+	renderer.code = (code, lang) => {
+		let { value: highlighted, language } = hljs.highlightAuto(code, lang ? [lang, ...possibleLangs] : possibleLangs);
+
+		if (!lang && !language) {
 			return codeBlockPlain(highlighted);
 		}
-		return codeBlockAndHeader(lang, highlighted);
+		return codeBlockAndHeader(lang || language || '', highlighted);
 	}
 	renderer.codespan = (code) => {
-		const highlighted = hljs.highlightAuto(code).value;
-		return codespan(highlighted);
+		let { value: highlighted, language } = hljs.highlightAuto(code, possibleLangs);
+		
+		return codespan(highlighted, language);
+	}
+	renderer.html = (html) => {
+		return codeBlockPlain(html);
 	}
 	renderer.paragraph = (text) => {
 		return paragraph(text);

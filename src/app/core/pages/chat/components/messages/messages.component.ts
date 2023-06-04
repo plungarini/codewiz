@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, Renderer2 } from '@angular/core';
-import { MarkdownService } from 'ngx-markdown';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 
 
@@ -27,15 +26,9 @@ export class MessagesComponent {
 	};
 
 	constructor(
-		private markdownService: MarkdownService,
 		private cdRef: ChangeDetectorRef,
-		private renderer: Renderer2
 	) {
-		this.markdownService.renderer.html = (html) => {
-			const p = this.renderer.createElement('p') as HTMLParagraphElement;
-			p.innerText = html;
-			return p.outerHTML;
-		}
+		
 	}
 
 	onCopyToClipboard(event: MouseEvent): void {
