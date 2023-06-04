@@ -18,7 +18,8 @@
 	<ng-container *ngFor="let msg of chat; let i = index">
 		<div
 			*ngIf="!msg.error; else error"
-			class="relative flex flex-row w-full py-3 space-x-4"
+			[ngClass]="{ 'pt-3': msg.role === msgRoles.Assistant }"
+			class="relative flex flex-row w-full pb-3 space-x-4"
 		>
 			<app-message-avatar
 				name="Pietro Lungarini"
@@ -42,7 +43,6 @@
 							[data]="msg.content"
 							ngPreserveWhitespaces
 							clipboard
-							[disableSanitizer]="msg.role === msgRoles.Assistant"
 							[clipboardButtonTemplate]="buttonTemplate"
 							class="block w-full max-w-full markdown"
 						></markdown>

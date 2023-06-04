@@ -210,6 +210,7 @@ export class AiChatService {
 					const message = choices?.delta?.content;
 					if (message) {
 						result += message;
+						
 						sinceLastRes = new Date().getTime() / 1000;
 						observer.next({
 							completion: result,
