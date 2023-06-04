@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 
 @Component({
-  selector: 'app-message-toolbar',
-  templateUrl: './message-toolbar.component.html',
+  selector: 'app-ai-toolbar',
+  templateUrl: './ai-toolbar.component.html',
   styles: [
     `
       :host {
@@ -14,7 +14,7 @@ import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MessageToolbarComponent {
+export class AiToolbarComponent {
 
 	@Input('msg') set setMsg(value: AiChatMessage | undefined) {
 		if (!value) return;
