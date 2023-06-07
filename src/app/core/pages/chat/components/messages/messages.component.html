@@ -29,7 +29,7 @@
 				class="block w-fit"
 			></app-message-avatar>
 			
-			<div class="relative pr-10">
+			<div class="relative max-w-full pr-10">
 				<div
 					[ngClass]="{
 						'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant,
@@ -66,28 +66,22 @@
 					(onShowPageSections)="togglePageSections(i, true)"
 				></app-ai-toolbar>
 
-				<app-pagesections-selector
-					[pageSections]="msg.pageSections"
-					[ngClass]="{
-						'translate-y-2 opacity-0 pointer-events-none': !msg.showPageSections,
-						'translate-y-0 opacity-100 pointer-events-auto': msg.showPageSections,
-					}"
-					[show]="!!msg.showPageSections"
-					(onClose)="togglePageSections(i, false)"
-					class="transition-all duration-500 no-scrollbar"
-				></app-pagesections-selector>
 
-				<div class="absolute top-[0.05rem] right-0 group-hover/message:opacity-100 group-hover/message:translate-y-0 translate-y-2 opacity-0 transition-all duration-300">
-					<button class="transition-all duration-300 text-zinc-600 hover:text-zinc-400">
-						<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path fill-rule="evenodd" clip-rule="evenodd" d="M21 16.2169V7.78216C21 4.84281 18.9188 3 15.9736 3H8.02638C5.08119 3 3 4.83308 3 7.78216V16.2159C3 19.165 5.08119 21 8.02638 21H15.9736C18.9188 21 21 19.165 21 16.2169Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-							<path d="M11.9708 15.8404L11.9068 15.8404M11.957 16.0997C11.813 16.0997 11.6962 15.9828 11.6962 15.8388C11.6962 15.6948 11.813 15.5781 11.957 15.5781C12.101 15.5781 12.2178 15.6948 12.2178 15.8388C12.2178 15.9828 12.101 16.0997 11.957 16.0997Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-							<path d="M11.9708 11.9381L11.9068 11.9381M11.957 12.1973C11.813 12.1973 11.6962 12.0805 11.6962 11.9365C11.6962 11.7925 11.813 11.6758 11.957 11.6758C12.101 11.6758 12.2178 11.7925 12.2178 11.9365C12.2178 12.0805 12.101 12.1973 11.957 12.1973Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-							<path d="M11.9708 8.03964L11.9068 8.03964M11.957 8.2989C11.813 8.2989 11.6962 8.18206 11.6962 8.03804C11.6962 7.89403 11.813 7.77734 11.957 7.77734C12.101 7.77734 12.2178 7.89403 12.2178 8.03804C12.2178 8.18206 12.101 8.2989 11.957 8.2989Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-						</svg>
-					</button>
-				</div>
+				<app-message-toolbar
+					class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
+				></app-message-toolbar>
 			</div>
+
+			<app-pagesections-selector
+				[pageSections]="msg.pageSections"
+				[ngClass]="{
+					'translate-y-2 opacity-0 pointer-events-none': !msg.showPageSections,
+					'translate-y-0 opacity-100 pointer-events-auto': msg.showPageSections,
+				}"
+				[show]="!!msg.showPageSections"
+				(onClose)="togglePageSections(i, false)"
+				class="transition-all duration-500 no-scrollbar"
+			></app-pagesections-selector>
 
 		</div>
 		<ng-template #error>

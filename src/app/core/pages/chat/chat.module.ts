@@ -10,6 +10,7 @@ import { PagesectionsSelectorComponent } from './components/messages/components/
 import { MessagesComponent } from './components/messages/messages.component';
 import { QueryInputComponent } from './components/query-input/query-input.component';
 import { StatusComponent } from './components/status/status.component';
+import { MessageToolbarComponent } from './components/messages/components/message-toolbar/message-toolbar.component';
 
 
 
@@ -22,6 +23,7 @@ import { StatusComponent } from './components/status/status.component';
 		MessageAvatarComponent,
 		AiToolbarComponent,
     PagesectionsSelectorComponent,
+    MessageToolbarComponent,
   ],
   imports: [
 		CommonModule,

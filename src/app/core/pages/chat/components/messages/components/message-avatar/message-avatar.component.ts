@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 
 @Component({
@@ -18,6 +18,7 @@ export class MessageAvatarComponent implements AfterViewInit {
 	@Input() set stopAnim(value: boolean) {
 		if (!value) return;
 		this.animate = false;
+		this.cdRef.detectChanges();
 	}
 
 	roles = AiChatMessageRole;
@@ -25,12 +26,14 @@ export class MessageAvatarComponent implements AfterViewInit {
 	id: number;
 
 	constructor(
+		private cdRef: ChangeDetectorRef,
 	) {
 		this.id = new Date().getTime();
 	}
 
 	ngAfterViewInit(): void {
 		this.startAura();
+		this.cdRef.detectChanges();
 	}
 
 	startAura(): void {
