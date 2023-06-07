@@ -1,1 +1,98 @@
-<p>sidebar works!</p>
+<nav aria-label="Sidebar" class="flex-col justify-between hidden h-full border-r w-fit md:flex md:flex-shrink-0 md:overflow-y-auto md:bg-zinc-950 border-zinc-800">
+	<div class="relative flex flex-col items-center p-2 space-y-3 w-14">
+
+		<a
+			routerLink="/app"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300"
+		>
+			<!-- <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" class="overflow-visible w-9 h-9">
+				<defs>
+					<radialGradient id="radial_gradient_main_logo">
+						<stop offset="10%" stop-color="#ec4899"/>
+						<stop offset="80%" stop-color="#8B5CF6"/>
+					</radialGradient>
+					<linearGradient id="linear_gradient_main_logo" x1="0" y1="0" x2="1" y2="1">
+						<stop offset="0%" stop-color="#8B5CF6"/>
+						<stop offset="50%" stop-color="#ec4899"/>
+						<stop offset="100%" stop-color="#f59e0b"/>
+					</linearGradient>
+					<mask id="mask_logo_main" maskUnits="userSpaceOnUse" x="0" y="0">
+						<circle cx="40" cy="40" r="30" [attr.fill]="'url(#radial_gradient_main_logo)'"/>
+					</mask>
+				</defs>
+				<circle class="logo-circle" cx="40" cy="40" r="30" [attr.fill]="'url(#linear_gradient_main_logo)'" mask="url(#mask_logo_main)"/>
+				<circle
+					class="transition-all duration-300 aura-circle"
+					cx="40"
+					cy="40"
+					r="35"
+					[attr.stroke]="'url(#linear_gradient_main_logo)'"
+					stroke-width="10"
+					fill="none"
+				/>
+			</svg> -->
+			<img src="assets/logo/svg/codewhiz_logo_mask.svg" alt="CodeWhizAi" class="w-9 h-9">
+		</a>
+
+		<div class="w-4/5 border-b border-zinc-800"></div>
+
+		<a
+			routerLink="/app"
+			[ngClass]="{
+				'bg-gradient-to-tr from-zinc-900/50 to-zinc-800/70 shadow-xl text-white': currentPage === 'app',
+				'text-zinc-400 hover:text-zinc-200 bg-zinc-950 hover:bg-zinc-900': currentPage !== 'app'
+			}"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300 rounded-lg"
+		>
+			<svg class="w-[1.4rem] h-[1.4rem]" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<g id="Iconly/Light/Home" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+					<g id="Home" transform="translate(2.500000, 2.000000)" stroke="currentColor" stroke-width="1.5" >
+						<path d="M6.65721519,18.7714023 L6.65721519,15.70467 C6.65719744,14.9246392 7.29311743,14.2908272 8.08101266,14.2855921 L10.9670886,14.2855921 C11.7587434,14.2855921 12.4005063,14.9209349 12.4005063,15.70467 L12.4005063,15.70467 L12.4005063,18.7809263 C12.4003226,19.4432001 12.9342557,19.984478 13.603038,20 L15.5270886,20 C17.4451246,20 19,18.4606794 19,16.5618312 L19,16.5618312 L19,7.8378351 C18.9897577,7.09082692 18.6354747,6.38934919 18.0379747,5.93303245 L11.4577215,0.685301154 C10.3049347,-0.228433718 8.66620456,-0.228433718 7.51341772,0.685301154 L0.962025316,5.94255646 C0.362258604,6.39702249 0.00738668938,7.09966612 0,7.84735911 L0,16.5618312 C0,18.4606794 1.55487539,20 3.47291139,20 L5.39696203,20 C6.08235439,20 6.63797468,19.4499381 6.63797468,18.7714023 L6.63797468,18.7714023"></path>
+					</g>
+				</g>
+			</svg>
+		</a>
+	
+		<a
+			routerLink="/app/chat"
+			[ngClass]="{
+				'bg-gradient-to-tr from-zinc-900/50 to-zinc-800/70 shadow-xl text-white': currentPage === 'chat',
+				'text-zinc-400 hover:text-zinc-200 bg-zinc-950 hover:bg-zinc-900': currentPage !== 'chat'
+			}"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300 rounded-lg"
+		>
+			<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path fill-rule="evenodd" clip-rule="evenodd" d="M18.9005 18.5379C17.081 20.6892 14.5269 21.7565 11.9758 21.7478C11.0826 21.7449 7.10208 21.7468 4.75232 21.7478C4.05371 21.7488 3.64117 20.9704 4.02939 20.3895C4.24637 20.0645 4.52464 19.6685 4.74453 19.3591C4.96346 19.0497 4.98292 18.644 4.79318 18.3151C4.45945 17.7362 3.96225 16.8566 3.83382 16.5365C2.29164 13.2021 2.88613 9.12524 5.63871 6.37364C9.40416 2.60818 15.6906 2.8777 19.0941 7.18316C21.7085 10.4894 21.6229 15.3193 18.9005 18.5379Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M16.0147 13.0117V13.0815M16.2975 13.0267C16.2975 13.1838 16.1701 13.3112 16.0129 13.3112C15.8558 13.3112 15.7285 13.1838 15.7285 13.0267C15.7285 12.8696 15.8558 12.7422 16.0129 12.7422C16.1701 12.7422 16.2975 12.8696 16.2975 13.0267Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M12.0088 13.0117V13.0815M12.2917 13.0267C12.2917 13.1838 12.1642 13.3112 12.0071 13.3112C11.85 13.3112 11.7227 13.1838 11.7227 13.0267C11.7227 12.8696 11.85 12.7422 12.0071 12.7422C12.1642 12.7422 12.2917 12.8696 12.2917 13.0267Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M8.00296 13.0117V13.0815M8.28582 13.0267C8.28582 13.1838 8.15834 13.3112 8.00122 13.3112C7.8441 13.3112 7.7168 13.1838 7.7168 13.0267C7.7168 12.8696 7.8441 12.7422 8.00122 12.7422C8.15834 12.7422 8.28582 12.8696 8.28582 13.0267Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</a>
+		
+	</div>
+
+
+	<div class="relative flex flex-col items-center p-2 space-y-3 w-14">
+		<a
+			routerLink="/app/premium"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 text-white transition-all duration-300 rounded-lg shadow-xl bg-gradient-to-tr from-pink-600/80 to-indigo-400/80 opacity-80 hover:opacity-100"
+		>
+			<svg class="w-6 h-6"  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M3.57919 16.3063L3.00123 7.32852C2.96912 6.82548 3.57335 6.54818 3.93336 6.89943L6.55363 9.45451C6.55363 9.45451 9.5485 6.47325 11.1072 4.91452C11.6083 4.41245 12.4188 4.4144 12.917 4.91744C14.4611 6.4752 17.4463 9.45937 17.4463 9.45937C17.4463 9.45937 18.9904 7.94442 20.0685 6.88775C20.4285 6.53455 21.0318 6.81575 20.9987 7.31879L20.4207 16.3054C20.3069 18.0781 18.8348 19.4579 17.059 19.4579H6.94185C5.16517 19.4579 3.694 18.0781 3.57919 16.3063Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M3.48438 14.8438H20.5137" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M12.0001 10.1998V10.2466M12.1893 10.2099C12.1893 10.315 12.104 10.4002 11.9989 10.4002C11.8938 10.4002 11.8086 10.315 11.8086 10.2099C11.8086 10.1048 11.8938 10.0195 11.9989 10.0195C12.104 10.0195 12.1893 10.1048 12.1893 10.2099Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</a>
+		
+		<a
+			routerLink="/app/settings"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+		>
+			<svg class="w-6 h-6"  viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<circle cx="12.0929" cy="8.6925" r="4.6925" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M14.2883 13.668H10.0124C7.58727 13.668 5.62131 15.6339 5.62131 18.0591C5.62131 18.1462 5.62047 18.2336 5.6193 18.3213C5.60627 19.2937 6.39631 19.9999 7.36883 19.9999H16.9318C17.9044 19.9999 18.6944 19.2937 18.6814 18.3213C18.6802 18.2336 18.6794 18.1462 18.6794 18.0591C18.6794 15.6339 16.7134 13.668 14.2883 13.668Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</a>
+
+	</div>
+</nav>
