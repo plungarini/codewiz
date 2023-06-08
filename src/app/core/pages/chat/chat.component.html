@@ -1,19 +1,25 @@
-<div class="relative">
-	<app-status
-		class="pointer-events-none"
-		[status]="status"
-	></app-status>
-
-	<div
-		class="h-screen max-h-screen pt-6 overflow-x-hidden overflow-y-auto"
-		#mainChatContainer
-	>
-		<app-messages
-			[chat]="chat"
-		></app-messages>
+<div class="flex flex-row">
+	<div class="w-full max-w-sm">
+		CHAT SIDEBAR
 	</div>
+
+	<div class="relative flex-1">
+		<app-status
+			class="pointer-events-none"
+			[status]="status"
+		></app-status>
 	
-	<app-query-input
-		(onQuery)="createQuery($event)"
-	></app-query-input>
+		<div
+			class="h-screen max-h-screen pt-6 overflow-x-hidden overflow-y-auto"
+			#mainChatContainer
+		>
+			<app-messages
+				[chat]="chat"
+			></app-messages>
+		</div>
+		
+		<app-query-input
+			(onQuery)="createQuery($event)"
+		></app-query-input>
+	</div>
 </div>
