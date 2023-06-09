@@ -8,6 +8,7 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ImgixAngularModule } from '@imgix/angular';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -36,6 +37,13 @@ import { markedOptionsFactory } from './core/pages/chat/components/messages/md-b
 				useFactory: markedOptionsFactory,
 			}
 		}),
+
+		ImgixAngularModule.forRoot({
+      domain: 'codewhizai.imgix.net',
+      defaultImgixParams: {
+        auto: 'format,compress',
+      },
+    }),
   ],
   providers: [
     ScreenTrackingService,UserTrackingService
