@@ -7,7 +7,7 @@ import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/
   templateUrl: './messages.component.html',
 	styles: [`
 		:host {
-			@apply block pb-44 relative w-full overflow-y-visible;
+			@apply block pb-44 relative w-full overflow-y-visible px-6;
 		}
 	`],
   changeDetection: ChangeDetectionStrategy.OnPush
