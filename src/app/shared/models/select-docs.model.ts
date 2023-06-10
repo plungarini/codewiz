@@ -4,6 +4,6 @@ export type SelectedDocs = {
 	id: string;
 	name: string;
 	logo: string;
-	lastUpdated: Timestamp;
+	lastUpdate: Timestamp;
 	url: string;
 }
