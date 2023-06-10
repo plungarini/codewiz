@@ -1,13 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 
-type Docs = {
-	id: string;
-	name: string;
-	logo: string;
-}
 
 @Component({
   selector: 'app-search-repo-autocomplete',
@@ -24,14 +20,14 @@ type Docs = {
 export class SearchRepoAutocompleteComponent implements OnDestroy {
 
 	@ViewChild('searchDocsInput') searchDocsInputElement: ElementRef<HTMLInputElement> | undefined;
-	@Output('onSelectedDocs') onSelectedDocs: EventEmitter<Docs> = new EventEmitter()
+	@Output('onSelectedDocs') onSelectedDocs: EventEmitter<SelectedDocs> = new EventEmitter()
 
 	searchInput = new FormControl();
 	selectedIndex = 0;
-	docs: Docs[] = [];
-	filteredDocs: Docs[] = [];
-	selectedDocs: Docs | undefined;
-	cacheSelectedDocs: Docs | undefined;
+	docs: SelectedDocs[] = [];
+	filteredDocs: SelectedDocs[] = [];
+	selectedDocs: SelectedDocs | undefined;
+	cacheSelectedDocs: SelectedDocs | undefined;
 	placeholder: string = 'Search a repo';
 
 	docsListLoaded: boolean = false;
@@ -42,7 +38,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		private cdRef: ChangeDetectorRef,
 		private db: FirebaseExtendedService,
 	) {
-		this.docsListSub = this.db.getCol<Docs>('supported-docs').subscribe(d => {
+		this.docsListSub = this.db.getCol<SelectedDocs>('supported-docs').subscribe(d => {
 			if (!this.docsListLoaded) this.docsListLoaded = true;
 			this.docs = d.sort((a, b) => {
 				const nameA = a.name.toUpperCase(); // Convert to uppercase for case-insensitive sorting
@@ -121,7 +117,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		this.searchInput.setValue('');
 	}
 
-	private _filterDocs(value: string): Docs[] {
+	private _filterDocs(value: string): SelectedDocs[] {
 		this.selectedIndex = 0;
 		if (!value) return this.docs;
 		return this.docs.filter(doc => {
