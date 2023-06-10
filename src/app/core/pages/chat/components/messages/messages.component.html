@@ -18,7 +18,10 @@
 	<ng-container *ngFor="let msg of chat; let i = index">
 		<div
 			*ngIf="!msg.error; else error"
-			[ngClass]="{ 'pt-3': msg.role === msgRoles.Assistant }"
+			[ngClass]="{
+				'pt-3': msg.role === msgRoles.Assistant,
+				'pt-1': msg.role === msgRoles.User,
+			}"
 			class="relative flex flex-row w-full pb-3 space-x-4 group/message"
 		>
 			<app-message-avatar
@@ -68,6 +71,7 @@
 
 
 				<app-message-toolbar
+					*ngIf="msg.content"
 					class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
 				></app-message-toolbar>
 			</div>
