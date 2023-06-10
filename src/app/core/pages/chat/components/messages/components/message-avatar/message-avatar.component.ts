@@ -23,41 +23,19 @@ export class MessageAvatarComponent implements AfterViewInit {
 
 	roles = AiChatMessageRole;
 	animate = true;
-	id: number;
 
 	constructor(
 		private cdRef: ChangeDetectorRef,
 	) {
-		this.id = new Date().getTime();
 	}
 
 	ngAfterViewInit(): void {
 		this.startAura();
-		this.cdRef.detectChanges();
 	}
 
 	startAura(): void {
-		const linearGradient = this.linearGradient?.nativeElement;
-		const radialGradient = this.radialGradient?.nativeElement;
-
-		if (!linearGradient || !radialGradient || this.role !== this.roles.Assistant || this.animate) return;
-		
 		this.animate = true;
-		linearGradient.children[0].setAttribute('stop-color', this.getRandomAuraColor());
-		linearGradient.children[0].classList.add('stop-color-transition');
-		linearGradient.children[1].setAttribute('stop-color', this.getRandomAuraColor());
-		linearGradient.children[1].classList.add('stop-color-transition');
-		linearGradient.children[2].setAttribute('stop-color', this.getRandomAuraColor());
-		linearGradient.children[2].classList.add('stop-color-transition');
-		radialGradient.children[0].setAttribute('stop-color', this.getRandomAuraColor());
-		radialGradient.children[0].classList.add('stop-color-transition');
-		radialGradient.children[1].setAttribute('stop-color', this.getRandomAuraColor());
-		radialGradient.children[1].classList.add('stop-color-transition');
-	}
-
-	private getRandomAuraColor() {
-		const colors = ['#3b82f6', '#8B5CF6', '#ec4899', '#f59e0b'];
-		return colors[Math.floor(Math.random() * colors.length)];
+		this.cdRef.detectChanges();
 	}
 
 }

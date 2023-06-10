@@ -14,37 +14,39 @@
 	</ng-container>
 
 	<ng-container *ngSwitchCase="roles.Assistant">
-		<div *ngIf="role === roles.Assistant" class="flex items-center justify-center w-7 h-7 -mx-0.5">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" class="w-full h-full overflow-visible">
-					<defs>
-						<radialGradient #radialGradient id="gradient-{{id}}">
-							<stop offset="10%" stop-color="#3b82f6"/>
-							<stop offset="80%" stop-color="#8B5CF6"/>
-						</radialGradient>
-						<linearGradient #linearGradient id="gradient-{{id + 1}}" x1="0" y1="0" x2="1" y2="1">
-							<stop offset="0%" stop-color="#8B5CF6"/>
-							<stop offset="50%" stop-color="#ec4899"/>
-							<stop offset="100%" stop-color="#f59e0b"/>
-						</linearGradient>
-						<mask id="mask__logo" maskUnits="userSpaceOnUse" x="0" y="0">
-							<circle cx="40" cy="40" r="30" [attr.fill]="'url(#gradient-' + (id) + ')'"/>
-						</mask>
-					</defs>
-					<circle class="logo-circle" cx="40" cy="40" r="30" [attr.fill]="'url(#gradient-' + (id + 1) + ')'" mask="url(#mask__logo)"/>
-					<circle
-						class="transition-all duration-300 aura-circle"
-						cx="40"
-						cy="40"
-						r="35"
-						[attr.stroke]="'url(#gradient-' + (id + 1) + ')'"
-						stroke-width="10"
-						fill="none"
-						[ngClass]="{
-							'stop-aura-anim': !animate,
-							'aura-anim': animate
-						}"
-					/>
-				</svg>
+		<div *ngIf="role === roles.Assistant" class="relative w-6 h-6">
+			<img
+				src="assets/logo/svg/codewhiz_logo_mask.svg"
+				alt="CodeWhizAi"
+				class="relative z-20 w-6 h-6 grayscale brightness-[1000] transition-opacity duration-1000"
+				[ngClass]="{
+					'opacity-100': !animate,
+					'opacity-0': animate,
+				}"
+			>
+			<img
+				src="assets/logo/svg/codewhiz_logo_mask.svg"
+				alt="CodeWhizAi"
+				class="absolute top-0 left-0 z-30 w-6 h-6 transition-opacity duration-1000 grayscale-0 brightness-100"
+				[ngClass]="{
+					'opacity-0': !animate,
+					'opacity-100': animate,
+				}"
+			>
+			<!-- <div
+				[ngClass]="{
+					'stop-aura-anim': !animate,
+					'aura-anim': animate
+				}"
+				class="relative z-20 w-6 h-6 overflow-visible rounded-full logo-gradient"
+			></div> -->
+			<div
+				[ngClass]="{
+					'stop-aura-anim': !animate,
+					'aura-anim': animate
+				}"
+				class="absolute top-0 left-0 z-10 w-6 h-6 overflow-visible aura-shadow aura-gradient"
+			></div>
 		</div>
 	</ng-container>
 
