@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
-import { filter, interval, lastValueFrom, map, Observable, startWith, switchMap } from 'rxjs';
+import { Observable, filter, interval, lastValueFrom, map, of, startWith, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
 import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator, ClientOpenaiStatus } from '../models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageRole, AiChatRepo, AiChatRequestData, AiChatResponseData } from '../models/ai-chat/ai-chat.model';
+import { FirebaseExtendedService } from './firebase-ext.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,7 @@ export class AiChatService {
 	constructor(
 		private zone: NgZone,
 		private http: HttpClient,
+		private db: FirebaseExtendedService,
 	) { }
 
 	getStatusPromise(): Promise<ClientOpenaiStatus> {
@@ -249,5 +251,22 @@ export class AiChatService {
 
 			ev.stream();
 		})
+	}
+
+	getRepoChats(repo: string) {
+		return this._getCurrentUid().pipe(
+			switchMap((uid) => this.db.getCol(`users/${uid}/repos/${repo}/chats`))
+		);
+	}
+
+	getChatMessages(repo: string, chatId: string) {
+		return this._getCurrentUid().pipe(
+			switchMap((uid) => this.db.getDoc(`users/${uid}/repos/${repo}/chats/${chatId}`))
+		);
+	}
+
+	private _getCurrentUid(): Observable<string> {
+		// TODO: Replace this with actual current user when implemented Authentication
+		return of('test');
 	}
 }
