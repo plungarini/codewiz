@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { animationFrameScheduler, catchError, finalize, of, Subscription } from 'rxjs';
+import { Subscription, animationFrameScheduler, catchError, finalize, of } from 'rxjs';
 import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageRole, AiChatRepo } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
@@ -53,7 +53,6 @@ export class ChatComponent implements OnDestroy {
 		if (!query) return console.error('Query is required.');
 		if (this.gettingQuery) return console.error('Another query is already running...');
 
-		// TODO: Save query to Database
 		const userQuery: AiChatMessage = {
 			role: AiChatMessageRole.User,
 			content: query,
@@ -117,7 +116,6 @@ export class ChatComponent implements OnDestroy {
 
 				this.onMessageScroll();
 				
-				// TODO: Save response to Database
 				this.chat = [...this.chat]
 				this.cdRef.detectChanges();
 			});
