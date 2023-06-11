@@ -8,15 +8,11 @@ const routes: Routes = [
 		component: ChatComponent,
 		children: [
 			{
-				path: ':repo/:id',
-				loadChildren: () => import('./components/chat-view/chat-view.module').then((m) => m.ChatViewModule),
-			},
-			{
-				path: ':repo/new',
-				loadChildren: () => import('./components/chat-view/chat-view.module').then((m) => m.ChatViewModule),
-			},
-			{
 				path: '',
+				loadChildren: () => import('./components/chat-view/chat-view.module').then((m) => m.ChatViewModule),
+			},
+			{
+				path: '**',
 				pathMatch: 'full',
 				redirectTo: 'angular/new',
 			}

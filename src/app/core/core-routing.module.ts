@@ -7,7 +7,20 @@ const routes: Routes = [
 		path: '',
 		component: CoreComponent,
 		children: [
-			{ path: 'chat', loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatModule), }
+			{
+				path: 'chat/:repo/:id',
+				loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatModule),
+			},
+			{
+				path: 'chat/:repo',
+				pathMatch: 'full',
+				redirectTo: 'chat/:repo/new'
+			},
+			{
+				path: 'chat',
+				pathMatch: 'full',
+				redirectTo: 'chat/angular/new'
+			},
 		]
 	}
 ];

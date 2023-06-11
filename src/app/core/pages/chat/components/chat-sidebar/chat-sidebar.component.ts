@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, switchMap } from 'rxjs';
 import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
@@ -26,20 +26,25 @@ export class ChatSidebarComponent {
 
 	constructor(
 		private chatService: AiChatService,
-		private router: Router
+		private router: Router,
+		private route: ActivatedRoute,
 	) {
 		this.$reposChats = this._$selectedRepo.asObservable().pipe(
 			switchMap((repo) => this.chatService.getRepoChats(repo))
 		)
 	}
 
-	selectNewDoc(doc: SelectedDocs): void {
-		console.log('Loading new docs...', doc);
-		
+	updateSelectedDoc(doc: SelectedDocs): void {
 		this.selectedDoc = doc;
 		this._$selectedRepo.next(doc.id);
 		
 		if (!this.router.url.includes(`/chat/${doc.id}/`))
 			this.router.navigateByUrl(`/app/chat/${doc.id}/new`);
 	}
+
+	createNewChat(): void {
+		const repo = this.route.snapshot.paramMap.get('repo') || 'angular';
+		this.router.navigateByUrl(`/app/chat/${repo}/new`);
+	}
+
 }

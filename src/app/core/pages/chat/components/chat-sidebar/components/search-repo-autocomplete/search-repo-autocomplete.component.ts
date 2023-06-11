@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
@@ -37,11 +38,13 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 	constructor(
 		private cdRef: ChangeDetectorRef,
 		private db: FirebaseExtendedService,
+		private route: ActivatedRoute,
 	) {
 		this.docsListSub = this.db.getCol<SelectedDocs>('supported-docs').subscribe(d => {
 			if (!this.docsListLoaded) this.docsListLoaded = true;
 			this.docs = d.sort((a, b) => {
-				const nameA = a.name.toUpperCase(); // Convert to uppercase for case-insensitive sorting
+				// Convert to uppercase for case-insensitive sorting
+				const nameA = a.name.toUpperCase();
 				const nameB = b.name.toUpperCase();
 
 				if (nameA < nameB) {
@@ -52,13 +55,27 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 				}
 				return 0;
 			});
+
 			this.filteredDocs = this._filterDocs(this.searchInput.value);
+			const repoParam = this.route.snapshot.paramMap.get('repo');
 
 			if (!this.searchInput.value && !this.selectedDocs && !this.cacheSelectedDocs) {
-				this.selectDoc(0);
+
+				if (!repoParam) {
+					this.selectDoc(0);
+				} else {
+					this.filteredDocs = this._filterDocs('');
+					const index = this.filteredDocs.findIndex(d => d.id === repoParam);
+					if (index < 0) {
+						this.selectDoc(0);
+					} else {
+						this.selectDoc(index);
+					}
+				}
 			}
 			this.cdRef.detectChanges();
 		});
+
 		this.searchInputSub = this.searchInput.valueChanges.subscribe(value => {
 			if (!value) {
 				setTimeout(() => {

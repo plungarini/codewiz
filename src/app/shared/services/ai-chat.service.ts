@@ -400,11 +400,11 @@ export class AiChatService {
 		);
 	}
 
-	getChatMessages(repo: string, chatId: string): Observable<AiUserRepoChat[]> {
+	getChatMessages(repo: string, chatId: string): Observable<AiChatMessage[]> {
 		return this._$getCurrentUid().pipe(
 			switchMap((uid) =>
-				this.db.getDoc<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats/${chatId}`).pipe(
-					map(chat => ({ ...chat, repo }))
+				this.db.getCol<AiChatMessage>(`users/${uid}/repos/${repo}/chats/${chatId}/messages`).pipe(
+					map(chat => chat.map(c => ({ ...c, repo })))
 				)
 			)
 		);
