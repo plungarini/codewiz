@@ -39,7 +39,7 @@ export class ChatSidebarComponent {
 		this.selectedDoc = doc;
 		this._$selectedRepo.next(doc.id);
 		
-		if (!this.router.url.includes(`/${doc.id}/`))
+		if (!this.router.url.includes(`/chat/${doc.id}/`))
 			this.router.navigateByUrl(`/app/chat/${doc.id}/new`);
 	}
 }
