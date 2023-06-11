@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
-import { Observable, filter, interval, lastValueFrom, map, of, startWith, switchMap } from 'rxjs';
+import { Observable, filter, firstValueFrom, interval, lastValueFrom, map, of, startWith, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
 import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator, ClientOpenaiStatus } from '../models/ai-chat/ai-chat-status.model';
-import { AiChatMessage, AiChatMessageRole, AiChatRepo, AiChatRequestData, AiChatResponseData } from '../models/ai-chat/ai-chat.model';
+import { AiChatMessage, AiChatMessageRole, AiChatRepo, AiChatRequestData, AiChatResponseData, AiChatTitleRequestData, AiChatTitleResponseData, AiUserRepoChat } from '../models/ai-chat/ai-chat.model';
 import { FirebaseExtendedService } from './firebase-ext.service';
+
 
 @Injectable({
   providedIn: 'root'
@@ -210,6 +211,7 @@ export class AiChatService {
 					const completionResponse = JSON.parse(event.data);
 					const choices = completionResponse.choices[0];
 					const message = choices?.delta?.content;
+
 					if (message) {
 						result += message;
 						
@@ -223,6 +225,14 @@ export class AiChatService {
 
 					if (choices.finish_reason) {
 						finishReason = choices.finish_reason;
+						sinceLastRes = new Date().getTime() / 1000;
+						observer.next({
+							completion: result,
+							pageSections,
+							finishReason
+						});
+						closeStream();
+						return;
 					}
 
 					if (completionResponse.page_sections) {
@@ -253,20 +263,159 @@ export class AiChatService {
 		})
 	}
 
-	getRepoChats(repo: string) {
-		return this._getCurrentUid().pipe(
-			switchMap((uid) => this.db.getCol(`users/${uid}/repos/${repo}/chats`))
+	createChatTitle(chat: AiChatMessage[], timeoutSeconds = 30): Observable<AiChatTitleResponseData> {
+		return new Observable((observer) => {
+			let result = '';
+			let finishReason: "stop" | "lenght" | undefined = undefined;
+			
+			let sinceLastRes = new Date().getTime() / 1000; // In seconds
+			const normMessages = chat
+				.map(m => ({ role: m.role, content: m.content }));
+			
+			// If last chat message is from Assistant, removes it
+			if (normMessages[normMessages.length - 1].role === AiChatMessageRole.Assistant) {
+				normMessages.pop();
+			}
+
+			const closeStream = () => {
+				ev?.close();
+				clearInterval(timeoutCheckInterval);
+				observer.complete();
+			}
+
+			const timeoutCheckInterval = setInterval(() => {
+				const now = new Date().getTime() / 1000;
+				if ((now - sinceLastRes) < timeoutSeconds) return;
+				const err = {
+					"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+					"debug": {
+						"message": `Timeout Error: Request Timed Out (>${timeoutSeconds}s). Please try again later.`,
+						"type": "client_error",
+					}
+				}
+				observer.error({
+					data: JSON.stringify(err),
+				})
+				closeStream();
+			}, 500);
+
+			if (
+				normMessages.length <= 0 ||
+				!normMessages[normMessages.length - 1].content ||
+				normMessages[normMessages.length - 1].role !== AiChatMessageRole.User
+			) {
+				observer.error(`The query is invalid: ${JSON.stringify(normMessages)}`);
+				closeStream();
+				return;
+			};
+
+			const data: AiChatTitleRequestData = {
+				messages: normMessages,
+				stream: true,
+			}
+
+			const ev = new SSE(
+				`https://${environment.supabase.projectRef}.functions.supabase.co/chat-title`,
+				{
+					headers: {
+						apikey: environment.supabase.anonKey,
+						Authorization: `Bearer ${environment.supabase.anonKey}`,
+						'Content-Type': 'application/json',
+					},
+					payload: JSON.stringify(data),
+				}
+			);
+
+			ev.onmessage = (event) => {
+				this.zone.run(() => {
+					
+					if (event.data === '[DONE]') {
+						closeStream();
+						return;
+					}
+					
+					const completionResponse = JSON.parse(event.data);
+					const choices = completionResponse.choices[0];
+					const message = choices?.delta?.content;
+
+					
+
+					if (message) {
+						result += message;
+						
+						sinceLastRes = new Date().getTime() / 1000;
+						observer.next({
+							completion: result,
+							finishReason
+						});
+					}
+					
+					if (choices.finish_reason) {
+						finishReason = choices.finish_reason;
+						sinceLastRes = new Date().getTime() / 1000;
+						observer.next({
+							completion: result,
+							finishReason
+						});
+						closeStream();
+						return;
+					}
+				})
+			}
+
+			ev.onerror = (event: any) => {
+				console.log('error', event);
+				this.zone.run(() => {
+					const err = {
+						"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+						"debug": {
+							"message": event,
+							"type": "server_error",
+						}
+					}
+					observer.error({
+						data: JSON.stringify(err),
+					})
+					observer.error(event);
+					closeStream();
+				})
+			}
+
+			ev.stream();
+		})
+	}
+
+	async saveChatName(name: string, repo: string, chatId: string): Promise<void> {
+		const uid = await this._getCurrentUid();
+		this.db.upsert<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats/${chatId}`, { name });
+	}
+
+	getRepoChats(repo: string): Observable<AiUserRepoChat[]> {
+		return this._$getCurrentUid().pipe(
+			switchMap((uid) =>
+				this.db.getCol<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats`).pipe(
+					map(chat => chat.map(c => ({ ...c, repo })))
+				)
+			)
 		);
 	}
 
-	getChatMessages(repo: string, chatId: string) {
-		return this._getCurrentUid().pipe(
-			switchMap((uid) => this.db.getDoc(`users/${uid}/repos/${repo}/chats/${chatId}`))
+	getChatMessages(repo: string, chatId: string): Observable<AiUserRepoChat[]> {
+		return this._$getCurrentUid().pipe(
+			switchMap((uid) =>
+				this.db.getDoc<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats/${chatId}`).pipe(
+					map(chat => ({ ...chat, repo }))
+				)
+			)
 		);
 	}
 
-	private _getCurrentUid(): Observable<string> {
+	private _$getCurrentUid(): Observable<string> {
 		// TODO: Replace this with actual current user when implemented Authentication
 		return of('test');
+	}
+
+	private _getCurrentUid(): Promise<string> {
+		return firstValueFrom(this._$getCurrentUid());
 	}
 }

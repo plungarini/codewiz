@@ -8,7 +8,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploySupabase": "yarn updateSecrets && yarn sb-aiSearch && yarn sb-search",
+    "deploySupabase": "yarn updateSecrets && yarn sb-aiSearch && yarn sb-search && yarn sb-chatTitle",
+    "sb-chatTitle": "npx supabase functions deploy chat-title --project-ref rbikifjpcodmtsgggpbk",
     "sb-aiSearch": "npx supabase functions deploy ai-docs --project-ref rbikifjpcodmtsgggpbk",
     "sb-search": "npx supabase functions deploy search --project-ref rbikifjpcodmtsgggpbk",
     "updateSecrets": "npx supabase secrets set --env-file ./supabase/.env"

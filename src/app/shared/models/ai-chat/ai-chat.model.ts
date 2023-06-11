@@ -39,6 +39,16 @@ export type AiChatRequestData = {
 	stream: boolean;
 }
 
+export type AiChatTitleRequestData = {
+	messages: AiChatMessageReqItem[];
+	stream: boolean;
+}
+
+export type AiChatTitleResponseData = {
+	completion: string;
+	finishReason?: 'stop' | 'lenght';
+}
+
 export type PageSection = {
 	id: string;
 	title: string;
@@ -49,3 +59,6 @@ export type AiChatResponseData = {
 	pageSections: PageSection[];
 	finishReason?: 'stop' | 'lenght';
 }
+
+// TODO: Replace with proper type
+export type AiUserRepoChat = any;
