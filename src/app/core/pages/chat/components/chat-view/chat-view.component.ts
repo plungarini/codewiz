@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Subscription, animationFrameScheduler, catchError, finalize, of } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription, animationFrameScheduler, catchError, finalize, of, switchMap } from 'rxjs';
 import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageRole, AiChatRepo } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
@@ -33,27 +33,44 @@ export class ChatViewComponent implements OnDestroy {
 		indicator: AiChatStatusIndicator.None,
 	}
 
-	statusSubscription: Subscription;
+	statusSub: Subscription;
+	chatSub: Subscription | undefined;
 
 	constructor(
 		private ai: AiChatService,
 		private cdRef: ChangeDetectorRef,
 		private route: ActivatedRoute,
+		private router: Router,
+		private zone: NgZone
 	) {
-		this.statusSubscription = this.ai.getStatus().subscribe((s) => {
+		this.statusSub = this.ai.getStatus().subscribe((s) => {
 			this.status = s;
 			console.warn('New openai status', this.status);
 			this.cdRef.detectChanges();
 		});
 
-		const repo = this.route.snapshot.paramMap.get('repo');
-		const id = this.route.snapshot.paramMap.get('id');
+		this.chatSub = this.route.paramMap
+			.pipe(
+				switchMap((params) => {
+					const repo = params.get('repo');
+					const id = params.get('id');
 
-		console.log({ repo, id })
+					if (!id || id === 'new' || !repo) {
+						this.router.navigateByUrl(`/app/chat/${repo}/new`);
+						return of([])
+					};
+
+					return this.ai.getChatMessages(repo, id);
+				})
+			).subscribe((messages) => {
+				this.chat = messages;
+				this.cdRef.markForCheck();
+			});
 	}
 
 	ngOnDestroy(): void {
-		this.statusSubscription.unsubscribe();
+		this.statusSub.unsubscribe();
+		this.chatSub?.unsubscribe();
 	}
 
 	createQuery(query: string): void {
