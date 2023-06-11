@@ -5,7 +5,22 @@ import { ChatComponent } from './chat.component';
 const routes: Routes = [
 	{
 		path: '',
-		component: ChatComponent
+		component: ChatComponent,
+		children: [
+			{
+				path: ':repo/:id',
+				loadChildren: () => import('./components/chat-view/chat-view.module').then((m) => m.ChatViewModule),
+			},
+			{
+				path: ':repo/new',
+				loadChildren: () => import('./components/chat-view/chat-view.module').then((m) => m.ChatViewModule),
+			},
+			{
+				path: '',
+				pathMatch: 'full',
+				redirectTo: 'angular/new',
+			}
+		]
 	}
 ];
 

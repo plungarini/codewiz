@@ -4,23 +4,5 @@
 		></app-chat-sidebar>
 	</div>
 
-	<div class="relative flex-1">
-		<app-status
-			class="pointer-events-none"
-			[status]="status"
-		></app-status>
-	
-		<div
-			class="h-screen max-h-screen pt-6 overflow-x-hidden overflow-y-auto"
-			#mainChatContainer
-		>
-			<app-messages
-				[chat]="chat"
-			></app-messages>
-		</div>
-		
-		<app-query-input
-			(onQuery)="createQuery($event)"
-		></app-query-input>
-	</div>
+	<router-outlet></router-outlet>
 </div>

@@ -2,5 +2,5 @@
 	*ngFor="let chat of chatHistory"
 	class="px-2 py-1"
 >
-	<p class="text-sm">{{ chat.id }}</p>
+	<p class="text-sm truncate">{{ chat.name || 'New chat' }}</p>
 </div>
