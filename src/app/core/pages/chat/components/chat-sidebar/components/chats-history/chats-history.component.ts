@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
+import { NavigationEnd, Router } from '@angular/router';
+import { Subscription, filter } from 'rxjs';
 import { AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
@@ -14,7 +16,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChatsHistoryComponent implements OnInit {
+export class ChatsHistoryComponent implements OnDestroy {
 
 	@Input('chatHistory') set setChatHistory(value: any[]) {
 		if (!value) {
@@ -30,15 +32,33 @@ export class ChatsHistoryComponent implements OnInit {
 	};
 
 	chatHistory: any[] = [];
+	currentChatId: string = '';
 	
 	private queue: Set<string> = new Set();
+	private routerSub: Subscription;
 
 	constructor(
 		private aiChatService: AiChatService,
 		private cdRef: ChangeDetectorRef,
-	) { }
+		public router: Router
+	) {
+		this.routerSub = this.router.events
+      .pipe(
+        filter(
+          (event) =>
+            event instanceof NavigationEnd
+        )
+      )
+      .subscribe((e) => {
+				if (e instanceof NavigationEnd) {
+					console.log(e.url);
+					this.cdRef.detectChanges();
+        }
+      });
+	}
 
-	ngOnInit(): void {
+	ngOnDestroy(): void {
+		this.routerSub.unsubscribe();
 	}
 
 	getChatTitle(id: string) {
