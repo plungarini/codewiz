@@ -13,7 +13,7 @@ import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { markedOptionsFactory } from './core/pages/chat/components/messages/md-blocks';
+import { markedOptionsFactory } from './core/pages/chat/components/chat-view/components/messages/md-blocks';
 
 @NgModule({
   declarations: [

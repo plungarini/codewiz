@@ -5,5 +5,5 @@ export const list = (body: string, ordered: boolean) => `
 `.trim();
 
 export const listitem = (text: string) => `
-	<li class="text-base text-zinc-400">${text.replace('mt-4 first-of-type:mt-0', 'inline-block')}</li>
+	<li class="text-sm text-zinc-400">${text.replace('mt-4 first-of-type:mt-0', 'inline-block')}</li>
 `.trim();
