@@ -61,10 +61,17 @@ export class ChatViewComponent implements OnDestroy {
 					};
 
 					return this.ai.getChatMessages(repo, id);
-				})
+				}),
 			).subscribe((messages) => {
 				this.chat = messages;
-				this.cdRef.markForCheck();
+				this.cdRef.markForCheck();	
+
+				if (messages.length <= 0) {
+					const repo = this.route.snapshot.paramMap.get('repo');
+					this.router.navigateByUrl(`/app/chat/${repo}/new`);
+					this.cdRef.markForCheck();
+					return;
+				}
 			});
 	}
 

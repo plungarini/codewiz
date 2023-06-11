@@ -132,6 +132,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		});
 		this.selectedIndex = 0;
 		this.searchInput.setValue('');
+		this.cdRef.markForCheck();
 	}
 
 	private _filterDocs(value: string): SelectedDocs[] {
