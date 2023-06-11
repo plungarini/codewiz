@@ -5,7 +5,7 @@ export const blockquote = (quote: string) => `
 			<path d="M9.4895 8.39648C8.55739 9.06718 7.86463 10.0679 7.56301 11.1798C7.35187 11.9579 7.34798 12.8502 7.81209 13.5102C8.25577 14.1418 9.11296 14.4493 9.85533 14.2424C11.2107 13.8665 11.6514 12.1375 10.7349 11.1027C10.3866 10.7102 9.87577 10.4652 9.35133 10.4418" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 			<path d="M15.4504 8.39648C14.5174 9.06718 13.8256 10.0679 13.5239 11.1798C13.3128 11.9579 13.3089 12.8502 13.773 13.5102C14.2167 14.1418 15.0739 14.4493 15.8163 14.2424C17.1716 13.8665 17.6124 12.1375 16.6958 11.1027C16.3475 10.7102 15.8367 10.4652 15.3123 10.4418" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 		</svg>
-		<div class="px-3 py-2 rounded-md bg-zinc-950 text-sm">
+		<div class="px-3 py-2 rounded-md bg-zinc-950 text-sm md:text-base">
 			${quote}
 		</div>
 	</blockquote>
