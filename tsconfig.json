@@ -26,6 +26,9 @@
       "dom"
     ]
   },
+	"exclude": [
+		"imgix-url-params/dist/parameters.json",
+	],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
