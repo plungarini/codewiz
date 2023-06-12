@@ -1,7 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { Subscription, filter } from 'rxjs';
-import { AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
 @Component({
@@ -16,7 +13,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChatsHistoryComponent implements OnDestroy {
+export class ChatsHistoryComponent {
 
 	@Input('chatHistory') set setChatHistory(value: any[]) {
 		if (!value) {
@@ -24,8 +21,8 @@ export class ChatsHistoryComponent implements OnDestroy {
 			return
 		};
 		this.chatHistory = value.map((v) => {
-			if (!v.name || v.name === 'New chat') {
-				this.getChatTitle(v.id);
+			if (!v.name || v.name === 'New Chat') {
+				this.getChatTitle(v.repo, v.id);
 			}
 			return v;
 		});
@@ -35,87 +32,40 @@ export class ChatsHistoryComponent implements OnDestroy {
 	currentChatId: string = '';
 	
 	private queue: Set<string> = new Set();
-	private routerSub: Subscription;
 
 	constructor(
 		private aiChatService: AiChatService,
 		private cdRef: ChangeDetectorRef,
-		public router: Router
 	) {
-		this.routerSub = this.router.events
-      .pipe(
-        filter(
-          (event) =>
-            event instanceof NavigationEnd
-        )
-      )
-      .subscribe((e) => {
-				if (e instanceof NavigationEnd) {
-					console.log(e.url);
-					this.cdRef.detectChanges();
-        }
-      });
 	}
 
-	ngOnDestroy(): void {
-		this.routerSub.unsubscribe();
+	trackBy(i: number, obj: any): string {
+		return obj?.id || i.toString();
 	}
 
-	getChatTitle(id: string) {
+	getChatTitle(repo: string, id: string) {
 		if (this.queue.has(id)) return;
+		
+		const chatIndex = this.chatHistory.findIndex(c => c.id === id);
+		if (this.chatHistory[chatIndex]?.name !== 'new' && !!this.chatHistory[chatIndex]?.name) return;
 
-		this.aiChatService.createChatTitle(
-			[
-				{
-					completed: true,
-					content: 'Hello, I need to implement a search feature in my Angular component using mock data. Can you help me with that?',
-					role: AiChatMessageRole.User,
-				},
-				{
-					completed: true,
-					content: 'Hi there! Sure, one way to do that is to create a mock service that returns an array of objects that resemble the data you expect to receive from the server.',
-					role: AiChatMessageRole.Assistant,
-				},
-				{
-					completed: true,
-					content: 'Okay, how should I structure the mock data?',
-					role: AiChatMessageRole.User,
-				},
-				{
-					completed: true,
-					content: 'You can structure the data using a class that defines the properties you need',
-					role: AiChatMessageRole.Assistant,
-				},
-				{
-					completed: true,
-					content: 'Hello again, I have another question. How can I implement pagination with mock data in my Angular component?',
-					role: AiChatMessageRole.User,
-				},
-				{
-					completed: true,
-					content: 'Hi there! To implement pagination with mock data, you can modify the mock service to return a subset of the data based on the current page and page size.',
-					role: AiChatMessageRole.Assistant,
-				},
-				{
-					completed: true,
-					content: 'Okay, thank you!',
-					role: AiChatMessageRole.User,
-				},
-			]
-		).subscribe(async (d) => {
-			this.queue.add(id);
+		const sub = this.aiChatService.createChatTitle(repo, id)
+			.subscribe(async (d) => {
+				if (!d.shouldUpdate) return;
+
+				this.queue.add(id);
 			
-			const i = this.chatHistory.findIndex(c => c.id === id);
-			this.chatHistory[i].name = d.completion;
-			console.log(d.completion);
+				const index = this.chatHistory.findIndex(c => c.id === id);
+				this.chatHistory[index].name = d.completion;
 
-			if (!!d.finishReason) {
-				this.queue.delete(id);
-				await this.saveChatName(d.completion, id);
-			};
+				if (!!d.finishReason) {
+					this.queue.delete(id);
+					await this.saveChatName(d.completion, id);
+					sub.unsubscribe();
+				};
 
-			this.cdRef.detectChanges();
-		})
+				this.cdRef.detectChanges();
+			});
 	}
 
 	private async saveChatName(title: string, id: string): Promise<void> {
