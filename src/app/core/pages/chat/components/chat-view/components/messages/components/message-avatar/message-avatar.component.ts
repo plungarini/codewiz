@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 
 @Component({
@@ -7,10 +7,7 @@ import { AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 	styleUrls: ['./message-avatar.component.scss'],
 	changeDetection: ChangeDetectionStrategy.Default
 })
-export class MessageAvatarComponent implements AfterViewInit {
-
-	@ViewChild('radialGradient') radialGradient: ElementRef | undefined;
-	@ViewChild('linearGradient') linearGradient: ElementRef | undefined;
+export class MessageAvatarComponent {
 	
 	@Input() name: string = '';
 	@Input() role: AiChatMessageRole = AiChatMessageRole.Assistant;
@@ -26,16 +23,6 @@ export class MessageAvatarComponent implements AfterViewInit {
 
 	constructor(
 		private cdRef: ChangeDetectorRef,
-	) {
-	}
-
-	ngAfterViewInit(): void {
-		this.startAura();
-	}
-
-	startAura(): void {
-		this.animate = true;
-		this.cdRef.detectChanges();
-	}
+	) { }
 
 }
