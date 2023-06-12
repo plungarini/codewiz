@@ -40,4 +40,8 @@ export class MessagesComponent {
 		this.cdRef.detectChanges();
 	}
 
+	trackBy(i: number, obj: AiChatMessage): string {
+		return obj?.id || i.toString();
+	}
+
 }

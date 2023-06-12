@@ -15,84 +15,87 @@
 </ng-template>
 
 <div class="max-w-5xl px-4 mx-auto">
-	<ng-container *ngFor="let msg of chat; let i = index">
-		<div
-			*ngIf="!msg.error; else error"
-			[ngClass]="{
-				'pt-3': msg.role === msgRoles.Assistant,
-				'pt-1': msg.role === msgRoles.User,
-			}"
-			class="relative flex flex-row w-full pb-3 space-x-4 group/message"
-		>
-			<app-message-avatar
-				name="Pietro Lungarini"
-				[role]="msg.role"
-				[stopAnim]="msg.completed"
-				[ngClass]="{ 'pt-2.5': msg.role === msgRoles.Assistant }"
-				class="block w-fit"
-			></app-message-avatar>
-			
-			<div class="relative max-w-full pr-10">
-				<div
-					[ngClass]="{
-						'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant,
-						'translate-y-3 opacity-0': !msg.content,
-						'translate-y-0 opacity-100': msg.content
-					}"
-					#msgContentDiv
-					class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0">
-					<ng-container *ngIf="msg.role === msgRoles.Assistant; else isUser">
-						<markdown
-							[data]="msg.content"
-							ngPreserveWhitespaces
-							clipboard
-							[clipboardButtonTemplate]="buttonTemplate"
-							class="block w-full max-w-full markdown"
-						></markdown>
-					</ng-container>
-					<ng-template #isUser>
-						<p class="text-sm whitespace-pre-wrap pt-0.5">{{msg.content}}</p>
-					</ng-template>
+	<ng-container *ngFor="let msg of chat; let i = index; trackBy: trackBy">
+		<ng-container *ngIf="msg && !msg?.hide">
+			<div
+				*ngIf="!msg.error?.message; else error"
+				[ngClass]="{
+					'pt-3': msg.role === msgRoles.Assistant,
+					'pt-1': msg.role === msgRoles.User,
+				}"
+				class="relative flex flex-row w-full pb-3 space-x-4 group/message"
+			>
+				<app-message-avatar
+					name="Pietro Lungarini"
+					[role]="msg.role"
+					[stopAnim]="msg.completed"
+					[ngClass]="{ 'pt-2.5': msg.role === msgRoles.Assistant }"
+					class="block w-fit"
+				></app-message-avatar>
+				
+				<div class="relative max-w-full pr-10">
+					<div
+						[ngClass]="{
+							'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant,
+							'translate-y-3 opacity-0': !msg.content,
+							'translate-y-0 opacity-100': msg.content
+						}"
+						#msgContentDiv
+						class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0">
+						<ng-container *ngIf="msg.role === msgRoles.Assistant; else isUser">
+							<markdown
+								[data]="msg.content"
+								ngPreserveWhitespaces
+								clipboard
+								[clipboardButtonTemplate]="buttonTemplate"
+								class="block w-full max-w-full markdown"
+							></markdown>
+						</ng-container>
+						<ng-template #isUser>
+							<p class="text-sm whitespace-pre-wrap pt-0.5">{{msg.content}}</p>
+						</ng-template>
+					</div>
+		
+					<app-ai-toolbar
+						*ngIf="msg.role === msgRoles.Assistant && msg.content.length > 0"
+						[show]="msg.role === msgRoles.Assistant && msg.content.length > 0 && !msg.showPageSections"
+						[msg]="{
+							content: msg.content,
+							role: msg.role,
+							completed: msg.completed,
+							error: msg.error,
+							pageSections: msg.pageSections
+						}"
+						[containerWidth]="msgContentDiv.clientWidth"
+						(onShowPageSections)="togglePageSections(i, true)"
+					></app-ai-toolbar>
+	
+	
+					<app-message-toolbar
+						*ngIf="msg.content"
+						class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
+					></app-message-toolbar>
 				</div>
 	
-				<app-ai-toolbar
-					*ngIf="msg.role === msgRoles.Assistant && msg.content.length > 0"
-					[show]="msg.role === msgRoles.Assistant && msg.content.length > 0 && !msg.showPageSections"
-					[msg]="{
-						content: msg.content,
-						role: msg.role,
-						completed: msg.completed,
-						error: msg.error,
-						pageSections: msg.pageSections
+				<app-pagesections-selector
+					[pageSections]="msg.pageSections"
+					[ngClass]="{
+						'translate-y-2 opacity-0 pointer-events-none': !msg.showPageSections,
+						'translate-y-0 opacity-100 pointer-events-auto': msg.showPageSections,
 					}"
-					[containerWidth]="msgContentDiv.clientWidth"
-					(onShowPageSections)="togglePageSections(i, true)"
-				></app-ai-toolbar>
-
-
-				<app-message-toolbar
-					*ngIf="msg.content"
-					class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
-				></app-message-toolbar>
+					[show]="!!msg.showPageSections"
+					(onClose)="togglePageSections(i, false)"
+					class="transition-all duration-500 no-scrollbar"
+				></app-pagesections-selector>
+	
 			</div>
-
-			<app-pagesections-selector
-				[pageSections]="msg.pageSections"
-				[ngClass]="{
-					'translate-y-2 opacity-0 pointer-events-none': !msg.showPageSections,
-					'translate-y-0 opacity-100 pointer-events-auto': msg.showPageSections,
-				}"
-				[show]="!!msg.showPageSections"
-				(onClose)="togglePageSections(i, false)"
-				class="transition-all duration-500 no-scrollbar"
-			></app-pagesections-selector>
-
-		</div>
-		<ng-template #error>
-			<div class="py-2 border-y border-zinc-600">
-				<p class="font-semibold">From: {{msg.role}}</p>
-				<p class="text-red-400 whitespace-pre-wrap">{{msg.error?.debug?.message}}</p>
-			</div>
-		</ng-template>
+			<ng-template #error>
+				<div class="py-2 border-y border-zinc-600">
+					<p class="font-semibold">From: {{msg.role}}</p>
+					<p class="text-red-400 whitespace-pre-wrap">{{msg.error?.debug?.message}}</p>
+				</div>
+			</ng-template>
+		</ng-container>
+		
 	</ng-container>
 </div>
