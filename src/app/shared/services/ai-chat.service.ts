@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { orderBy } from '@angular/fire/firestore';
-import { Router } from '@angular/router';
-import { Observable, filter, first, firstValueFrom, interval, lastValueFrom, map, of, startWith, switchMap } from 'rxjs';
+import { Observable, Subject, filter, firstValueFrom, interval, lastValueFrom, map, of, startWith, switchMap, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
 import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator, ClientOpenaiStatus } from '../models/ai-chat/ai-chat-status.model';
@@ -20,7 +19,6 @@ export class AiChatService {
 		private zone: NgZone,
 		private http: HttpClient,
 		private db: FirebaseExtendedService,
-		private router: Router,
 	) { }
 
 	getStatusPromise(): Promise<ClientOpenaiStatus> {
@@ -269,8 +267,9 @@ export class AiChatService {
 	}
 
 	createChatTitle(repo: string, id: string, timeoutSeconds = 30): Observable<AiChatTitleResponseData> {
+		const unsubscribe$ = new Subject<boolean>();
 		return this.getChatMessages(repo, id).pipe(
-			first(),
+			takeUntil(unsubscribe$),
 			switchMap((chat) => {
 				if (chat.length <= 2) {
 					return of({
@@ -297,6 +296,8 @@ export class AiChatService {
 						ev?.close();
 						clearInterval(timeoutCheckInterval);
 						observer.complete();
+						unsubscribe$.next(true);
+						unsubscribe$.complete();
 					}
 
 					const timeoutCheckInterval = setInterval(() => {
@@ -353,11 +354,8 @@ export class AiChatService {
 							const completionResponse = JSON.parse(event.data);
 							const choices = completionResponse.choices[0];
 							const message = choices?.delta?.content as string | undefined;
-
 							
-
 							if (message) {
-								console.warn('Title contains "\\n?"', message.includes('\n'))
 								result += message.split('\n')[0];
 								
 								sinceLastRes = new Date().getTime() / 1000;
@@ -415,14 +413,18 @@ export class AiChatService {
 		const uid = await this._getCurrentUid();
 		const newChatId = this.db.generateId();
 		
-		if (chatId === 'new' || !chatId || !this.router.url.includes(`/chat/${repo}/${chatId}`)) {
-			if (chatId === 'new' || !chatId) {
-				await this.createNewChat(repo, newChatId);
-			}
+		if (chatId === 'new' || !chatId) {
+			await this.createNewChat(repo, newChatId);
 		}
 		chatId = chatId ? chatId !== 'new' ? chatId : newChatId : newChatId;
 		const msgId = message.id || this.db.generateId();
 		await this.db.upsert(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${msgId}`, message);
+
+		const chatDoc = await this.db.getDocPromise<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats/${chatId}`);
+		if (chatDoc && (!chatDoc.name || chatDoc.name === 'New Chat')) {
+			const colLen = ((await this.db.getColRef(`users/${uid}/repos/${repo}/chats/${chatId}/messages`)) || new Set()).size;
+			if (colLen >= 3) await this.db.upsert(`users/${uid}/repos/${repo}/chats/${chatId}`, { updatedAt: new Date() });
+		}
 	}
 
 	async createNewChat(repo: string, chatId?: string) {
@@ -437,7 +439,10 @@ export class AiChatService {
 	getRepoChats(repo: string): Observable<AiUserRepoChat[]> {
 		return this._$getCurrentUid().pipe(
 			switchMap((uid) =>
-				this.db.getCol<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats`).pipe(
+				this.db.getCol<AiUserRepoChat>(
+					`users/${uid}/repos/${repo}/chats`,
+					'id', orderBy('updatedAt', 'desc')
+				).pipe(
 					map(chat => chat.map(c => ({ ...c, repo }))),
 				)
 			)

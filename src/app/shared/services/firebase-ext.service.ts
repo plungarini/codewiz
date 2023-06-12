@@ -23,7 +23,16 @@ export class FirebaseExtendedService {
 
 	constructor(
 		private firestore: Firestore
-	) {}
+	) { }
+	
+	async getColRef(path: string,  ...queryConstraints: QueryConstraint[]) {
+		if (!path) return undefined;
+
+    let ref: Query;
+    const colRef = collection(this.firestore, path) as CollectionReference;
+		ref = query(colRef, ...queryConstraints);
+		return await getDocs(ref);
+	}
 
   async getDocPromise<T>(path: string): Promise<T | undefined> {
     if (!path) return undefined;

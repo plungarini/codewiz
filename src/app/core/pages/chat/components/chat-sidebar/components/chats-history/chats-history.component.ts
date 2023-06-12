@@ -16,15 +16,16 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 export class ChatsHistoryComponent {
 
 	@Input('chatHistory') set setChatHistory(value: any[]) {
+		console.log('Chat updated', value);
 		if (!value) {
 			this.chatHistory = [];
 			return
 		};
-		this.chatHistory = value.map((v) => {
-			if (!v.name || v.name === 'New Chat') {
-				this.getChatTitle(v.repo, v.id);
+		this.chatHistory = value.map((c) => {
+			if (!c.name || c.name === 'New Chat') {
+				this.getChatTitle(c.repo, c.id);
 			}
-			return v;
+			return c;
 		});
 	};
 
@@ -36,8 +37,7 @@ export class ChatsHistoryComponent {
 	constructor(
 		private aiChatService: AiChatService,
 		private cdRef: ChangeDetectorRef,
-	) {
-	}
+	) {	}
 
 	trackBy(i: number, obj: any): string {
 		return obj?.id || i.toString();
