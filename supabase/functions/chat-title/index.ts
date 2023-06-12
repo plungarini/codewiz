@@ -107,14 +107,17 @@ serve(async (req) => {
 				role: ChatCompletionRequestMessageRoleEnum.System,
 				content: codeBlock`
 					${oneLine`
-						Now generate a concise title that accurately represents the key
-						argument discussed in this chat's message. The title should be
+						Now generate a short and concise title that accurately represents
+						the key argument discussed in this chat's message. The title should be
 						no longer than 30 characters.
 					`}
 					${oneLine`
 						Avoid including any unnecessary details or context from the
 						message. Output just the title as a plain text without any
 						additional formatting or quotes.
+					`}
+					${oneLine`
+						Make the title extremely short
 					`}
 					${oneLine`
 						Title:
@@ -124,7 +127,7 @@ serve(async (req) => {
 		];
 
 		const model = 'gpt-3.5-turbo-0301';
-		const maxCompletionTokenCount = 1024;
+		const maxCompletionTokenCount = 10;
 
 		const completionMessages: ChatCompletionRequestMessage[] = capMessages(
 			initMessages,
@@ -136,7 +139,7 @@ serve(async (req) => {
 		const completionOptions: CreateChatCompletionRequest = {
 			model,
 			messages: completionMessages,
-			max_tokens: 1024,
+			max_tokens: maxCompletionTokenCount,
 			temperature: 0.75,
 			stream: !!stream,
 		}
