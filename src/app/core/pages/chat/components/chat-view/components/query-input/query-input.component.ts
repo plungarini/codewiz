@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
+import { NavigationEnd, Router } from '@angular/router';
+import { Subscription, filter } from 'rxjs';
 
 @Component({
   selector: 'app-query-input',
@@ -23,9 +25,19 @@ export class QueryInputComponent {
 		validators: Validators.required
 	});
 
+	private routerSub: Subscription;
+
 	constructor(
 		private cdRef: ChangeDetectorRef,
-	) { }
+		private router: Router,
+	) {
+		this.routerSub = this.router.events.pipe(
+			filter((e) => e instanceof NavigationEnd)
+		).subscribe((e) => {
+			this.textAreaComponent?.nativeElement.focus();
+			this.cdRef.detectChanges();
+		})
+	}
 
 	handleDummyInputChange(event: Event): void {
 		const div = event.target as HTMLDivElement;
@@ -41,11 +53,6 @@ export class QueryInputComponent {
 				if (event.shiftKey) return;
 				event.preventDefault();
 				event.stopImmediatePropagation();
-				
-				/*
-					this.sendBtnClicked = true;
-					this.cdRef.detectChanges();
-				*/
 
 				this.submitMessage();
 				break;
@@ -53,13 +60,6 @@ export class QueryInputComponent {
 			default:
 				return;
 		}
-		
-		/*
-		setTimeout(() => {
-			this.sendBtnClicked = false;
-			this.cdRef.detectChanges();
-		}, 100);
-		*/
 	}
 
 	submitMessage(): void {

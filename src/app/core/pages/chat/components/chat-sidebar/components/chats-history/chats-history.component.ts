@@ -16,7 +16,6 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 export class ChatsHistoryComponent {
 
 	@Input('chatHistory') set setChatHistory(value: any[]) {
-		console.log('Chat updated', value);
 		if (!value) {
 			this.chatHistory = [];
 			return
