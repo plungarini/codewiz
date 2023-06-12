@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, animationFrameScheduler, catchError, finalize, of, switchMap } from 'rxjs';
 import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
-import { AiChatMessage, AiChatMessageRole, AiChatRepo } from 'src/app/shared/models/ai-chat/ai-chat.model';
+import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
 
@@ -18,61 +18,75 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChatViewComponent implements OnDestroy {
+export class ChatViewComponent implements OnInit, OnDestroy {
 	@ViewChild('mainChatContainer', { static: true }) mainChatContainer: ElementRef<HTMLDivElement> | undefined;
 
-	private selectedRepo: AiChatRepo = AiChatRepo.Angular;
 	gettingQuery = false;
 	autoscroll: boolean = true;
 	chat: AiChatMessage[] = [];
-
+	
 	status: ClientOpenaiStatus = {
 		title: 'OpenAI\'s APIs are online',
 		message: '',
 		link: 'https://status.openai.com/',
 		indicator: AiChatStatusIndicator.None,
 	}
-
+	
 	statusSub: Subscription;
 	chatSub: Subscription | undefined;
+	private selectedRepo: string = 'angular';
+	private chatId: string = '';
+	private chatLoaded = false;
 
 	constructor(
 		private ai: AiChatService,
 		private cdRef: ChangeDetectorRef,
 		private route: ActivatedRoute,
 		private router: Router,
-		private zone: NgZone
 	) {
 		this.statusSub = this.ai.getStatus().subscribe((s) => {
 			this.status = s;
 			console.warn('New openai status', this.status);
 			this.cdRef.detectChanges();
 		});
-
 		this.chatSub = this.route.paramMap
 			.pipe(
 				switchMap((params) => {
 					const repo = params.get('repo');
 					const id = params.get('id');
 
+					if (repo) {
+						this.selectedRepo = repo;
+					}
+
+					if (id && id !== this.chatId) {
+						this.chatId = id;
+						this.chatLoaded = false;
+					}
+
 					if (!id || id === 'new' || !repo) {
-						this.router.navigateByUrl(`/app/chat/${repo}/new`);
+						this.router.navigateByUrl(`/app/chat/${repo || 'angular'}/new`);
 						return of([])
 					};
 
 					return this.ai.getChatMessages(repo, id);
 				}),
-			).subscribe((messages) => {
-				this.chat = messages;
-				this.cdRef.markForCheck();	
+		).subscribe((messages) => {
+			this.chat = messages;
+			this.cdRef.markForCheck();	
+			
+			if (messages.length <= 0) {
+				const repo = this.route.snapshot.paramMap.get('repo');
+				this.router.navigateByUrl(`/app/chat/${repo}/new`);
+				this.cdRef.markForCheck();
+				return;
+			}
 
-				if (messages.length <= 0) {
-					const repo = this.route.snapshot.paramMap.get('repo');
-					this.router.navigateByUrl(`/app/chat/${repo}/new`);
-					this.cdRef.markForCheck();
-					return;
-				}
-			});
+			if (!this.chatLoaded) {
+				this.chatLoaded = true;
+				this.onMessageScroll(true, false);
+			};
+		});
 	}
 
 	ngOnDestroy(): void {
@@ -80,41 +94,49 @@ export class ChatViewComponent implements OnDestroy {
 		this.chatSub?.unsubscribe();
 	}
 
-	createQuery(query: string): void {
+	ngOnInit(): void {
+	}
+
+	async createQuery(query: string): Promise<void> {
 		if (!query) return console.error('Query is required.');
 		if (this.gettingQuery) return console.error('Another query is already running...');
+		if (!this.chatId || this.chatId === 'new') {
+			const newId = await this.ai.createNewChat(this.selectedRepo);
+			await this.router.navigate([`/app/chat/`, this.selectedRepo, newId]);
+		}
 
 		const userQuery: AiChatMessage = {
 			role: AiChatMessageRole.User,
-			content: query,
+			content: query.trim(),
 			completed: false,
-			// timestamp etc...
 		}
-		const assistantRes: AiChatMessage = {
-			role: AiChatMessageRole.Assistant,
-			content: '',
-			completed: false,
-			// timestamp etc...
-		}
-		this.chat.push(userQuery, assistantRes);
+
+		await this.ai.saveNewMessage(this.selectedRepo, this.chatId, userQuery);
 
 		this.onMessageScroll(true);
 
-		const newMsgIndex = this.chat.length - 1;
+		const newMsgIndex = this.chat.length + 1;
 		this.gettingQuery = true;
 		this.chat = [...this.chat]
 		this.cdRef.detectChanges();
 
 		let backupResult = '';
+		
+		console.log('Creating query...', [...this.chat])
 		this.ai.createQuery(this.selectedRepo, [...this.chat])
 			.pipe(
 				catchError((err) => {
 					const parsedErr = err.data ? JSON.parse(err.data) : { message: '', debug: undefined };
-					this.chat[newMsgIndex].content = backupResult;
-					this.chat[newMsgIndex].completed = true;
-					this.chat[newMsgIndex].error = {
-						debug: parsedErr?.debug,
-						message: parsedErr?.message,
+					this.chat[newMsgIndex] = {
+						role: AiChatMessageRole.Assistant,
+						content: backupResult,
+						completed: true,
+						error: {
+							debug: parsedErr?.debug || '',
+							message: parsedErr?.message || '',
+						},
+						id: this.chat[newMsgIndex]?.id || '',
+						pageSections: this.chat[newMsgIndex]?.pageSections || [],
 					};
 
 					this.chat = [...this.chat]
@@ -123,11 +145,21 @@ export class ChatViewComponent implements OnDestroy {
 					this.pingStatus();
 					return of(undefined);
 				}),
-				finalize(() => {
+				finalize(async () => {
 					this.gettingQuery = false;
-					this.chat[newMsgIndex].completed = true;
-					this.chat = [...this.chat]
+					this.chat[newMsgIndex] = {
+						role: AiChatMessageRole.Assistant,
+						content: backupResult,
+						completed: true,
+						error: this.chat[newMsgIndex]?.error || { },
+						id: this.chat[newMsgIndex]?.id || '',
+						pageSections: this.chat[newMsgIndex]?.pageSections || [],
+					};
+					
+					this.chat = [...this.chat];
 					this.cdRef.detectChanges();
+
+					await this.ai.saveNewMessage(this.selectedRepo, this.chatId, this.chat[newMsgIndex]);
 					return of(undefined);
 				})
 			)
@@ -135,14 +167,25 @@ export class ChatViewComponent implements OnDestroy {
 				if (!val) return;
 				backupResult = val.completion;
 
-				this.chat[newMsgIndex].content = val.completion;
+				this.chat[newMsgIndex] = {
+					role: AiChatMessageRole.Assistant,
+					content: val.completion || '',
+					completed: false,
+					id: this.chat[newMsgIndex]?.id || '',
+					pageSections: this.chat[newMsgIndex]?.pageSections || [],
+				};
 				
-				const pageSections = this.chat[newMsgIndex].pageSections;
+				const pageSections = this.chat[newMsgIndex]?.pageSections;
 				if (
 					(!pageSections || pageSections.length <= 0) &&
-					val.pageSections.length > 0
+					val.pageSections.length > 0 &&
+					this.chat[newMsgIndex]
 				) {
 					this.chat[newMsgIndex].pageSections = val.pageSections;
+				}
+
+				if (val.finishReason) {
+					//
 				}
 
 				this.onMessageScroll();
@@ -159,7 +202,7 @@ export class ChatViewComponent implements OnDestroy {
 		this.cdRef.detectChanges();
 	}
 
-	private onMessageScroll(bypass = false) {
+	private onMessageScroll(bypass = false, animation = true) {
 		if (!this.mainChatContainer) return;
 		const element = this.mainChatContainer.nativeElement;
 
@@ -172,7 +215,7 @@ export class ChatViewComponent implements OnDestroy {
 			const sub = animationFrameScheduler.schedule(() => {
 				this.mainChatContainer?.nativeElement.scroll({
 					top: element.scrollHeight,
-					behavior: 'smooth'
+					behavior: animation ? 'smooth' : 'instant' as ScrollOptions['behavior'],
 				});
 				sub.unsubscribe();
 			})
