@@ -3,10 +3,6 @@ export enum AiChatMessageRole {
   Assistant = 'assistant',
 }
 
-export enum AiChatRepo {
-	Angular = 'angular/angular'
-}
-
 type AiChatMessageError = {
 	message?: string;
 	debug?: {
@@ -21,6 +17,8 @@ type AiChatPageSection = {
 }
 
 export interface AiChatMessage extends AiChatMessageReqItem  {
+	hide?: boolean;
+	id?: string;
 	completed: boolean;
 	pageSections?: AiChatPageSection[];
 	showPageSections?: boolean;
@@ -33,7 +31,7 @@ type AiChatMessageReqItem = {
 }
 
 export type AiChatRequestData = {
-	repo: AiChatRepo;
+	repo: string;
 	messages: AiChatMessageReqItem[];
 	onlyPrompt: boolean;
 	stream: boolean;
@@ -46,6 +44,7 @@ export type AiChatTitleRequestData = {
 
 export type AiChatTitleResponseData = {
 	completion: string;
+	shouldUpdate: boolean;
 	finishReason?: 'stop' | 'lenght';
 }
 
