@@ -12,7 +12,8 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   styles: [
     `
       :host {
-        @apply relative flex-1;
+        @apply relative w-full;
+				display: inline-grid;
       }
     `
 	],
