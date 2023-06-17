@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import { error, warn } from 'firebase-functions/logger';
+import { sendEmailActionCode } from './functions/email_action_code';
 import { elaborateEmbeddings } from './functions/embeddings';
 import { githubFolderFetcher } from './functions/githubFetcher';
 import { scrapeDocumentedPage } from './functions/scraper';
@@ -86,4 +87,8 @@ export const calculateOpenaiTokens = FFN.runWith({
 		error(err);
 		res.status(400);
 	}
+});
+
+export const emailActionCode = FFN.runWith({ memory: '128MB', timeoutSeconds: 60 }).https.onCall(async (data, ctx) => {
+	return await sendEmailActionCode(data);
 });
