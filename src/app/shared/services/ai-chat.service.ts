@@ -133,7 +133,7 @@ export class AiChatService {
 		if (chat.length <= 0) throw new Error('Invalid chat array');
 		return new Observable((observer) => {
 			let result = '';
-			let finishReason: "stop" | "lenght" | undefined = undefined;
+			let finishReason: AiChatTitleResponseData['finishReason'] = undefined;
 			const pageSections: { id: string; title: string; }[] = [];
 			
 			let sinceLastRes = new Date().getTime() / 1000; // In seconds
@@ -280,7 +280,7 @@ export class AiChatService {
 
 				return new Observable<AiChatTitleResponseData>((observer) => {
 					let result = '';
-					let finishReason: "stop" | "lenght" | undefined = undefined;
+					let finishReason: AiChatTitleResponseData['finishReason'] = undefined;
 					
 					let sinceLastRes = new Date().getTime() / 1000; // In seconds
 					const normMessages = chat

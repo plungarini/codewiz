@@ -1,3 +1,5 @@
+import { Timestamp } from '@angular/fire/firestore';
+
 export enum AiChatMessageRole {
   User = 'user',
   Assistant = 'assistant',
@@ -23,6 +25,8 @@ export interface AiChatMessage extends AiChatMessageReqItem  {
 	pageSections?: AiChatPageSection[];
 	showPageSections?: boolean;
 	error?: AiChatMessageError;
+	updatedAt?: Timestamp;
+	createdAt?: Timestamp;
 }
 
 type AiChatMessageReqItem = {
@@ -42,10 +46,12 @@ export type AiChatTitleRequestData = {
 	stream: boolean;
 }
 
+type AiChatFinishReason = 'stop' | 'length' | 'function_call' | 'content_filter' | null;
+
 export type AiChatTitleResponseData = {
 	completion: string;
 	shouldUpdate: boolean;
-	finishReason?: 'stop' | 'lenght';
+	finishReason?: AiChatFinishReason;
 }
 
 export type PageSection = {
@@ -56,7 +62,7 @@ export type PageSection = {
 export type AiChatResponseData = {
 	completion: string;
 	pageSections: PageSection[];
-	finishReason?: 'stop' | 'lenght';
+	finishReason?: AiChatFinishReason;
 }
 
 // TODO: Replace with proper type
