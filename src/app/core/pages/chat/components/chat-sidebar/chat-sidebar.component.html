@@ -37,6 +37,7 @@
 	<div *ngIf="$reposChats | async as chats" class="flex max-h-full overflow-hidden shrink">
 		<app-chats-history
 			[chatHistory]="chats"
+			(onDelete)="deleteChat($event)"
 		></app-chats-history>
 	</div>
 </div>

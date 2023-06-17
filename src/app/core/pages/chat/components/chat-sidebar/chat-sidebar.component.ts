@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, switchMap } from 'rxjs';
 import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
@@ -24,11 +24,11 @@ export class ChatSidebarComponent {
 
 	private _$selectedRepo = new Subject<string>();
 
-	constructor(
-		private chatService: AiChatService,
-		private router: Router,
-		private cdRef: ChangeDetectorRef
-	) {
+	private chatService = inject(AiChatService);
+	private router = inject(Router);
+	private cdRef = inject(ChangeDetectorRef);
+
+	constructor( ) {
 		this.$reposChats = this._$selectedRepo.asObservable().pipe(
 			switchMap((repo) => this.chatService.getRepoChats(repo))
 		)
@@ -45,6 +45,11 @@ export class ChatSidebarComponent {
 			this.cdRef.markForCheck();
 		}
 		this.cdRef.markForCheck();
+	}
+
+	async deleteChat(opt: { repo: string; id: string }): Promise<void> {
+		if (!opt) return console.error('Error on deleting chat, chat details are not defined', opt);
+		await this.chatService.deleteChat(opt.repo, opt.id);
 	}
 
 }
