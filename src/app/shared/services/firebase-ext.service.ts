@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import {
 	collection, collectionData, CollectionReference,
 	deleteDoc,
@@ -20,10 +20,10 @@ import { Observable, of } from 'rxjs';
   providedIn: 'root',
 })
 export class FirebaseExtendedService {
+	
+	private firestore = inject(Firestore);
 
-	constructor(
-		private firestore: Firestore
-	) { }
+	constructor( ) { }
 	
 	async getColRef(path: string,  ...queryConstraints: QueryConstraint[]) {
 		if (!path) return undefined;
@@ -104,4 +104,16 @@ export class FirebaseExtendedService {
     const docRef = doc(this.firestore, path);
     return await deleteDoc(docRef);
   }
+
+	async deleteCollection(path: string, ...queryConstraints: QueryConstraint[]): Promise<void> {
+		if (!path) return;
+		
+		const colRef = await this.getColRef(path, ...queryConstraints);
+		colRef?.docs.forEach((d) => {
+			this.delete(path + '/' + d.id)
+				.catch(err => {
+					console.warn(`Unable to delete doc at ${path}/${d.id}`, err);
+				});
+		});
+	}
 }
