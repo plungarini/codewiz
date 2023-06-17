@@ -9,7 +9,7 @@ import { Subscription, filter } from 'rxjs';
   styles: [
     `
       :host {
-				@apply absolute bottom-0 left-0 w-full px-6;
+				@apply absolute bottom-12 sm:bottom-0 left-0 w-full px-6;
       }
     `
   ],
