@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { AiUserRepoChat } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
@@ -8,16 +8,13 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   styles: [
     `
       :host {
-        @apply block mt-4 overflow-x-hidden overflow-y-scroll pr-5 shrink;
+        @apply block mt-2 overflow-x-hidden overflow-y-auto pr-6 shrink;
       }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatsHistoryComponent {
-
-	groupedDocuments: { date: string, documents: AiUserRepoChat[] }[] = [];
-
 	@Input('chatHistory') set setChatHistory(value: AiUserRepoChat[]) {
 		if (!value) {
 			this.chatHistory = [];
@@ -58,15 +55,18 @@ export class ChatsHistoryComponent {
 		});
 	};
 
+	@Output('onDelete') onDelete = new EventEmitter<{ repo: string; id: string }>();
+
+	groupedDocuments: { date: string, documents: AiUserRepoChat[] }[] = [];
 	chatHistory: AiUserRepoChat[] = [];
 	currentChatId: string = '';
 	
 	private queue: Set<string> = new Set();
 
-	constructor(
-		private aiChatService: AiChatService,
-		private cdRef: ChangeDetectorRef,
-	) {	}
+	private aiChatService = inject(AiChatService);
+	private cdRef = inject(ChangeDetectorRef);
+	
+	constructor() { }
 
 	trackBy(i: number, obj: AiUserRepoChat): string {
 		return obj?.id || i.toString();
@@ -100,6 +100,11 @@ export class ChatsHistoryComponent {
 	private async saveChatName(title: string, id: string): Promise<void> {
 		const chat = this.chatHistory.find(c => c.id === id);
 		await this.aiChatService.saveChatName(title, chat.repo, id);
+	}
+
+	deleteChat(repo: string, id: string): void {
+		if (!repo || !id) return console.error('Error on delete, chat repo or chat id is undefined', { repo, id });
+		this.onDelete.emit({ repo, id });
 	}
 
 }

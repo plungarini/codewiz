@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, NgZone, inject } from '@angular/core';
 import { orderBy } from '@angular/fire/firestore';
+import { Router } from '@angular/router';
 import { Observable, Subject, filter, firstValueFrom, interval, lastValueFrom, map, of, startWith, switchMap, takeUntil } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
@@ -15,11 +16,12 @@ import { FirebaseExtendedService } from './firebase-ext.service';
 export class AiChatService {
 	private statusUrl = 'https://status.openai.com/api/v2/summary.json';
 
-	constructor(
-		private zone: NgZone,
-		private http: HttpClient,
-		private db: FirebaseExtendedService,
-	) { }
+	private zone = inject(NgZone);
+	private http = inject(HttpClient);
+	private db = inject(FirebaseExtendedService);
+	private router = inject(Router);
+	
+	constructor() { }
 
 	getStatusPromise(): Promise<ClientOpenaiStatus> {
 		const $status = this.http.get<AiChatStatus>(this.statusUrl).pipe(
@@ -460,6 +462,18 @@ export class AiChatService {
 				)
 			)
 		);
+	}
+
+	async deleteChat(repo: string, id: string): Promise<void> {
+		const uid = await this._getCurrentUid();
+		try {
+			const path = `users/${uid}/repos/${repo}/chats/${id}`;
+			await this.db.deleteCollection(`${path}/messages`);
+			await this.db.delete(path);
+			this.router.navigateByUrl(`/app/chat/${repo}/new`);
+		} catch (err) {
+			console.error('Unable to delete collection', err);
+		}
 	}
 
 	private _$getCurrentUid(): Observable<string> {
