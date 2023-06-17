@@ -1,0 +1,114 @@
+<div class="w-full max-w-sm mx-auto lg:w-96">
+	<div>
+		<img class="w-auto h-12" src="assets/logo/codewhiz_logo_mask.svg" alt="CodeWhizAi">
+		<h2 class="mt-6 text-3xl font-bold text-zinc-100">Sign in to your account</h2>
+	</div>
+
+	<div class="mt-8">
+		<div>
+			<div>
+				<p class="text-sm font-medium text-zinc-400">Sign in with</p>
+
+				<div class="grid grid-cols-2 gap-3 mt-1">
+					<div>
+						<a (click)="googleLogin()" class="inline-flex justify-center w-full px-3 py-2 transition-colors duration-300 rounded-md shadow-sm cursor-pointer bg-zinc-800 text-zinc-200 ring-1 ring-inset ring-zinc-600 hover:bg-zinc-700 focus:outline-offset-0">
+							<span class="sr-only">Sign in with Google</span>
+							<svg class="w-6 h-6" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd" clip-rule="evenodd" d="M7.56386 15.1723C7.65999 15.0757 7.67806 14.9268 7.61406 14.8064C7.24805 14.1181 7.027 13.3418 7.027 12.5093C7.027 11.4873 7.34879 10.5459 7.88147 9.75758C7.96488 9.63413 7.95411 9.46792 7.84907 9.36227L5.04414 6.54077C4.92103 6.41693 4.71824 6.42374 4.60855 6.5596C3.29316 8.18885 2.5 10.2564 2.5 12.5093C2.5 14.5586 3.15875 16.453 4.26795 18.006C4.37341 18.1537 4.58569 18.167 4.71363 18.0383L7.56386 15.1723Z" fill="currentColor" />
+								<path fill-rule="evenodd" clip-rule="evenodd" d="M8.91755 8.30893C9.02168 8.41365 9.18602 8.42617 9.30979 8.34563C10.0859 7.84062 11.0062 7.53979 11.9994 7.53979C13.1424 7.53979 14.2174 7.91579 15.1074 8.62879C15.3074 8.78879 15.5964 8.77179 15.7764 8.58879L18.2514 6.06979C18.3474 5.97079 18.3994 5.83779 18.3944 5.70079C18.3894 5.56279 18.3274 5.43379 18.2244 5.34279C16.5064 3.83779 14.2954 3.00879 11.9994 3.00879C9.78507 3.00879 7.74852 3.77312 6.13147 5.04804C5.99383 5.15657 5.98525 5.36024 6.10885 5.48452L8.91755 8.30893Z" fill="currentColor" />
+								<path fill-rule="evenodd" clip-rule="evenodd" d="M15.0946 16.7085C14.9906 16.6038 14.8263 16.5912 14.7025 16.6716C13.9162 17.1822 12.9879 17.4787 11.9999 17.4787C10.8207 17.4787 9.74634 17.0556 8.89523 16.3667C8.77075 16.2659 8.5891 16.2699 8.47614 16.3835L5.69381 19.1797C5.5749 19.2992 5.57747 19.4935 5.70349 19.6055C7.38162 21.0968 9.58423 22.0087 11.9999 22.0087C14.1962 22.0087 16.2443 21.2509 17.8748 19.9663C18.0125 19.8578 18.0211 19.6542 17.8976 19.5299L15.0946 16.7085Z" fill="currentColor" />
+								<path fill-rule="evenodd" clip-rule="evenodd" d="M21.3379 10.7952C21.2929 10.5602 21.0869 10.3892 20.8469 10.3892H11.9999C11.7229 10.3892 11.4999 10.6122 11.4999 10.8892V14.2192C11.4999 14.4952 11.7229 14.7192 11.9999 14.7192H16.4579C16.3628 14.9108 16.2525 15.0914 16.1332 15.2652C16.0492 15.3876 16.0603 15.5531 16.1649 15.6584L18.9677 18.4795C19.0908 18.6034 19.2937 18.5966 19.4033 18.4607C20.3506 17.286 21.0274 15.8745 21.3279 14.3142C21.4419 13.7332 21.4999 13.1262 21.4999 12.5092C21.4999 11.9372 21.4449 11.3602 21.3379 10.7952Z" fill="currentColor" />
+							</svg>
+							<p class="inline mt-0 ml-1 text-zinc-200">Google</p>
+						</a>
+					</div>
+
+					<div>
+						<a (click)="githubLogin()" class="inline-flex justify-center w-full px-3 py-2 transition-colors duration-300 rounded-md shadow-sm cursor-pointer bg-zinc-800 text-zinc-200 ring-1 ring-inset ring-zinc-600 hover:bg-zinc-700 focus:outline-offset-0">
+							<span class="sr-only">Sign in with GitHub</span>
+							<svg class="w-6 h-6" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.20898C6.762 3.20898 2.5 7.47098 2.5 12.709C2.5 16.835 5.24 20.563 9.164 21.776C9.324 21.828 9.498 21.792 9.627 21.686C9.757 21.58 9.825 21.416 9.809 21.249C9.669 19.856 10.47 18.38 10.812 18.026C10.944 17.891 10.988 17.692 10.925 17.514C10.862 17.335 10.704 17.206 10.516 17.183C8.725 16.955 7.067 16.347 7.067 13.457C7.063 12.738 7.337 12.051 7.836 11.522C7.968 11.383 8.009 11.181 7.941 11.002C7.75 10.497 7.729 9.93198 7.877 9.40998C8.168 9.45798 8.731 9.62898 9.608 10.215C9.728 10.296 9.877 10.317 10.015 10.282C11.312 9.93398 12.682 9.93398 13.979 10.282C14.116 10.317 14.266 10.296 14.386 10.215C15.27 9.62398 15.835 9.45498 16.115 9.40598C16.264 9.92998 16.245 10.496 16.054 11.003C15.986 11.183 16.027 11.385 16.16 11.523C16.654 12.043 16.927 12.727 16.927 13.448C16.927 16.387 15.273 16.974 13.486 17.171C13.296 17.191 13.135 17.319 13.071 17.498C13.006 17.678 13.049 17.879 13.182 18.016C13.512 18.357 14.321 19.872 14.185 21.26C14.168 21.427 14.236 21.591 14.367 21.696C14.457 21.771 14.569 21.809 14.682 21.809C14.732 21.809 14.783 21.801 14.832 21.785C18.82 20.53 21.5 16.883 21.5 12.709C21.5 7.47098 17.238 3.20898 12 3.20898Z" fill="currentColor" />
+							</svg>
+							<p class="inline mt-0 ml-1 text-zinc-200">Github</p>
+						</a>
+					</div>
+				</div>
+			</div>
+
+			<div class="relative mt-6">
+				<div class="absolute inset-0 flex items-center" aria-hidden="true">
+					<div class="w-full border-t border-zinc-600"></div>
+				</div>
+				<div class="relative flex justify-center text-sm">
+					<span class="px-2 bg-zinc-900 text-zinc-400">Or continue with</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="mt-6">
+			<form [formGroup]="form" (ngSubmit)="emailLogin(form)" class="space-y-4">
+				<div>
+					<label for="email" class="block text-sm font-medium text-zinc-400">Email address</label>
+					<div class="mt-1">
+						<input formControlName="email" id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-md py-1.5 shadow-sm ring-inset border border-zinc-600 focus:border-highlight-600 placeholder:text-zinc-400 text-zinc-200 focus:outline-none outline-highlight-500 bg-zinc-800 focus:ring-2 transition-all duration-300 ring-0 ring-highlight-600 focus:ring-highlight-600 sm:text-sm sm:leading-6">
+					</div>
+				</div>
+
+				<div class="space-y-1">
+					<label for="password" class="block text-sm font-medium text-zinc-400">Password</label>
+					<div class="mt-1">
+						<input formControlName="password" id="password" name="password" type="password" autocomplete="current-password" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{0,30}$" required class="block w-full rounded-md py-1.5 shadow-sm ring-inset border border-zinc-600 focus:border-highlight-600 placeholder:text-zinc-400 focus:outline-none outline-highlight-500 text-zinc-200 bg-zinc-800 focus:ring-2 transition-all duration-300 ring-0 ring-highlight-600 focus:ring-highlight-600 sm:text-sm sm:leading-6">
+					</div>
+				</div>
+
+				<ng-template #formErrorsIcon>
+					<div class="inline-block p-1 text-red-700 transform bg-red-200 rounded-full w-min">
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M16.2178 21H7.78313C4.83503 21 3 18.9188 3 15.9736V8.02638C3 5.08119 4.83503 3 7.78411 3H16.2178C19.1659 3 21 5.08119 21 8.02638V15.9736C21 18.9188 19.1572 21 16.2178 21Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M12.0059 8.10742V11.9993M12.0059 15.6926V15.7407" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</div>
+				</ng-template>
+
+				<ng-container *ngIf="loginError">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+						<span>{{ loginError }}</span>
+					</span>
+				</ng-container>
+
+				<ng-container *ngIf="form.controls.email.touched && form.controls.email.invalid">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+						<span>{{ getEmailErrMsg() }}</span>
+					</span>
+				</ng-container>
+
+				<ng-container *ngIf="form.controls.password.touched && form.controls.password.invalid">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngIf="form.controls.password.invalid && !form.controls.password.errors?.['pattern']">
+							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+							<span>{{ getPasswErrMsg() }}</span>
+						</ng-container>
+						<ng-container *ngIf="form.controls.password.errors?.['pattern']">
+							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+							<span>This password is not valid. Do you have Caps Lock enabled?</span>
+						</ng-container>
+					</span>
+				</ng-container>
+
+				<div class="flex items-center justify-between">
+					<div></div>
+					<div class="text-sm">
+						<a routerLink="/auth/reset/new-password" class="font-medium text-highlight-600 hover:text-highlight-500">Forgot your password?</a>
+					</div>
+				</div>
+
+				<div class="flex flex-col space-y-4">
+					<button type="submit" [disabled]="!form.valid" class="flex items-center justify-center w-full px-3 py-2 text-sm font-semibold text-white transition-all duration-300 rounded-md shadow-sm disabled:hover:bg-highlight-600 disabled:cursor-not-allowed disabled:opacity-80 bg-highlight-600 hover:bg-highlight-500 ring-1 ring-highlight-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-highlight-600">Sign in</button>
+					<p class="mt-0 text-center">Don't have an account? <a routerLink="/auth/signup" class="font-medium text-highlight-600 hover:text-highlight-400">Sign up</a> instead!</p>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
