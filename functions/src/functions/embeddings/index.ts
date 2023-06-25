@@ -179,7 +179,6 @@ export const elaborateEmbeddings = async (req: {
       }
     }
   } catch (err) {
-    // TODO: decide how to better handle failed embeddings
     error(
       `Failed to generate embeddings for '${
         req.id
