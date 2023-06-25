@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, NgZone, inject } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { orderBy } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { Observable, Subject, filter, firstValueFrom, interval, lastValueFrom, map, of, startWith, switchMap, takeUntil } from 'rxjs';
+import { UsersService } from 'src/app/auth/services/users.service';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
 import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator, ClientOpenaiStatus } from '../models/ai-chat/ai-chat-status.model';
@@ -16,12 +17,14 @@ import { FirebaseExtendedService } from './firebase-ext.service';
 export class AiChatService {
 	private statusUrl = 'https://status.openai.com/api/v2/summary.json';
 
-	private zone = inject(NgZone);
-	private http = inject(HttpClient);
-	private db = inject(FirebaseExtendedService);
-	private router = inject(Router);
 	
-	constructor() { }
+	constructor(
+		private zone: NgZone,
+		private http: HttpClient,
+		private db: FirebaseExtendedService,
+		private router: Router,
+		private users: UsersService
+	) { }
 
 	getStatusPromise(): Promise<ClientOpenaiStatus> {
 		const $status = this.http.get<AiChatStatus>(this.statusUrl).pipe(
@@ -477,8 +480,7 @@ export class AiChatService {
 	}
 
 	private _$getCurrentUid(): Observable<string> {
-		// TODO: Replace this with actual current user when implemented Authentication
-		return of('test');
+		return this.users.fireUser$.pipe(map((u) => u?.uid || ''))
 	}
 
 	private _getCurrentUid(): Promise<string> {

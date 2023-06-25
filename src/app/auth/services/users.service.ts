@@ -2,15 +2,14 @@ import { Injectable } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { getAuth, User } from '@firebase/auth';
 import { user } from 'rxfire/auth';
-import { firstValueFrom, Observable, ReplaySubject, take } from 'rxjs';
-import { FirebaseExtendedService } from 'src/app/shared/services/firebase-extended.service';
+import { firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { User as DbUser, UserDetails } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UsersService {
-  public currentUserDb$: ReplaySubject<DbUser> = new ReplaySubject(1);
+export class UsersService {	
 
   private defaultRole: DbUser['role'] = {
 		id: 'customer',
@@ -21,7 +20,22 @@ export class UsersService {
 
 	constructor(
 		private db: FirebaseExtendedService,
-	) { }
+	) {	}
+
+	get user$(): Observable<DbUser | null> {
+		return user(this.auth).pipe(
+			switchMap(user => {
+				if (user && user?.uid) {
+					return this.get(user.uid);
+				} else {
+					return of(null);
+				}
+			})
+		)
+	};
+	get fireUser$(): Observable<User | null> {
+		return user(this.auth);
+	};
 
   /**
    * Update or create a user.
@@ -97,8 +111,13 @@ export class UsersService {
    *
    * @param id Set it to firebase.User.uid
    */
-  get(id: string): Observable<DbUser | undefined> {
-    return this.db.getDoc<DbUser>(`users/${id}`);
+  get(id: string): Observable<DbUser | null> {
+		return this.db.getDoc<DbUser>(`users/${id}`).pipe(
+			map((u) => {
+				if (!u) return null;
+				return { ...u, id };
+			})
+		);
   }
 
   /**
@@ -106,9 +125,7 @@ export class UsersService {
    */
   getCurrentFire(): Promise<User | null> {
 		return firstValueFrom(
-			user(this.auth).pipe(
-				take(1),
-			)
+			user(this.auth)
 		);
-  }
+	}
 }
