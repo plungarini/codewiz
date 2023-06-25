@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AuthProvider, confirmPasswordReset, createUserWithEmailAndPassword, getAuth, GithubAuthProvider, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut, User } from '@angular/fire/auth';
+import { AuthProvider, confirmPasswordReset, createUserWithEmailAndPassword, getAuth, GithubAuthProvider, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from '@angular/fire/auth';
 import { doc, getDoc, getFirestore } from '@angular/fire/firestore';
 import { getFunctions, httpsCallable } from '@angular/fire/functions';
 import { Router } from '@angular/router';
-import { user } from 'rxfire/auth';
-import { Observable, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
-import { FirebaseExtendedService } from 'src/app/shared/services/firebase-extended.service';
 import { User as DbUser } from '../models/user.model';
 import { FirebaseErrorHandling } from '../namespaces/error-auth';
 import { UsersService } from './users.service';
@@ -16,18 +12,14 @@ import { UsersService } from './users.service';
 	providedIn: 'root'
 })
 export class AuthenticationService {
-	
-	user$: Observable<DbUser | null> = of(null);
-	fireUser$: Observable<User | null> = of(null);
 		
 	private auth = getAuth();
 	
 	constructor(
-		private db: FirebaseExtendedService,
 		private userService: UsersService,
 		private router: Router
 	) {
-		this.initUser();
+		
 	}
 	
 	/**
@@ -129,20 +121,6 @@ export class AuthenticationService {
 		return condition;
 	}
 	
-	private initUser(): void {
-		this.user$ = user(this.auth).pipe(
-			switchMap(user => {
-				if (user) {
-					const user$ = this.db.getDoc<DbUser>(`users/${user.uid}`).pipe(map(userDb => ({ ...userDb, id: user.uid }) as DbUser));
-					return user$;
-				} else {
-					return of(null);
-				}
-			})
-		);
-		this.fireUser$ = user(this.auth);
-	}
-	
 	private async oAuthLogin(provider: AuthProvider): Promise<any> {
 		try {
 			const credential = await signInWithPopup(this.auth, provider);
@@ -169,6 +147,6 @@ export class AuthenticationService {
 			this.router.navigate([returnUrl]);
 			localStorage.removeItem('returnUrl');
 		} else
-			this.router.navigate(['/app']); // TODO Set custom redirect after login.
+			this.router.navigate(['/app']);
 	}
 }
