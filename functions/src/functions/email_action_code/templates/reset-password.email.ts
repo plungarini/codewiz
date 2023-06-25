@@ -9,7 +9,7 @@
 export class EmailTemplateOptions {
   resetLink?: string = '';
   pageTitle?: string = 'Reset your password | CodeWhizAi';
-  brandLogo?: string = 'https://codewhizai.club/assets/logo/codewhizai_icon.png';
+  brandLogo?: string = 'https://codewhizai.club/assets/logo/svg/codewhizai_icon.png';
   brandLogoFull?: string = '';
   bodyTitle?: string = 'Reset your password';
   bodyText?: string = 'You received this email because you requested to change your password on your <b>CodeWhizAi</b> account.';
