@@ -1,5 +1,15 @@
 import { Injectable } from '@angular/core';
-import { AuthProvider, confirmPasswordReset, createUserWithEmailAndPassword, getAuth, GithubAuthProvider, GoogleAuthProvider, signInWithEmailAndPassword, signInWithPopup, signOut } from '@angular/fire/auth';
+import {
+	AuthProvider,
+	confirmPasswordReset,
+	createUserWithEmailAndPassword,
+	getAuth,
+	GithubAuthProvider,
+	GoogleAuthProvider,
+	signInWithEmailAndPassword,
+	signInWithPopup,
+	signOut
+} from '@angular/fire/auth';
 import { doc, getDoc, getFirestore } from '@angular/fire/firestore';
 import { getFunctions, httpsCallable } from '@angular/fire/functions';
 import { Router } from '@angular/router';
@@ -18,9 +28,7 @@ export class AuthenticationService {
 	constructor(
 		private userService: UsersService,
 		private router: Router
-	) {
-		
-	}
+	) {	}
 	
 	/**
 		* Performs a Login with GOOGLE provider through Firebase.

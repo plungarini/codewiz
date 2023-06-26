@@ -1,30 +1,21 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { Observable } from 'rxjs';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { map, take, tap } from 'rxjs/operators';
-import { AuthenticationService } from '../../services/authentication.service';
+import { UsersService } from '../../services/users.service';
 
 
-@Injectable({
-	providedIn: 'root'
-})
-export class AdminGuard implements CanActivate {
+export const AdminGuard: CanActivateFn = (route, state) => {
+  const usersService = inject(UsersService);
+  const router = inject(Router);
 
-	constructor(private auth: AuthenticationService, private router: Router) {}
-
-	canActivate(
-		next: ActivatedRouteSnapshot,
-		state: RouterStateSnapshot): Observable<boolean> {
-
-		return this.auth.user$.pipe(
-			take(1),
-			map(user => (user && (user.role?.id === 'admin' || user.role?.id === 'super-admin')) ? true : false),
-			tap(isAdmin => {
-				if (!isAdmin) {
-					console.error('Access denied - Admins only');
-					this.router.navigate(['/app']);
-				}
-			})
-		);
-	}
+  return usersService.user$.pipe(
+		take(1),
+		map(user => (user && (user.role?.id === 'admin' || user.role?.id === 'super-admin')) ? true : false),
+		tap(isAdmin => {
+			if (!isAdmin) {
+				console.error('Access denied - Admins only');
+				router.navigate(['/app']);
+			}
+		})
+	);
 }
