@@ -1,1 +1,24 @@
-<p>repo-details works!</p>
+<ng-container>
+	<div
+		*ngIf="repo$ | async; else isNewRepo"
+		class="w-full mt-6 mb-1"
+	>
+		<h2>Edit repo</h2>
+	</div>
+
+	<ng-template #isNewRepo>
+		<div class="w-full mt-6 mb-1 border-b border-zinc-800">
+			<h2>New repo</h2>
+		</div>
+	</ng-template>
+
+	<app-repo-preview
+		[repo]="repo$"
+	></app-repo-preview>
+
+	<app-repo-meta
+		[repo]="repo$ | async"
+		class="mt-6"
+	></app-repo-meta>
+	
+</ng-container>
