@@ -10,31 +10,27 @@ import { User as DbUser, UserDetails } from '../models/user.model';
   providedIn: 'root',
 })
 export class UsersService {	
-
-  private defaultRole: DbUser['role'] = {
-		id: 'customer',
-		name: 'Customer',
-		permissions: [],
-  };
   private auth = getAuth();
 
 	constructor(
 		private db: FirebaseExtendedService,
 	) {	}
 
-	get user$(): Observable<DbUser | null> {
+	get user$(): Observable<DbUser | undefined> {
 		return user(this.auth).pipe(
 			switchMap(user => {
 				if (user && user?.uid) {
 					return this.get(user.uid);
 				} else {
-					return of(null);
+					return of(undefined);
 				}
 			})
 		)
 	};
-	get fireUser$(): Observable<User | null> {
-		return user(this.auth);
+	get fireUser$(): Observable<User | undefined> {
+		return user(this.auth).pipe(
+			map((a) => a || undefined)
+		);
 	};
 
   /**
@@ -55,21 +51,20 @@ export class UsersService {
         name: user.displayName || additionalDetails?.fullName || '',
         email: user.email || '',
         disabled: false,
-        role: additionalDetails?.role || this.defaultRole,
         details: (isSignup
           ? {
-              imgUrl: user.photoURL || null,
+              imgUrl: user.photoURL || undefined,
               phoneNumber:
-                user.phoneNumber || additionalDetails?.phoneNumber || null,
+                user.phoneNumber || additionalDetails?.phoneNumber || undefined,
               lastLogin: Timestamp.fromDate(new Date()),
-              profileUrlRef: additionalDetails?.profileUrlRef || null,
+              profileUrlRef: additionalDetails?.profileUrlRef || undefined,
             }
           : {
-              imgUrl: user.photoURL || null,
+              imgUrl: user.photoURL || undefined,
               phoneNumber:
-                user.phoneNumber || additionalDetails?.phoneNumber || null,
+                user.phoneNumber || additionalDetails?.phoneNumber || undefined,
               lastLogin: Timestamp.fromDate(new Date()),
-              profileUrlRef: additionalDetails?.profileUrlRef || null,
+              profileUrlRef: additionalDetails?.profileUrlRef || undefined,
               firstLogin: false,
             }) as UserDetails,
       };
@@ -111,10 +106,10 @@ export class UsersService {
    *
    * @param id Set it to firebase.User.uid
    */
-  get(id: string): Observable<DbUser | null> {
+  get(id: string): Observable<DbUser | undefined> {
 		return this.db.getDoc<DbUser>(`users/${id}`).pipe(
 			map((u) => {
-				if (!u) return null;
+				if (!u) return undefined;
 				return { ...u, id };
 			})
 		);
@@ -123,9 +118,11 @@ export class UsersService {
   /**
    * Get current user from Firebase.
    */
-  getCurrentFire(): Promise<User | null> {
+  getCurrentFire(): Promise<User | undefined> {
 		return firstValueFrom(
-			user(this.auth)
+			user(this.auth).pipe(
+				map((a) => a || undefined)
+			)
 		);
 	}
 }

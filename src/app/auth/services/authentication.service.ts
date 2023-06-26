@@ -13,7 +13,6 @@ import {
 import { doc, getDoc, getFirestore } from '@angular/fire/firestore';
 import { getFunctions, httpsCallable } from '@angular/fire/functions';
 import { Router } from '@angular/router';
-import { User as DbUser } from '../models/user.model';
 import { FirebaseErrorHandling } from '../namespaces/error-auth';
 import { UsersService } from './users.service';
 	
@@ -108,25 +107,6 @@ export class AuthenticationService {
 		this.router.navigateByUrl('/auth/login');
 		localStorage.clear();
 		signOut(this.auth);
-	}
-	
-	/**
-		* Determines if user matches a role
-		*
-		* @param user of type class User
-		* @param permissions of types string[]
-		*/
-	checkAuthorization(user?: DbUser, permissions: string[] = []): boolean {
-		if (!user) return false;
-		if (!permissions || permissions.length <= 0) return true;
-		let condition = true;
-		for (const permission of permissions) {
-			const isContrary = permission.includes('!');
-			const normPermission = permission.replace('!', '');
-			const hasPermission = !!user.role?.permissions.includes(normPermission);
-			condition = isContrary ? !hasPermission : hasPermission;
-		}
-		return condition;
 	}
 	
 	private async oAuthLogin(provider: AuthProvider): Promise<any> {

@@ -30,11 +30,9 @@ export type User = {
   name?: string;
   email?: string;
   disabled?: boolean;
-	role?: UserRole;
 	onboardingCompleted?: boolean;
 	details?: UserDetails;
-	hypixel?: HypixelDetails;
-	discord?: DiscordDetails;
+	permissions?: string[];
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }
