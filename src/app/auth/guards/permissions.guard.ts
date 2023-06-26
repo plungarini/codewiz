@@ -7,11 +7,13 @@ import { UserPermissionsService } from '../services/user-permissions.service';
 export const PermissionsGuard: CanActivateFn = (route, state) => {
 	const permissionsService = inject(UserPermissionsService);
 	const router = inject(Router);
+	const requires = route.data['permissions'];
 
-	return permissionsService.checkPermissions$(route.data['permissions'])
+	return permissionsService.checkPermissions$(requires)
 		.pipe(
 			tap((canActivate) => {
 				if (!canActivate) {
+					console.error(`You are not allowed to access this page, you need the following permissions: "${requires.join(', ')}"`);
 					router.navigate(['/app'], {
 						queryParams: {
 							returnUrl: state.url,

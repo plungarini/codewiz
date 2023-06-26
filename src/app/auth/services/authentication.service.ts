@@ -87,17 +87,19 @@ export class AuthenticationService {
 		* @param code it should be set to the verification code sent by email to the user.
 		* @param password it should be set to the new password to overwrite the old one.
 		*/
-	resetPassword(code: string, password: string): Promise<any> {
-		return confirmPasswordReset(this.auth, code, password).then(
-			() => {
-				this.router.navigate(['/auth/login'], {
-					queryParams: {
-						resetPassword: true
-					}
-				});
-				return true;
-			}, () => false
-		);
+	async resetPassword(code: string, password: string): Promise<any> {
+		try {
+			await confirmPasswordReset(this.auth, code, password);
+			this.router.navigate(['/auth/login'], {
+				queryParams: {
+					resetPassword: true
+				}
+			});
+			return true;
+		} catch (err) {
+			console.error(err);
+			return false;
+		}
 	}
 	
 	/**
@@ -114,16 +116,15 @@ export class AuthenticationService {
 			const credential = await signInWithPopup(this.auth, provider);
 			const userRef = doc(getFirestore(), `users/${credential.user.uid}`);
 			const userSnap = await getDoc(userRef);
-			const userExists = userSnap.exists();
+			const isSignup = !userSnap.exists();
 			if (!credential.user) return;
-			if (userExists) return this.redirectAfterSignIn();
-			return this.userService.editOrCreate(
-				credential.user, !userExists,
+			if (!isSignup) return this.redirectAfterSignIn();
+			await this.userService.editOrCreate(
+				credential.user, isSignup,
 				{ phoneNumber: credential.user.phoneNumber },
 				true,
-			).then(() => {
-				this.redirectAfterSignIn();
-			});
+			);
+			this.redirectAfterSignIn();
 		} catch (err: any) {
 			return FirebaseErrorHandling.convertMessage(err.code);
 		}

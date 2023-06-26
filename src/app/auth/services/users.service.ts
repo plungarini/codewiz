@@ -69,8 +69,8 @@ export class UsersService {
             }) as UserDetails,
       };
 
-      if (forceEdits || isSignup) {
-        await this.db.upsert(`/users/${user.uid}`, toFirebaseUser);
+			if (forceEdits || isSignup) {
+				await this.db.upsert(`/users/${user.uid}`, toFirebaseUser);
 			}
 			
 			if (isSignup) {
