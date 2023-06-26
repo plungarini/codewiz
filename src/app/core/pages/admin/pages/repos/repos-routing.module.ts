@@ -16,7 +16,7 @@ const routes: Routes = [
 				loadChildren: () => import('./pages/repo-details/repo-details.module').then(m => m.RepoDetailsModule)
 			},
 			{
-				path: 'edit:id',
+				path: 'edit/:id',
 				loadChildren: () => import('./pages/repo-details/repo-details.module').then(m => m.RepoDetailsModule)
 			},
 		]
