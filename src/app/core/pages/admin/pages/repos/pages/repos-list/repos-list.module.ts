@@ -1,6 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { ImgixAngularModule } from '@imgix/angular';
 import { ReposListRoutingModule } from './repos-list-routing.module';
 import { ReposListComponent } from './repos-list.component';
 
@@ -11,7 +12,8 @@ import { ReposListComponent } from './repos-list.component';
   ],
   imports: [
     CommonModule,
-    ReposListRoutingModule
+		ReposListRoutingModule,
+		ImgixAngularModule,
   ]
 })
 export class ReposListModule { }

@@ -1,1 +1,51 @@
-<p>repos-list works!</p>
+<h2 class="sm:mt-6">Repos list</h2>
+<ng-container *ngIf="repos | async as repos">
+	<div *ngIf="repos.length > 0; else noRepos" class="flex flex-col mt-4 overflow-hidden border divide-y rounded-md divide-zinc-800 border-zinc-800">
+
+		<a
+			*ngFor="let repo of repos"
+			routerLink="/app/admin/repos/edit/{{repo.id}}"
+			class="flex flex-row items-center justify-between max-w-full px-3 py-2 space-x-4 transition-all duration-300 bg-transparent cursor-pointer group hover:bg-zinc-900"
+		>
+			<div class="flex flex-row items-center space-x-4">
+				<img
+					ixImg
+					[alt]="repo.name"
+					priority
+					loading="eager"
+					priority
+					[width]="1"
+					[height]="1"
+					[path]="repo.logo"
+					class="w-5 h-5 shrink-0"
+				>
+				<p class="font-medium text-zinc-300">{{repo.name}}</p>
+			</div>
+			<div class="flex flex-row items-center space-x-4">
+				<span class="truncate text-zinc-500">{{repo.updatedAt?.toDate() | date:'mediumDate'}}</span>
+
+				<div class="relative">
+					<div
+						[ngClass]="{
+							'opacity-0': !repo.hide,
+							'bg-amber-300 animate-ping opacity-100': repo.hide,
+						}"
+						class="absolute top-0 left-0 z-10 w-3 h-3 transition-all duration-300 rounded-full"
+					></div>
+					<div
+						[ngClass]="{
+							'bg-teal-500': !repo.hide,
+							'bg-amber-400': repo.hide,
+						}"
+						class="relative z-20 w-3 h-3 rounded-full"
+					></div>
+				</div>
+
+			</div>
+		</a>
+	</div>
+
+	<ng-template #noRepos>
+		<p class="mt-4">No supported docs to show...</p>
+	</ng-template>
+</ng-container>
