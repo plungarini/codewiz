@@ -1,1 +1,55 @@
-<p>sidebar works!</p>
+<div class="flex flex-col max-h-full min-h-full p-6 pr-0 border-r border-zinc-800">
+	<div class="pr-6 shrink-0">
+		<h3>Admin Dashboard</h3>
+	
+		<div class="flex flex-col w-full max-w-xs max-h-full mt-6 space-y-2 overflow-hidden shrink">
+
+			<a
+				routerLink="/app/admin/repos"
+				routerLinkActive
+				#rlaRepos="routerLinkActive"
+				[routerLinkActiveOptions]="{
+					exact: true,
+				}"
+				[ngClass]="{
+					'bg-zinc-800/80 text-zinc-200': rlaRepos.isActive,
+					'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rlaRepos.isActive,
+				}"
+				class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
+			>
+				<svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M19.6425 11.9965V8.9996C19.6425 8.47029 19.4382 7.96238 19.0714 7.57998L15.2796 3.63054C14.8933 3.22771 14.3591 3.00003 13.8006 3.00003H8.14935C6.10895 2.99224 4.43732 4.61814 4.38867 6.65757V11.9965" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M14.2852 3.0625V5.95526C14.2842 7.36709 15.4275 8.5133 16.8393 8.51622H19.5793" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M20.8136 11.9961H3.18555" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M19.6432 15.2734V17.1669C19.653 19.2161 18.0348 20.913 15.9847 21.0015H8.05955C5.98023 20.9519 4.34168 19.2365 4.38157 17.1669V15.2734" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+
+				<span>Repos manager</span>
+			</a>
+
+			<a
+				routerLink="/app/admin/users"
+				routerLinkActive
+				#rlaUsers="routerLinkActive"
+				[routerLinkActiveOptions]="{
+					exact: true,
+				}"
+				[ngClass]="{
+					'bg-zinc-800/80 text-zinc-200': rlaUsers.isActive,
+					'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rlaUsers.isActive,
+				}"
+				class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
+			>
+				<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<circle cx="10.1798" cy="9.48448" r="4.76573" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M12.4099 14.5391H8.06729C5.60431 14.5391 3.60767 16.5357 3.60767 18.9987C3.60767 19.0872 3.60682 19.176 3.60563 19.265C3.5924 20.2526 4.39476 20.9698 5.38246 20.9698H15.0947C16.0824 20.9698 16.8848 20.2526 16.8715 19.265C16.8704 19.176 16.8695 19.0872 16.8695 18.9987C16.8695 16.5357 14.8729 14.5391 12.4099 14.5391Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M16.1436 13.9883C18.6065 13.9883 20.6032 15.9849 20.6032 18.4479C20.6032 18.5364 20.604 18.6252 20.6052 18.7142C20.6185 19.7018 19.8161 20.419 18.8284 20.419" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M16.1371 13.9878C17.8601 13.2859 19.0746 11.5943 19.0746 9.61899C19.0746 7.27445 17.3636 5.32953 15.1221 4.96484" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+
+				<span>Users manager</span>
+			</a>
+
+		</div>
+	</div>
+</div>
