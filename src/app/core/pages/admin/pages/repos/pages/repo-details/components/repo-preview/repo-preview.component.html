@@ -1,0 +1,41 @@
+<div
+	*ngIf="repo$ | async as repo"
+	class="flex flex-row items-center justify-between max-w-full px-3 py-2 space-x-4 transition-all duration-300 border rounded-md border-zinc-800"
+>
+	<div class="flex flex-row items-center space-x-2">
+		<img
+			ixImg
+			[alt]="repo.name"
+			priority
+			loading="eager"
+			priority
+			[width]="1"
+			[height]="1"
+			[path]="repo.logo"
+			class="w-5 h-5 shrink-0"
+		>
+		<p class="font-medium text-zinc-300">{{repo.name}}</p>
+		<p class="text-sm font-medium text-zinc-500 pt-0.5 shrink truncate md:block hidden">{{repo.url}}</p>
+	</div>
+	<div class="flex flex-row items-center space-x-2">
+		<span class="truncate text-zinc-500">{{repo.updatedAt?.toDate() | date:'mediumDate'}}</span>
+
+		<div class="relative">
+			<div
+				[ngClass]="{
+					'opacity-0': !repo.hide,
+					'bg-amber-300 animate-ping opacity-100': repo.hide,
+				}"
+				class="absolute top-0 left-0 z-10 w-2 h-2 transition-all duration-300 rounded-full"
+			></div>
+			<div
+				[ngClass]="{
+					'bg-teal-500': !repo.hide,
+					'bg-amber-400': repo.hide,
+				}"
+				class="relative z-20 w-2 h-2 rounded-full"
+			></div>
+		</div>
+
+	</div>
+</div>
