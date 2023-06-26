@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
 	collection, collectionData, CollectionReference,
 	deleteDoc,
@@ -14,16 +14,22 @@ import {
 	setDoc,
 	updateDoc
 } from '@angular/fire/firestore';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirebaseExtendedService {
-	
-	private firestore = inject(Firestore);
 
-	constructor( ) { }
+	constructor(
+		private firestore: Firestore,
+		private functions: Functions
+	) { }
+	
+	callFunction<T, Z>(name: string, timeout = 60_000) {
+		return httpsCallable<T, Z>(this.functions, name, { timeout });
+	}
 	
 	async getColRef(path: string,  ...queryConstraints: QueryConstraint[]) {
 		if (!path) return undefined;
