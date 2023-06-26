@@ -42,6 +42,31 @@
 				<path d="M8.00296 13.0117V13.0815M8.28582 13.0267C8.28582 13.1838 8.15834 13.3112 8.00122 13.3112C7.8441 13.3112 7.7168 13.1838 7.7168 13.0267C7.7168 12.8696 7.8441 12.7422 8.00122 12.7422C8.15834 12.7422 8.28582 12.8696 8.28582 13.0267Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 			</svg>
 		</a>
+	
+		<ng-container
+			*ngIf="isUserAdmin$ | async"
+		>
+			<div class="w-4/5 border-b border-zinc-800"></div>
+			
+			<a
+				routerLink="/app/admin"
+				[ngClass]="{
+					'bg-gradient-to-tr from-zinc-900/50 to-zinc-800/70 shadow-xl text-teal-400': currentPage === 'admin',
+					'text-zinc-400 hover:text-teal-400 bg-zinc-950 hover:bg-zinc-900': currentPage !== 'admin'
+				}"
+				class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300 rounded-lg"
+			>
+				<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M14.9904 9.18909C14.9904 10.5831 13.8604 11.7131 12.4664 11.7131C11.0714 11.7131 9.94238 10.5831 9.94238 9.18909C9.94238 7.79509 11.0714 6.66406 12.4664 6.66406C13.8604 6.66406 14.9904 7.79509 14.9904 9.18909Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M8.51465 17.0483C8.51465 15.7583 9.53364 14.1523 12.4666 14.1523C15.4006 14.1523 16.4186 15.7473 16.4186 17.0383" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M21.4662 15.5312V17.1082C21.4662 19.2582 19.7242 21.0002 17.5742 21.0002H16.2842" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M3.46582 15.5312V17.1082C3.46582 19.2582 5.20883 21.0002 7.35883 21.0002H8.61581" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M3.46582 8.46899V6.89203C3.46582 4.74303 5.20883 3 7.35883 3H8.64783" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M21.4674 8.46899V6.89203C21.4674 4.74303 19.7244 3 17.5744 3H16.3174" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</a>
+		</ng-container>
+		
 		
 	</div>
 
