@@ -34,10 +34,11 @@
 		</button>
 	</div>
 
-	<div *ngIf="$reposChats | async as chats" class="flex max-h-full overflow-hidden shrink">
+	<div *ngIf="$reposChats | async as chats" class="flex w-full max-w-xs max-h-full overflow-hidden shrink">
 		<app-chats-history
 			[chatHistory]="chats"
 			(onDelete)="deleteChat($event)"
+			class="w-full"
 		></app-chats-history>
 	</div>
 </div>
