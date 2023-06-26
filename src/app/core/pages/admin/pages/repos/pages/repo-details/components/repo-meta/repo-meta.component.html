@@ -1,0 +1,88 @@
+<h3>Repo details</h3>
+<div class="w-full border-b border-zinc-800"></div>
+
+<form [formGroup]="form" class="flex flex-col mt-4 space-y-4">
+	<div class="flex flex-col items-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+		
+		<div class="flex-1 w-full">
+			<label for="id"><p class="mb-1 text-sm">Slug</p></label>
+			<input
+				type="text"
+				formControlName="id"
+				id="id"
+				name="id"
+				placeholder="Slug"
+				class="w-full px-3 py-1 transition-all duration-300 border rounded-md outline-none bg-zinc-900 border-zinc-600 text-zinc-200 focus:outline-none outline-offset-0 focus:border-zinc-600 focus:ring-1 focus:ring-offset-1 focus:ring-purple-400 focus:ring-offset-zinc-950"
+			>
+		</div>
+
+		<div class="flex-1 w-full">
+			<label for="name"><p class="mb-1 text-sm">Name</p></label>
+			<input
+				type="text"
+				formControlName="name"
+				id="name"
+				name="name"
+				placeholder="Name"
+				class="w-full px-3 py-1 transition-all duration-300 border rounded-md outline-none bg-zinc-900 border-zinc-600 text-zinc-200 focus:outline-none outline-offset-0 focus:border-zinc-600 focus:ring-1 focus:ring-offset-1 focus:ring-purple-400 focus:ring-offset-zinc-950"
+			>
+		</div>
+
+	</div>
+
+	<div class="flex flex-col items-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+		
+		<div class="flex-1 w-full">
+			<label for="logo"><p class="mb-1 text-sm">Logo</p></label>
+			<input
+				type="text"
+				formControlName="logo"
+				id="logo"
+				name="logo"
+				placeholder="Logo"
+				class="w-full px-3 py-1 transition-all duration-300 border rounded-md outline-none bg-zinc-900 border-zinc-600 text-zinc-200 focus:outline-none outline-offset-0 focus:border-zinc-600 focus:ring-1 focus:ring-offset-1 focus:ring-purple-400 focus:ring-offset-zinc-950"
+			>
+		</div>
+
+		<div class="flex-1 w-full">
+			<label for="url"><p class="mb-1 text-sm">Docs URL</p></label>
+			<input
+				type="text"
+				formControlName="url"
+				id="url"
+				name="url"
+				placeholder="Docs url"
+				class="w-full px-3 py-1 transition-all duration-300 border rounded-md outline-none bg-zinc-900 border-zinc-600 text-zinc-200 focus:outline-none outline-offset-0 focus:border-zinc-600 focus:ring-1 focus:ring-offset-1 focus:ring-purple-400 focus:ring-offset-zinc-950"
+			>
+		</div>
+
+	</div>
+
+	<div class="flex flex-col items-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
+		
+		<div class="flex-1 w-full">
+			<label for="hostUrl"><p class="mb-1 text-sm">Host URL</p></label>
+			<input
+				type="text"
+				formControlName="hostUrl"
+				id="hostUrl"
+				name="hostUrl"
+				placeholder="Host URL"
+				class="w-full px-3 py-1 transition-all duration-300 border rounded-md outline-none bg-zinc-900 border-zinc-600 text-zinc-200 focus:outline-none outline-offset-0 focus:border-zinc-600 focus:ring-1 focus:ring-offset-1 focus:ring-purple-400 focus:ring-offset-zinc-950"
+			>
+		</div>
+
+		<div class="flex-1 w-full">
+			<label for="replaceUrl"><p class="mb-1 text-sm">Replace URL</p></label>
+			<input
+				type="text"
+				formControlName="replaceUrl"
+				id="replaceUrl"
+				name="replaceUrl"
+				placeholder="Replace URL"
+				class="w-full px-3 py-1 transition-all duration-300 border rounded-md outline-none bg-zinc-900 border-zinc-600 text-zinc-200 focus:outline-none outline-offset-0 focus:border-zinc-600 focus:ring-1 focus:ring-offset-1 focus:ring-purple-400 focus:ring-offset-zinc-950"
+			>
+		</div>
+
+	</div>
+</form>
