@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styles: [
     `
       :host {
-        display: block;
+        @apply block w-full;
       }
     `
   ],
