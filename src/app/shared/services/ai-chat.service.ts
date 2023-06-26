@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { orderBy } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { Observable, Subject, filter, firstValueFrom, interval, lastValueFrom, map, of, startWith, switchMap, takeUntil } from 'rxjs';
+import { filter, firstValueFrom, interval, lastValueFrom, map, Observable, of, startWith, switchMap, take } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
@@ -272,9 +272,8 @@ export class AiChatService {
 	}
 
 	createChatTitle(repo: string, id: string, timeoutSeconds = 30): Observable<AiChatTitleResponseData> {
-		const unsubscribe$ = new Subject<boolean>();
 		return this.getChatMessages(repo, id).pipe(
-			takeUntil(unsubscribe$),
+			take(1),
 			switchMap((chat) => {
 				if (chat.length <= 2) {
 					return of({
@@ -301,8 +300,6 @@ export class AiChatService {
 						ev?.close();
 						clearInterval(timeoutCheckInterval);
 						observer.complete();
-						unsubscribe$.next(true);
-						unsubscribe$.complete();
 					}
 
 					const timeoutCheckInterval = setInterval(() => {
