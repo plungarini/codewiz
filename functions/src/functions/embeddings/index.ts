@@ -1,4 +1,4 @@
-import { SupabaseClient, createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { error, warn } from 'firebase-functions/logger';
 import { Configuration, OpenAIApi } from 'openai';
 
@@ -190,4 +190,24 @@ export const elaborateEmbeddings = async (req: {
   }
 
   return true;
+};
+
+export const getAllEmbeddings = async (repo: string) => {
+	const supabasePublicUrl = process.env.SUPABASE_PUBLIC_URL;
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabasePublicUrl || !supabaseServiceRoleKey) {
+    return error(
+      'Environment variables SUPABASE_PUBLIC_URL or SUPABASE_SERVICE_ROLE_KEY are required: cannot get embeddings'
+    );
+	}
+
+	if (!repo) throw new Error(`A repo must be specified, currently is ${JSON.stringify(repo)}`);
+
+	const supabase = createClient(supabasePublicUrl, supabaseServiceRoleKey);
+
+	const { data, error: err } = await supabase.from(repo).select('id, createdAt, updatedAt, title, token_count, path, section');
+	if (err) throw err;
+	console.log(data);
+	return data;
 };
