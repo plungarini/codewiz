@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
 
@@ -21,9 +21,9 @@ export class RepoMetaComponent {
 		this.initReplaceStrings(value.replaceStrings);
 		console.log(this.form.value);
 	};
-
+	
 	private builder = new FormBuilder();
-
+	
 	form = this.builder.group({
 		id: this.builder.control('', { nonNullable: true, validators: [Validators.required] }),
 		name: this.builder.control('', { nonNullable: true, validators: [Validators.required] }),
@@ -34,6 +34,16 @@ export class RepoMetaComponent {
 		replaceUrl: this.builder.control('', { nonNullable: true }),
 		replaceStrings: this.builder.array<FormGroup<{ s: FormControl<string>, r: FormControl<string> }>>([]),
 	});
+	showSection = false;
+
+	constructor(
+		private cdRef: ChangeDetectorRef,
+	) { }
+
+	toggleSection() {
+		this.showSection = !this.showSection;
+		this.cdRef.detectChanges();
+	}
 
 	private initReplaceStrings(replaceStrings: { s: string, r: string }[]) {
 		if (!replaceStrings || replaceStrings.length <= 0) return;
