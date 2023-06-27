@@ -7,6 +7,7 @@ import { RepoDetailsRoutingModule } from './repo-details-routing.module';
 import { RepoDetailsComponent } from './repo-details.component';
 import { RepoPreviewComponent } from './components/repo-preview/repo-preview.component';
 import { RepoMetaComponent } from './components/repo-meta/repo-meta.component';
+import { RepoPagesComponent } from './components/repo-pages/repo-pages.component';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import { RepoMetaComponent } from './components/repo-meta/repo-meta.component';
     RepoDetailsComponent,
     RepoPreviewComponent,
     RepoMetaComponent,
+    RepoPagesComponent,
   ],
   imports: [
     CommonModule,

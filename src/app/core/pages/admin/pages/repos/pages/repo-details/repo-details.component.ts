@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, of, switchMap } from 'rxjs';
 import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { Embedding } from './models/embedding.model';
@@ -11,7 +11,7 @@ import { EmbeddingsService } from './services/embeddings.service';
   styles: [
     `
       :host {
-        display: block;
+      	@apply block h-full max-h-full overflow-y-hidden; 
       }
     `
   ],
@@ -24,6 +24,9 @@ export class RepoDetailsComponent {
 	loadingError = '';
 	cacheId: string = '';
 	loading = false;
+	
+	private embeddingsSubject$: BehaviorSubject<Embedding[]> = new BehaviorSubject<Embedding[]>([]);
+	embeddings$: Observable<Embedding[]> = this.embeddingsSubject$.asObservable();
 
 	constructor(
 		private route: ActivatedRoute,
@@ -35,26 +38,41 @@ export class RepoDetailsComponent {
 			switchMap((paramMap) => {
 				const id = (paramMap.get('id') || '').trim();
 				if (!id) return of(undefined);
-				/* this.loadEmbeddings(id); */
+				this.loadEmbeddings(id);
 				return this.db.getDoc<SelectedDocs>(`supported-docs/${id}`);
 			})
 		);
 	}
 
-	/* async loadEmbeddings(repo: string): Promise<void> {
+	async loadEmbeddings(repo: string): Promise<void> {
 		if (this.cacheId == repo) return;
 		this.cacheId = repo;
 		this.loading = true;
 		this.cdRef.detectChanges();
 
 		try {
-			this.embeddings = await this.embeddingsService.getEmbeddings(repo);
+			const embeddings = await this.embeddingsService.getEmbeddings(repo);
+			embeddings
+				.sort((a, b) => {
+					// Convert to uppercase for case-insensitive sorting
+					const nameA = a.title.toUpperCase();
+					const nameB = b.title.toUpperCase();
+
+					if (nameA < nameB) {
+						return -1;
+					}
+					if (nameA > nameB) {
+						return 1;
+					}
+					return 0;
+				})
+			this.embeddingsSubject$.next(embeddings);
 		} catch (err) {
 			this.loadingError = 'Error loading embeddings... Check console.';
 		} finally {
 			this.loading = false;
 			this.cdRef.detectChanges();
 		}
-	} */
+	}
 
 }

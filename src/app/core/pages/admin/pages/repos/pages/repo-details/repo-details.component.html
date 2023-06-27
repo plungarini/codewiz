@@ -1,24 +1,43 @@
-<ng-container>
-	<div
-		*ngIf="repo$ | async; else isNewRepo"
-		class="w-full mt-6 mb-1"
-	>
-		<h2>Edit repo</h2>
+<div class="flex flex-col max-h-full min-h-full">
+	<div class="shrink-0">
+
+		<div class="relative z-10 w-full pt-6 pb-6 bg-zinc-950">
+			<div
+				*ngIf="repo$ | async; else isNewRepo"
+				class="w-full mt-6 mb-1"
+			>
+				<h2>Edit repo</h2>
+			</div>
+		
+			<ng-template #isNewRepo>
+				<div class="w-full mt-6 mb-1 border-b border-zinc-800">
+					<h2>New repo</h2>
+				</div>
+			</ng-template>
+		
+			<app-repo-preview
+				[repo]="repo$"
+			></app-repo-preview>
+		</div>
+		
+		<app-repo-meta
+			[repo]="repo$ | async"
+		></app-repo-meta>
+		
+		<div class="relative z-10 flex flex-row items-center justify-between w-full pb-2 mb-4 border-b border-zinc-800 bg-zinc-950">
+			<h3 class="mb-0">Repo pages</h3>
+		</div>
+
 	</div>
 
-	<ng-template #isNewRepo>
-		<div class="w-full mt-6 mb-1 border-b border-zinc-800">
-			<h2>New repo</h2>
-		</div>
-	</ng-template>
+	<div class="flex w-full max-h-full overflow-hidden shrink">
+		<p *ngIf="loading" class="w-full">Loading repo pages...</p>
+		<p *ngIf="loadingError" class="w-full text-red-400">{{loadingError}}</p>
+		<app-repo-pages
+			[embeddings]="embeddings$"
+			class="block w-full overflow-x-hidden overflow-y-auto shrink"
+		></app-repo-pages>
+	</div>
+</div>
 
-	<app-repo-preview
-		[repo]="repo$"
-	></app-repo-preview>
 
-	<app-repo-meta
-		[repo]="repo$ | async"
-		class="mt-6"
-	></app-repo-meta>
-	
-</ng-container>
