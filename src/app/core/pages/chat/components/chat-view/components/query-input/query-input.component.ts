@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
-import { Subscription, filter } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-query-input',
@@ -15,7 +15,7 @@ import { Subscription, filter } from 'rxjs';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class QueryInputComponent {
+export class QueryInputComponent implements OnDestroy {
 
 	@Output() onQuery = new EventEmitter<string>();
 	@ViewChild('textArea') textAreaComponent: ElementRef<HTMLDivElement> | undefined;
@@ -37,6 +37,10 @@ export class QueryInputComponent {
 			this.textAreaComponent?.nativeElement.focus();
 			this.cdRef.detectChanges();
 		})
+	}
+
+	ngOnDestroy(): void {
+		this.routerSub.unsubscribe();
 	}
 
 	handleDummyInputChange(event: Event): void {
