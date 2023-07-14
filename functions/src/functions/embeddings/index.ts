@@ -3,61 +3,65 @@ import { error, warn } from 'firebase-functions/logger';
 import { Configuration, OpenAIApi } from 'openai';
 
 const MAX_CHARS = 25_000;
-const MIN_SECTION_LENGTH = 5;
+const MIN_SECTION_LENGTH = 100;
 
-const splitInput = (input: string): string[] => {
+const openAiTokenSanitizer = (input: string): string[] => {
   const sections: string[] = [];
-	let currentSection = '';
+  const lines = input.split('\n');
+  let currentSection = '';
 
-	const getSplitIndex = (s: string) => s.lastIndexOf('##') || s.lastIndexOf('======') || s.lastIndexOf('-------');
-
-  while (input.length > 0) {
-    const splitIndex = getSplitIndex(input);
-
-    if (splitIndex !== -1 && input.length > MAX_CHARS) {
-      const newSection = input.slice(splitIndex);
-      const totalLength = currentSection.length + newSection.length;
-
-      if (totalLength > MAX_CHARS) {
-        if (currentSection.length > MIN_SECTION_LENGTH) sections.unshift(currentSection);
-        currentSection = newSection;
-        input = input.slice(0, splitIndex);
-      } else {
-        currentSection = newSection + currentSection;
-        input = input.slice(0, splitIndex);
-      }
-    } else {
-      if (currentSection.length > MIN_SECTION_LENGTH) sections.unshift(currentSection);
-      if (input.length > MIN_SECTION_LENGTH) sections.unshift(input);
+  const pushCurrentSection = () => {
+    if (currentSection.length > 0) {
+      sections.push(currentSection.trim());
       currentSection = '';
-      input = '';
+    }
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    if (
+      (line.startsWith('#') || line.startsWith('======') || line.startsWith('-------')) &&
+      currentSection.length >= MIN_SECTION_LENGTH &&
+      currentSection.length <= MAX_CHARS
+    ) {
+      pushCurrentSection();
+      currentSection += line;
+    } else if (currentSection.length + line.length <= MAX_CHARS) {
+      currentSection += '\n' + line;
+    } else {
+      let breakIndex = -1;
+
+      if (currentSection.lastIndexOf('#') !== -1) {
+        breakIndex = currentSection.lastIndexOf('#');
+      } else if (currentSection.lastIndexOf('=====') !== -1) {
+        breakIndex = currentSection.lastIndexOf('=====');
+      } else if (currentSection.lastIndexOf('---') !== -1) {
+        breakIndex = currentSection.lastIndexOf('---');
+      } else if (currentSection.lastIndexOf('\n') !== -1) {
+        breakIndex = currentSection.lastIndexOf('\n');
+      }
+
+      if (breakIndex !== -1 && breakIndex >= MIN_SECTION_LENGTH) {
+        sections.push(currentSection.substring(0, breakIndex).trim());
+        currentSection = currentSection.substring(breakIndex).trim();
+      } else {
+        sections.push(currentSection.trim());
+        currentSection = line;
+      }
     }
   }
 
+  pushCurrentSection();
+
 	sections.forEach((section) => {
-		const splitIndex2 = getSplitIndex(section);
 		if (section.length > MAX_CHARS) {
-			if (splitIndex2 > 0) {
-				sections.push(section.substring(0, splitIndex2), section.substring(splitIndex2));
-				return;
-			}
-			warn(`Split index found? ${splitIndex2} - Length: ${section.length} - MAX_CHARS: ${MAX_CHARS}`);
-			warn(section);
 			throw new Error('One of the sections is too long.');
 		}
   });
 
   warn('Sections:', sections.length, sections.map((v, i) => `[Section ${i + 1}: ${v.length} chars]`));
   return sections;
-};
-
-const openAiTokenSanitizer = (input: string): string[] => {
-  if (input.length < MAX_CHARS) {
-    warn(`Input length (${input.length}) is less than MAX_CHARS (${MAX_CHARS})`);
-    return [input];
-  }
-
-  return splitInput(input);
 };
 
 const checkTableExists = async (supabase: SupabaseClient, tableName: string) => {
@@ -72,7 +76,6 @@ const checkTableExists = async (supabase: SupabaseClient, tableName: string) => 
 		return data?.length || -1 > 0;
 	}
 };
-
 
 export const elaborateEmbeddings = async (req: {
 	author: string;
@@ -98,28 +101,6 @@ export const elaborateEmbeddings = async (req: {
 
 	const supabase = createClient(supabasePublicUrl, supabaseServiceRoleKey);
 
-
-	/*
-	// Sign up
-	const signup = await supabase.auth.signUp({ email, password });
-	warn('User signed up:', signup.data.user);
-	if (signup.error || !signup.data.user) {
-		error(signup.error);
-		throw signup.error;
-	} */
-
-	/*
-
-	// Sign in to the admin account
-	const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-
-	if (signInError) {
-		error('signInError', signInError.cause, signInError.message, signInError.name);
-		throw signInError;
-	}
-
-	*/
-
 	const tableExists = await checkTableExists(supabase, author);
 	if (!tableExists) {
 		const { error: err } = await supabase.rpc('create_embeddings_table', { author });
@@ -140,7 +121,11 @@ export const elaborateEmbeddings = async (req: {
 			const normInput = sanitizedInput[i];
 
       // OpenAI recommends replacing newlines with spaces for best results (specific to embeddings)
-      const sanInput = normInput.replace(/\n/g, ' ');
+			const sanInput = normInput.replace(/\n/g, ' ');
+
+			const inputId = sanitizedInput.length < 2
+				? `${req.id}[1]`
+				: `${req.id}[${i + 1}]`;
 
       const embeddingResponse = await openai.createEmbedding({
         model: 'text-embedding-ada-002',
@@ -157,10 +142,7 @@ export const elaborateEmbeddings = async (req: {
       const { error: insertPageSectionError } = await supabase
         .from(author)
         .upsert({
-          id:
-            sanitizedInput.length < 2
-              ? `${req.id}[1]`
-              : `${req.id}[${i + 1}]`,
+          id: inputId,
 					path: req.link,
 					title: req.title,
           content: normInput,
@@ -174,7 +156,7 @@ export const elaborateEmbeddings = async (req: {
 				.single();
 
 			if (insertPageSectionError) {
-				error('upsertPageError', insertPageSectionError.code, insertPageSectionError.hint, insertPageSectionError.details);
+				error('insertPageSectionError', insertPageSectionError.code, insertPageSectionError.hint, insertPageSectionError.details);
         throw insertPageSectionError;
       }
     }
