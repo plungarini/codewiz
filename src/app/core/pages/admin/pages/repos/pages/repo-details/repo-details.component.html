@@ -25,7 +25,7 @@
 		></app-repo-meta>
 		
 		<div class="relative z-10 flex flex-row items-center justify-between w-full pb-2 mb-4 border-b border-zinc-800 bg-zinc-950">
-			<h3 class="mb-0">Repo pages</h3>
+			<h3 class="mb-0">Repo pages <ng-container *ngIf="embeddings$ | async  as e"><span *ngIf="e.length > 0">({{e.length}})</span></ng-container></h3>
 
 			<button routerLink="/app/admin/repos/edit/{{repoId}}/edit-pages" class="px-2 py-1 text-sm leading-6 rounded-md cursor-pointer bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-zinc-50">Edit</button>
 		</div>
