@@ -24,6 +24,7 @@ export class RepoDetailsComponent {
 	loadingError = '';
 	cacheId: string = '';
 	loading = false;
+	repoId: string = '';
 	
 	private embeddingsSubject$: BehaviorSubject<Embedding[]> = new BehaviorSubject<Embedding[]>([]);
 	embeddings$: Observable<Embedding[]> = this.embeddingsSubject$.asObservable();
@@ -37,6 +38,7 @@ export class RepoDetailsComponent {
 		this.repo$ = this.route.paramMap.pipe(
 			switchMap((paramMap) => {
 				const id = (paramMap.get('id') || '').trim();
+				this.repoId = id;
 				if (!id) return of(undefined);
 				this.loadEmbeddings(id);
 				return this.db.getDoc<SelectedDocs>(`supported-docs/${id}`);

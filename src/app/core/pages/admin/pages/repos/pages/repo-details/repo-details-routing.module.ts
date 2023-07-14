@@ -6,6 +6,10 @@ const routes: Routes = [
 	{
 		path: '',
 		component: RepoDetailsComponent
+	},
+	{
+		path: 'edit-pages',
+		loadChildren: () => import('./pages/edit-pages/edit-pages.module').then(m => m.EditPagesModule)
 	}
 ];
 
