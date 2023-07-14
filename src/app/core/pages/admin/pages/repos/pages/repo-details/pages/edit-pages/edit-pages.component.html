@@ -1,8 +1,8 @@
-<div class="flex flex-col max-h-full min-h-full">
+<div class="flex flex-col h-full max-h-full">
 	<div class="shrink-0">
 
 		<div class="relative z-10 w-full pt-6 pb-6 bg-zinc-950">
-			<div class="flex items-center w-full mt-6 mb-4 space-x-2">
+			<div class="flex items-center w-full mt-6 mb-4 space-x-4">
 				<button routerLink="/app/admin/repos/edit/{{repoId}}">
 					<svg class="w-8 h-8 transition-colors duration-300 cursor-pointer text-zinc-600 group hover:text-zinc-50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path class="transition-opacity duration-300 opacity-0 group-hover:opacity-40" fill-rule="evenodd" clip-rule="evenodd" d="M16.218 21.5L7.784 21.5C4.623 21.5 2.5 19.279 2.5 15.974L2.5 8.026C2.5 4.72 4.624 2.5 7.785 2.5L16.218 2.5C19.377 2.5 21.5 4.72 21.5 8.026L21.5 15.974C21.5 19.279 19.377 21.5 16.218 21.5Z" fill="currentColor" />
@@ -12,11 +12,201 @@
 				</button>
 				<h2 class="mb-0">Edit pages</h2>
 			</div>
-		
-			<div class="relative z-10 flex flex-row items-center justify-between w-full pb-2 mb-4 border-b border-zinc-800 bg-zinc-950">
-				<h3 class="mb-0">Repo pages</h3>
+
+			<form
+      [formGroup]="scrapeRepoform"
+      (ngSubmit)="fetchRepo()"
+      class="flex flex-row items-end w-full mt-6 space-x-4"
+    >
+      <div class="flex-1">
+        <p class="mb-2">Creator and Repo:</p>
+        <input
+          formControlName="author"
+          type="text"
+          name="author"
+          placeholder="Example: angular/angular (Case sensitive)"
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div class="flex-1">
+        <p class="mb-2">Folder:</p>
+        <input
+          formControlName="folder"
+          type="text"
+          name="folder"
+          placeholder="Example: aio/content/guide (Case sensitive)"
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div class="flex-1">
+        <p class="mb-2">Relative links host:</p>
+        <input
+          formControlName="relativeLinksHost"
+          type="text"
+          name="relativeLinksHost"
+          placeholder="Example: https://angular.io (Case sensitive)"
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          [disabled]="buttonLoading || buttonLoadingEmbeddings"
+          class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 rounded-md shadow-xl disabled:cursor-not-allowed disabled:opacity-50 text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+        >
+          Fetch
+        </button>
+      </div>
+    </form>
+
+		<div class="flex items-center mt-6 ml-auto space-x-2 w-fit">
+			<button [disabled]="buttonLoadingEmbeddings" (click)="parseRepoFiles(true)" class="px-3 py-2 text-sm transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-zinc-800 disabled:hover:text-zinc-300 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white">
+				Manual parse
+			</button>
+
+			<div class="flex items-center px-3 py-2 space-x-2 transition-all duration-300 rounded-md bg-zinc-800 hover:bg-zinc-700 hover:text-white">
+				<input type="checkbox" name="autoParse" id="autoParse" [formControl]="autoParse" class="transition-all duration-300 rounded-sm focus:ring-offset-zinc-950 bg-zinc-800">
+				<label for="autoParse" class="text-sm text-zinc-300">Auto parse?</label>
 			</div>
+		</div>
 
 		</div>
 	</div>
+
+	<div class="flex w-full max-h-full overflow-hidden shrink">
+		<app-repo-pages
+			[pages]="pages$"
+			class="block w-full overflow-x-hidden overflow-y-auto shrink"
+		></app-repo-pages>
+	</div>
 </div>
+
+
+
+<!-- <div
+  class="h-full max-w-full max-h-full px-4 pt-24 overflow-x-hidden overflow-y-auto"
+>
+  <div class="w-full max-w-5xl mx-auto">
+    <h2>CodeWhiz AI</h2>
+
+    <form
+      [formGroup]="scrapeUrlform"
+      (ngSubmit)="parse()"
+      class="flex flex-row items-end w-full mt-6 space-x-4"
+    >
+      <div class="flex-1">
+        <p class="mb-2">Category Name:</p>
+        <input
+          formControlName="category"
+          type="text"
+          name="catName"
+          placeholder="Type something..."
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div class="flex-1">
+        <p class="mb-2">Docs page URL:</p>
+        <input
+          formControlName="url"
+          type="text"
+          name="catName"
+          placeholder="Type something..."
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          [disabled]="buttonLoading"
+          class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 rounded-md shadow-xl disabled:cursor-not-allowed disabled:opacity-50 text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+        >
+          Fetch
+        </button>
+      </div>
+    </form>
+
+    <form
+      [formGroup]="scrapeRepoform"
+      (ngSubmit)="fetchRepo()"
+      class="flex flex-row items-end w-full mt-6 space-x-4"
+    >
+      <div class="flex-1">
+        <p class="mb-2">Creator and Repo:</p>
+        <input
+          formControlName="author"
+          type="text"
+          name="author"
+          placeholder="Example: angular/angular (Case sensitive)"
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div class="flex-1">
+        <p class="mb-2">Folder:</p>
+        <input
+          formControlName="folder"
+          type="text"
+          name="folder"
+          placeholder="Example: aio/content/guide (Case sensitive)"
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          [disabled]="buttonLoading"
+          class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 rounded-md shadow-xl disabled:cursor-not-allowed disabled:opacity-50 text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+        >
+          Fetch
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-8" *ngIf="result">
+      <div class="flex flex-row items-center justify-between w-full">
+        <p class="font-semibold text-zinc-50">Result:</p>
+        <button
+          type="button"
+          (click)="loadEmbeddings()"
+          [disabled]="buttonLoadingEmbeddings"
+          class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 rounded-md shadow-xl disabled:cursor-not-allowed disabled:opacity-50 text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+        >
+          Generate Embeddings
+        </button>
+      </div>
+      <p class="mt-2 whitespace-pre-wrap">{{ result }}</p>
+    </div>
+
+    <div class="mt-8" *ngIf="repoFiles">
+      <div class="flex flex-row items-center justify-between w-full mb-4">
+        <p class="font-semibold text-zinc-50">Result:</p>
+      </div>
+      
+			<div *ngFor="let item of repoFiles" class="flex flex-row items-center justify-between px-4 py-2 my-1 rounded-md bg-zinc-800">
+				<div class="flex flex-row items-center space-x-2">
+					<p class="pt-0 mt-0 font-semibold text-zinc-300">{{item.title}}</p>
+					<p class="pt-0 mt-0 text-sm text-zinc-500">{{item.name}}</p>
+				</div>
+
+				<div class="flex flex-row items-center space-x-4">
+					<p class="pt-0 mt-0 text-sm text-zinc-400" *ngIf="getExpectedSections(item.content.length) as sections">
+						{{item.content.length}} characters
+						<span *ngIf="sections > 1" class="text-xs text-zinc-500"> ({{sections}} sections)</span>
+					</p>
+	
+					<p
+						*ngIf="item.status"
+						[ngClass]="{
+							'text-teal-400': item.status === 'success',
+							'text-red-400': item.status === 'failed',
+							'text-amber-400': item.status === 'loading',
+						}"
+						class="pt-0 mt-0 text-sm"
+					>
+						{{item.status}}
+					</p>
+				</div>
+			</div>
+    </div>
+
+  </div>
+</div> -->
