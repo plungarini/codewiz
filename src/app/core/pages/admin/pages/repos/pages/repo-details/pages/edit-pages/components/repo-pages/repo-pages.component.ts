@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { RepoPage } from '../../../../models/repo.model';
+import { RepoPage } from '../../../../../../../../../../../shared/models/repo.model';
 
 @Component({
   selector: 'app-repo-pages',

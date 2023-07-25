@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
+import { Repo } from '../../../../../../../../../shared/models/repo.model';
 
 @Component({
 	selector: 'app-repo-preview',
@@ -15,5 +15,5 @@ import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RepoPreviewComponent {
-	@Input('repo') repo$: Observable<SelectedDocs | undefined> = of(undefined);
+	@Input('repo') repo$: Observable<Repo | undefined> = of(undefined);
 }

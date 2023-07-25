@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { map, Observable } from 'rxjs';
-import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
+import { Observable, map } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
+import { Repo } from '../../../../../../../shared/models/repo.model';
 
 @Component({
   templateUrl: './repos-list.component.html',
@@ -16,12 +16,12 @@ import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.se
 })
 export class ReposListComponent {
 
-	repos: Observable<SelectedDocs[]>;
+	repos: Observable<Repo[]>;
 
 	constructor(
 		private db: FirebaseExtendedService,
 	) {
-		this.repos = this.db.getCol<SelectedDocs>('supported-docs').pipe(
+		this.repos = this.db.getCol<Repo>('supported-docs').pipe(
 			map((d) => {
 				const docs = d
 					// Sort by name
