@@ -27,7 +27,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 	selectedIndex = 0;
 	docs: Repo[] = [];
 	filteredDocs: Repo[] = [];
-	Repo: Repo | undefined;
+	repo: Repo | undefined;
 	cacheRepo: Repo | undefined;
 	placeholder: string = 'Search a repo';
 
@@ -59,7 +59,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 			this.filteredDocs = this._filterDocs(this.searchInput.value);
 			const repoParam = this.route.snapshot.paramMap.get('repo');
 
-			if (!this.searchInput.value && !this.Repo && !this.cacheRepo) {
+			if (!this.searchInput.value && !this.repo && !this.cacheRepo) {
 
 				if (!repoParam) {
 					this.selectDoc(0);
@@ -93,13 +93,13 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 	}
 
 	onFocus(): void {
-		this.cacheRepo = this.Repo;
-		this.Repo = undefined;
+		this.cacheRepo = this.repo;
+		this.repo = undefined;
 		this.cdRef.detectChanges();
 	}
 
 	onBlur(): void {
-		this.Repo = this.cacheRepo;
+		this.repo = this.cacheRepo;
 		this.cacheRepo = undefined;
 		this.searchInput.setValue('');
 		this.cdRef.detectChanges();
@@ -123,7 +123,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 
 	selectDoc(i: number): void {
 		if (i <= -1) this.selectedIndex = 0;
-		this.Repo = this.filteredDocs[i];
+		this.repo = this.filteredDocs[i];
 		this.cacheRepo = this.filteredDocs[i];
 		this.onRepo.emit(this.filteredDocs[i])
 		this.searchDocsInputElement?.nativeElement.focus();

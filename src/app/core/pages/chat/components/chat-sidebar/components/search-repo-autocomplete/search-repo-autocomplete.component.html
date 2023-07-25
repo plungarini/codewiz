@@ -3,21 +3,21 @@
 		(click)="searchDocsInput.focus()"
 		class="relative z-20 flex flex-row items-center w-full px-2 py-1 space-x-2 transition-all duration-300 border rounded-md outline-none group-focus-within/menu:outline-none bg-zinc-950 group-hover/menu:bg-zinc-900 group-focus-within/menu:bg-zinc-900 text-zinc-400 border-zinc-600 group-hover/menu:border-zinc-200 group-focus-within/menu:border-zinc-200 group-hover/menu:text-zinc-200 group-focus-within/menu:text-zinc-200"
 	>
-		<ng-container *ngIf="selectedDocs && selectedDocs?.name && selectedDocs?.id && selectedDocs?.logo; else noSelectedDocs">
+		<ng-container *ngIf="repo && repo?.name && repo?.id && repo?.logo; else noRepo">
 			<img
 				ixImg
-				[alt]="selectedDocs.name"
+				[alt]="repo.name"
 				priority
 				loading="lazy"
 				priority
 				[width]="1"
 				[height]="1"
-				[path]="selectedDocs.logo"
+				[path]="repo.logo"
 				class="w-5 h-5 shrink-0"
 			>
 		</ng-container>
 
-		<ng-template #noSelectedDocs>
+		<ng-template #noRepo>
 			<svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path fill-rule="evenodd" clip-rule="evenodd" d="M9.07331 9.59389C7.74574 9.59389 6.66895 8.5171 6.66895 7.18952C6.66895 5.86195 7.74574 4.78516 9.07331 4.78516C10.4009 4.78516 11.4777 5.86195 11.4777 7.18952C11.4777 8.5171 10.4009 9.59389 9.07331 9.59389Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 				<path fill-rule="evenodd" clip-rule="evenodd" d="M9.07331 20.0001C7.74574 20.0001 6.66895 18.9234 6.66895 17.5958C6.66895 16.2682 7.74574 15.1914 9.07331 15.1914C10.4009 15.1914 11.4777 16.2682 11.4777 17.5958C11.4777 18.9234 10.4009 20.0001 9.07331 20.0001Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -35,10 +35,10 @@
 			(focus)="onFocus()"
 			(blur)="onBlur()"
 			(keydown)="handleKeypress($event)"
-			[placeholder]="selectedDocs?.name || placeholder"
+			[placeholder]="repo?.name || placeholder"
 			[ngClass]="{
-				'placeholder:text-zinc-200': selectedDocs?.name,
-				'placeholder:text-zinc-400/70': !selectedDocs?.name,
+				'placeholder:text-zinc-200': repo?.name,
+				'placeholder:text-zinc-400/70': !repo?.name,
 			}"
 			class="w-full p-0 m-0 transition-colors duration-300 bg-transparent border-none outline-none text-zinc-200 placeholder:text-zinc-400/70 focus:outline-none ring-0 focus:ring-0 focus:border-none"
 		>
@@ -61,9 +61,9 @@
 					*ngFor="let l of filteredDocs; let i = index"
 					#el
 					[ngClass]="{
-						'bg-zinc-700 cursor-default': l.id === cacheSelectedDocs?.id,
-						'bg-transparent hover:bg-zinc-700/50 cursor-pointer': l.id !== cacheSelectedDocs?.id && i !== selectedIndex,
-						'bg-zinc-700/50 cursor-pointer': i === selectedIndex && l.id !== cacheSelectedDocs?.id,
+						'bg-zinc-700 cursor-default': l.id === cacheRepo?.id,
+						'bg-transparent hover:bg-zinc-700/50 cursor-pointer': l.id !== cacheRepo?.id && i !== selectedIndex,
+						'bg-zinc-700/50 cursor-pointer': i === selectedIndex && l.id !== cacheRepo?.id,
 					}"
 					(click)="selectDoc(i)"
 					class="flex flex-row items-center px-2 py-2 space-x-2 transition-colors duration-300 group"
@@ -82,13 +82,13 @@
 		
 					<p
 						[ngClass]="{
-							'text-zinc-200': l.id === cacheSelectedDocs?.id,
-							'text-zinc-400': l.id !== cacheSelectedDocs?.id,
+							'text-zinc-200': l.id === cacheRepo?.id,
+							'text-zinc-400': l.id !== cacheRepo?.id,
 						}"
 						class="w-full text-left truncate duration-300 group-hover:text-zinc-200"
 					>{{l.name}}</p>
 
-					<div *ngIf="l.id === cacheSelectedDocs?.id" class="pr-2 shrink-0">
+					<div *ngIf="l.id === cacheRepo?.id" class="pr-2 shrink-0">
 						<div class="w-2 h-2 rounded-full bg-sky-500"></div>
 					</div>
 				</button>
