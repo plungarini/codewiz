@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
 import { RepoPage } from '../../../../../../../../../shared/models/repo.model';
 import { EmbeddingsService } from '../../services/embeddings.service';
 
@@ -105,11 +105,13 @@ export class EditPagesComponent {
 				relativeLinksHost: this.scrapeRepoform.value.relativeLinksHost || '',
 			});
 			this._pages$.next(files);
-			this.cdRef.detectChanges();
 			this.buttonLoading = false;
+			this.buttonLoadingEmbeddings = false;
+			this.cdRef.detectChanges();
 			this.parseRepoFiles();
     } catch (error) {
 			this.buttonLoading = false;
+			this.buttonLoadingEmbeddings = false;
 			this.cdRef.detectChanges();
       console.error(error);
     }

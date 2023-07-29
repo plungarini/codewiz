@@ -96,8 +96,8 @@ export const elaborateEmbeddings = async (req: {
     );
 	}
 
-	const author = req.author.split('/').pop();
-	if (!author) throw new Error(`Author field is required. Currently it's ${author}`);
+	const author = req.author.split('/').pop()?.replaceAll('.', '');
+	if (!author) throw new Error(`Author field is required. Currently it's ${author}, original is ${req.author}`);
 
 	const supabase = createClient(supabasePublicUrl, supabaseServiceRoleKey);
 
