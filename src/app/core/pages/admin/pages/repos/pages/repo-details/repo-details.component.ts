@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Observable, of, switchMap } from 'rxjs';
-import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
+import { Repo } from '../../../../../../../shared/models/repo.model';
 import { Embedding } from './models/embedding.model';
 import { EmbeddingsService } from './services/embeddings.service';
 
@@ -19,7 +19,7 @@ import { EmbeddingsService } from './services/embeddings.service';
 })
 export class RepoDetailsComponent {
 
-	repo$: Observable<SelectedDocs | undefined>;
+	repo$: Observable<Repo | undefined>;
 	embeddings: Embedding[] = [];
 	loadingError = '';
 	cacheId: string = '';
@@ -41,7 +41,7 @@ export class RepoDetailsComponent {
 				this.repoId = id;
 				if (!id) return of(undefined);
 				this.loadEmbeddings(id);
-				return this.db.getDoc<SelectedDocs>(`supported-docs/${id}`);
+				return this.db.getDoc<Repo>(`supported-docs/${id}`);
 			})
 		);
 	}

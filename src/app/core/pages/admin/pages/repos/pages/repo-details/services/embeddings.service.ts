@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { Embedding, FetchGitRepoData, FetchGitRepoRes, GenerateEmbeddingData } from '../models/embedding.model';
+import { AdminRepoService } from './admin-repo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,7 @@ export class EmbeddingsService {
 
 	constructor(
 		private db: FirebaseExtendedService,
+		private adminRepo: AdminRepoService,
 		private functions: Functions
 	) { }
 
@@ -35,10 +37,6 @@ export class EmbeddingsService {
     return res;
   } */
 
-	async updateTimestampRepo(repo: string): Promise<void> {
-		await this.db.upsert(`supported-docs/${repo}`, {});
-	}
-
   async generateEmbedding(data: GenerateEmbeddingData): Promise<void> {
     const scrapePage = httpsCallable<GenerateEmbeddingData, boolean>(
       this.functions,
@@ -46,8 +44,9 @@ export class EmbeddingsService {
       { timeout: 540 * 1000 }
     );
 		const { data: res } = await scrapePage(data);
-		if (typeof res !== 'boolean') throw new Error(`Skipping generation for file: ${data.id}`)
-    console.log(`Generated embedding?`, res && typeof res === 'boolean');
+		const generated = !!res && typeof res === 'boolean';
+		if (!generated) throw new Error(`Skipping generation for file: ${data.id}`);
+		console.log(`Generated embedding?`, generated);
   }
 
 	async fetchGitRepo(data: FetchGitRepoData): Promise<FetchGitRepoRes[]> {

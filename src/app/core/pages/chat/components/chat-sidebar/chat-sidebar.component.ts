@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, switchMap } from 'rxjs';
-import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
+import { Repo } from '../../../../../shared/models/repo.model';
 
 @Component({
   selector: 'app-chat-sidebar',
@@ -20,7 +20,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 export class ChatSidebarComponent {
 
 	$reposChats: Observable<unknown[]>;
-	selectedDoc: SelectedDocs | undefined;
+	selectedDoc: Repo | undefined;
 
 	private _$selectedRepo = new Subject<string>();
 
@@ -36,7 +36,7 @@ export class ChatSidebarComponent {
 
 	thisDate = () => Date.now();
 
-	updateSelectedDoc(doc: SelectedDocs): void {
+	updateSelectedDoc(doc: Repo): void {
 		this.selectedDoc = doc;
 		this._$selectedRepo.next(doc.id);
 		

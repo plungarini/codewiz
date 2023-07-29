@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
-import { RepoPage } from '../../models/repo.model';
+import { RepoPage } from '../../../../../../../../../shared/models/repo.model';
 import { EmbeddingsService } from '../../services/embeddings.service';
 
 @Component({

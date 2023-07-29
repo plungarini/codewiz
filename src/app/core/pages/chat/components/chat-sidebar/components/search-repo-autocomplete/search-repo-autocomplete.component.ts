@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Even
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { SelectedDocs } from 'src/app/shared/models/select-docs.model';
+import { Repo } from 'src/app/shared/models/repo.model';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 
 
@@ -21,14 +21,14 @@ import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.se
 export class SearchRepoAutocompleteComponent implements OnDestroy {
 
 	@ViewChild('searchDocsInput') searchDocsInputElement: ElementRef<HTMLInputElement> | undefined;
-	@Output('onSelectedDocs') onSelectedDocs: EventEmitter<SelectedDocs> = new EventEmitter()
+	@Output('onRepo') onRepo: EventEmitter<Repo> = new EventEmitter()
 
 	searchInput = new FormControl();
 	selectedIndex = 0;
-	docs: SelectedDocs[] = [];
-	filteredDocs: SelectedDocs[] = [];
-	selectedDocs: SelectedDocs | undefined;
-	cacheSelectedDocs: SelectedDocs | undefined;
+	docs: Repo[] = [];
+	filteredDocs: Repo[] = [];
+	repo: Repo | undefined;
+	cacheRepo: Repo | undefined;
 	placeholder: string = 'Search a repo';
 
 	docsListLoaded: boolean = false;
@@ -40,7 +40,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		private db: FirebaseExtendedService,
 		private route: ActivatedRoute,
 	) {
-		this.docsListSub = this.db.getCol<SelectedDocs>('supported-docs').subscribe(d => {
+		this.docsListSub = this.db.getCol<Repo>('supported-docs').subscribe(d => {
 			if (!this.docsListLoaded) this.docsListLoaded = true;
 			this.docs = d.sort((a, b) => {
 				// Convert to uppercase for case-insensitive sorting
@@ -59,7 +59,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 			this.filteredDocs = this._filterDocs(this.searchInput.value);
 			const repoParam = this.route.snapshot.paramMap.get('repo');
 
-			if (!this.searchInput.value && !this.selectedDocs && !this.cacheSelectedDocs) {
+			if (!this.searchInput.value && !this.repo && !this.cacheRepo) {
 
 				if (!repoParam) {
 					this.selectDoc(0);
@@ -93,14 +93,14 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 	}
 
 	onFocus(): void {
-		this.cacheSelectedDocs = this.selectedDocs;
-		this.selectedDocs = undefined;
+		this.cacheRepo = this.repo;
+		this.repo = undefined;
 		this.cdRef.detectChanges();
 	}
 
 	onBlur(): void {
-		this.selectedDocs = this.cacheSelectedDocs;
-		this.cacheSelectedDocs = undefined;
+		this.repo = this.cacheRepo;
+		this.cacheRepo = undefined;
 		this.searchInput.setValue('');
 		this.cdRef.detectChanges();
 	}
@@ -123,9 +123,9 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 
 	selectDoc(i: number): void {
 		if (i <= -1) this.selectedIndex = 0;
-		this.selectedDocs = this.filteredDocs[i];
-		this.cacheSelectedDocs = this.filteredDocs[i];
-		this.onSelectedDocs.emit(this.filteredDocs[i])
+		this.repo = this.filteredDocs[i];
+		this.cacheRepo = this.filteredDocs[i];
+		this.onRepo.emit(this.filteredDocs[i])
 		this.searchDocsInputElement?.nativeElement.focus();
 		setTimeout(() => {
 			this.searchDocsInputElement?.nativeElement.blur();
@@ -135,7 +135,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		this.cdRef.markForCheck();
 	}
 
-	private _filterDocs(value: string): SelectedDocs[] {
+	private _filterDocs(value: string): Repo[] {
 		this.selectedIndex = 0;
 		if (!value) return this.docs;
 		return this.docs.filter(doc => {
