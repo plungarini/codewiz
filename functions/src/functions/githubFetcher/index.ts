@@ -79,7 +79,7 @@ const elaborateTitle = (input: string, fileName: string): string => {
 		const normTitle = fileName.replaceAll('-', ' ').replaceAll('_', ' ');
 		title = normTitle[0].toUpperCase() + normTitle.substring(1);
 	}
-	return title;
+	return title.replace('.md', '');
 };
 
 const getMarkdown = async (fileUrl: string, fileName: string, host: string): Promise<{ name: string, content: string, title: string, path: string }> => {
