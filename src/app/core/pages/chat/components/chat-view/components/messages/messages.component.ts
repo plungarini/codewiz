@@ -1,5 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
+import { Repo } from 'src/app/shared/models/repo.model';
+import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 
 
 @Component({
@@ -19,6 +22,9 @@ export class MessagesComponent {
 
 	show = false;
 
+	repo$: Observable<Repo | undefined>;
+	private repoId = new BehaviorSubject('angular');
+
 	@Input('chat') set setChat(value: AiChatMessage[]) {
 		if (!value || value?.length < 0) return;
 
@@ -35,10 +41,18 @@ export class MessagesComponent {
 		this.cdRef.detectChanges();
 	};
 
+	@Input('repoId') set setRepoId(value: string) {
+		if (!value) return;
+		this.repoId.next(value);
+	}
+
 	constructor(
+		private db: FirebaseExtendedService,
 		private cdRef: ChangeDetectorRef,
 	) {
-		
+		this.repo$ = this.repoId.pipe(
+			switchMap((id) => this.db.getDoc<Repo>(`supported-docs/${id}`))
+		)
 	}
 
 	onCopyToClipboard(event: MouseEvent): void {

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, animationFrameScheduler, catchError, finalize, of, switchMap } from 'rxjs';
+import { animationFrameScheduler, catchError, finalize, of, Subscription, switchMap } from 'rxjs';
 import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
@@ -35,7 +35,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 	
 	statusSub: Subscription;
 	chatSub: Subscription | undefined;
-	private selectedRepo: string = 'angular';
+	selectedRepo: string = 'angular';
 	private chatId: string = '';
 	private chatLoaded = false;
 

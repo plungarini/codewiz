@@ -18,7 +18,23 @@ export class AiToolbarComponent {
 
 	@Input('msg') set setMsg(value: AiChatMessage | undefined) {
 		if (!value) return;
-		this.msg = value;
+		const urls = new Set();
+		value.pageSections?.map((p) => {
+			const numberIdRegex = /^(.*?)(?:\[\d+\])?$/;
+			const match = p.id.match(numberIdRegex);
+			p.id = match ? match[1] : p.id;
+			return p;
+		})
+		this.msg = {
+			...value,
+			pageSections: value.pageSections?.filter(section => {
+        if (!urls.has(section.id)) {
+            urls.add(section.id);
+            return true;
+        }
+        return false;
+			}),
+		};
 		this.cdRef.detectChanges();
 	};
 	@Input() show: boolean = false;
