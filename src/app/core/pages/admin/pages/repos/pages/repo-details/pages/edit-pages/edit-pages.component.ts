@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
-import { RepoPage } from '../../../../../../../../../shared/models/repo.model';
+import { BehaviorSubject, firstValueFrom, Observable, Subscription } from 'rxjs';
+import { Repo, RepoPage } from '../../../../../../../../../shared/models/repo.model';
+import { AdminRepoService } from '../../services/admin-repo.service';
 import { EmbeddingsService } from '../../services/embeddings.service';
 
 @Component({
@@ -16,39 +17,23 @@ import { EmbeddingsService } from '../../services/embeddings.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditPagesComponent {
+export class EditPagesComponent implements OnDestroy {
 
 	repoId: string;
 
-	constructor(
-		private route: ActivatedRoute,
-		private embeddingsService: EmbeddingsService,
-		private cdRef: ChangeDetectorRef,
-		private fb: FormBuilder,
-	) { 
-		this.repoId = this.route.snapshot.params['id'];
-	}
-
-  buttonLoading: boolean = false;
+	buttonLoading: boolean = false;
 	buttonLoadingEmbeddings: boolean = false;
 
+	repoHistory: Repo['editPagesSearch'];
+	repoHistorySub: Subscription;
+	showHistory = {
+		author: false,
+		folder: false,
+		relativeLinksHost: false,
+	}
+
 	autoParse = this.fb.control(false);
-	
-  /* scrapeUrlform = new FormGroup({
-    category: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    url: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-    page_title: new FormControl('', {
-      nonNullable: true,
-      validators: [Validators.required],
-    }),
-	}); */
-	
+
 	scrapeRepoform = this.fb.group({
 		author: ['', {
 			nonNullable: true,
@@ -66,6 +51,46 @@ export class EditPagesComponent {
 
 	private _pages$ = new BehaviorSubject<RepoPage[]>([]);
 	pages$: Observable<RepoPage[]> = this._pages$.asObservable();
+
+	constructor(
+		private route: ActivatedRoute,
+		private embeddingsService: EmbeddingsService,
+		private cdRef: ChangeDetectorRef,
+		private fb: FormBuilder,
+		private adminRepoService: AdminRepoService,
+	) { 
+		this.repoId = this.route.snapshot.params['id'];
+		this.repoHistorySub = this.adminRepoService.getEditPagesSearch(this.repoId).subscribe((repoHistory) => {
+			this.repoHistory = repoHistory;
+			this.cdRef.detectChanges();
+		});
+	}
+
+	ngOnDestroy(): void {
+		this.repoHistorySub.unsubscribe();
+	}
+
+	showHistoryFn(id: 'author' | 'folder' | 'relativeLinksHost', value: boolean): void {
+		setTimeout(() => {
+			this.showHistory[id] = value;
+			this.cdRef.detectChanges();
+		}, 100);
+	}
+	
+  /* scrapeUrlform = new FormGroup({
+    category: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    url: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    page_title: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+	}); */
 
   /* async loadEmbeddings(): Promise<void> {
     this.buttonLoadingEmbeddings = true;
@@ -91,6 +116,15 @@ export class EditPagesComponent {
     }
     this.buttonLoadingEmbeddings = false;
 	} */
+
+	async removeRecentSearch(id: 'author' | 'folder' | 'relativeLinksHost', value: string): Promise<void> {
+		await this.adminRepoService.removeEditPagesSearch(this.repoId, { [id]: [value] });
+	}
+
+	setValueFromHistorySearch(id: 'author' | 'folder' | 'relativeLinksHost', value: string): void {
+		this.scrapeRepoform.patchValue({ [id]: value });
+		this.cdRef.detectChanges();
+	}
 	
 	async fetchRepo(): Promise<void> {
 		if (!this.scrapeRepoform.valid)
@@ -108,6 +142,15 @@ export class EditPagesComponent {
 			this.buttonLoading = false;
 			this.buttonLoadingEmbeddings = false;
 			this.cdRef.detectChanges();
+
+			const req: Partial<Repo['editPagesSearch']> = {};
+			if (this.scrapeRepoform.value.author) req.author = [this.scrapeRepoform.value.author];
+			if (this.scrapeRepoform.value.folder) req.folder = [this.scrapeRepoform.value.folder];
+			if (this.scrapeRepoform.value.relativeLinksHost) req.relativeLinksHost = [this.scrapeRepoform.value.relativeLinksHost];
+
+			if (files.length > 0)
+				await this.adminRepoService.updateEditPagesSearch(this.repoId, req);
+			
 			this.parseRepoFiles();
     } catch (error) {
 			this.buttonLoading = false;
@@ -119,9 +162,6 @@ export class EditPagesComponent {
 
 	async parseRepoFiles(run = this.autoParse.value) {
 		if (!run) return;
-		
-		const author = this.scrapeRepoform.value.author;
-		const folder = this.scrapeRepoform.value.folder;
 
 		if (!this.scrapeRepoform.valid) {
 			return console.error('Form is invalid.');
@@ -130,43 +170,61 @@ export class EditPagesComponent {
 		this.buttonLoadingEmbeddings = true;
 		this.cdRef.detectChanges();
 
-		const files = await firstValueFrom(this.pages$);
+		let files = await firstValueFrom(this.pages$);
 
 		for (const file of files) {
-			if (file.status && file.status === 'success') {
-				continue;
-			}
-
-			file.status = 'loading';
-			this._pages$.next(files);
-
-			const id = `${author}/${folder}/${file.name.replace('.md', '').replaceAll(' ', '_').toLowerCase()}`;
-
 			try {
-				await this.embeddingsService.generateEmbedding({
-					author: author || '',
-					content: file.content,
-					link: file.path,
-					title: file.title,
-					id
-				});
-
-				file.status = 'success';
-				this._pages$.next(files);
-			} catch (error) {
-				file.status = 'failed';
-				this._pages$.next(files);
-				console.error(error);
+				await this.parseRepoFile(file, files);
+			} catch (err) {
 				continue;
 			}
 		}
 
+		files = await firstValueFrom(this.pages$);
+
 		const success = files.filter(f => f.status === 'success').length;
 		const failed = files.filter(f => f.status === 'failed');
 
-		console.log(`✨ Finished - ${success}/${failed.length} - Saved to local storage`);
+		console.log(`✨ Finished - ${success}/${failed.length}`);
 		this.buttonLoadingEmbeddings = false;
 		this.cdRef.detectChanges();
+	}
+
+	async parseRepoFile(inputFile: RepoPage, inputFiles?: RepoPage[]): Promise<void> {
+		if (inputFile.status && inputFile.status === 'success') {
+			return;
+		}
+
+		const files: RepoPage[] = inputFiles ? inputFiles : await firstValueFrom(this.pages$);
+		const file = files.find(f => f.name === inputFile.name);
+		const author = this.scrapeRepoform.value.author;
+		const folder = this.scrapeRepoform.value.folder;
+
+		if (!file) return console.warn('Unable to find file => ', inputFile);
+
+		file.status = 'loading';
+		this._pages$.next(files);
+
+		const id = `${author}/${folder}/${file.name.replace('.md', '').replaceAll(' ', '_').toLowerCase()}`;
+
+		try {
+			await this.embeddingsService.generateEmbedding({
+				author: author || '',
+				content: file.content,
+				link: file.path,
+				title: file.title,
+				id
+			});
+
+			file.status = 'success';
+			this._pages$.next(files);
+
+			this.adminRepoService.updateRepoTimestamp(this.repoId);
+		} catch (error) {
+			file.status = 'failed';
+			this._pages$.next(files);
+			console.error(error);
+		}
 	}
 
 	// Parse from url

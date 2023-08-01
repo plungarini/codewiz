@@ -20,6 +20,12 @@ export type Repo = {
 		s: string;
 		r: string;
 	}[];
+	editPagesSearch?: {
+		author: string[];
+		folder: string[];
+		relativeLinksHost: string[];
+	};
+	embeddingsUpdatedAt?: Timestamp;
 	createdAt?: Timestamp;
 	updatedAt?: Timestamp;
 }

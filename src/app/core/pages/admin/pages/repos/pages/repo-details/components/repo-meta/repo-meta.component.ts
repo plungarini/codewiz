@@ -27,6 +27,7 @@ export class RepoMetaComponent implements OnDestroy {
 	private builder = new FormBuilder();
 	private oldValue: Partial<Repo> | undefined;
 	private saves = 0;
+	private lastSave: Date = new Date();
 	private isFirstValue = true;
 	
 	form = this.builder.group({
@@ -63,12 +64,14 @@ export class RepoMetaComponent implements OnDestroy {
 				delete comparison.createdAt;
 				delete comparison.updatedAt;
 				delete comparison.id;
+				delete comparison.editPagesSearch;
 				const normVal = {
 					...val,
 					replaceStrings: newReplaceStrings,
 				};
 				delete normVal.id;
 				isEqual = _isEqual(comparison, normVal);
+				/* console.log({ isEqual, comparison, normVal }) */
 			}
 			
 			if (isEqual) return;
@@ -107,6 +110,15 @@ export class RepoMetaComponent implements OnDestroy {
 	save(value: Partial<Repo>) {
 		if (this.isFirstValue) return;
 		if (this.saves > 5) return console.error('Too many saves!');
+
+		setTimeout(() => {
+			const currentTime = new Date();
+			const differenceInSeconds = Math.floor((currentTime.getTime() - this.lastSave.getTime()) / 1000);
+			const canReset = differenceInSeconds >= 30;
+			if(canReset) this.saves = 0;
+		}, 1000 * 35);
+
+		
 		this.saves++;
 		console.warn('Saving form...', value);
 		this.adminRepo.updateRepo(value);
