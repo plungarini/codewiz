@@ -18,7 +18,7 @@
 	
 			<p *ngIf="selectedDoc" class="flex flex-row justify-between px-2 space-x-1 text-sm">
 				<b class="whitespace-nowrap">Last update:</b>
-				<span class="truncate text-zinc-500">{{selectedDoc.updatedAt?.toDate() | date:'mediumDate'}}</span>
+				<span class="truncate text-zinc-500">{{selectedDoc.embeddingsUpdatedAt?.toDate() || selectedDoc.updatedAt?.toDate() | date:'mediumDate'}}</span>
 			</p>
 	
 		</div>
