@@ -50,6 +50,10 @@ export class AiChatService {
 						link: status.incidents[0]?.shortlink || 'https://status.openai.com/',
 					};
 
+					if (newStatus.indicator !== AiChatStatusIndicator.None && newStatus.title === 'OpenAI\'s APIs are online') {
+						newStatus.title = 'Minor issues reported in OpenAI\'s APIs';
+					}
+
 					return newStatus;
 				}
 
@@ -72,6 +76,10 @@ export class AiChatService {
 					message: status.incidents[0]?.incident_updates[0].body || AiChatStatusIndicator.None ? '' : 'Click here to visit the status webpage.',
 					link: status.incidents[0]?.shortlink || 'https://status.openai.com/',
 				};
+
+				if (newStatus.indicator !== AiChatStatusIndicator.None && newStatus.title === 'OpenAI\'s APIs are online') {
+					newStatus.title = 'Minor issues reported in OpenAI\'s APIs';
+				}
 
 				return newStatus;
 			})
@@ -106,6 +114,10 @@ export class AiChatService {
 						link: status.incidents[0]?.shortlink || 'https://status.openai.com/',
 					};
 
+					if (newStatus.indicator !== AiChatStatusIndicator.None && newStatus.title === 'OpenAI\'s APIs are online') {
+						newStatus.title = 'Minor issues reported in OpenAI\'s APIs';
+					}
+
 					return newStatus;
 				}
 
@@ -128,6 +140,10 @@ export class AiChatService {
 					message: status.incidents[0]?.incident_updates[0].body || AiChatStatusIndicator.None ? '' : 'Click here to visit the status webpage.',
 					link: status.incidents[0]?.shortlink || 'https://status.openai.com/',
 				};
+
+				if (newStatus.indicator !== AiChatStatusIndicator.None && newStatus.title === 'OpenAI\'s APIs are online') {
+					newStatus.title = 'Minor issues reported in OpenAI\'s APIs';
+				}
 
 				return newStatus;
 			})
@@ -420,7 +436,7 @@ export class AiChatService {
 		}
 		chatId = chatId ? chatId !== 'new' ? chatId : newChatId : newChatId;
 		const msgId = message.id || this.db.generateId();
-		await this.db.upsert(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${msgId}`, message);
+		await this.db.upsert<AiChatMessage>(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${msgId}`, { ...message, completed: true });
 
 		const chatDoc = await this.db.getDocPromise<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats/${chatId}`);
 		if (chatDoc && (!chatDoc.name || chatDoc.name === 'New Chat')) {
