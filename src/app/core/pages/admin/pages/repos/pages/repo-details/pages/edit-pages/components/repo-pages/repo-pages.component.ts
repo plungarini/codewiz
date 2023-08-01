@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { RepoPage } from '../../../../../../../../../../../shared/models/repo.model';
 
@@ -10,5 +10,11 @@ import { RepoPage } from '../../../../../../../../../../../shared/models/repo.mo
 export class RepoPagesComponent {
 
 	@Input('pages') pages$: Observable<RepoPage[]> = of([]);
+
+	@Output('manualElaborate') manualElaborate = new EventEmitter<RepoPage>();
+
+	manualElaborateClick(page: RepoPage) {
+		this.manualElaborate.emit(page);
+	}
 
 }
