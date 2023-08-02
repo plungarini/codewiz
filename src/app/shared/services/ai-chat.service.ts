@@ -17,7 +17,6 @@ import { FirebaseExtendedService } from './firebase-ext.service';
 export class AiChatService {
 	private statusUrl = 'https://status.openai.com/api/v2/summary.json';
 
-	
 	constructor(
 		private zone: NgZone,
 		private http: HttpClient,
@@ -427,6 +426,17 @@ export class AiChatService {
 		this.db.upsert<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats/${chatId}`, { name });
 	}
 
+	async updateMessageFeedback(message: AiChatMessage): Promise<void> {
+		const uid = await this._getCurrentUid();
+		const chatId = message.chatId;
+		const messageId = message.id;
+		const repo = message.repoId;
+		if (!uid || !chatId || !messageId || !repo) return console.error('Missing uid, repoId, chatId or messageId: unable to update message feedback.', { uid, chatId, messageId, repo });
+		if (!message.feedback) return console.error('Missing feedback: unable to update message feedback.', message);
+		await this.db.upsert<AiChatMessage>(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, { feedback: message.feedback });
+		await this.db.upsert(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, message)
+	}
+
 	async saveNewMessage(repo: string, chatId: string, message: Partial<AiChatMessage>) {
 		const uid = await this._getCurrentUid();
 		const newChatId = this.db.generateId();
@@ -435,14 +445,30 @@ export class AiChatService {
 			await this.createNewChat(repo, newChatId);
 		}
 		chatId = chatId ? chatId !== 'new' ? chatId : newChatId : newChatId;
-		const msgId = message.id || this.db.generateId();
-		await this.db.upsert<AiChatMessage>(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${msgId}`, { ...message, completed: true });
 
-		const chatDoc = await this.db.getDocPromise<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats/${chatId}`);
-		if (chatDoc && (!chatDoc.name || chatDoc.name === 'New Chat')) {
-			const colLen = ((await this.db.getColRef(`users/${uid}/repos/${repo}/chats/${chatId}/messages`)) || new Set()).size;
-			if (colLen >= 3) await this.db.upsert(`users/${uid}/repos/${repo}/chats/${chatId}`, { updatedAt: new Date() });
-		}
+		const urls = new Set();
+		const pageSections = message.pageSections?.filter(section => {
+        if (!urls.has(section.id)) {
+            urls.add(section.id);
+            return true;
+        }
+        return false;
+		});
+
+		const msgId = message.id || this.db.generateId();
+		const normMessage: Partial<AiChatMessage> = {
+			...message,
+			id: msgId,
+			repoId: repo,
+			chatId: chatId,
+			completed: true,
+			pageSections: pageSections || [],
+		};
+		await this.db.upsert<AiChatMessage>(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${msgId}`, normMessage);
+
+		const colLen = ((await this.db.getColRef(`users/${uid}/repos/${repo}/chats/${chatId}/messages`)) || new Set()).size;
+		if (colLen >= 3) await this.db.upsert(`users/${uid}/repos/${repo}/chats/${chatId}`, { updatedAt: new Date() });
+		if (colLen >= 3) console.warn('Updating updatedAt')
 	}
 
 	async createNewChat(repo: string, chatId?: string) {

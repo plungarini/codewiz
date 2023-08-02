@@ -21,8 +21,11 @@ type AiChatPageSection = {
 export interface AiChatMessage extends AiChatMessageReqItem  {
 	hide?: boolean;
 	id?: string;
+	chatId?: string;
+	repoId?: string;
 	completed: boolean;
 	pageSections?: AiChatPageSection[];
+	feedback?: 'like' | 'dislike' | 'none';
 	showPageSections?: boolean;
 	error?: AiChatMessageError;
 	updatedAt?: Timestamp;
