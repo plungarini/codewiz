@@ -59,13 +59,7 @@
 					<app-ai-toolbar
 						*ngIf="msg.role === msgRoles.Assistant && msg.content.length > 0"
 						[show]="msg.role === msgRoles.Assistant && msg.content.length > 0 && !msg.showPageSections"
-						[msg]="{
-							content: msg.content,
-							role: msg.role,
-							completed: msg.completed,
-							error: msg.error,
-							pageSections: msg.pageSections
-						}"
+						[msg]="msg"
 						[containerWidth]="msgContentDiv.clientWidth"
 						(onShowPageSections)="togglePageSections(i, true)"
 					></app-ai-toolbar>

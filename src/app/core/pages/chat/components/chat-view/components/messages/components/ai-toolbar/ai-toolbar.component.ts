@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
+import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
 @Component({
   selector: 'app-ai-toolbar',
@@ -44,6 +45,7 @@ export class AiToolbarComponent {
 
 	constructor(
 		private cdRef: ChangeDetectorRef,
+		private aiChatService: AiChatService,
 	) { }
 
 	msg: AiChatMessage = {
@@ -54,6 +56,14 @@ export class AiToolbarComponent {
 
 	showPageSections(): void {
 		this.onShowPageSections.emit();
+	}
+
+	async feedbackMessage(status: 'like' | 'dislike'): Promise<void> {
+		const normStatus = this.msg.feedback === status ? 'none' : status;
+		await this.aiChatService.updateMessageFeedback({
+			...this.msg,
+			feedback: normStatus,
+		})
 	}
 	
 }
