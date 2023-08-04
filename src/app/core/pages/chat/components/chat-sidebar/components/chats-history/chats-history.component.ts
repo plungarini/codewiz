@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { AiUserRepoChat } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
@@ -60,13 +62,19 @@ export class ChatsHistoryComponent {
 	groupedDocuments: { date: string, documents: AiUserRepoChat[] }[] = [];
 	chatHistory: AiUserRepoChat[] = [];
 	currentChatId: string = '';
+
+	editModeTitle: boolean[] = [];
+	editModeGroupIndex: number = -1;
+
+	newChatNameInput = new FormControl('');
 	
 	private queue: Set<string> = new Set();
-
-	private aiChatService = inject(AiChatService);
-	private cdRef = inject(ChangeDetectorRef);
 	
-	constructor() { }
+	constructor(
+		@Inject(DOCUMENT) private document: Document,
+		private aiChatService: AiChatService,
+		private cdRef: ChangeDetectorRef,
+	) { }
 
 	trackBy(i: number, obj: AiUserRepoChat): string {
 		return obj?.id || i.toString();
@@ -104,14 +112,47 @@ export class ChatsHistoryComponent {
 			});
 	}
 
-	private async saveChatName(title: string, id: string): Promise<void> {
-		const chat = this.chatHistory.find(c => c.id === id);
-		await this.aiChatService.saveChatName(title, chat.repo, id);
-	}
-
 	deleteChat(repo: string, id: string): void {
 		if (!repo || !id) return console.error('Error on delete, chat repo or chat id is undefined', { repo, id });
 		this.onDelete.emit({ repo, id });
+	}
+
+	editTitleMode(iGroup: number, iChat: number, title: string | undefined, value: boolean): void {
+		this.editModeTitle.forEach((item, i) => this.editModeTitle[i] = false);
+		this.editModeTitle[iChat] = value;
+		this.editModeGroupIndex = iGroup;
+		
+		this.newChatNameInput.setValue(title || '');
+		
+		setTimeout(() => {
+			const input = this.document.querySelector(`div[data-group="${iGroup}"][data-chat="${iChat}"] input`) as HTMLInputElement;
+			if (value) input?.select();
+		}, 200);
+
+		this.cdRef.detectChanges();
+	}
+
+	onKeyEnter(id: string, element: HTMLInputElement): void {
+		if (!this.newChatNameInput.value) return;
+		this.saveChatName(this.newChatNameInput.value, id);
+		element?.blur();
+	}
+
+	blurNewChatNameInput(id: string, event: FocusEvent): void {
+		const target = event.relatedTarget as HTMLElement | null;
+		const condition = target?.classList?.contains('saveNewChatName');
+		if (condition) {
+			if (!this.newChatNameInput.value) return;
+			this.saveChatName(this.newChatNameInput.value, id);
+		};
+		this.editTitleMode(-1, -1, undefined, false);
+	}
+
+	private async saveChatName(title: string, id: string): Promise<void> {
+		const newTitle = title.substring(0, 50).trim().replace(/[\r\n]+/g, '');
+		if (!newTitle) return;
+		const chat = this.chatHistory.find(c => c.id === id);
+		await this.aiChatService.saveChatName(newTitle, chat.repo, id);
 	}
 
 }
