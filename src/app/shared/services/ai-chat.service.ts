@@ -522,7 +522,7 @@ export class AiChatService {
 			switchMap((uid) =>
 				this.db.getCol<AiChatMessage>(
 					`users/${uid}/repos/${repo}/chats/${chatId}/messages`,
-					'id', orderBy('updatedAt')
+					'id', orderBy('createdAt')
 				).pipe(
 					map(chat => chat.map(c => ({ ...c, repo }))),
 				)
