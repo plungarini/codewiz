@@ -29,7 +29,8 @@ export const calculateTokens = async (data: {
 };
 
 const setUsageToUser = async (uid: string, repo: string, usage: { usedTokens: number, usedUSD: number }) => {
-	const date = `${new Date().getMonth()}_${new Date().getFullYear()}`;
+	const month = new Date().getMonth();
+	const date = `${month < 10 ? '0' : ''}${month}_${new Date().getFullYear()}`;
 	const docRef = firestore.doc(`users/${uid}/protected/usages/${repo}/${date}`);
 	const doc = await docRef.get();
 	const createdAt = doc.data()?.createdAt || new Date();
@@ -37,7 +38,7 @@ const setUsageToUser = async (uid: string, repo: string, usage: { usedTokens: nu
 	const usedUsdDb = doc.data()?.usedUSD || 0;
 
 	await docRef.set({
-		usedTokens: parseFloat(usedTokensDb + usage.usedTokens.toFixed(10)),
+		usedTokens: usedTokensDb + usage.usedTokens,
 		usedUSD: parseFloat(usedUsdDb + usage.usedUSD.toFixed(10)),
 		createdAt,
 		updatedAt: new Date(),
