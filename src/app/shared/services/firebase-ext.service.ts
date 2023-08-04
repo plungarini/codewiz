@@ -22,16 +22,20 @@ import { Observable, of } from 'rxjs';
 })
 export class FirebaseExtendedService {
 
+	private debug = false;
+
 	constructor(
 		private firestore: Firestore,
 		private functions: Functions
 	) { }
 	
 	callFunction<T, Z>(name: string, timeout = 60_000) {
+		if (this.debug) console.log('[Firebase "callFunction"]', { name, timeout });
 		return httpsCallable<T, Z>(this.functions, name, { timeout });
 	}
 	
-	async getColRef(path: string,  ...queryConstraints: QueryConstraint[]) {
+	async getColRef(path: string, ...queryConstraints: QueryConstraint[]) {
+		if (this.debug) console.log('[Firebase "getColRef"]', { path, queryConstraints });
 		if (!path) return undefined;
 
     let ref: Query;
@@ -40,19 +44,22 @@ export class FirebaseExtendedService {
 		return await getDocs(ref);
 	}
 
-  async getDocPromise<T>(path: string): Promise<T | undefined> {
+	async getDocPromise<T>(path: string): Promise<T | undefined> {
+		if (this.debug) console.log('[Firebase "getDocPromise"]', { path });
     if (!path) return undefined;
 		const docRef = doc(this.firestore, path) as DocumentReference<T>;
 		return (await getDocFb<T>(docRef)).data();
 	}
 	
-  getDoc<T>(path: string): Observable<T | undefined> {
+	getDoc<T>(path: string): Observable<T | undefined> {
+		if (this.debug) console.log('[Firebase "getDoc"]', { path });
     if (!path) return of(undefined);
     const docRef = doc(this.firestore, path) as DocumentReference<T>;
     return docData<T>(docRef, { idField: 'id' });
 	}
 	
 	async getColPromise<T>(path: string, ...queryConstraints: QueryConstraint[]): Promise<T[]> {
+		if (this.debug) console.log('[Firebase "getColPromise"]', { path, queryConstraints });
     if (!path) return [];
 
     let ref: Query<T>;
@@ -62,6 +69,7 @@ export class FirebaseExtendedService {
   }
 
 	getCol<T>(path: string, idField = 'id', ...queryConstraints: QueryConstraint[]): Observable<T[]> {
+		if (this.debug) console.log('[Firebase "getCol"]', { path, idField, queryConstraints });
 		if (!path) return of([]);
 
 		let ref: Query<T>;
@@ -81,7 +89,8 @@ export class FirebaseExtendedService {
     return exist;
   }
 
-  async upsert<T>(path: string, obj: Partial<T>): Promise<void> {
+	async upsert<T>(path: string, obj: Partial<T>): Promise<void> {
+		if (this.debug) console.log('[Firebase "upsert"]', { path, obj });
     if (!path) return;
 
     const docRef = doc(this.firestore, path);
@@ -108,7 +117,8 @@ export class FirebaseExtendedService {
     });
   }
 
-  async delete(path: string): Promise<void> {
+	async delete(path: string): Promise<void> {
+		if (this.debug) console.log('[Firebase "delete"]', { path });
     if (!path) return;
 
     const docRef = doc(this.firestore, path);
@@ -116,6 +126,7 @@ export class FirebaseExtendedService {
   }
 
 	async deleteCollection(path: string, ...queryConstraints: QueryConstraint[]): Promise<void> {
+		if (this.debug) console.log('[Firebase "deleteCollection"]', { path, queryConstraints });
 		if (!path) return;
 		
 		const colRef = await this.getColRef(path, ...queryConstraints);
