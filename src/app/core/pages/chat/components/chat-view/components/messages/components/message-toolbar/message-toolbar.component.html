@@ -21,19 +21,7 @@
 				</svg>
 			</button>
 
-			<button type="button" title="Flag reply" class="transition-colors duration-300 outline-none focus:outline-none text-zinc-600 hover:text-zinc-100">
-				<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M4.8877 13.6882C4.8877 13.6882 7.15371 11.4222 11.8482 13.4314C16.5437 15.4405 19.1133 13.7116 19.1133 13.7116V4.11047C19.1133 4.11047 16.5437 5.83941 11.8482 3.83026C7.15371 1.82208 4.8877 4.08809 4.8877 4.08809V21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-			</button>
-
-			<button type="button" title="Quote reply" class="transition-colors duration-300 outline-none focus:outline-none text-zinc-600 hover:text-zinc-100">
-				<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path fill-rule="evenodd" clip-rule="evenodd" d="M11.718 13.9659C15.8975 13.9659 19.1331 15.4119 20.9227 19.3646C20.9227 19.3646 22.4698 8.51768 11.718 8.51768C11.718 8.51768 11.717 6.92016 11.716 5.54449C11.715 4.77198 10.8107 4.35403 10.2215 4.85418L3.32331 10.6976C2.90438 11.0521 2.88952 11.6919 3.29657 12.0594C4.81288 13.4301 8.22085 16.5102 10.2056 18.3038C10.789 18.8317 11.718 18.4148 11.718 17.6274V13.9659Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-			</button>
-
-			<button type="button" title="Share reply" class="transition-colors duration-300 outline-none focus:outline-none text-zinc-600 hover:text-zinc-100">
+			<button *ngIf="role === 'assistant'" type="button" title="Share reply" class="transition-colors duration-300 outline-none focus:outline-none text-zinc-600 hover:text-zinc-100">
 				<svg class="w-6 h-6" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<g id="Iconly/Light/Send" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
 						<g id="Send" transform="translate(3.000000, 3.000000)" stroke="currentColor" stroke-width="1.5" >

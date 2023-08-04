@@ -123,7 +123,6 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 
 		let backupResult = '';
 		
-		console.log('Creating query...', [...this.chat])
 		this.ai.createQuery(this.selectedRepo, [...this.chat])
 			.pipe(
 				catchError((err) => {
