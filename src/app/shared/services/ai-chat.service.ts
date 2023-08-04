@@ -477,7 +477,6 @@ export class AiChatService {
 
 		const colLen = ((await this.db.getColRef(`users/${uid}/repos/${repo}/chats/${chatId}/messages`)) || new Set()).size;
 		if (colLen >= 3) await this.db.upsert(`users/${uid}/repos/${repo}/chats/${chatId}`, { updatedAt: new Date() });
-		if (colLen >= 3) console.warn('Updating updatedAt')
 	}
 
 	async getChatMessageLength(repo: string, chatId: string): Promise<number> {

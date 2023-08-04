@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { ReactiveFormsModule } from '@angular/forms';
+import { ClipboardModule } from 'ngx-clipboard';
 import { MarkdownModule } from 'ngx-markdown';
 import { ChatViewRoutingModule } from './chat-view-routing.module';
 import { ChatViewComponent } from './chat-view.component';
@@ -29,7 +30,8 @@ import { StatusComponent } from './components/status/status.component';
 		CommonModule,
     ChatViewRoutingModule,
 		MarkdownModule.forChild(),
-		ReactiveFormsModule
+		ReactiveFormsModule,
+		ClipboardModule
   ]
 })
 export class ChatViewModule { }

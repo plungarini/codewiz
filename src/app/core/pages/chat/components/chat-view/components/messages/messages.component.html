@@ -1,5 +1,5 @@
 <ng-template #buttonTemplate>
-	<button (click)="onCopyToClipboard($event)" class="absolute invisible px-2 py-2 text-sm transition-all border rounded-lg shadow-sm opacity-0 btn active:shadow-inner border-zinc-600 hover:border-zinc-400 top-2 right-2 group-hover:visible group-hover:opacity-100 text-zinc-200 false" title="Copy to clipboard" type="button">
+	<button (click)="onCodeCopyToClipboard($event)" class="absolute invisible px-2 py-2 text-sm transition-all border rounded-lg shadow-sm opacity-0 btn active:shadow-inner border-zinc-600 hover:border-zinc-400 top-2 right-2 group-hover:visible group-hover:opacity-100 text-zinc-200 false" title="Copy to clipboard" type="button">
 		<span class="relative">
 			<svg class="" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" focusable="false" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
 				<path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z" transform="translate(0)"></path>
@@ -48,11 +48,19 @@
 								ngPreserveWhitespaces
 								clipboard
 								[clipboardButtonTemplate]="buttonTemplate"
-								class="block w-full max-w-full markdown"
+								class="block w-full max-w-full markdown dura"
+								[ngClass]="{
+									'animate-[pulse_0.7s_ease-in-out_1]': copiedAnim[i],
+								}"
 							></markdown>
 						</ng-container>
 						<ng-template #isUser>
-							<p class="text-sm whitespace-pre-wrap md:text-base">{{msg.content}}</p>
+							<p
+								class="text-sm whitespace-pre-wrap md:text-base"
+								[ngClass]="{
+									'animate-[pulse_0.7s_ease-in-out_1]': copiedAnim[i],
+								}"
+							>{{msg.content}}</p>
 						</ng-template>
 					</div>
 		
@@ -66,7 +74,9 @@
 	
 	
 					<app-message-toolbar
-						*ngIf="msg.content"
+						*ngIf="msg.content && msg.completed"
+						[role]="msg.role"
+						(onCopy)="onMsgCopyToClipboard(msg.content, i)"
 						class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
 					></app-message-toolbar>
 				</div>

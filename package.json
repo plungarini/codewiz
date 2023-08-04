@@ -34,6 +34,7 @@
     "highlight.js": "^11.8.0",
     "lodash-es": "^4.17.21",
     "marked": "4.3.0",
+    "ngx-clipboard": "^16.0.0",
     "ngx-markdown": "^16.0.0",
     "rxjs": "~7.8.0",
     "sse.js": "^0.6.1",

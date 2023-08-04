@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ClipboardService } from 'ngx-clipboard';
 import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { Repo } from 'src/app/shared/models/repo.model';
@@ -21,6 +22,7 @@ export class MessagesComponent {
 	chat: AiChatMessage[] = [];
 
 	show = false;
+	copiedAnim: boolean[] = [];
 
 	repo$: Observable<Repo | undefined>;
 	private repoId = new BehaviorSubject('angular');
@@ -49,13 +51,24 @@ export class MessagesComponent {
 	constructor(
 		private db: FirebaseExtendedService,
 		private cdRef: ChangeDetectorRef,
+		private clipboardService: ClipboardService
 	) {
 		this.repo$ = this.repoId.pipe(
 			switchMap((id) => this.db.getDoc<Repo>(`supported-docs/${id}`))
 		)
 	}
 
-	onCopyToClipboard(event: MouseEvent): void {
+	onMsgCopyToClipboard(content: string, i: number): void {
+		this.clipboardService.copy(content);
+		this.copiedAnim[i] = true;
+		this.cdRef.detectChanges();
+		setTimeout(() => {
+			this.copiedAnim[i] = false;
+			this.cdRef.detectChanges();
+		}, 2000);
+	}
+
+	onCodeCopyToClipboard(event: MouseEvent): void {
 		console.log('Copied', event)
 	}
 
