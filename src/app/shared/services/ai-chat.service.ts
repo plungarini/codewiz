@@ -471,6 +471,12 @@ export class AiChatService {
 		if (colLen >= 3) console.warn('Updating updatedAt')
 	}
 
+	async getChatMessageLength(repo: string, chatId: string): Promise<number> {
+		const uid = await this._getCurrentUid();
+		const colLen = ((await this.db.getColRef(`users/${uid}/repos/${repo}/chats/${chatId}/messages`)) || new Set()).size;
+		return colLen;
+	}
+
 	async createNewChat(repo: string, chatId?: string) {
 		const newId = this.db.generateId();
 		const id = chatId ? chatId === 'new' ? newId : chatId : newId;

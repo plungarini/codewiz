@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { AiUserRepoChat } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
@@ -20,12 +20,12 @@ export class ChatsHistoryComponent {
 			this.chatHistory = [];
 			return
 		};
-		this.chatHistory = value.map((c) => {
+		this.chatHistory = value;
+		this.chatHistory.forEach((c) => {
 			if (!c.name || c.name === 'New Chat') {
 				this.getChatTitle(c.repo, c.id);
 			}
-			return c;
-		});
+		})
 
 		// Group documents by date
 		const grouped: Record<string, AiUserRepoChat[]> = {};
@@ -72,11 +72,18 @@ export class ChatsHistoryComponent {
 		return obj?.id || i.toString();
 	}
 
-	getChatTitle(repo: string, id: string) {
+	async getChatTitle(repo: string, id: string): Promise<void> {
 		if (this.queue.has(id)) return;
 		
 		const chatIndex = this.chatHistory.findIndex(c => c.id === id);
-		if (this.chatHistory[chatIndex]?.name !== 'new' && !!this.chatHistory[chatIndex]?.name) return;
+
+		if (chatIndex < 0) return;
+		
+		if (!!this.chatHistory[chatIndex]?.name && this.chatHistory[chatIndex]?.name !== 'New Chat') return;
+
+		const chatLen = await this.aiChatService.getChatMessageLength(repo, id);
+
+		if (chatLen < 3) return;
 
 		const sub = this.aiChatService.createChatTitle(repo, id)
 			.subscribe(async (d) => {
