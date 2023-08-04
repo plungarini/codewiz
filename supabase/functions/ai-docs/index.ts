@@ -24,6 +24,8 @@ interface Message {
 
 interface RequestData {
 	repo: string;
+	uid: string;
+	repoHost: string;
 	messages: Message[];
 	onlyPrompt: boolean;
 	stream: boolean;
@@ -64,7 +66,11 @@ serve(async (req) => {
 			throw new UserError('Missing request data')
 		}
 
-		const { messages, repo, onlyPrompt, stream } = requestData
+		const { messages, repo, uid, repoHost, onlyPrompt, stream } = requestData
+
+		if (!uid) {
+			throw new UserError('Missing uid in request data')
+		}
 
 		if (!messages) {
 			throw new UserError('Missing messages in request data')
@@ -172,8 +178,8 @@ serve(async (req) => {
 				content: codeBlock`
 					${oneLine`
 						You are a very enthusiastic developer who loves
-						to help people! Given the following information from the documentation
-						of this Github repository: https://github.com/${repo}, answer the user's question using
+						to help people! You'll receive the documentation of this
+						framework/language: ${repoHost}, answer the user's question using
 						only that information, outputted in markdown format. You were created
 						by Pietro Lungarini to help developers.
 					`}
@@ -183,7 +189,7 @@ serve(async (req) => {
 				role: ChatCompletionRequestMessageRoleEnum.User,
 				content: codeBlock`
 						Here is the documentation:
-						${contextText}
+						${contextText.length < 10 ? '[No documentation found]' : contextText}
 					`,
 			},
 			{
@@ -278,7 +284,8 @@ serve(async (req) => {
 			},
 			method: 'POST',
 			body: JSON.stringify({
-				uid: 'asd',
+				uid: uid,
+				repo: repo,
 				model: completionOptions.model,
 				messages: completionOptions.messages,
 				authorization: firebaseKey,

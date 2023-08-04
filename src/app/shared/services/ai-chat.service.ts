@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
 import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator, ClientOpenaiStatus } from '../models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageFeedback, AiChatMessageRole, AiChatRequestData, AiChatResponseData, AiChatTitleRequestData, AiChatTitleResponseData, AiUserRepoChat } from '../models/ai-chat/ai-chat.model';
+import { Repo } from '../models/repo.model';
 import { FirebaseExtendedService } from './firebase-ext.service';
 
 
@@ -152,137 +153,146 @@ export class AiChatService {
 	createQuery(repo: string, chat: AiChatMessage[], timeoutSeconds = 30): Observable<AiChatResponseData> {
 		if (chat.length <= 0) throw new Error('Invalid chat array');
 		return new Observable((observer) => {
-			let result = '';
-			let finishReason: AiChatTitleResponseData['finishReason'] = undefined;
-			const pageSections: { id: string; title: string; }[] = [];
-			
-			let sinceLastRes = new Date().getTime() / 1000; // In seconds
-			const normMessages = chat
-				.filter(m => !!m.content && !!m.role)
-				.map(m => ({ role: m.role, content: m.content }));
-			
-			// If last chat message is from Assistant, removes it
-			if (normMessages[normMessages.length - 1].role === AiChatMessageRole.Assistant) {
-				normMessages.pop();
-			}
-
-			const closeStream = () => {
-				ev?.close();
-				clearInterval(timeoutCheckInterval);
-				observer.complete();
-			}
-
-			const timeoutCheckInterval = setInterval(() => {
-				const now = new Date().getTime() / 1000;
-				if ((now - sinceLastRes) < timeoutSeconds) return;
-				const err = {
-					"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
-					"debug": {
-						"message": `Timeout Error: Request Timed Out (>${timeoutSeconds}s). Please try again later.`,
-						"type": "client_error",
-					}
+			(async () => {
+				let result = '';
+				let finishReason: AiChatTitleResponseData['finishReason'] = undefined;
+				const pageSections: { id: string; title: string; }[] = [];
+				
+				let sinceLastRes = new Date().getTime() / 1000; // In seconds
+				const normMessages = chat
+					.filter(m => !!m.content && !!m.role)
+					.map(m => ({ role: m.role, content: m.content }));
+				
+				// If last chat message is from Assistant, removes it
+				if (normMessages[normMessages.length - 1].role === AiChatMessageRole.Assistant) {
+					normMessages.pop();
 				}
-				observer.error({
-					data: JSON.stringify(err),
-				})
-				closeStream();
-			}, 500);
 
-			if (!repo) {
-				observer.error('The repository is invalid.');
-				closeStream();
-				return;
-			};
-
-			if (
-				normMessages.length <= 0 ||
-				!normMessages[normMessages.length - 1].content ||
-				normMessages[normMessages.length - 1].role !== AiChatMessageRole.User
-			) {
-				observer.error(`The query is invalid: ${JSON.stringify(normMessages)}`);
-				closeStream();
-				return;
-			};
-
-			const data: AiChatRequestData = {
-				messages: normMessages,
-				repo,
-				onlyPrompt: false,
-				stream: true,
-			}
-
-			const ev = new SSE(
-				`https://${environment.supabase.projectRef}.functions.supabase.co/ai-docs`,
-				{
-					headers: {
-						apikey: environment.supabase.anonKey,
-						Authorization: `Bearer ${environment.supabase.anonKey}`,
-						'Content-Type': 'application/json',
-					},
-					payload: JSON.stringify(data),
+				const closeStream = () => {
+					ev?.close();
+					clearInterval(timeoutCheckInterval);
+					observer.complete();
 				}
-			);
 
-			ev.onmessage = (event) => {
-				this.zone.run(() => {
-					
-					if (event.data === '[DONE]') {
-						closeStream();
-						return;
-					}
-					
-					const completionResponse = JSON.parse(event.data);
-					const choices = completionResponse.choices[0];
-					const message = choices?.delta?.content;
-
-					if (message) {
-						result += message;
-						
-						sinceLastRes = new Date().getTime() / 1000;
-						observer.next({
-							completion: result,
-							pageSections,
-							finishReason
-						});
-					}
-
-					if (choices.finish_reason) {
-						finishReason = choices.finish_reason;
-						sinceLastRes = new Date().getTime() / 1000;
-						observer.next({
-							completion: result,
-							pageSections,
-							finishReason
-						});
-						closeStream();
-						return;
-					}
-
-					if (completionResponse.page_sections) {
-						pageSections.push(...completionResponse.page_sections);
-					};
-				})
-			}
-
-			ev.onerror = (event: any) => {
-				console.log('error', event);
-				this.zone.run(() => {
+				const timeoutCheckInterval = setInterval(() => {
+					const now = new Date().getTime() / 1000;
+					if ((now - sinceLastRes) < timeoutSeconds) return;
 					const err = {
 						"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
 						"debug": {
-							"message": event,
-							"type": "server_error",
+							"message": `Timeout Error: Request Timed Out (>${timeoutSeconds}s). Please try again later.`,
+							"type": "client_error",
 						}
 					}
 					observer.error({
 						data: JSON.stringify(err),
 					})
-					observer.error(event);
 					closeStream();
-				})
-			}
+				}, 500);
 
-			ev.stream();
+				if (!repo) {
+					observer.error('The repository is invalid.');
+					closeStream();
+					return;
+				};
+
+				if (
+					normMessages.length <= 0 ||
+					!normMessages[normMessages.length - 1].content ||
+					normMessages[normMessages.length - 1].role !== AiChatMessageRole.User
+				) {
+					observer.error(`The query is invalid: ${JSON.stringify(normMessages)}`);
+					closeStream();
+					return;
+				};
+
+				const uid = await this._getCurrentUid();
+				const repoHost = await firstValueFrom(this.db.getDoc<Repo>(`supported-docs/${repo}`).pipe(
+					map(doc => doc?.hostUrl)
+				));
+			
+				const data: AiChatRequestData = {
+					uid: uid,
+					repoHost: repoHost || repo,
+					messages: normMessages,
+					repo,
+					onlyPrompt: false,
+					stream: true,
+				}
+	
+				const ev = new SSE(
+					`https://${environment.supabase.projectRef}.functions.supabase.co/ai-docs`,
+					{
+						headers: {
+							apikey: environment.supabase.anonKey,
+							Authorization: `Bearer ${environment.supabase.anonKey}`,
+							'Content-Type': 'application/json',
+						},
+						payload: JSON.stringify(data),
+					}
+				);
+	
+				ev.onmessage = (event) => {
+					this.zone.run(() => {
+						
+						if (event.data === '[DONE]') {
+							closeStream();
+							return;
+						}
+						
+						const completionResponse = JSON.parse(event.data);
+						const choices = completionResponse.choices[0];
+						const message = choices?.delta?.content;
+	
+						if (message) {
+							result += message;
+							
+							sinceLastRes = new Date().getTime() / 1000;
+							observer.next({
+								completion: result,
+								pageSections,
+								finishReason
+							});
+						}
+	
+						if (choices.finish_reason) {
+							finishReason = choices.finish_reason;
+							sinceLastRes = new Date().getTime() / 1000;
+							observer.next({
+								completion: result,
+								pageSections,
+								finishReason
+							});
+							closeStream();
+							return;
+						}
+	
+						if (completionResponse.page_sections) {
+							pageSections.push(...completionResponse.page_sections);
+						};
+					})
+				}
+	
+				ev.onerror = (event: any) => {
+					console.log('error', event);
+					this.zone.run(() => {
+						const err = {
+							"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+							"debug": {
+								"message": event,
+								"type": "server_error",
+							}
+						}
+						observer.error({
+							data: JSON.stringify(err),
+						})
+						observer.error(event);
+						closeStream();
+					})
+				}
+	
+				ev.stream();
+			})().then((r) => { });
 		})
 	}
 

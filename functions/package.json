@@ -20,7 +20,7 @@
     "axios": "^1.4.0",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^4.4.1",
-    "gpt-tokens": "^1.0.7",
+    "gpt-tokens": "^1.1.2",
     "nodemailer": "^6.9.3",
     "openai": "^3.2.1",
     "puppeteer": "16.2.0",

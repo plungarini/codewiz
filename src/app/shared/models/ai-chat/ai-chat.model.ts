@@ -42,6 +42,8 @@ type AiChatMessageReqItem = {
 }
 
 export type AiChatRequestData = {
+	uid: string;
+	repoHost: string;
 	repo: string;
 	messages: AiChatMessageReqItem[];
 	onlyPrompt: boolean;

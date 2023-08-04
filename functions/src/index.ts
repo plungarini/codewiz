@@ -67,6 +67,7 @@ export const calculateOpenaiTokens = FFN.runWith({
 }).https.onRequest(async (req, res) => {
   /**
 	 * uid: string,
+	 * repo: string,
 	 * model: supportModelType,
 	 * messages: AiChatMessage[],
 	 * authorization: string,
@@ -81,7 +82,7 @@ export const calculateOpenaiTokens = FFN.runWith({
 	}
 
 	try {
-		const result = calculateTokens(req.body);
+		const result = await calculateTokens(req.body);
 		res.status(200).json(result);
 	} catch (err) {
 		error(err);
