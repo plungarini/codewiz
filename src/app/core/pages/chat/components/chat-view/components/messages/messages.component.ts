@@ -28,7 +28,7 @@ export class MessagesComponent {
 	@Input('chat') set setChat(value: AiChatMessage[]) {
 		if (!value || value?.length < 0) return;
 
-		const hasCompleted = !this.chat[this.chat.length - 1]?.completed && value[value.length - 1]?.completed;
+		const hasCompleted = this.chat[this.chat.length - 1]?.completed === false && value[value.length - 1]?.completed;
 		if (hasCompleted) {
 			value[value.length - 1].completed = false;
 			setTimeout(() => {
