@@ -85,7 +85,11 @@ export class FirebaseExtendedService {
     if (!path) return;
 
     const docRef = doc(this.firestore, path);
-    const exist = (await getDocFb(docRef)).exists();
+		const exist = (await getDocFb(docRef)).exists();
+		
+		obj = JSON.parse(JSON.stringify(obj, function(k, v) {
+			if (v === undefined) { return null; } return v; 
+		}));
 
     if (!exist)
       return await setDoc(
