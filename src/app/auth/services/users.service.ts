@@ -71,6 +71,7 @@ export class UsersService {
 
 			if (forceEdits || isSignup) {
 				await this.db.upsert(`/users/${user.uid}`, toFirebaseUser);
+				await this.db.upsert(`/users/${user.uid}/permissions/role`, { permissions: [] });
 			}
 			
 			if (isSignup) {
