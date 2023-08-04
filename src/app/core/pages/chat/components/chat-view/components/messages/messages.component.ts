@@ -23,6 +23,7 @@ export class MessagesComponent {
 
 	show = false;
 	copiedAnim: boolean[] = [];
+	codeCopied: boolean[] = [];
 
 	repo$: Observable<Repo | undefined>;
 	private repoId = new BehaviorSubject('angular');
@@ -59,7 +60,7 @@ export class MessagesComponent {
 	}
 
 	onMsgCopyToClipboard(content: string, i: number): void {
-		this.clipboardService.copy(content);
+		this.clipboardService.copy(content.trim());
 		this.copiedAnim[i] = true;
 		this.cdRef.detectChanges();
 		setTimeout(() => {
@@ -68,8 +69,13 @@ export class MessagesComponent {
 		}, 2000);
 	}
 
-	onCodeCopyToClipboard(event: MouseEvent): void {
-		console.log('Copied', event)
+	onCodeCopyToClipboard(i: number): void {
+		this.codeCopied[i] = true;
+		this.cdRef.detectChanges();
+		setTimeout(() => {
+			this.codeCopied[i] = false;
+			this.cdRef.detectChanges();
+		}, 3000);
 	}
 
 	togglePageSections(i: number, value: boolean): void {
