@@ -7,7 +7,7 @@ import { UsersService } from 'src/app/auth/services/users.service';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
 import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator, ClientOpenaiStatus } from '../models/ai-chat/ai-chat-status.model';
-import { AiChatMessage, AiChatMessageRole, AiChatRequestData, AiChatResponseData, AiChatTitleRequestData, AiChatTitleResponseData, AiUserRepoChat } from '../models/ai-chat/ai-chat.model';
+import { AiChatMessage, AiChatMessageFeedback, AiChatMessageRole, AiChatRequestData, AiChatResponseData, AiChatTitleRequestData, AiChatTitleResponseData, AiUserRepoChat } from '../models/ai-chat/ai-chat.model';
 import { FirebaseExtendedService } from './firebase-ext.service';
 
 
@@ -434,7 +434,16 @@ export class AiChatService {
 		if (!uid || !chatId || !messageId || !repo) return console.error('Missing uid, repoId, chatId or messageId: unable to update message feedback.', { uid, chatId, messageId, repo });
 		if (!message.feedback) return console.error('Missing feedback: unable to update message feedback.', message);
 		await this.db.upsert<AiChatMessage>(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, { feedback: message.feedback });
-		await this.db.upsert(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, message)
+
+		if (message.feedback !== 'none' && message.feedback !== undefined) {
+			const messages = await firstValueFrom(this.getChatMessages(repo, chatId));
+			const feedbackPromptIndex = messages.findIndex(m => m.id === messageId) - 1;
+			const prompt = messages[feedbackPromptIndex].role === AiChatMessageRole.User ? messages[feedbackPromptIndex].content : '';
+	
+			await this.db.upsert<AiChatMessageFeedback>(`feedbacks/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, { ...message, prompt });
+		} else {
+			await this.db.delete(`feedbacks/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`);
+		}
 	}
 
 	async saveNewMessage(repo: string, chatId: string, message: Partial<AiChatMessage>) {

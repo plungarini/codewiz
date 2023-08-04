@@ -18,6 +18,10 @@ type AiChatPageSection = {
 	id: string;
 }
 
+export interface AiChatMessageFeedback extends AiChatMessage {
+	prompt?: string;
+}
+
 export interface AiChatMessage extends AiChatMessageReqItem  {
 	hide?: boolean;
 	id?: string;
