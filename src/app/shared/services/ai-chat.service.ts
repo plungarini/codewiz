@@ -531,12 +531,16 @@ export class AiChatService {
 	}
 
 	async deleteChat(repo: string, id: string): Promise<void> {
-		const uid = await this._getCurrentUid();
+		const wasCurrentChat = this.router.url.includes(id);
+		
 		try {
+			const uid = await this._getCurrentUid();
 			const path = `users/${uid}/repos/${repo}/chats/${id}`;
 			await this.db.deleteCollection(`${path}/messages`);
 			await this.db.delete(path);
-			this.router.navigateByUrl(`/app/chat/${repo}/new`);
+			
+			if (wasCurrentChat)
+				this.router.navigateByUrl(`/app/chat/${repo}/new`);
 		} catch (err) {
 			console.error('Unable to delete collection', err);
 		}
