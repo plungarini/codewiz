@@ -84,6 +84,7 @@ export class ChatsHistoryComponent {
 		if (this.queue.has(id)) return;
 		
 		const chatIndex = this.chatHistory.findIndex(c => c.id === id);
+		const oldTitle = this.chatHistory[chatIndex]?.name;
 
 		if (chatIndex < 0) return;
 		
@@ -104,7 +105,7 @@ export class ChatsHistoryComponent {
 
 				if (!!d.finishReason) {
 					this.queue.delete(id);
-					await this.saveChatName(d.completion, id);
+					await this.saveChatName(d.completion, id, oldTitle);
 					sub.unsubscribe();
 				};
 
@@ -148,12 +149,12 @@ export class ChatsHistoryComponent {
 		this.editTitleMode(-1, -1, undefined, false);
 	}
 
-	private async saveChatName(title: string, id: string): Promise<void> {
+	private async saveChatName(title: string, id: string, oldTitle?: string): Promise<void> {
 		const newTitle = title.substring(0, 50).trim().replace(/[\r\n]+/g, '');
 		if (!newTitle) return;
 
 		const chat = this.chatHistory.find(c => c.id === id);
-		const condition = newTitle !== chat.name;
+		const condition = newTitle !== (oldTitle || chat.name);
 
 		if (condition)
 			await this.aiChatService.saveChatName(newTitle, chat.repo, id);
