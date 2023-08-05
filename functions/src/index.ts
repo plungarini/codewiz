@@ -97,7 +97,8 @@ export const calculateOpenaiTokensOnReply = FFN
 	.onCreate(async (change, context) => {
 		try {
 			const { uid, repo, chatId, messageId } = context.params;
-			warn('Updating document at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`);
+			if (messageId === 'init') return;
+			warn('New message at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`);
 			const message = change.data() as AiChatMessage;
 			await calculateTokens({
 				messages: [{ role: message.role, content: message.content }],
