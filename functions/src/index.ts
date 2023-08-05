@@ -5,6 +5,7 @@ import { elaborateEmbeddings, getAllEmbeddings } from './functions/embeddings';
 import { githubFolderFetcher } from './functions/githubFetcher';
 import { scrapeDocumentedPage } from './functions/scraper';
 import { calculateTokens } from './functions/tiktoken';
+import { AiChatMessage } from './models/tiktoken/tiktoken.model';
 
 const FFN = functions.region('europe-west2');
 
@@ -82,13 +83,32 @@ export const calculateOpenaiTokens = FFN.runWith({
 	}
 
 	try {
-		const result = await calculateTokens(req.body);
+		const result = await calculateTokens({ ...req.body, type: 'prompt' });
 		res.status(200).json(result);
 	} catch (err) {
 		error(err);
 		res.status(400);
 	}
 });
+
+export const calculateOpenaiTokensOnReply = FFN
+	.runWith({ memory: '256MB', timeoutSeconds: 60 }).firestore
+	.document('users/{uid}/repos/{repo}/chats/{chatId}/messages/{messageId}')
+	.onCreate(async (change, context) => {
+		try {
+			const { uid, repo, chatId, messageId } = context.params;
+			warn('Updating document at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`);
+			const message = change.data() as AiChatMessage;
+			await calculateTokens({
+				messages: [{ role: message.role, content: message.content }],
+				model: 'gpt-3.5-turbo',
+				repo, uid, type: 'completion',
+			});
+		} catch (err) {
+			error(err);
+			return err;
+		}
+	});
 
 export const emailActionCode = FFN.runWith({ memory: '128MB', timeoutSeconds: 60 }).https.onCall(async (data) => {
 	return await sendEmailActionCode(data);
