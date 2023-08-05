@@ -151,8 +151,12 @@ export class ChatsHistoryComponent {
 	private async saveChatName(title: string, id: string): Promise<void> {
 		const newTitle = title.substring(0, 50).trim().replace(/[\r\n]+/g, '');
 		if (!newTitle) return;
+
 		const chat = this.chatHistory.find(c => c.id === id);
-		await this.aiChatService.saveChatName(newTitle, chat.repo, id);
+		const condition = newTitle !== chat.name;
+
+		if (condition)
+			await this.aiChatService.saveChatName(newTitle, chat.repo, id);
 	}
 
 }
