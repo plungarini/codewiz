@@ -51,12 +51,13 @@ const setUsageToUser = async (
 	const exists = doc.exists;
 
 	const createdAt = docData?.createdAt || new Date();
-	const prompt = docData?.prompt || { usedTokens: 0, usedUSD: 0 };
-	const completion = docData?.completion || { usedTokens: 0, usedUSD: 0 };
+	const prompt = docData?.prompt || { usedTokens: 0, usedUSD: 0, count: 0 };
+	const completion = docData?.completion || { usedTokens: 0, usedUSD: 0, count: 0 };
 
 	if (type === 'prompt') {
 		prompt.usedTokens = prompt.usedTokens + usage.usedTokens;
 		prompt.usedUSD = parseFloat((prompt.usedUSD + usage.usedUSD).toFixed(10));
+		prompt.count = prompt.count + 1;
 
 		if (!exists) {
 			await docRef.set({
@@ -73,6 +74,7 @@ const setUsageToUser = async (
 	} else {
 		completion.usedTokens = completion.usedTokens + usage.usedTokens;
 		completion.usedUSD = parseFloat((completion.usedUSD + usage.usedUSD).toFixed(10));
+		completion.count = completion.count + 1;
 
 		if (!exists) {
 			await docRef.set({
