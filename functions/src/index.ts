@@ -98,8 +98,9 @@ export const calculateOpenaiTokensOnReply = FFN
 		try {
 			const { uid, repo, chatId, messageId } = context.params;
 			if (messageId === 'init') return;
-			warn('New message at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`);
 			const message = change.data() as AiChatMessage;
+			if (!message.role || message.role !== 'assistant') return;
+			warn('New message at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, message);
 			await calculateTokens({
 				messages: [{ role: message.role, content: message.content }],
 				model: 'gpt-3.5-turbo',

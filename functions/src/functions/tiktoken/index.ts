@@ -116,7 +116,7 @@ const saveUsageToStats = async (repo: string, usage: { usedTokens: number, usedU
 		totalTokensPrompt = totalTokensPrompt + usage.usedTokens;
 		totalUSDPrompt = parseFloat((totalUSDPrompt + usage.usedUSD).toFixed(10));
 		totalPrompts = totalPrompts + 1;
-		const averageTokensPerPrompt = totalTokensPrompt / totalPrompts;
+		const averageTokensPerPrompt = Math.ceil(totalTokensPrompt / totalPrompts);
 		const averageUSDPerPrompt = parseFloat((totalUSDPrompt / totalPrompts).toFixed(10));
 
 		const prompt = {
@@ -143,7 +143,7 @@ const saveUsageToStats = async (repo: string, usage: { usedTokens: number, usedU
 		totalTokensCompletion = totalTokensCompletion + usage.usedTokens;
 		totalUSDCompletion = parseFloat((totalUSDCompletion + usage.usedUSD).toFixed(10));
 		totalCompletions = totalCompletions + 1;
-		const averageTokensPerCompletion = totalTokensCompletion / totalCompletions;
+		const averageTokensPerCompletion = Math.ceil(totalTokensCompletion / totalCompletions);
 		const averageUSDPerCompletion = parseFloat((totalUSDCompletion / totalCompletions).toFixed(10));
 
 		const completion = {
