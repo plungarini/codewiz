@@ -11,7 +11,8 @@ const FFN = functions.region('europe-west2');
 
 export const scrapePage = FFN.runWith({
   memory: '1GB',
-  timeoutSeconds: 540,
+	timeoutSeconds: 540,
+	maxInstances: 10,
 }).https.onCall(async (req) => {
   /**
    * page_link: string;
@@ -28,7 +29,8 @@ export const scrapePage = FFN.runWith({
 
 export const createEmbedding = FFN.runWith({
   memory: '256MB',
-  timeoutSeconds: 60,
+	timeoutSeconds: 60,
+	maxInstances: 10,
 }).https.onCall(async (req) => {
   /**
    * title: string;
@@ -47,7 +49,8 @@ export const createEmbedding = FFN.runWith({
 
 export const githubFetcher = FFN.runWith({
   memory: '256MB',
-  timeoutSeconds: 60,
+	timeoutSeconds: 60,
+	maxInstances: 50,
 }).https.onCall(async (req) => {
   /**
 	 * author: string;
@@ -64,7 +67,8 @@ export const githubFetcher = FFN.runWith({
 
 export const calculateOpenaiTokens = FFN.runWith({
   memory: '256MB',
-  timeoutSeconds: 60,
+	timeoutSeconds: 60,
+	maxInstances: 10,
 }).https.onRequest(async (req, res) => {
   /**
 	 * uid: string,
@@ -92,7 +96,7 @@ export const calculateOpenaiTokens = FFN.runWith({
 });
 
 export const calculateOpenaiTokensOnReply = FFN
-	.runWith({ memory: '256MB', timeoutSeconds: 60 }).firestore
+	.runWith({ memory: '256MB', timeoutSeconds: 60, maxInstances: 10 }).firestore
 	.document('users/{uid}/repos/{repo}/chats/{chatId}/messages/{messageId}')
 	.onCreate(async (change, context) => {
 		try {
@@ -112,10 +116,10 @@ export const calculateOpenaiTokensOnReply = FFN
 		}
 	});
 
-export const emailActionCode = FFN.runWith({ memory: '128MB', timeoutSeconds: 60 }).https.onCall(async (data) => {
+export const emailActionCode = FFN.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 }).https.onCall(async (data) => {
 	return await sendEmailActionCode(data);
 });
 
-export const getEmbeddings = FFN.runWith({ memory: '128MB', timeoutSeconds: 60 }).https.onCall(async (data) => {
+export const getEmbeddings = FFN.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 }).https.onCall(async (data) => {
 	return await getAllEmbeddings(data);
 });
