@@ -25,7 +25,7 @@ export class ChatStatsService {
 	}
 
 	getAllChatStats(): Observable<RepoStat[]> {
-		return this.db.getCol<RepoStat>('/stats/completions/repos').pipe(
+		return this.db.getCol<RepoStat>('/stats/completions/repos', 'id', orderBy('prompt.count', 'desc')).pipe(
 			switchMap(users => {
 				const observables = users
 					.filter(user => !!user.id)
