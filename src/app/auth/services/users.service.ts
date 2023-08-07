@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Timestamp } from '@angular/fire/firestore';
+import { Timestamp, where } from '@angular/fire/firestore';
 import { getAuth, User } from '@firebase/auth';
 import { user } from 'rxfire/auth';
-import { firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
+import { StripeSubscription } from '../models/subscription.model';
 import { User as DbUser, UserDetails } from '../models/user.model';
 
 @Injectable({
@@ -100,7 +101,35 @@ export class UsersService {
    */
   getAll(query?: any): Observable<DbUser[]> {
     return this.db.getCol<DbUser>('users', query);
-  }
+	}
+	
+	/**
+	 * Retrieves all users with subscriptions.
+	 *
+	 * @param {any} query - Optional query parameters.
+	 * @return {Observable<any>} An observable that emits the combined results.
+	 */
+	getAllWithSubscriptions(query?: any): Observable<DbUser[]> {
+		return this.db.getCol<DbUser>('users', query).pipe(
+			switchMap(users => {
+				const observables = users.map(user =>
+					this.db.getCol<StripeSubscription>(
+						`users/${user.id}/subscriptions`,
+						'id',
+						where('status', 'in', ['trialing', 'active'])
+					).pipe(
+						map(subscriptions => {
+							return {
+								...user,
+								subscriptions
+							};
+						})
+					)
+				);
+				return combineLatest(observables);
+			})
+		)
+	}
 
   /**
    * Get a single user.

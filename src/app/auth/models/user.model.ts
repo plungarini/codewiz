@@ -1,3 +1,4 @@
+import { StripeSubscription } from './subscription.model';
 import { Timestamp } from './timestamp.model';
 
 export type UserDetails = {
@@ -27,7 +28,8 @@ export type DiscordDetails = {
 
 export type User = {
   id?: string;
-  name?: string;
+	name?: string;
+	subscriptions?: StripeSubscription[];
   email?: string;
   disabled?: boolean;
 	onboardingCompleted?: boolean;
