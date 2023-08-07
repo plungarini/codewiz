@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, switchMap } from 'rxjs';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
@@ -24,17 +24,22 @@ export class ChatSidebarComponent {
 
 	private _$selectedRepo = new Subject<string>();
 
-	private chatService = inject(AiChatService);
-	private router = inject(Router);
-	private cdRef = inject(ChangeDetectorRef);
-
-	constructor( ) {
+	constructor(
+		private chatService: AiChatService,
+		private router: Router,
+		private cdRef: ChangeDetectorRef,
+	) {
 		this.$reposChats = this._$selectedRepo.asObservable().pipe(
 			switchMap((repo) => this.chatService.getRepoChats(repo))
 		)
 	}
 
 	thisDate = () => Date.now();
+
+	startNewChat(): void {
+		this.router.navigateByUrl(`/app/chat/${this.selectedDoc?.id || 'angular'}/new`);
+		this.cdRef.detectChanges();
+	}
 
 	updateSelectedDoc(doc: Repo): void {
 		this.selectedDoc = doc;

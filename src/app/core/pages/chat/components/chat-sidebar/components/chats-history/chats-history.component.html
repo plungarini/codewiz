@@ -1,6 +1,6 @@
 <ng-container *ngFor="let group of groupedDocuments; let iGroup = index">
 	<p class="mt-4 mb-2 text-xs text-zinc-600 h-fit">{{ group.date }}</p>
-	<div *ngFor="let chat of group.documents; trackBy: trackBy; let iChat = index" [attr.data-group]="iGroup" [attr.data-chat]="iChat" class="flex flex-row items-center justify-between w-full mb-2 group/chatItem">
+	<div *ngFor="let chat of group.documents; trackBy: trackBy; let iChat = index; let last = last" [attr.data-group]="iGroup" [attr.data-chat]="iChat" class="flex flex-row items-center justify-between w-full mb-2 group/chatItem">
 		<div class="relative block truncate rounded-md w-fit shrink">
 			<input
 				type="text"
@@ -13,7 +13,7 @@
 				class="absolute top-0 left-0 z-10 w-full max-w-full px-4 py-2 m-0 text-sm text-white bg-transparent border-0 outline-none pointer-events-auto focus:outline-none focus:ring-0"
 			>
 			<a
-				routerLink="/app/chat/{{chat.repo}}/{{chat.id}}"
+				[routerLink]="['/app/chat/', chat.repo, chat.id]"
 				routerLinkActive
 				#rla="routerLinkActive"
 				[routerLinkActiveOptions]="{

@@ -65,7 +65,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 						this.chatLoaded = false;
 					}
 
-					if (!id || id === 'new' || !repo) {
+					if (!id || !repo) {
 						this.router.navigateByUrl(`/app/chat/${repo || 'angular'}/new`);
 						return of([])
 					};
