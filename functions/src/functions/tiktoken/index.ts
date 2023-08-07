@@ -169,4 +169,87 @@ const saveUsageToStats = async (repo: string, usage: { usedTokens: number, usedU
 			});
 		}
 	}
+
+	try {
+		await setUsageToMonthlyStats(repo, usage, type);
+	} catch (err) {
+		error('Error on setUsageToMonthlyStats', err);
+	}
+};
+
+const setUsageToMonthlyStats = async (repo: string, usage: { usedTokens: number, usedUSD: number }, type: 'prompt' | 'completion') => {
+	warn(`Saving usage to general MONTHLY stats for ${type}...`);
+
+	const month = new Date().getMonth();
+	const date = `${month < 10 ? '0' : ''}${month}_${new Date().getFullYear()}`;
+
+	const docPath = `stats/completions/repos/${repo}/byMonth/${date}`;
+	const docRef = firestore.doc(docPath);
+	const doc = await docRef.get();
+	const docData = doc.data();
+	const exists = doc.exists;
+
+	const createdAt = docData?.createdAt || new Date();
+	let totalTokensPrompt = docData?.prompt?.totalTokens || 0;
+	let totalUSDPrompt = docData?.prompt?.totalUSD || 0;
+	let totalTokensCompletion = docData?.completion?.totalTokens || 0;
+	let totalUSDCompletion = docData?.completion?.totalUSD || 0;
+	let totalPrompts = docData?.prompt?.count || 0;
+	let totalCompletions = docData?.completion?.count || 0;
+
+	if (type === 'prompt') {
+		totalTokensPrompt = totalTokensPrompt + usage.usedTokens;
+		totalUSDPrompt = parseFloat((totalUSDPrompt + usage.usedUSD).toFixed(10));
+		totalPrompts = totalPrompts + 1;
+		const averageTokensPerPrompt = Math.ceil(totalTokensPrompt / totalPrompts);
+		const averageUSDPerPrompt = parseFloat((totalUSDPrompt / totalPrompts).toFixed(10));
+
+		const prompt = {
+			totalTokens: totalTokensPrompt,
+			totalUSD: totalUSDPrompt,
+			averageTokensPerPrompt,
+			averageUSDPerPrompt,
+			count: totalPrompts,
+		};
+
+		if (!exists) {
+			await docRef.set({
+				prompt,
+				createdAt,
+				updatedAt: new Date(),
+			}, { merge: true });
+		} else {
+			await docRef.update({
+				prompt,
+				updatedAt: new Date(),
+			});
+		}
+	} else {
+		totalTokensCompletion = totalTokensCompletion + usage.usedTokens;
+		totalUSDCompletion = parseFloat((totalUSDCompletion + usage.usedUSD).toFixed(10));
+		totalCompletions = totalCompletions + 1;
+		const averageTokensPerCompletion = Math.ceil(totalTokensCompletion / totalCompletions);
+		const averageUSDPerCompletion = parseFloat((totalUSDCompletion / totalCompletions).toFixed(10));
+
+		const completion = {
+			totalTokens: totalTokensCompletion,
+			totalUSD: totalUSDCompletion,
+			averageTokensPerCompletion,
+			averageUSDPerCompletion,
+			count: totalCompletions,
+		};
+
+		if (!exists) {
+			await docRef.set({
+				completion,
+				createdAt,
+				updatedAt: new Date(),
+			}, { merge: true });
+		} else {
+			await docRef.update({
+				completion,
+				updatedAt: new Date(),
+			});
+		}
+	}
 };
