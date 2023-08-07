@@ -1,0 +1,282 @@
+<ng-template #noUserSkeleton>
+	<dd class="flex items-baseline justify-between mt-1 md:block lg:flex">
+		<div class="flex items-baseline w-24 h-8 text-2xl font-semibold bg-indigo-500 rounded-md animate-pulse">
+		</div>
+
+		<div
+			class="inline-flex bg-zinc-400 h-6 w-14 animate-pulse items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
+		>
+			<svg
+				class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-zinc-600"
+
+				viewBox="0 0 20 20"
+				fill="currentColor"
+				aria-hidden="true"
+			>
+				<path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+			</svg>
+		</div>
+	</dd>
+</ng-template>
+
+
+<div class="pb-36">
+  <h3 class="text-base font-semibold leading-6 text-zinc-500">Chat stats</h3>
+  <dl class="grid grid-cols-1 mt-5 overflow-hidden divide-y rounded-lg shadow bg-zinc-900 divide-zinc-800 md:grid-cols-2 md:divide-x md:divide-y-0">
+    <div class="px-4 py-5 sm:p-6">
+      <dt class="text-base font-normal text-zinc-100">Total cost</dt>
+      <dd class="flex items-baseline justify-between mt-1 md:block lg:flex" *ngIf="(stats$ | async) as stats; else noUserSkeleton">
+        <div class="flex items-baseline text-2xl font-semibold text-indigo-500">
+          ${{getTotalCost(stats) | number:'1.2-2'}}
+          <span class="ml-2 text-sm font-medium text-zinc-500">from ${{getTotalCostLastMonth(stats) | number:'1.2-2'}}</span>
+        </div>
+
+				<div
+					*ngIf="getPriceDifference(getTotalCost(stats), getTotalCostLastMonth(stats)) as difference"
+					[ngClass]="{
+						'bg-teal-100 text-teal-800': difference <= 0,
+						'bg-red-100 text-red-800': difference > 0,
+					}"
+					class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
+				>
+          <svg
+						class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-teal-500"
+						[ngClass]="{
+							'text-teal-500 rotate-180': difference <= 0,
+							'text-red-500': difference > 0,
+						}"
+						viewBox="0 0 20 20"
+						fill="currentColor"
+						aria-hidden="true"
+					>
+            <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+          </svg>
+          {{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+        </div>
+      </dd>
+    </div>
+    <div class="px-4 py-5 sm:p-6">
+      <dt class="text-base font-normal text-zinc-100">Price per question</dt>
+      <dd class="flex items-baseline justify-between mt-1 md:block lg:flex" *ngIf="(stats$ | async) as stats; else noUserSkeleton">
+        <div class="flex items-baseline text-2xl font-semibold text-indigo-500">
+          ${{getPricePerQuestion(stats) | number:'1.2-2'}}
+          <span class="ml-2 text-sm font-medium text-zinc-500">from ${{getPricePerQuestionLastMonth(stats) | number:'1.2-2'}}</span>
+        </div>
+
+				<div
+					*ngIf="getPriceDifference(getPricePerQuestion(stats), getPricePerQuestionLastMonth(stats)) as difference"
+					[ngClass]="{
+						'bg-teal-100 text-teal-800': difference <= 0,
+						'bg-red-100 text-red-800': difference > 0,
+					}"
+					class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
+				>
+          <svg
+						class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-teal-500"
+						[ngClass]="{
+							'text-teal-500 rotate-180': difference <= 0,
+							'text-red-500': difference > 0,
+						}"
+						viewBox="0 0 20 20"
+						fill="currentColor"
+						aria-hidden="true"
+					>
+            <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+          </svg>
+          {{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+        </div>
+      </dd>
+    </div>
+  </dl>
+  <dl class="grid grid-cols-1 mt-2 overflow-hidden divide-y rounded-lg shadow bg-zinc-900 divide-zinc-800 md:grid-cols-2 md:divide-x md:divide-y-0">
+    <div class="px-4 py-5 sm:p-6">
+      <dt class="text-base font-normal text-zinc-100">Price per Prompt</dt>
+      <dd class="flex items-baseline justify-between mt-1 md:block lg:flex" *ngIf="(stats$ | async) as stats; else noUserSkeleton">
+        <div class="flex items-baseline text-2xl font-semibold text-indigo-500">
+          ${{getPricePerPrompt(stats) | number:'1.2-2'}}
+          <span class="ml-2 text-sm font-medium text-zinc-500">from ${{getPricePerPromptLastMonth(stats) | number:'1.2-2'}}</span>
+        </div>
+
+				<div
+					*ngIf="getPriceDifference(getPricePerPrompt(stats), getPricePerPromptLastMonth(stats)) as difference"
+					[ngClass]="{
+						'bg-teal-100 text-teal-800': difference <= 0,
+						'bg-red-100 text-red-800': difference > 0,
+					}"
+					class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
+				>
+          <svg
+						class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-teal-500"
+						[ngClass]="{
+							'text-teal-500 rotate-180': difference <= 0,
+							'text-red-500': difference > 0,
+						}"
+						viewBox="0 0 20 20"
+						fill="currentColor"
+						aria-hidden="true"
+					>
+            <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+          </svg>
+          {{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+        </div>
+      </dd>
+    </div>
+    <div class="px-4 py-5 sm:p-6">
+      <dt class="text-base font-normal text-zinc-100">Price per Completion</dt>
+      <dd class="flex items-baseline justify-between mt-1 md:block lg:flex" *ngIf="(stats$ | async) as stats; else noUserSkeleton">
+        <div class="flex items-baseline text-2xl font-semibold text-indigo-500">
+          ${{getPricePerCompletion(stats) | number:'1.2-2'}}
+          <span class="ml-2 text-sm font-medium text-zinc-500">from ${{getPricePerCompletionLastMonth(stats) | number:'1.2-2'}}</span>
+        </div>
+
+				<div
+					*ngIf="getPriceDifference(getPricePerCompletion(stats), getPricePerCompletionLastMonth(stats)) as difference"
+					[ngClass]="{
+						'bg-teal-100 text-teal-800': difference <= 0,
+						'bg-red-100 text-red-800': difference > 0,
+					}"
+					class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
+				>
+          <svg
+						class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-teal-500"
+						[ngClass]="{
+							'text-teal-500 rotate-180': difference <= 0,
+							'text-red-500': difference > 0,
+						}"
+						viewBox="0 0 20 20"
+						fill="currentColor"
+						aria-hidden="true"
+					>
+            <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+          </svg>
+          {{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+        </div>
+      </dd>
+    </div>
+  </dl>
+	<table class="w-full max-w-full mt-2 rounded-lg shadow bg-zinc-900">
+		<thead class="max-h-full overflow-y-auto">
+			<tr class="border-b border-zinc-800">
+				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Name</th>
+				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Count</th>
+				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Question</th>
+				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Prompt</th>
+				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Completion</th>
+			</tr>
+		</thead>
+		<tbody *ngIf="(stats$ | async)?.length; else repoStatsSkeleton">
+			<tr *ngFor="let stat of (stats$ | async); trackBy: trackBy">
+				<td class="px-4 py-4 text-sm text-center text-zinc-100">{{stat.id}}</td>
+				<td class="px-4 py-4 text-sm">
+					<div class="flex items-center justify-center w-full space-x-2">
+						<div class="text-sm font-semibold text-zinc-400">
+							{{getTotalCount([stat]) | number:'1.2-2'}}
+						</div>
+	
+						<div
+							*ngIf="getPriceDifference(getTotalCount([stat]), getTotalCountLastMonth([stat])) as difference"
+							[ngClass]="{
+								'text-teal-400': difference > 0,
+								'text-red-400': difference <= 0,
+							}"
+							class="hidden text-sm font-medium scale-90 lg:block"
+						>
+							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+						</div>
+					</div>
+				</td>
+				<td class="px-4 py-4 text-sm">
+					<div class="flex items-center justify-center w-full space-x-2">
+						<div class="text-sm font-semibold text-zinc-400">
+							${{getTotalCost([stat]) | number:'1.2-2'}}
+						</div>
+	
+						<div
+							*ngIf="getPriceDifference(getTotalCost([stat]), getTotalCostLastMonth([stat])) as difference"
+							[ngClass]="{
+								'text-teal-400': difference <= 0,
+								'text-red-400': difference > 0,
+							}"
+							class="hidden text-sm font-medium scale-90 lg:block"
+						>
+							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+						</div>
+					</div>
+				</td>
+				<td class="px-4 py-4 text-sm">
+					<div class="flex items-center justify-center w-full space-x-2">
+						<div class="text-sm font-semibold text-zinc-400">
+							${{getPricePerPrompt([stat]) | number:'1.2-2'}}
+						</div>
+	
+						<div
+							*ngIf="getPriceDifference(getPricePerPrompt([stat]), getPricePerPromptLastMonth([stat])) as difference"
+							[ngClass]="{
+								'text-teal-400': difference <= 0,
+								'text-red-400': difference > 0,
+							}"
+							class="hidden text-sm font-medium scale-90 lg:block"
+						>
+							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+						</div>
+					</div>
+				</td>
+				<td class="px-4 py-4 text-sm">
+					<div class="flex items-center justify-center w-full space-x-2">
+						<div class="text-sm font-semibold text-zinc-400">
+							${{getPricePerCompletion([stat]) | number:'1.2-2'}}
+						</div>
+	
+						<div
+							*ngIf="getPriceDifference(getPricePerCompletion([stat]), getPricePerCompletionLastMonth([stat])) as difference"
+							[ngClass]="{
+								'text-teal-400': difference <= 0,
+								'text-red-400': difference > 0,
+							}"
+							class="hidden text-sm font-medium scale-90 lg:block"
+						>
+							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+						</div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+		<ng-template #repoStatsSkeleton>
+			<tbody>
+				<tr *ngFor="let stat of [1, 2, 3]">
+					<td class="px-4 py-4">
+						<div class="h-5 mx-auto rounded-md w-14 bg-zinc-100 animate-pulse"></div>
+					</td>
+					<td class="px-4 py-4 text-sm">
+						<div class="flex items-center justify-center w-full space-x-2">
+							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+		
+							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+						</div>
+					</td>
+					<td class="px-4 py-4 text-sm">
+						<div class="flex items-center justify-center w-full space-x-2">
+							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+		
+							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+						</div>
+					</td>
+					<td class="px-4 py-4 text-sm">
+						<div class="flex items-center justify-center w-full space-x-2">
+							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+		
+							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+						</div>
+					</td>
+					<td class="px-4 py-4 text-sm">
+						<div class="flex items-center justify-center w-full space-x-2">
+							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+		
+							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</ng-template>
+	</table>
+</div>
