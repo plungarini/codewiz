@@ -8,16 +8,13 @@ const routes: Routes = [
 		component: AdminComponent,
 		children: [
 			{
+				path: '',
+				loadChildren: () => import('./pages/dashboard/dashboard.module').then(m => m.DashboardModule),
+			},
+			{
 				path: 'repos',
 				loadChildren: () => import('./pages/repos/repos.module').then(m => m.ReposModule),
 			},
-
-			// Redirects
-			{
-				path: '',
-				pathMatch: 'full',
-				redirectTo: 'repos',
-			}
 		]
 	}
 ];
