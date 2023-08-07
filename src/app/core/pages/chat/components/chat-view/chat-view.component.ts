@@ -30,6 +30,8 @@ export class ChatViewComponent implements OnDestroy {
 	private oldChat: AiChatMessage[] = [];
 	private maxResultsLoaded = false;
 	private messageLimit = 10;
+
+	showScrollToBottom = false;
 	
 	status: ClientOpenaiStatus = {
 		title: 'OpenAI\'s APIs are online',
@@ -92,6 +94,10 @@ export class ChatViewComponent implements OnDestroy {
 				this.cdRef.markForCheck();
 			}
 
+			if (messages.length <= (this.messageLimit - 1)) {
+				this.maxResultsLoaded = true;
+			}
+
 			if (!this.chatLoaded) {
 				this.chatLoaded = true;
 				this.onMessageScroll(true, false);
@@ -106,8 +112,21 @@ export class ChatViewComponent implements OnDestroy {
 	}
 
 	async onChatScroll(event: any): Promise<void> {
-		const scrolledToTop = this.mainChatContainer?.nativeElement.scrollTop === 0;
-		if (scrolledToTop && this.chat.length > 5 && !this.maxResultsLoaded) {
+		const element = this.mainChatContainer?.nativeElement;
+		if (!element) return;
+		
+		const scrolledToTop = element.scrollTop === 0;
+		const isScrolledToBottom = element.scrollHeight - element.scrollTop === element.clientHeight;
+		if (!isScrolledToBottom && !this.showScrollToBottom) {
+			this.showScrollToBottom = true;
+			this.cdRef.markForCheck();
+		} else if (isScrolledToBottom && this.showScrollToBottom) {
+			this.showScrollToBottom = false;
+			this.cdRef.markForCheck();
+		}
+		
+
+		if (scrolledToTop && this.chat.length >= (this.messageLimit - 1) && !this.maxResultsLoaded) {
 			console.warn('Loading more messages...');
 			const now = new Date();
 			this.chatLoaded = false;
@@ -252,14 +271,7 @@ export class ChatViewComponent implements OnDestroy {
 			});
 	}
 
-	private async pingStatus(): Promise<void> {
-		const s = await this.ai.getStatusPromise();
-		this.status = s;
-		console.warn('New openai status', this.status);
-		this.cdRef.detectChanges();
-	}
-
-	private onMessageScroll(bypass = false, animation = true) {
+	onMessageScroll(bypass = false, animation = true) {
 		if (!this.mainChatContainer) return;
 		const element = this.mainChatContainer.nativeElement;
 
@@ -278,4 +290,11 @@ export class ChatViewComponent implements OnDestroy {
 			})
     }
   }
+
+	private async pingStatus(): Promise<void> {
+		const s = await this.ai.getStatusPromise();
+		this.status = s;
+		console.warn('New openai status', this.status);
+		this.cdRef.detectChanges();
+	}
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
@@ -17,7 +17,10 @@ import { filter, Subscription } from 'rxjs';
 })
 export class QueryInputComponent implements OnDestroy {
 
+	@Input() showScrollToBottom = false;
 	@Output() onQuery = new EventEmitter<string>();
+	@Output() onScrollBottom = new EventEmitter<void>();
+
 	@ViewChild('textArea') textAreaComponent: ElementRef<HTMLDivElement> | undefined;
 
 	textInput = new FormControl('', {
@@ -41,6 +44,10 @@ export class QueryInputComponent implements OnDestroy {
 
 	ngOnDestroy(): void {
 		this.routerSub.unsubscribe();
+	}
+
+	scrollToBottom(): void {
+		this.onScrollBottom.emit();
 	}
 
 	handleDummyInputChange(event: Event): void {

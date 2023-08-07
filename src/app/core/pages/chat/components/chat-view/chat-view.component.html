@@ -24,4 +24,6 @@
 
 <app-query-input
 	(onQuery)="createQuery($event)"
+	[showScrollToBottom]="showScrollToBottom"
+	(onScrollBottom)="onMessageScroll(true, true);"
 ></app-query-input>

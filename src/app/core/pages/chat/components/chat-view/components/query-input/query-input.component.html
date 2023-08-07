@@ -24,4 +24,17 @@
 		<p class="hidden max-w-3xl mx-auto mt-3 text-xs font-medium text-center pointer-events-none sm:block text-zinc-500">CodeWhizAi is experimental and may produce incorrect answers. Always verify the output before executing.</p>
 	</div>
 	
+	<button
+		[ngClass]="{
+			'opacity-0 pointer-events-none translate-y-4': !showScrollToBottom,
+			'opacity-100 pointer-events-auto translate-y-0': showScrollToBottom
+		}"
+		(click)="scrollToBottom()"
+		class="absolute right-0 flex items-center justify-center w-10 h-10 transition-all duration-300 rounded-full select-none ring-1 hover:ring-2 ring-offset-0 hover:ring-zinc-600 ring-zinc-800 hover:ring-offset-1 ring-offset-zinc-950 hover:bg-zinc-800 group bg-zinc-900 bottom-24 sm:bottom-32 xl:bottom-24"
+	>
+		<svg class="w-5 h-5 transition-colors duration-300 text-zinc-300 group-hover:text-zinc-50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M18.4265 13.5469L12.0003 20L5.57422 13.5469" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			<path d="M12 20V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>
+	</button>
 </div>
