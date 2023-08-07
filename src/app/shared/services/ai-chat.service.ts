@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
-import { orderBy } from '@angular/fire/firestore';
+import { limit, orderBy, startAfter } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { filter, firstValueFrom, interval, lastValueFrom, map, Observable, of, startWith, switchMap, take } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
@@ -517,17 +517,34 @@ export class AiChatService {
 		);
 	}
 
-	getChatMessages(repo: string, chatId: string): Observable<AiChatMessage[]> {
+	getChatMessages(repo: string, chatId: string, limitResults = 10): Observable<AiChatMessage[]> {
 		return this._$getCurrentUid().pipe(
 			switchMap((uid) =>
 				this.db.getCol<AiChatMessage>(
 					`users/${uid}/repos/${repo}/chats/${chatId}/messages`,
-					'id', orderBy('createdAt')
+					'id', orderBy('createdAt', 'desc'), limit(limitResults)
 				).pipe(
-					map(chat => chat.map(c => ({ ...c, repo }))),
+					map(chat =>
+						chat.map(c => ({ ...c, repo })).reverse()
+					),
 				)
 			)
 		);
+	}
+
+	getChatMessagesPaginated(repo: string, chatId: string, lastCreatedAt: Date, limitResults = 10): Promise<AiChatMessage[]> {
+		return firstValueFrom(this._$getCurrentUid().pipe(
+			switchMap((uid) =>
+				this.db.getCol<AiChatMessage>(
+					`users/${uid}/repos/${repo}/chats/${chatId}/messages`,
+					'id', orderBy('createdAt', 'desc'), startAfter(lastCreatedAt), limit(limitResults)
+				).pipe(
+					map(chat =>
+						chat.map(c => ({ ...c, repo })).reverse()
+					),
+				)
+			)
+		));
 	}
 
 	async deleteChat(repo: string, id: string): Promise<void> {

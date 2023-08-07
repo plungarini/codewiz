@@ -1,19 +1,21 @@
+<app-loader
+	[ngClass]="{
+		'opacity-0 pointer-events-none': chatLoaded,
+		'opacity-100 pointer-events-auto': !chatLoaded,
+	}"
+	class="absolute inset-0 z-[100] transition-opacity duration-300"
+></app-loader>
+
 <app-status
 	class="pointer-events-none"
 	[status]="status"
 ></app-status>
 
 <div
-	class="relative h-screen max-h-screen pt-6 overflow-x-hidden overflow-y-auto"
+	class="h-screen max-h-screen pt-6 overflow-x-hidden overflow-y-auto"
+	(scroll)="onChatScroll($event)"
 	#mainChatContainer
 >
-	<app-loader
-		[ngClass]="{
-			'opacity-0 pointer-events-none': chatLoaded,
-			'opacity-100 pointer-events-auto': !chatLoaded,
-		}"
-		class="absolute inset-0 z-[100] transition-opacity duration-300"
-	></app-loader>
 	<app-messages
 		[chat]="chat"
 		[repoId]="this.selectedRepo"

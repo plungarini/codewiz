@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { animationFrameScheduler, catchError, finalize, of, Subscription, switchMap } from 'rxjs';
 import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
@@ -19,12 +20,16 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ChatViewComponent implements OnInit, OnDestroy {
+export class ChatViewComponent implements OnDestroy {
 	@ViewChild('mainChatContainer', { static: true }) mainChatContainer: ElementRef<HTMLDivElement> | undefined;
 
 	gettingQuery = false;
 	autoscroll: boolean = true;
 	chat: AiChatMessage[] = [];
+
+	private oldChat: AiChatMessage[] = [];
+	private maxResultsLoaded = false;
+	private messageLimit = 10;
 	
 	status: ClientOpenaiStatus = {
 		title: 'OpenAI\'s APIs are online',
@@ -44,6 +49,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 		private cdRef: ChangeDetectorRef,
 		private route: ActivatedRoute,
 		private router: Router,
+		@Inject(DOCUMENT) private document: Document,
 	) {
 		this.statusSub = this.ai.getStatus().subscribe((s) => {
 			this.status = s;
@@ -63,6 +69,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 					if (id && id !== this.chatId) {
 						this.chatId = id;
 						this.chatLoaded = false;
+						this.oldChat = [];
 						this.cdRef.markForCheck();
 					}
 
@@ -71,10 +78,12 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 						return of([])
 					};
 
-					return this.ai.getChatMessages(repo, id);
+					return this.ai.getChatMessages(repo, id, this.messageLimit);
 				}),
 		).subscribe((messages) => {
-			this.chat = messages;
+			this.chat = [...messages, ...this.oldChat].sort((a, b) => {
+				return (a.createdAt?.toDate().getTime() || 0) - (b.createdAt?.toDate().getTime() || 0);
+			});
 			this.cdRef.markForCheck();	
 			
 			if (messages.length <= 0) {
@@ -96,7 +105,54 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 		this.chatSub?.unsubscribe();
 	}
 
-	ngOnInit(): void {
+	async onChatScroll(event: any): Promise<void> {
+		const scrolledToTop = this.mainChatContainer?.nativeElement.scrollTop === 0;
+		if (scrolledToTop && this.chat.length > 5 && !this.maxResultsLoaded) {
+			console.warn('Loading more messages...');
+			const now = new Date();
+			this.chatLoaded = false;
+			this.cdRef.markForCheck();
+			const lastId = this.oldChat.at(0)?.id || this.chat.at(0)?.id;
+			const lastDate = this.oldChat.at(0)?.createdAt?.toDate() || this.chat.at(0)?.createdAt?.toDate();
+			if (!lastDate) return;
+			const oldMessages = await this.ai.getChatMessagesPaginated(this.selectedRepo, this.chatId, lastDate, this.messageLimit);
+
+			if (oldMessages.length < (this.messageLimit - 1)) {
+				this.maxResultsLoaded = true;
+			}
+
+			const timeDiff = new Date().getTime() - now.getTime();
+			if (timeDiff <= 2000) {
+				await new Promise((resolve) => setTimeout(resolve, 2000 - timeDiff));
+			}
+
+			this.oldChat.push(...oldMessages);
+			this.oldChat.sort((a, b) => {
+				return (a.createdAt?.toDate().getTime() || 0) - (b.createdAt?.toDate().getTime() || 0);
+			});
+
+			const oldIdSet = new Set();
+			this.oldChat = this.oldChat.filter((m) => {
+				if (oldIdSet.has(m.id)) return false;
+				oldIdSet.add(m.id);
+				return true;
+			});
+
+			this.chat = [...this.chat, ...this.oldChat].sort((a, b) => {
+				return (a.createdAt?.toDate().getTime() || 0) - (b.createdAt?.toDate().getTime() || 0);
+			});
+
+			const newIdSet = new Set();
+			this.chat = this.chat.filter((m) => {
+				if (newIdSet.has(m.id)) return false;
+				newIdSet.add(m.id);
+				return true;
+			});
+
+			this.document.querySelector(`div[message-id="${lastId}"]`)?.scrollIntoView({ behavior: 'auto' });
+			this.chatLoaded = true;
+			this.cdRef.markForCheck();
+		};
 	}
 
 	async createQuery(query: string): Promise<void> {
