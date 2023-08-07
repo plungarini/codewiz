@@ -21,8 +21,26 @@
 
 
 <div class="pb-36">
-  <h3 class="text-base font-semibold leading-6 text-zinc-500">Chat stats</h3>
-  <dl class="grid grid-cols-1 mt-5 overflow-hidden divide-y rounded-lg shadow bg-zinc-900 divide-zinc-800 md:grid-cols-2 md:divide-x md:divide-y-0">
+	<h3 class="text-base font-semibold leading-6 text-zinc-500">Chat stats</h3>
+	<div class="flex flex-row items-center mt-2 space-x-2">
+		<div
+			(click)="statTime = 'lastMonth'"
+			[ngClass]="{
+				'bg-zinc-700 text-zinc-50 ring-2 ring-indigo-500 ring-offset-1 ring-offset-zinc-950': statTime === 'lastMonth',
+				'bg-zinc-800 text-zinc-200 ring-0 ring-offset-0 hover:bg-zinc-700': statTime === 'total',
+			}"
+			class="bg-zinc-800 rounded-full px-2.5 py-0.5 text-sm text-zinc-200 transition-all duration-300 cursor-pointer"
+		>{{today | date:'MMMM yyyy'}}</div>
+		<div
+			(click)="statTime = 'total'"
+			[ngClass]="{
+				'bg-zinc-700 text-zinc-50 ring-2 ring-indigo-500 ring-offset-1 ring-offset-zinc-950': statTime === 'total',
+				'bg-zinc-800 text-zinc-200 ring-0 ring-offset-0 hover:bg-zinc-700': statTime === 'lastMonth',
+			}"
+			class="bg-zinc-800 rounded-full px-2.5 py-0.5 text-sm text-zinc-200 transition-all duration-300 cursor-pointer"
+		>Total</div>
+	</div>
+  <dl class="grid grid-cols-1 mt-3 overflow-hidden divide-y rounded-lg shadow bg-zinc-900 divide-zinc-800 md:grid-cols-2 md:divide-x md:divide-y-0">
     <div class="px-4 py-5 sm:p-6">
       <dt class="text-base font-normal text-zinc-100">Total cost</dt>
       <dd class="flex items-baseline justify-between mt-1 md:block lg:flex" *ngIf="(stats$ | async) as stats; else noUserSkeleton">
@@ -166,7 +184,7 @@
 		</thead>
 		<tbody *ngIf="(stats$ | async)?.length; else repoStatsSkeleton">
 			<tr *ngFor="let stat of (stats$ | async); trackBy: trackBy">
-				<td class="px-4 py-4 text-sm text-center transition-colors duration-300 text-zinc-100 hover:text-indigo-400">
+				<td class="px-4 py-4 text-sm text-center no-underline transition-colors duration-300 hover:underline decoration-indigo-400 text-zinc-100 hover:text-indigo-400">
 					<a [routerLink]="['/app/admin/repos/edit', stat.id]">{{stat.id}}</a>
 				</td>
 				<td class="px-4 py-4 text-sm">
