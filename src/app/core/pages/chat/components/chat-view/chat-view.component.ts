@@ -36,8 +36,8 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 	statusSub: Subscription;
 	chatSub: Subscription | undefined;
 	selectedRepo: string = 'angular';
+	chatLoaded = false;
 	private chatId: string = '';
-	private chatLoaded = false;
 
 	constructor(
 		private ai: AiChatService,
@@ -63,6 +63,7 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 					if (id && id !== this.chatId) {
 						this.chatId = id;
 						this.chatLoaded = false;
+						this.cdRef.markForCheck();
 					}
 
 					if (!id || !repo) {
@@ -80,12 +81,12 @@ export class ChatViewComponent implements OnInit, OnDestroy {
 				const repo = this.route.snapshot.paramMap.get('repo');
 				this.router.navigateByUrl(`/app/chat/${repo}/new`);
 				this.cdRef.markForCheck();
-				return;
 			}
 
 			if (!this.chatLoaded) {
 				this.chatLoaded = true;
 				this.onMessageScroll(true, false);
+				this.cdRef.markForCheck();
 			};
 		});
 	}

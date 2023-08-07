@@ -13,6 +13,7 @@ import { PagesectionsSelectorComponent } from './components/messages/components/
 import { MessagesComponent } from './components/messages/messages.component';
 import { QueryInputComponent } from './components/query-input/query-input.component';
 import { StatusComponent } from './components/status/status.component';
+import { LoaderComponent } from './components/loader/loader.component';
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { StatusComponent } from './components/status/status.component';
 		AiToolbarComponent,
     PagesectionsSelectorComponent,
 		MessageToolbarComponent,
+  LoaderComponent,
   ],
   imports: [
 		CommonModule,
