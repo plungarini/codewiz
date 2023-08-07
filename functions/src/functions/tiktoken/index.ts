@@ -183,7 +183,7 @@ const setUsageToMonthlyStats = async (repo: string, usage: { usedTokens: number,
 	const month = new Date().getMonth();
 	const date = `${month < 10 ? '0' : ''}${month}_${new Date().getFullYear()}`;
 
-	const docPath = `stats/completions/repos/${repo}/byMonth/${date}`;
+	const docPath = `stats/completions/repos/${repo}/byDate/${date}`;
 	const docRef = firestore.doc(docPath);
 	const doc = await docRef.get();
 	const docData = doc.data();
