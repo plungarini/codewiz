@@ -166,7 +166,9 @@
 		</thead>
 		<tbody *ngIf="(stats$ | async)?.length; else repoStatsSkeleton">
 			<tr *ngFor="let stat of (stats$ | async); trackBy: trackBy">
-				<td class="px-4 py-4 text-sm text-center text-zinc-100">{{stat.id}}</td>
+				<td class="px-4 py-4 text-sm text-center transition-colors duration-300 text-zinc-100 hover:text-indigo-400">
+					<a [routerLink]="['/app/admin/repos/edit', stat.id]">{{stat.id}}</a>
+				</td>
 				<td class="px-4 py-4 text-sm">
 					<div class="flex items-center justify-center w-full space-x-2">
 						<div class="text-sm font-semibold text-zinc-400">
