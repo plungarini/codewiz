@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import { error, warn } from 'firebase-functions/logger';
+import { checkUserSubscription } from './functions/checkUserSubscription';
 import { sendEmailActionCode } from './functions/email_action_code';
 import { elaborateEmbeddings, getAllEmbeddings } from './functions/embeddings';
 import { githubFolderFetcher } from './functions/githubFetcher';
@@ -115,6 +116,32 @@ export const calculateOpenaiTokensOnReply = FFN
 			return err;
 		}
 	});
+
+export const canUserQuery = FFN
+	.runWith({ memory: '256MB', timeoutSeconds: 60, maxInstances: 100 })
+	.https.onRequest(async (req, res) => {
+		/**
+		 * uid: string,
+		 * authorization: string,
+		 */
+		warn('request', req.body);
+
+		const key = process.env.EXTERNAL_FUNCTIONS_KEY;
+		if (!key) {
+			res.status(501);
+		} else if (key !== req.body.authorization) {
+			res.status(401);
+		}
+
+		try {
+			const result = await checkUserSubscription(req.body.uid);
+			res.status(200).json(result);
+		} catch (err) {
+			error(err);
+			res.status(400);
+		}
+	});
+
 
 export const emailActionCode = FFN.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 }).https.onCall(async (data) => {
 	return await sendEmailActionCode(data);

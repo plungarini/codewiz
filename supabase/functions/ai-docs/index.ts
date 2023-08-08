@@ -79,6 +79,23 @@ serve(async (req) => {
 		// Intentionally log the request data
 		console.log({ requestData })
 
+		const res = await fetch('https://europe-west2-code-whiz-ai.cloudfunctions.net/canUserQuery', {
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json',
+			},
+			method: 'POST',
+			body: JSON.stringify({
+				uid: uid,
+				authorization: firebaseKey,
+			}),
+		});
+		const canQueryJson = await res.json();
+		
+		if (!canQueryJson) {
+			throw new UserError('Subscription reached maximum limit')
+		}
+
 		// TODO: better sanitization
 		const contextMessages: ChatCompletionRequestMessage[] = messages.map(({ role, content }) => {
 			if (
