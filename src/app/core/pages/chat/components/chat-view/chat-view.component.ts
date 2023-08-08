@@ -1,5 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, ViewChild } from '@angular/core';
+import { Timestamp } from '@angular/fire/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
 import { animationFrameScheduler, catchError, finalize, of, Subscription, switchMap } from 'rxjs';
 import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
@@ -179,97 +180,144 @@ export class ChatViewComponent implements OnDestroy {
 	async createQuery(query: string): Promise<void> {
 		if (!query) return console.error('Query is required.');
 		if (this.gettingQuery) return console.error('Another query is already running...');
-		if (!this.chatId || this.chatId === 'new') {
-			const newId = await this.ai.createNewChat(this.selectedRepo);
-			await this.router.navigate([`/app/chat/`, this.selectedRepo, newId]);
+
+		let newChatId = this.chatId;
+		if (!newChatId || newChatId === 'new') {
+			newChatId = await this.ai.createNewChat(this.selectedRepo);
+			await this.router.navigate([`/app/chat/`, this.selectedRepo, newChatId]);
 		}
 
 		const userQuery: AiChatMessage = {
+			chatId: newChatId,
+			repoId: this.selectedRepo,
 			role: AiChatMessageRole.User,
 			content: query.trim(),
-			completed: false,
+			completed: true,
 		}
 
 		await this.ai.saveNewMessage(this.selectedRepo, this.chatId, userQuery);
 
+		const assistantId = this.ai.getNewRandomId();
+		const assistantQuery: AiChatMessage = {
+			id: assistantId,
+			chatId: newChatId,
+			repoId: this.selectedRepo,
+			role: AiChatMessageRole.Assistant,
+			content: '',
+			completed: false,
+		}
+
+		await this.ai.saveNewMessage(this.selectedRepo, this.chatId, assistantQuery, true);
+
 		this.onMessageScroll(true);
 
-		const newMsgIndex = this.chat.length + 1;
 		this.gettingQuery = true;
 		this.chat = [...this.chat]
 		this.cdRef.detectChanges();
 
-		let backupResult = '';
+		let backupResult: AiChatMessage = assistantQuery;
 		
 		this.ai.createQuery(this.selectedRepo, [...this.chat])
 			.pipe(
 				catchError((err) => {
 					const parsedErr = err.data ? JSON.parse(err.data) : { message: '', debug: undefined };
-					this.chat[newMsgIndex] = {
+					const savedMessage = this.getFromLocalStorage(assistantId);
+					const msgRef = savedMessage || backupResult;
+					const msgRefIndex = this.chat.findIndex(m => m.id === assistantId);
+
+					const queryRes: AiChatMessage = {
 						role: AiChatMessageRole.Assistant,
-						content: backupResult,
+						content: backupResult.content,
 						completed: true,
+						id: msgRef?.id || '',
+						chatId: msgRef?.chatId || '',
+						repoId: msgRef?.repoId || '',
+						pageSections: msgRef?.pageSections || [],
 						error: {
 							debug: parsedErr?.debug || '',
 							message: parsedErr?.message || '',
 						},
-						id: this.chat[newMsgIndex]?.id || '',
-						pageSections: this.chat[newMsgIndex]?.pageSections || [],
-					};
+					}
 
-					this.chat = [...this.chat]
-					this.cdRef.detectChanges();
+					if (msgRefIndex >= 0) {
+						this.chat[msgRefIndex] = queryRes;
+						this.chat = [...this.chat];
+						this.cdRef.detectChanges();
+					}
+
 					console.error(parsedErr);
 					this.pingStatus();
 					return of(undefined);
 				}),
 				finalize(async () => {
 					this.gettingQuery = false;
-					this.chat[newMsgIndex] = {
-						role: AiChatMessageRole.Assistant,
-						content: backupResult,
-						completed: true,
-						error: this.chat[newMsgIndex]?.error || { },
-						id: this.chat[newMsgIndex]?.id || '',
-						pageSections: this.chat[newMsgIndex]?.pageSections || [],
-					};
-					
-					this.chat = [...this.chat];
-					this.cdRef.detectChanges();
+					const savedMessage = this.getFromLocalStorage(assistantId);
+					const msgRef = savedMessage || backupResult;
+					const msgRefIndex = this.chat.findIndex(m => m.id === assistantId);
 
-					await this.ai.saveNewMessage(this.selectedRepo, this.chatId, this.chat[newMsgIndex]);
+					const queryRes: AiChatMessage = {
+						role: AiChatMessageRole.Assistant,
+						content: backupResult.content,
+						completed: true,
+						error: msgRef?.error || { },
+						id: msgRef?.id || '',
+						chatId: msgRef?.chatId || '',
+						repoId: msgRef?.repoId || '',
+						pageSections: msgRef?.pageSections || [],
+					}
+
+					if (msgRefIndex >= 0) {
+						this.chat[msgRefIndex] = queryRes;
+						this.chat = [...this.chat];
+						this.cdRef.detectChanges();
+	
+						await this.ai.saveNewMessage(this.selectedRepo, this.chatId, this.chat[msgRefIndex]);
+					} else {
+						await this.ai.saveNewMessage(queryRes.repoId, queryRes.chatId, queryRes);
+					}
+					
 					return of(undefined);
 				})
 			)
 			.subscribe((val) => {
 				if (!val) return;
-				backupResult = val.completion;
+				const savedMessage = this.getFromLocalStorage(assistantId);
+				const msgRef = savedMessage || backupResult;
+				const msgRefIndex = this.chat.findIndex(m => m.id === assistantId);
 
-				this.chat[newMsgIndex] = {
+				const queryRes: AiChatMessage = {
 					role: AiChatMessageRole.Assistant,
 					content: val.completion || '',
 					completed: false,
-					id: this.chat[newMsgIndex]?.id || '',
-					pageSections: this.chat[newMsgIndex]?.pageSections || [],
-				};
+					error: msgRef?.error || { },
+					id: msgRef?.id || '',
+					chatId: msgRef?.chatId || '',
+					repoId: msgRef?.repoId || '',
+					pageSections: msgRef?.pageSections || [],
+				}
+
+				backupResult = queryRes;
 				
-				const pageSections = this.chat[newMsgIndex]?.pageSections;
+				const pageSections = msgRef?.pageSections;
 				if (
 					(!pageSections || pageSections.length <= 0) &&
-					val.pageSections.length > 0 &&
-					this.chat[newMsgIndex]
+					val.pageSections.length > 0
 				) {
-					this.chat[newMsgIndex].pageSections = val.pageSections;
+					queryRes.pageSections = val.pageSections;
 				}
 
 				if (val.finishReason) {
-					//
+					queryRes.finishReason = val.finishReason;
 				}
-
-				this.onMessageScroll();
 				
-				this.chat = [...this.chat]
-				this.cdRef.detectChanges();
+				if (msgRefIndex >= 0) {
+					this.chat[msgRefIndex] = queryRes;
+					this.chat = [...this.chat];
+					this.cdRef.detectChanges();
+					this.onMessageScroll();
+				} else {
+					this.saveToLocalStorage(queryRes);
+				}
 			});
 	}
 
@@ -299,5 +347,28 @@ export class ChatViewComponent implements OnDestroy {
 		this.status = s;
 		console.warn('New openai status', this.status);
 		this.cdRef.detectChanges();
+	}
+
+	private saveToLocalStorage(message: AiChatMessage): void {
+		const existing = JSON.parse(localStorage.getItem('ai_chat') || '[]') as AiChatMessage[];
+		existing.push({ ...message, createdAt: Timestamp.fromDate(new Date()) });
+		localStorage.setItem('ai_chat', JSON.stringify(existing));
+	}
+
+	private getFromLocalStorage(messageId: string): AiChatMessage | undefined {
+		const existing = JSON.parse(localStorage.getItem('ai_chat') || '[]') as AiChatMessage[];
+		const index = existing.findIndex((m) => m.id === messageId);
+		const res = index >= 0 ? existing[index] : undefined;
+		if (res) this.deleteFromLocalStorage(messageId);
+		return res;
+	}
+
+	private deleteFromLocalStorage(messageId: string): void {
+		const existing = JSON.parse(localStorage.getItem('ai_chat') || '[]') as AiChatMessage[];
+		const index = existing.findIndex((m) => m.id === messageId);
+		if (index >= 0) {
+			existing.splice(index, 1);
+			localStorage.setItem('ai_chat', JSON.stringify(existing));
+		}
 	}
 }

@@ -32,6 +32,7 @@ export interface AiChatMessage extends AiChatMessageReqItem  {
 	feedback?: 'like' | 'dislike' | 'none';
 	showPageSections?: boolean;
 	error?: AiChatMessageError;
+	finishReason?: AiChatFinishReason;
 	updatedAt?: Timestamp;
 	createdAt?: Timestamp;
 }

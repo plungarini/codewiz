@@ -274,7 +274,7 @@ export class AiChatService {
 				}
 	
 				ev.onerror = (event: any) => {
-					console.log('error', event);
+					console.error('error', event);
 					this.zone.run(() => {
 						const err = {
 							"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
@@ -456,8 +456,12 @@ export class AiChatService {
 		}
 	}
 
-	async saveNewMessage(repo?: string, chatId?: string, message?: Partial<AiChatMessage>) {
+	async saveNewMessage(repo?: string, chatId?: string, message?: Partial<AiChatMessage>, forceCompleted = false) {
 		if (!repo || !chatId || !message) return console.error('Missing repo, chatId or message: unable to save new message.', { repo, chatId, message });
+		
+		if (message.chatId !== chatId) chatId = message.chatId || chatId;
+		if (message.repoId !== repo) repo = message.repoId || repo;
+
 		const uid = await this._getCurrentUid();
 		const newChatId = this.db.generateId();
 		
@@ -481,7 +485,7 @@ export class AiChatService {
 			id: msgId,
 			repoId: repo,
 			chatId: chatId,
-			completed: true,
+			completed: forceCompleted ? message.completed : true,
 			pageSections: pageSections || [],
 		};
 		await this.db.upsert<AiChatMessage>(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${msgId}`, normMessage);
