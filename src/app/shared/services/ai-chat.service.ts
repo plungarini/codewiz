@@ -456,7 +456,8 @@ export class AiChatService {
 		}
 	}
 
-	async saveNewMessage(repo: string, chatId: string, message: Partial<AiChatMessage>) {
+	async saveNewMessage(repo?: string, chatId?: string, message?: Partial<AiChatMessage>) {
+		if (!repo || !chatId || !message) return console.error('Missing repo, chatId or message: unable to save new message.', { repo, chatId, message });
 		const uid = await this._getCurrentUid();
 		const newChatId = this.db.generateId();
 		
@@ -502,6 +503,10 @@ export class AiChatService {
 		await this.db.upsert(`users/${uid}/repos/${repo}/chats/${id}`, { name: 'New Chat' });
 		await this.db.upsert(`users/${uid}/repos/${repo}/chats/${id}/messages/init`, { hide: true });
 		return id;
+	}
+
+	getNewRandomId(): string {
+		return this.db.generateId();
 	}
 
 	getRepoChats(repo: string): Observable<AiUserRepoChat[]> {
