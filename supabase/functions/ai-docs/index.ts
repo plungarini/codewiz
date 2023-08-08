@@ -63,17 +63,17 @@ serve(async (req) => {
 		const requestData: RequestData = await req.json()
 
 		if (!requestData) {
-			throw new UserError('Missing request data')
+			throw new UserError('Missing request data', { code: 'INVALID_REQUEST_DATA' })
 		}
 
 		const { messages, repo, uid, repoHost, onlyPrompt, stream } = requestData
 
 		if (!uid) {
-			throw new UserError('Missing uid in request data')
+			throw new UserError('Missing uid in request data', { code: 'MISSING_UID' })
 		}
 
 		if (!messages) {
-			throw new UserError('Missing messages in request data')
+			throw new UserError('Missing messages in request data', { code: 'MISSING_MESSAGES' })
 		}
 
 		// Intentionally log the request data
@@ -93,7 +93,7 @@ serve(async (req) => {
 		const canQueryJson = await res.json();
 		
 		if (!canQueryJson) {
-			throw new UserError('Subscription reached maximum limit')
+			throw new UserError('Subscription reached maximum limit', { code: 'SUBSCRIPTION_LIMIT_REACHED' })
 		}
 
 		// TODO: better sanitization
@@ -136,7 +136,7 @@ serve(async (req) => {
 				throw new UserError('Flagged content', {
 					flagged: true,
 					categories: results.categories,
-				})
+				}, 'FLAGGED_PROMPT')
 			}
 		}
 
@@ -292,7 +292,7 @@ serve(async (req) => {
 			const error = await response.json()
 			throw new ApplicationError('Failed to generate completion', error)
 		}
-		
+
 		// Calculate openai tokens
 		fetch('https://europe-west2-code-whiz-ai.cloudfunctions.net/calculateOpenaiTokens', {
 			headers: {

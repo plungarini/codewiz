@@ -274,19 +274,15 @@ export class AiChatService {
 				}
 	
 				ev.onerror = (event: any) => {
-					console.error('error', event);
 					this.zone.run(() => {
 						const err = {
-							"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
-							"debug": {
-								"message": event,
-								"type": "server_error",
+							message: "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+							debug: {
+								message: event?.data ? typeof event.data === 'string' ? JSON.parse(event.data) : event.data : event,
+								type: "server_error",
 							}
 						}
-						observer.error({
-							data: JSON.stringify(err),
-						})
-						observer.error(event);
+						observer.error(err);
 						closeStream();
 					})
 				}
@@ -488,6 +484,7 @@ export class AiChatService {
 			completed: forceCompleted ? message.completed : true,
 			pageSections: pageSections || [],
 		};
+		console.log('saving', normMessage)
 		await this.db.upsert<AiChatMessage>(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${msgId}`, normMessage);
 
 		const colLen = ((await this.db.getColRef(`users/${uid}/repos/${repo}/chats/${chatId}/messages`)) || new Set()).size;

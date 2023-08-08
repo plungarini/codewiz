@@ -220,7 +220,7 @@ export class ChatViewComponent implements OnDestroy {
 		this.ai.createQuery(this.selectedRepo, [...this.chat])
 			.pipe(
 				catchError((err) => {
-					const parsedErr = err.data ? JSON.parse(err.data) : { message: '', debug: undefined };
+					const parsedErr = err ? err : { message: '', debug: undefined };
 					const savedMessage = this.getFromLocalStorage(assistantId);
 					const msgRef = savedMessage || backupResult;
 					const msgRefIndex = this.chat.findIndex(m => m.id === assistantId);
@@ -233,19 +233,20 @@ export class ChatViewComponent implements OnDestroy {
 						chatId: msgRef?.chatId || '',
 						repoId: msgRef?.repoId || '',
 						pageSections: msgRef?.pageSections || [],
-						error: {
-							debug: parsedErr?.debug || '',
-							message: parsedErr?.message || '',
-						},
+						error: parsedErr,
 					}
+
+					backupResult = queryRes;
 
 					if (msgRefIndex >= 0) {
 						this.chat[msgRefIndex] = queryRes;
 						this.chat = [...this.chat];
 						this.cdRef.detectChanges();
+					} else {
+						this.saveToLocalStorage(queryRes);
 					}
 
-					console.error(parsedErr);
+					console.error('Error while getting query', parsedErr);
 					this.pingStatus();
 					return of(undefined);
 				}),
@@ -270,11 +271,9 @@ export class ChatViewComponent implements OnDestroy {
 						this.chat[msgRefIndex] = queryRes;
 						this.chat = [...this.chat];
 						this.cdRef.detectChanges();
-	
-						await this.ai.saveNewMessage(this.selectedRepo, this.chatId, this.chat[msgRefIndex]);
-					} else {
-						await this.ai.saveNewMessage(queryRes.repoId, queryRes.chatId, queryRes);
 					}
+					
+					await this.ai.saveNewMessage(queryRes.repoId, queryRes.chatId, queryRes);
 					
 					return of(undefined);
 				})
