@@ -6,19 +6,30 @@ import { firestore } from '../../utils';
 export const calculateTokens = async (data: {
 	uid: string;
 	repo: string;
+	chatId: string;
+	messageId: string;
 	model: supportModelType;
 	messages: AiChatMessage[];
 	type: 'prompt' | 'completion';
 }) => {
-	const { messages, model, uid, repo, type } = data;
+	const { messages, model, uid, repo, type, chatId, messageId } = data;
 
 	if (!repo || !uid) return error('Error on calculateTokens, repo or uid is undefined', { repo, uid, type });
 
 	warn(`Calculating tokens for ${type}...`);
+	const normedMessages = messages.map((m) => ({
+		role: m.role,
+		content: m.content,
+	}));
 
 	try {
-		const { usedTokens, usedUSD } = new GPTTokens({ messages, model });
+		const { usedTokens, usedUSD } = new GPTTokens({ messages: normedMessages, model });
 		warn({ usedTokens, usedUSD });
+
+		if (type === 'completion') {
+			await firestore.doc(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`)
+				.update({ usedTokens, usedUSD, updatedAt: new Date() });
+		}
 
 		await setUsageToUser(uid, repo, { usedTokens, usedUSD }, type);
 

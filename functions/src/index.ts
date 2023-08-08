@@ -99,17 +99,18 @@ export const calculateOpenaiTokens = FFN.runWith({
 export const calculateOpenaiTokensOnReply = FFN
 	.runWith({ memory: '256MB', timeoutSeconds: 60, maxInstances: 10 }).firestore
 	.document('users/{uid}/repos/{repo}/chats/{chatId}/messages/{messageId}')
-	.onCreate(async (change, context) => {
+	.onUpdate(async (change, context) => {
 		try {
 			const { uid, repo, chatId, messageId } = context.params;
 			if (messageId === 'init') return;
-			const message = change.data() as AiChatMessage;
-			if (!message.role || message.role !== 'assistant') return;
+			const message = change.after.data() as AiChatMessage;
+			if (!message.role || message.role === 'user' || !!message.usage || !message.content || message.content.length <= 1) return;
 			warn('New message at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, message);
 			await calculateTokens({
 				messages: [{ role: message.role, content: message.content }],
 				model: 'gpt-3.5-turbo',
-				repo, uid, type: 'completion',
+				repo, uid, chatId, messageId,
+				type: 'completion',
 			});
 		} catch (err) {
 			error(err);

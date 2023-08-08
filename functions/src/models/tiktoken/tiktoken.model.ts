@@ -7,4 +7,8 @@ export enum AiChatMessageRole {
 export type AiChatMessage = {
 	role: AiChatMessageRole;
 	content: string;
+	usage?: {
+		usedTokens: number;
+		usedUSD: number;
+	}
 }
