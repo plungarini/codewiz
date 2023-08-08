@@ -111,7 +111,7 @@ export class ChatViewComponent implements OnDestroy {
 		this.chatSub?.unsubscribe();
 	}
 
-	async onChatScroll(event: any): Promise<void> {
+	async onChatScroll(event?: any): Promise<void> {
 		const element = this.mainChatContainer?.nativeElement;
 		if (!element) return;
 		
@@ -120,11 +120,13 @@ export class ChatViewComponent implements OnDestroy {
 		if (!isScrolledToBottom && !this.showScrollToBottom) {
 			this.showScrollToBottom = true;
 			this.cdRef.markForCheck();
+		} else if (isScrolledToBottom || this.chat.length <= 2) {
+			this.showScrollToBottom = false;
+			this.cdRef.markForCheck();
 		} else if (isScrolledToBottom && this.showScrollToBottom) {
 			this.showScrollToBottom = false;
 			this.cdRef.markForCheck();
-		}
-		
+		}		
 
 		if (scrolledToTop && this.chat.length >= (this.messageLimit - 1) && !this.maxResultsLoaded) {
 			console.warn('Loading more messages...');
@@ -272,6 +274,7 @@ export class ChatViewComponent implements OnDestroy {
 	}
 
 	onMessageScroll(bypass = false, animation = true) {
+		this.onChatScroll();
 		if (!this.mainChatContainer) return;
 		const element = this.mainChatContainer.nativeElement;
 
