@@ -57,7 +57,7 @@ const setUsageToUser = async (
 	if (type === 'prompt') {
 		prompt.usedTokens = prompt.usedTokens + usage.usedTokens;
 		prompt.usedUSD = parseFloat((prompt.usedUSD + usage.usedUSD).toFixed(10));
-		prompt.count = prompt.count + 1;
+		prompt.count = (isNaN(prompt.count) ? 0 : prompt.count) + 1;
 
 		if (!exists) {
 			await docRef.set({
@@ -74,7 +74,7 @@ const setUsageToUser = async (
 	} else {
 		completion.usedTokens = completion.usedTokens + usage.usedTokens;
 		completion.usedUSD = parseFloat((completion.usedUSD + usage.usedUSD).toFixed(10));
-		completion.count = completion.count + 1;
+		completion.count = (isNaN(completion.count) ? 0 : completion.count) + 1;
 
 		if (!exists) {
 			await docRef.set({
@@ -111,8 +111,10 @@ const saveUsageToStats = async (repo: string, usage: { usedTokens: number, usedU
 	let totalUSDPrompt = docData?.prompt?.totalUSD || 0;
 	let totalTokensCompletion = docData?.completion?.totalTokens || 0;
 	let totalUSDCompletion = docData?.completion?.totalUSD || 0;
-	let totalPrompts = docData?.prompt?.count || 0;
-	let totalCompletions = docData?.completion?.count || 0;
+	const pomptCount = docData?.prompt?.count;
+	let totalPrompts = isNaN(pomptCount) ? 0 : pomptCount || 0;
+	const completionCount = docData?.prompt?.count;
+	let totalCompletions = isNaN(completionCount) ? 0 : completionCount || 0;
 
 	if (type === 'prompt') {
 		totalTokensPrompt = totalTokensPrompt + usage.usedTokens;
@@ -194,8 +196,10 @@ const setUsageToMonthlyStats = async (repo: string, usage: { usedTokens: number,
 	let totalUSDPrompt = docData?.prompt?.totalUSD || 0;
 	let totalTokensCompletion = docData?.completion?.totalTokens || 0;
 	let totalUSDCompletion = docData?.completion?.totalUSD || 0;
-	let totalPrompts = docData?.prompt?.count || 0;
-	let totalCompletions = docData?.completion?.count || 0;
+	const pomptCount = docData?.prompt?.count;
+	let totalPrompts = isNaN(pomptCount) ? 0 : pomptCount || 0;
+	const completionCount = docData?.prompt?.count;
+	let totalCompletions = isNaN(completionCount) ? 0 : completionCount || 0;
 
 	if (type === 'prompt') {
 		totalTokensPrompt = totalTokensPrompt + usage.usedTokens;
