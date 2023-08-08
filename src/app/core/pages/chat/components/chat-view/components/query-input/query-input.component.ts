@@ -18,6 +18,7 @@ import { filter, Subscription } from 'rxjs';
 export class QueryInputComponent implements OnDestroy {
 
 	@Input() showScrollToBottom = false;
+	@Input() gettingQuery = false;
 	@Output() onQuery = new EventEmitter<string>();
 	@Output() onScrollBottom = new EventEmitter<void>();
 
@@ -74,7 +75,7 @@ export class QueryInputComponent implements OnDestroy {
 	}
 
 	submitMessage(): void {
-		if (!this.textInput.valid || !this.textInput.value) return;
+		if (!this.textInput.valid || !this.textInput.value || this.gettingQuery) return;
 		this.onQuery.emit(this.textInput.value.trim());
 		this.resetTextInput();
 		this.cdRef.detectChanges();

@@ -23,7 +23,8 @@
 </div>
 
 <app-query-input
-	(onQuery)="createQuery($event)"
+	[gettingQuery]="gettingQuery"
 	[showScrollToBottom]="showScrollToBottom"
+	(onQuery)="createQuery($event)"
 	(onScrollBottom)="onMessageScroll(true, true);"
 ></app-query-input>
