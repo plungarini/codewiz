@@ -1,0 +1,22 @@
+<div class="relative w-12 h-12 max-w-full max-h-full">
+  <svg viewBox="0 0 120 120" class="w-full h-full">
+		<!-- Background circle -->
+		<g class="text-zinc-950">
+			<circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="10"></circle>
+		</g>
+		<!-- Progress circle -->
+		<g class="text-pink-600 origin-center rotate-90">
+			<circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round"
+				[attr.stroke-dasharray]="CIRCUMFERENCE"
+				[attr.stroke-dashoffset]="offset"></circle>
+		</g>
+	</svg>
+
+	<div class="absolute inset-0 flex items-center justify-center">
+		<span class="text-lg font-semibold leading-5 shrink text-pink-500/80">
+			{{remainingQueries}}
+		</span>
+	</div>
+
+	<p class="absolute left-0 w-full text-xs font-medium text-center text-zinc-600 -bottom-4">queries</p>
+</div>
