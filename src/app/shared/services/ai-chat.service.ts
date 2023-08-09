@@ -178,15 +178,13 @@ export class AiChatService {
 					const now = new Date().getTime() / 1000;
 					if ((now - sinceLastRes) < timeoutSeconds) return;
 					const err = {
-						"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
-						"debug": {
-							"message": `Timeout Error: Request Timed Out (>${timeoutSeconds}s). Please try again later.`,
-							"type": "client_error",
+						message: "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+						debug: {
+							message: `Timeout Error: Request Timed Out (>${timeoutSeconds}s). Please try again later.`,
+							type: "server_error",
 						}
 					}
-					observer.error({
-						data: JSON.stringify(err),
-					})
+					observer.error(err);
 					closeStream();
 				}, 500);
 
