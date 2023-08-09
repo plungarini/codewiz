@@ -20,7 +20,7 @@ import { markedOptionsFactory } from './core/pages/chat/components/chat-view/com
     AppComponent
   ],
   imports: [
-    BrowserModule,
+		BrowserModule,
     AppRoutingModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAnalytics(() => getAnalytics()),

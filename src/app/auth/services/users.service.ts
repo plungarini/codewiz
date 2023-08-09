@@ -28,6 +28,7 @@ export class UsersService {
 			})
 		)
 	};
+
 	get fireUser$(): Observable<User | undefined> {
 		return user(this.auth).pipe(
 			map((a) => a || undefined)
