@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { orderBy } from '@angular/fire/firestore';
 import { combineLatest, filter, map, Observable, of, switchMap } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
-import { CompletionStat, RepoStat } from '../models/chat-stats.model';
+import { CompletionStat, RepoStat } from '../../../../../../shared/models/chat-stats.model';
 
 @Injectable({
   providedIn: 'root'
