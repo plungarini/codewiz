@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Observable, map } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { Repo } from '../../../../../../../shared/models/repo.model';
 
