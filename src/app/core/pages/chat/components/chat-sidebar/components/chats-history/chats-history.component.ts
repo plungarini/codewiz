@@ -92,14 +92,14 @@ export class ChatsHistoryComponent {
 
 		const chatLen = await this.aiChatService.getChatMessageLength(repo, id);
 
-		if (chatLen < 3) return;
+		if (chatLen < 2) return;
+
+		this.queue.add(id);
 
 		const sub = this.aiChatService.createChatTitle(repo, id)
 			.subscribe(async (d) => {
 				if (!d.shouldUpdate) return;
-
-				this.queue.add(id);
-			
+				
 				const index = this.chatHistory.findIndex(c => c.id === id);
 				this.chatHistory[index].name = d.completion;
 

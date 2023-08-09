@@ -4,6 +4,7 @@ import {
 	deleteDoc,
 	doc,
 	docData,
+	DocumentData,
 	DocumentReference,
 	Firestore,
 	getDoc as getDocFb,
@@ -11,6 +12,7 @@ import {
 	Query,
 	query,
 	QueryConstraint,
+	QuerySnapshot,
 	setDoc,
 	updateDoc
 } from '@angular/fire/firestore';
@@ -34,14 +36,14 @@ export class FirebaseExtendedService {
 		return httpsCallable<T, Z>(this.functions, name, { timeout });
 	}
 	
-	async getColRef(path: string, ...queryConstraints: QueryConstraint[]) {
+	async getColRef(path: string, ...queryConstraints: QueryConstraint[]): Promise<QuerySnapshot<DocumentData> | undefined> {
 		if (this.debug) console.log('[Firebase "getColRef"]', { path, queryConstraints });
 		if (!path) return undefined;
 
     let ref: Query;
     const colRef = collection(this.firestore, path) as CollectionReference;
 		ref = query(colRef, ...queryConstraints);
-		return await getDocs(ref);
+		return getDocs(ref);
 	}
 
 	async getDocPromise<T>(path: string): Promise<T | undefined> {

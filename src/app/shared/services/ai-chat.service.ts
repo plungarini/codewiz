@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
-import { limit, orderBy, startAfter } from '@angular/fire/firestore';
+import { limit, orderBy, startAfter, where } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { filter, firstValueFrom, interval, lastValueFrom, map, Observable, of, startWith, switchMap, take } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
@@ -493,7 +493,8 @@ export class AiChatService {
 
 	async getChatMessageLength(repo: string, chatId: string): Promise<number> {
 		const uid = await this._getCurrentUid();
-		const colLen = ((await this.db.getColRef(`users/${uid}/repos/${repo}/chats/${chatId}/messages`)) || new Set()).size;
+		const query = await this.db.getColRef(`users/${uid}/repos/${repo}/chats/${chatId}/messages`,  where('content', '!=', ''));
+		const colLen = (query || new Set()).size;
 		return colLen;
 	}
 
