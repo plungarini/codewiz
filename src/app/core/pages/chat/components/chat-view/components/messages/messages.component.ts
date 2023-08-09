@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ClipboardService } from 'ngx-clipboard';
 import { BehaviorSubject, Observable, switchMap } from 'rxjs';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
@@ -17,6 +17,8 @@ import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.se
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MessagesComponent {
+
+	@Output() onQueryRefresh = new EventEmitter<{ query: string, queryId: string}>();
 
 	msgRoles = AiChatMessageRole;
 	chat: AiChatMessage[] = [];
@@ -67,6 +69,13 @@ export class MessagesComponent {
 			this.copiedAnim[i] = false;
 			this.cdRef.detectChanges();
 		}, 2000);
+	}
+
+	onMsgRefresh(promptId?: string): void {
+		if (!promptId) return;
+		const prompt = this.chat.find((m) => m.id === promptId);
+		if (!prompt) return;
+		this.onQueryRefresh.emit({ query: prompt.content, queryId: promptId });
 	}
 
 	onCodeCopyToClipboard(i: number): void {

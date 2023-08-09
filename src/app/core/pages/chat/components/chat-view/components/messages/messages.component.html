@@ -92,9 +92,13 @@
 	
 	
 					<app-message-toolbar
-						*ngIf="msg.content && msg.completed"
+						*ngIf="msg.completed"
 						[role]="msg.role"
+						[showCopyBtn]="!!msg.content"
+						[showRetryBtn]="msg.role === msgRoles.Assistant"
+						[showShareBtn]="msg.role === msgRoles.Assistant"
 						(onCopy)="onMsgCopyToClipboard(msg.content, i)"
+						(onRefresh)="onMsgRefresh(chat[i - 1].id)"
 						class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
 					></app-message-toolbar>
 				</div>
@@ -202,9 +206,13 @@
 							></app-ai-toolbar>
 			
 							<app-message-toolbar
-								*ngIf="msg.content && msg.completed"
+								*ngIf="msg.completed"
 								[role]="msg.role"
+								[showCopyBtn]="!!msg.content"
+								[showRetryBtn]="msg.role === msgRoles.Assistant"
+								[showShareBtn]="msg.role === msgRoles.Assistant"
 								(onCopy)="onMsgCopyToClipboard(msg.content, i)"
+								(onRefresh)="onMsgRefresh(chat[i - 1].id)"
 								class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
 							></app-message-toolbar>
 						</div>

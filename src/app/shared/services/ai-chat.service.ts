@@ -568,6 +568,13 @@ export class AiChatService {
 		}
 	}
 
+	async deleteMultipleMessages(repo: string, chatId: string, ids: string[]): Promise<void> {
+		const uid = await this._getCurrentUid();
+		const path = `users/${uid}/repos/${repo}/chats/${chatId}/messages`;
+		const promises = ids.map(id => this.db.delete(`${path}/${id}`));
+		await Promise.all(promises);
+	}
+
 	private _$getCurrentUid(): Observable<string> {
 		return this.users.fireUser$.pipe(map((u) => u?.uid || ''))
 	}

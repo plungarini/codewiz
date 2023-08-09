@@ -19,6 +19,7 @@
 	<app-messages
 		[chat]="chat"
 		[repoId]="this.selectedRepo"
+		(onQueryRefresh)="createQuery($event.query, $event.queryId)"
 	></app-messages>
 </div>
 

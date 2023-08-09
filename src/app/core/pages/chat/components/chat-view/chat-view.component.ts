@@ -177,7 +177,13 @@ export class ChatViewComponent implements OnDestroy {
 		};
 	}
 
-	async createQuery(query: string): Promise<void> {
+	private async deleteNextMessages(fromId: string): Promise<void> {
+		const msgIndex = this.chat.findIndex((m) => m.id === fromId);
+		const messagesToDelete = this.chat.slice(msgIndex + 1).map((m) => m.id).filter((id) => !!id) as string[];
+		await this.ai.deleteMultipleMessages(this.selectedRepo, this.chatId, messagesToDelete);
+	}
+
+	async createQuery(query: string, refreshQueryId?: string): Promise<void> {
 		if (!query) return console.error('Query is required.');
 		if (this.gettingQuery) return console.error('Another query is already running...');
 
@@ -187,15 +193,19 @@ export class ChatViewComponent implements OnDestroy {
 			await this.router.navigate([`/app/chat/`, this.selectedRepo, newChatId]);
 		}
 
-		const userQuery: AiChatMessage = {
-			chatId: newChatId,
-			repoId: this.selectedRepo,
-			role: AiChatMessageRole.User,
-			content: query.trim(),
-			completed: true,
+		if (refreshQueryId) {
+			await this.deleteNextMessages(refreshQueryId);
+		} else {
+			const userQuery: AiChatMessage = {
+				chatId: newChatId,
+				repoId: this.selectedRepo,
+				role: AiChatMessageRole.User,
+				content: query.trim(),
+				completed: true,
+			}
+	
+			await this.ai.saveNewMessage(this.selectedRepo, this.chatId, userQuery);
 		}
-
-		await this.ai.saveNewMessage(this.selectedRepo, this.chatId, userQuery);
 
 		const assistantId = this.ai.getNewRandomId();
 		const assistantQuery: AiChatMessage = {
