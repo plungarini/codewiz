@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RepoStat } from '../../models/chat-stats.model';
+import { RepoStat } from '../../../../../../../shared/models/chat-stats.model';
 import { ChatStatsService } from '../../services/chat-stats.service';
 
 @Component({
