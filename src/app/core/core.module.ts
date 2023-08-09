@@ -9,7 +9,7 @@ import { CoreComponent } from './core.component';
 @NgModule({
   declarations: [
     CoreComponent,
-    SidebarComponent
+    SidebarComponent,
   ],
   imports: [
     CommonModule,
