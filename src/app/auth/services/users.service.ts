@@ -21,7 +21,7 @@ export class UsersService {
 		return user(this.auth).pipe(
 			switchMap(user => {
 				if (user && user?.uid) {
-					return this.get(user.uid);
+					return this.getWithSubscription(user.uid);
 				} else {
 					return of(undefined);
 				}
@@ -144,7 +144,33 @@ export class UsersService {
 				return { ...u, id };
 			})
 		);
-  }
+	}
+	
+	/**
+	 * Retrieves a single user from the database with the given ID.
+	 *
+	 * @param {string} id - The ID of the user to retrieve.
+	 * @return {Observable<DbUser | undefined>} An observable that emits the user object if found, or undefined if not found.
+	 */
+	getWithSubscription(id: string): Observable<DbUser | undefined> {
+		return this.db.getDoc<DbUser>(`users/${id}`).pipe(
+			switchMap(user => {
+				if (!user) return of(undefined);
+				return this.db.getCol<StripeSubscription>(
+					`users/${user.id}/subscriptions`,
+					'id',
+					where('status', 'in', ['trialing', 'active'])
+				).pipe(
+					map(subscriptions => {
+						return {
+							...user,
+							subscriptions
+						};
+					})
+				)
+			})
+		)
+	}
 
   /**
    * Get current user from Firebase.
