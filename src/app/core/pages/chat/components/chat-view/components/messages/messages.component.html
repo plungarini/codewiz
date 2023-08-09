@@ -26,7 +26,8 @@
 							'translate-y-0 opacity-100': msg.content
 						}"
 						#msgContentDiv
-						class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0">
+						class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0"
+					>
 						<ng-container *ngIf="msg.role === msgRoles.Assistant; else isUser">
 							<ng-template #buttonTemplate>
 								<button
@@ -65,7 +66,7 @@
 								ngPreserveWhitespaces
 								clipboard
 								[clipboardButtonTemplate]="buttonTemplate"
-								class="block w-full max-w-full markdown dura"
+								class="block w-full max-w-full markdown"
 								[ngClass]="{
 									'animate-[pulse_0.7s_ease-in-out_1]': copiedAnim[i],
 								}"
@@ -114,12 +115,118 @@
 	
 			</div>
 			<ng-template #error>
-				<div class="py-2 border-y border-zinc-600">
-					<p class="font-semibold">From: {{msg.role}}</p>
-					<p class="text-red-400 whitespace-pre-wrap">{{msg.error?.debug?.message}}</p>
+				<div *ngIf="interpretError(msg.error) as err">
+					<div [ngSwitch]="err.code">
+
+						<ng-template #errorTemplate let-content="content">
+							<div
+								[attr.message-id]="msg.id"
+								class="relative flex flex-row w-full pt-3 pb-3 space-x-4 group/message"
+							>
+								<app-message-avatar
+									[role]="msg.role"
+									[stopAnim]="msg.completed"
+									class="block w-fit pt-2.5"
+								></app-message-avatar>
+								
+								<div class="relative max-w-full pr-10">
+									<div
+										[ngClass]="{
+											'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant,
+											'translate-y-3 opacity-0': !content,
+											'translate-y-0 opacity-100': content
+										}"
+										#msgErrorDiv
+										class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0"
+									>
+										<ng-template #buttonTemplate>
+											<button
+												(click)="onCodeCopyToClipboard(i)"
+												title="Copy to clipboard"
+												type="button"
+												[ngClass]="{
+													'bg-zinc-950 text-zinc-200': !codeCopied[i],
+													'bg-teal-500 text-zinc-800': codeCopied[i],
+												}"
+												class="absolute invisible px-2 py-2 text-sm transition-all duration-200 border rounded-lg shadow-sm opacity-0 btn active:shadow-inner border-zinc-600 hover:border-zinc-400 top-2 right-2 group-hover:visible group-hover:opacity-100 bg-zinc-950 text-zinc-200"
+											>
+												<span class="relative">
+													<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" focusable="false" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+														<path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z" transform="translate(0)"></path>
+														<path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z" transform="translate(0)"></path>
+														<rect fill="none" width="32" height="32"></rect>
+													</svg>
+													<div
+														[ngClass]="{
+															'opacity-0': !codeCopied[i],
+															'opacity-100': codeCopied[i],
+														}"
+														class="absolute px-2 py-1 font-normal leading-tight text-white transition-opacity transform -translate-x-6 -translate-y-1/2 rounded shadow opacity-100 pointer-events-none bg-zinc-800 top-1/2 right-full"
+													>
+														<div class="absolute w-0 h-0 transform -translate-y-1/2 border-4 border-r-0 border-zinc-800 bottom-full left-full top-1/2" style="border-top-color: transparent; border-bottom-color: transparent;">
+														</div>
+														Copied
+													</div>
+												</span>
+											</button>
+										</ng-template>
+
+										<markdown
+											[data]="content"
+											ngPreserveWhitespaces
+											clipboard
+											[clipboardButtonTemplate]="buttonTemplate"
+											class="block w-full max-w-full markdown"
+											[ngClass]="{
+												'animate-[pulse_0.7s_ease-in-out_1]': copiedAnim[i],
+											}"
+										></markdown>
+									</div>
+						
+									<app-ai-toolbar
+										*ngIf="msg.role === msgRoles.Assistant && msg.content.length > 0"
+										[show]="msg.role === msgRoles.Assistant && msg.content.length > 0 && !msg.showPageSections"
+										[msg]="msg"
+										[containerWidth]="msgErrorDiv.clientWidth"
+										(onShowPageSections)="togglePageSections(i, true)"
+									></app-ai-toolbar>
+					
+									<app-message-toolbar
+										*ngIf="msg.content && msg.completed"
+										[role]="msg.role"
+										(onCopy)="onMsgCopyToClipboard(msg.content, i)"
+										class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
+									></app-message-toolbar>
+								</div>
+					
+								<app-pagesections-selector
+									[pageSections]="msg.pageSections"
+									[ngClass]="{
+										'translate-y-2 opacity-0 pointer-events-none': !msg.showPageSections,
+										'translate-y-0 opacity-100 pointer-events-auto': msg.showPageSections,
+									}"
+									[hostUrl]="(repo$ | async)?.hostUrl || ''"
+									[replaceUrl]="(repo$ | async)?.replaceUrl || ''"
+									[replaceStrings]="(repo$ | async)?.replaceStrings || []"
+									[show]="!!msg.showPageSections"
+									(onClose)="togglePageSections(i, false)"
+									class="transition-all duration-500 no-scrollbar"
+								></app-pagesections-selector>
+							</div>
+						</ng-template>
+
+						<ng-container *ngSwitchCase="'SUBSCRIPTION_LIMIT_REACHED'">
+							<ng-container *ngTemplateOutlet="errorTemplate; context: { content: err.message }"></ng-container>
+						</ng-container>
+						<p *ngSwitchCase="'MISSING_UID'">
+							{{err.message}}
+						</p>
+						<p *ngSwitchDefault>
+						
+						</p>
+					</div>
 				</div>
 			</ng-template>
 		</ng-container>
-		
 	</ng-container>
 </div>

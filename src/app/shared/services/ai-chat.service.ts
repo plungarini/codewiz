@@ -484,7 +484,7 @@ export class AiChatService {
 			completed: forceCompleted ? message.completed : true,
 			pageSections: pageSections || [],
 		};
-		console.log('saving', normMessage)
+		
 		await this.db.upsert<AiChatMessage>(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${msgId}`, normMessage);
 
 		const colLen = ((await this.db.getColRef(`users/${uid}/repos/${repo}/chats/${chatId}/messages`)) || new Set()).size;

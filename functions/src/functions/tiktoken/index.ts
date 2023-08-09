@@ -28,7 +28,7 @@ export const calculateTokens = async (data: {
 
 		if (type === 'completion') {
 			await firestore.doc(`users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`)
-				.update({ usedTokens, usedUSD, updatedAt: new Date() });
+				.update({ usage: { usedTokens, usedUSD }, updatedAt: new Date() });
 		}
 
 		await setUsageToUser(uid, repo, { usedTokens, usedUSD }, type);

@@ -9,7 +9,10 @@ type AiChatMessageError = {
 	message?: string;
 	debug?: {
 		type?: string;
-		message?: string;
+		message?: string | {
+			data?: Record<string, any>;
+			error?: string;
+		};
 	}
 }
 
