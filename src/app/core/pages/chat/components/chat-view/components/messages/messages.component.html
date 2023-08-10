@@ -11,7 +11,7 @@
 				class="relative flex flex-row w-full pb-3 space-x-4 group/message"
 			>
 				<app-message-avatar
-					name="Pietro Lungarini"
+					[name]="(user$ | async)?.name || 'Anonymous'"
 					[role]="msg.role"
 					[stopAnim]="msg.completed"
 					[ngClass]="{ 'pt-2.5': msg.role === msgRoles.Assistant }"

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ClipboardService } from 'ngx-clipboard';
-import { BehaviorSubject, Observable, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, of, switchMap } from 'rxjs';
+import { UsersService } from 'src/app/auth/services/users.service';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { Repo } from 'src/app/shared/models/repo.model';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
@@ -27,6 +28,11 @@ export class MessagesComponent {
 	copiedAnim: boolean[] = [];
 	codeCopied: boolean[] = [];
 
+	user$: Observable<{ name: string }> = this.usersService.user$.pipe(
+		switchMap((u) => u?.name ? of({ name: u.name }) :
+			this.usersService.fireUser$.pipe(switchMap((u) => u?.displayName ? of({ name: u.displayName }) : of({ name: 'Anonymous' })))
+		)
+	);
 	repo$: Observable<Repo | undefined>;
 	private repoId = new BehaviorSubject('angular');
 
@@ -53,6 +59,7 @@ export class MessagesComponent {
 
 	constructor(
 		private db: FirebaseExtendedService,
+		private usersService: UsersService,
 		private cdRef: ChangeDetectorRef,
 		private clipboardService: ClipboardService
 	) {
