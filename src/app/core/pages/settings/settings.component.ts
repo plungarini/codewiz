@@ -1,18 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-admin-sidebar',
-  templateUrl: './sidebar.component.html',
+  templateUrl: './settings.component.html',
   styles: [
     `
       :host {
         display: block;
-				height: 100%;
       }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SidebarComponent {
+export class SettingsComponent {
 
 }

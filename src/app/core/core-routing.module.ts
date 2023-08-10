@@ -9,16 +9,20 @@ const routes: Routes = [
 		component: CoreComponent,
 		children: [
 			{
+				path: '',
+				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
+			},
+			{
+				path: 'settings',
+				loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsModule),
+			},
+			{
 				path: 'admin',
 				data: {
 					permissions: ['admin']
 				},
 				canActivate: [PermissionsGuard],
 				loadChildren: () => import('./pages/admin/admin.module').then(m => m.AdminModule)
-			},
-			{
-				path: '',
-				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
 			},
 			{
 				path: 'chat/:repo/:id',

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-admin-sidebar',
+  selector: 'app-sidebar',
   templateUrl: './sidebar.component.html',
   styles: [
     `
