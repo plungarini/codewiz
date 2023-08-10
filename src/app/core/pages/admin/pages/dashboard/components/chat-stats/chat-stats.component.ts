@@ -81,15 +81,15 @@ export class ChatStatsComponent {
 		stats.forEach((repoStat: RepoStat) => {
 			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.createdAt.toDate().getMonth() === new Date().getMonth());
 			if (!historyItem) return;
-			const promptTotalUSD: number = historyItem.prompt?.totalUSD || 0;
-			const completionTotalUSD: number = historyItem.completion?.totalUSD || 0;
+			const promptTotalUSD: number = historyItem.prompt?.averageUSDPerPrompt || 0;
+			const completionTotalUSD: number = historyItem.completion?.averageUSDPerCompletion || 0;
 			const itemTotalCost: number = promptTotalUSD + completionTotalUSD;
 			costs.push(itemTotalCost);
 		});
 
 		const sum = costs.reduce((a, b) => a + b, 0);
 
-		return sum / costs.length;
+		return costs.length > 0 ? sum / costs.length : 0;
 	}
 
 	getPricePerQuestionLastMonth(stats: RepoStat[]): number {
@@ -97,8 +97,8 @@ export class ChatStatsComponent {
 		stats.forEach((repoStat: RepoStat) => {
 			const historyItem = repoStat.history.find((item) => item.createdAt.toDate().getMonth() === new Date().getMonth() - 1);
 			if (!historyItem) return;
-			const promptTotalUSD: number = historyItem.prompt?.totalUSD || 0;
-			const completionTotalUSD: number = historyItem.completion?.totalUSD || 0;
+			const promptTotalUSD: number = historyItem.prompt?.averageUSDPerPrompt || 0;
+			const completionTotalUSD: number = historyItem.completion?.averageUSDPerCompletion || 0;
 			const itemTotalCost: number = promptTotalUSD + completionTotalUSD;
 			costs.push(itemTotalCost);
 		});
@@ -112,12 +112,12 @@ export class ChatStatsComponent {
 		stats.forEach((repoStat: RepoStat) => {
 			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.createdAt.toDate().getMonth() === new Date().getMonth());
 			if (!historyItem) return;
-			costs.push(historyItem.prompt?.totalUSD || 0);
+			costs.push(historyItem.prompt?.averageUSDPerPrompt || 0);
 		});
 
 		const sum = costs.reduce((a, b) => a + b, 0);
 
-		return sum / costs.length;
+		return costs.length > 0 ? sum / costs.length : 0;
 	}
 
 	getPricePerPromptLastMonth(stats: RepoStat[]): number {
@@ -125,7 +125,7 @@ export class ChatStatsComponent {
 		stats.forEach((repoStat: RepoStat) => {
 			const historyItem = repoStat.history.find((item) => item.createdAt.toDate().getMonth() === new Date().getMonth() - 1);
 			if (!historyItem) return;
-			costs.push(historyItem.prompt?.totalUSD || 0);
+			costs.push(historyItem.prompt?.averageUSDPerPrompt || 0);
 		});
 
 		const sum = costs.reduce((a, b) => a + b, 0);
@@ -137,12 +137,12 @@ export class ChatStatsComponent {
 		stats.forEach((repoStat: RepoStat) => {
 			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.createdAt.toDate().getMonth() === new Date().getMonth());
 			if (!historyItem) return;
-			costs.push(historyItem.completion?.totalUSD || 0);
+			costs.push(historyItem.completion?.averageUSDPerCompletion || 0);
 		});
 
 		const sum = costs.reduce((a, b) => a + b, 0);
 
-		return sum / costs.length;
+		return costs.length > 0 ? sum / costs.length : 0;
 	}
 
 	getPricePerCompletionLastMonth(stats: RepoStat[]): number {
@@ -150,7 +150,7 @@ export class ChatStatsComponent {
 		stats.forEach((repoStat: RepoStat) => {
 			const historyItem = repoStat.history.find((item) => item.createdAt.toDate().getMonth() === new Date().getMonth() - 1);
 			if (!historyItem) return;
-			costs.push(historyItem.completion?.totalUSD || 0);
+			costs.push(historyItem.completion?.averageUSDPerCompletion || 0);
 		});
 
 		const sum = costs.reduce((a, b) => a + b, 0);
