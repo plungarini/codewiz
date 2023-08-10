@@ -35,6 +35,8 @@ export class SidebarComponent implements OnDestroy {
 						this.currentPage = 'chat';
 					} else if (e.url.includes('admin')) {
 						this.currentPage = 'admin';
+					} else if (e.url.includes('settings')) {
+						this.currentPage = 'settings';
 					} else if (e.url.includes('app')) {
 						this.currentPage = 'app';
 					} else {
