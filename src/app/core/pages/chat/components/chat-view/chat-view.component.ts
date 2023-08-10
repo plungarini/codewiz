@@ -87,7 +87,7 @@ export class ChatViewComponent implements OnDestroy {
 			this.chat = [...messages, ...this.oldChat].sort((a, b) => {
 				return (a.createdAt?.toDate().getTime() || 0) - (b.createdAt?.toDate().getTime() || 0);
 			});
-			this.cdRef.markForCheck();	
+			this.cdRef.markForCheck();
 			
 			if (messages.length <= 0) {
 				const repo = this.route.snapshot.paramMap.get('repo');
@@ -331,7 +331,6 @@ export class ChatViewComponent implements OnDestroy {
 	}
 
 	onMessageScroll(bypass = false, animation = true) {
-		this.onChatScroll();
 		if (!this.mainChatContainer) return;
 		const element = this.mainChatContainer.nativeElement;
 
