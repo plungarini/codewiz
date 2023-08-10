@@ -1,5 +1,5 @@
-<div class="h-full overflow-hidden overflow-y-auto rounded-lg shadow bg-zinc-900 max-h-72 md:rounded-r-none md:border-r border-zinc-800">
-	<div class="flex flex-col py-1 divide-y divide-zinc-800">
+<div class="overflow-hidden overflow-y-auto rounded-lg shadow h-72 bg-zinc-900 max-h-72 md:rounded-r-none md:border-r border-zinc-800">
+	<div *ngIf="(chats$ | async)?.length; else noChats" class="flex flex-col py-1 divide-y divide-zinc-800">
 		<ng-container *ngFor="let chat of (chats$ | async); trackBy: trackBy">
 			<div [routerLink]="['/app/chat/', chat.repo.id, chat.id]" class="flex items-center py-1.5 px-2.5 bg-zinc-900 hover:bg-zinc-800 space-x-2 cursor-pointer">
 				<img
@@ -19,4 +19,24 @@
 			</div>
 		</ng-container>
 	</div>
+	<ng-template #noChats>
+		<div class="flex items-center justify-center h-full">
+			<div class="text-center">
+				<svg class="w-12 h-12 mx-auto text-zinc-400" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M20.7529 9.83784C21.8303 12.8128 21.3013 16.2757 19.1979 18.7716C17.3785 20.9289 14.8268 21.9993 12.2771 21.9905C11.3834 21.9876 7.40519 21.9895 5.05675 21.9905C4.35951 21.9915 3.94623 21.2109 4.33423 20.6284C4.55206 20.3025 4.83017 19.9044 5.04897 19.5951C5.26874 19.2848 5.28722 18.8779 5.09857 18.5482C4.76502 17.9676 4.2681 17.0855 4.13877 16.7645C2.59746 13.4207 3.19259 9.33242 5.94264 6.57306C8.13257 4.37573 11.1753 3.54831 14.0071 4.09082" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M13.9579 11.7622L14.7777 11.6247C15.2182 11.5505 15.6208 11.328 15.9194 10.9943L19.4542 7.12363C19.8762 6.66504 19.849 5.95081 19.3919 5.52637L18.6383 4.82579C18.1812 4.40233 17.4694 4.42965 17.0464 4.88824L13.4727 8.80188C13.1994 9.10923 13.0283 9.49465 12.9836 9.90445L12.8922 10.7543C12.827 11.3612 13.357 11.8637 13.9579 11.7622Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<h3 class="mt-2 text-sm font-semibold text-zinc-100">No chats found</h3>
+				<p class="mt-1 text-sm text-zinc-500">Get started by creating a new chat.</p>
+				<div class="mt-6">
+					<button [routerLink]="['/app/chat/angular/new']" type="button" class="inline-flex items-center px-3 py-2 text-sm font-semibold text-white transition-all duration-300 bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 hover:ring-2 hover:ring-offset-2 ring-offset-zinc-900 hover:ring-indigo-600">
+						<svg class="-ml-0.5 mr-1.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+							<path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+						</svg>
+						New Chat
+					</button>
+				</div>
+			</div>
+		</div>
+	</ng-template>
 </div>
