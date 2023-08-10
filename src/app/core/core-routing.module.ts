@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../auth/guards/auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { CoreComponent } from './core.component';
 
@@ -19,12 +18,10 @@ const routes: Routes = [
 			},
 			{
 				path: '',
-				canActivate: [AuthGuard],
 				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
 			},
 			{
 				path: 'chat/:repo/:id',
-				canActivate: [AuthGuard],
 				loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatModule),
 			},
 			{
