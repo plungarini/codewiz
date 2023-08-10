@@ -189,7 +189,14 @@ export class AiChatService {
 				}, 500);
 
 				if (!repo) {
-					observer.error('The repository is invalid.');
+					const err = {
+						message: "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+						debug: {
+							message: 'The repository is invalid.',
+							type: "application_error",
+						}
+					}
+					observer.error(err);
 					closeStream();
 					return;
 				};
@@ -199,7 +206,14 @@ export class AiChatService {
 					!normMessages[normMessages.length - 1].content ||
 					normMessages[normMessages.length - 1].role !== AiChatMessageRole.User
 				) {
-					observer.error(`The query is invalid: ${JSON.stringify(normMessages)}`);
+					const err = {
+						message: "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+						debug: {
+							message: `The query is invalid: ${JSON.stringify(normMessages)}`,
+							type: "application_error",
+						}
+					}
+					observer.error(err);
 					closeStream();
 					return;
 				};
@@ -325,15 +339,13 @@ export class AiChatService {
 						const now = new Date().getTime() / 1000;
 						if ((now - sinceLastRes) < timeoutSeconds) return;
 						const err = {
-							"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
-							"debug": {
-								"message": `Timeout Error: Request Timed Out (>${timeoutSeconds}s). Please try again later.`,
-								"type": "client_error",
+							message: "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+							debug: {
+								message: `Timeout Error: Request Timed Out (>${timeoutSeconds}s). Please try again later.`,
+								type: "server_error",
 							}
 						}
-						observer.error({
-							data: JSON.stringify(err),
-						})
+						observer.error(err);
 						closeStream();
 					}, 500);
 
@@ -342,7 +354,14 @@ export class AiChatService {
 						!normMessages[normMessages.length - 1].content ||
 						normMessages[normMessages.length - 1].role !== AiChatMessageRole.User
 					) {
-						observer.error(`The query is invalid: ${JSON.stringify(normMessages)}`);
+						const err = {
+							message: "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+							debug: {
+								message: `The query is invalid: ${JSON.stringify(normMessages)}`,
+								type: "application_error",
+							}
+						}
+						observer.error(err);
 						closeStream();
 						return;
 					};
@@ -405,16 +424,13 @@ export class AiChatService {
 						console.log('error', event);
 						this.zone.run(() => {
 							const err = {
-								"message": "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
-								"debug": {
-									"message": event,
-									"type": "server_error",
+								message: "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
+								debug: {
+									message: event,
+									type: "application_error",
 								}
 							}
-							observer.error({
-								data: JSON.stringify(err),
-							})
-							observer.error(event);
+							observer.error(err);
 							closeStream();
 						})
 					}
