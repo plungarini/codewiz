@@ -37,7 +37,7 @@ export class ChatSidebarComponent {
 	thisDate = () => Date.now();
 
 	startNewChat(): void {
-		this.router.navigateByUrl(`/app/chat/${this.selectedDoc?.id || 'angular'}/new`);
+		this.router.navigateByUrl(`/app/chat/${this.selectedDoc?.id || 'angular'}/new`, { onSameUrlNavigation: 'reload' });
 		this.cdRef.detectChanges();
 	}
 
