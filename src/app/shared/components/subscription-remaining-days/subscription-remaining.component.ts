@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges } from '@angular/core';
 
 @Component({
-  selector: 'app-subscription-remaining-queries',
-  templateUrl: './subscription-remaining-queries.component.html',
+  selector: 'app-subscription-remaining',
+  templateUrl: './subscription-remaining.component.html',
   styles: [
     `
 			circle {
@@ -16,10 +16,11 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges
 	],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SubscriptionRemainingQueriesComponent implements OnChanges {
+export class SubscriptionRemainingComponent implements OnChanges {
 	
 	@Input() percentage = 0;
-	@Input() remainingQueries = 0;
+	@Input() remaining = 0;
+	@Input() label = 'days';
 
   // Assuming the circle radius is 50 and cx, cy (the center of the circle) is 50, 50
   readonly CIRCUMFERENCE: number = 2 * Math.PI * 50;

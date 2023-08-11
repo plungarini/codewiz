@@ -61,11 +61,11 @@
       <div class="text-base font-normal text-zinc-100">Subscription details</div>
 
 			<div class="flex items-center w-full max-w-full mt-4 space-x-4">
-				<app-subscription-remaining-queries
-					[percentage]="getRemainingQueriesPerc((stats$ | async), (product$ | async))"
-					[remainingQueries]="getRemainingQueries((stats$ | async), (product$ | async))"
+				<app-subscription-remaining
+					[percentage]="getRemainingDaysPerc((user$ | async)?.subscriptions?.at(0))"
+					[remaining]="getRemainingDays((user$ | async)?.subscriptions?.at(0))"
 					class="shrink-0"
-				></app-subscription-remaining-queries>
+				></app-subscription-remaining>
 
 				<ng-container *ngIf="(product$ | async) as product; else noSubscriptionSkeleton">
 					<ng-container *ngIf="(user$ | async) as user; else noSubscriptionSkeleton">

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { of, switchMap } from 'rxjs';
+import { StripeSubscription } from 'src/app/auth/models/subscription.model';
 import { UsersService } from 'src/app/auth/services/users.service';
-import { CompletionStat } from 'src/app/shared/models/chat-stats.model';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
 import { UserSubscriptionService } from 'src/app/shared/services/stripe.service';
 import { UserUsagesService } from 'src/app/shared/services/user-usages.service';
@@ -37,16 +37,32 @@ export class ProfileOverviewComponent {
 		private userStats: UserUsagesService,
 	) { }
 	
-	getRemainingQueries(usage?: null | CompletionStat[], product?: null | StripeProduct) {
-		if (!usage || !product) return 0;
-		const totalCount = usage.reduce((a, b) => (isNaN(a) ? 0 : a) + (isNaN(b.prompt.count) ? 0 : b.prompt.count), 0);
-		return (parseInt(product.metadata.maxPromptCountMonth || '0')) - totalCount;
+	getRemainingDays(subscription?: StripeSubscription) {
+		if (!subscription) return 0;
+		const diff = subscription?.current_period_end?.toDate()?.getTime() - new Date().getTime();
+		const days = diff / (1000 * 60 * 60 * 24);
+		return parseInt(days + '');
 	}
 
-	getRemainingQueriesPerc(usage?: null | CompletionStat[], product?: null | StripeProduct) {
-		if (!usage || !product) return 0;
-		const totalCount = usage.reduce((a, b) => (isNaN(a) ? 0 : a) + (isNaN(b.prompt.count) ? 0 : b.prompt.count), 0);
-		return (totalCount / parseInt(product.metadata.maxPromptCountMonth || '0')) * 100;
+	getRemainingDaysPerc(subscription?: StripeSubscription) {
+		if (!subscription) return 0;
+		const periodStart = subscription?.current_period_start?.toDate();
+		const periodEnd = subscription?.current_period_end?.toDate();
+		const today = new Date();
+
+		if (!periodStart || !periodEnd) return 0;
+		
+		const totalDays = (periodEnd.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24);
+		const daysPassed = (today.getTime() - periodStart.getTime()) / (1000 * 60 * 60 * 24);
+
+		if (daysPassed < 0 || daysPassed > totalDays) {
+			return 0;
+		}
+
+		const percentagePassed = (daysPassed / totalDays) * 100;
+
+		const perc = Math.round(percentagePassed * 100) / 100;
+		return perc;
 	}
 
 	getPlanName(product: StripeProduct): string {
