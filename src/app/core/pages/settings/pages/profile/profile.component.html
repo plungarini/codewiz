@@ -1,0 +1,107 @@
+<ng-template #noUserSkeleton>
+	<div class="flex items-center pb-8 mb-8 space-x-4 border-b border-zinc-900">
+		<div
+			class="w-12 h-12 rounded-md bg-zinc-600 animate-pulse shrink-0"
+		></div>
+		<div class="max-w-full">
+			<span class="block h-6 max-w-full rounded-md w-36 bg-pink-600/80 animate-pulse"></span>
+			<span class="block w-24 h-4 max-w-full mt-1 rounded-md bg-zinc-600 animate-pulse"></span>
+		</div>
+	</div>
+</ng-template>
+
+
+<div class="px-6">
+	<div class="max-w-2xl py-16 mx-auto sm:py-24">
+		<ng-container *ngIf="(user$ | async) as user; else noUserSkeleton">
+			<ng-container *ngIf="(fireUser$ | async) as fireUser; else noUserSkeleton">
+				<div class="flex items-center pb-8 mb-8 space-x-4 border-b border-zinc-900">
+					<img
+						[src]="user.details?.imgUrl || fireUser.photoURL"
+						[alt]="user.name || fireUser.displayName || 'Anonymous'"
+						width="1"
+						height="1"
+						class="object-cover object-center w-12 h-12 rounded-md"
+					>
+					<p class="max-w-full text-lg font-semibold leading-5 truncate shrink text-pink-500/80">
+						<span class="truncate">{{user.name || fireUser.displayName || 'Anonymous'}}</span>
+						<span class="block text-sm font-medium truncate text-zinc-500">{{fireUser.email}}</span>
+					</p>
+				</div>
+			</ng-container>
+		</ng-container>
+
+		<form [formGroup]="form" (ngSubmit)="saveDetails()" class="flex flex-col pb-8 mb-8 space-y-4 border-b border-zinc-900">
+			<!-- FORM ROW -->
+			<div class="flex flex-col space-y-4 md:space-x-4 md:space-y-0 md:flex-row">
+				<div class="flex-1">
+					<label class="text-sm font-medium text-zinc-600" for="firstName">First Name</label>
+					<input
+						type="text"
+						id="firstName"
+						name="firstName"
+						formControlName="firstName"
+						placeholder="Your first name"
+						class="w-full m-0 mt-1 bg-transparent border px-2.5 rounded-md border-zinc-600 py-1.5 focus:border-zinc-600 outline-none text-zinc-200 placeholder:text-zinc-400/70 focus:outline-none ring-0 focus:ring-2 focus:ring-offset-1 ring-offset-0 ring-indigo-400 transition-all duration-300 focus:ring-offset-zinc-950 ring-offset-zinc-950"
+					>
+				</div>
+				<div class="flex-1">
+					<label class="text-sm font-medium text-zinc-600" for="lastName">Last Name</label>
+					<input
+						type="text"
+						id="lastName"
+						name="lastName"
+						formControlName="lastName"
+						placeholder="Your last name"
+						class="w-full m-0 mt-1 bg-transparent border px-2.5 rounded-md border-zinc-600 py-1.5 focus:border-zinc-600 outline-none text-zinc-200 placeholder:text-zinc-400/70 focus:outline-none ring-0 focus:ring-2 focus:ring-offset-1 ring-offset-0 ring-indigo-400 transition-all duration-300 focus:ring-offset-zinc-950 ring-offset-zinc-950"
+					>
+				</div>
+			</div>
+			<!-- FORM ROW -->
+			<div class="flex flex-col space-y-4 md:space-x-4 md:space-y-0 md:flex-row">
+				<div class="flex-1">
+					<label class="text-sm font-medium text-zinc-600" for="email">Email</label>
+					<input
+						type="email"
+						id="email"
+						name="email"
+						formControlName="email"
+						readonly
+						placeholder="Your email address"
+						class="w-full m-0 mt-1 bg-transparent border px-2.5 rounded-md border-zinc-600 py-1.5 focus:border-zinc-600 outline-none text-zinc-200 read-only:opacity-40 placeholder:text-zinc-400/70 focus:outline-none ring-0 focus:ring-0 focus:ring-offset-0 ring-offset-0 ring-indigo-400 transition-all duration-300 focus:ring-offset-zinc-950 ring-offset-zinc-950"
+					>
+				</div>
+				<div class="flex-1">
+					<label class="text-sm font-medium text-zinc-600" for="phone">Phone Number (optional)</label>
+					<input
+						type="tel"
+						id="phone"
+						name="phone"
+						formControlName="phone"
+						placeholder="Your phone number"
+						class="w-full m-0 mt-1 bg-transparent border px-2.5 rounded-md border-zinc-600 py-1.5 focus:border-zinc-600 outline-none text-zinc-200 placeholder:text-zinc-400/70 focus:outline-none ring-0 focus:ring-2 focus:ring-offset-1 ring-offset-0 ring-indigo-400 transition-all duration-300 focus:ring-offset-zinc-950 ring-offset-zinc-950"
+					>
+				</div>
+			</div>
+
+			<div class="flex flex-1" *ngIf="error || successMessage">
+				<ng-container *ngIf="error">
+					<div class="text-red-400">{{error}}</div>
+				</ng-container>
+				<ng-container *ngIf="successMessage">
+					<div class="text-teal-400">{{successMessage}}</div>
+				</ng-container>
+			</div>
+
+			<div class="flex justify-end">
+				<button
+					[disabled]="form.invalid || isFormEqual"
+					type="submit"
+					class="inline-flex items-center px-3 py-1 text-base font-semibold text-white transition-all duration-300 bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 disabled:hover:bg-indigo-600 hover:ring-2 disabled:hover:ring-0 hover:ring-offset-2 disabled:hover:ring-offset-0 ring-offset-zinc-900 hover:ring-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+				>
+					Save
+				</button>
+			</div>
+		</form>
+	</div>
+</div>
