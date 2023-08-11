@@ -1,4 +1,4 @@
-import { DOCUMENT, PlatformLocation } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 
@@ -36,7 +36,6 @@ export class BillingComponent {
 	constructor(
 		@Inject(DOCUMENT) private document: Document,
 		private db: FirebaseExtendedService,
-		private platformLocation: PlatformLocation,
 		private cdRef: ChangeDetectorRef,
 	) {
 		this.generateUrl();
@@ -46,12 +45,16 @@ export class BillingComponent {
 		this.error = '';
 		this.cdRef.markForCheck();
 
-		const returnUrl = this.platformLocation.href.split('/').slice(0, -1).join('/');
+		const startHref = this.document.location.href;
+		const returnUrl = startHref.split('/').slice(0, -1).join('/');
 		const fn = this.db.callFunction<{ returnUrl: string }, { url: string }>('ext-firestore-stripe-payments-createPortalLink');
 
 		try {
 			const { data } = await fn({ returnUrl });
-			this.document.location.href = data.url;
+
+			if (startHref === this.document.location.href)
+				this.document.location.href = data.url;
+			else console.warn('Customer portal URL redirection - ABORTED');
 		} catch (err) {
 			console.error(err);
 			this.error = 'Unable to generate your Customer Billing Portal. Try again later or contact support.';
