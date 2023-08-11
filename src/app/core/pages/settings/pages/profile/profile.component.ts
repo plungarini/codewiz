@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import _isEqual from 'lodash-es/isEqual';
-import { map, Subscription, switchMap, take } from 'rxjs';
+import { map, Subscription, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 
 
@@ -44,7 +44,8 @@ export class ProfileComponent implements OnDestroy {
 			lastName: '',
 			phone: '',
 			imgUrl: '',
-	};
+		};
+	private isFormUpdated = false;
 	private userSub: Subscription;
 	private formSub: Subscription;
 
@@ -53,51 +54,48 @@ export class ProfileComponent implements OnDestroy {
 		private cdRef: ChangeDetectorRef,
 	) {
 		this.userSub = this.usersService.user$.pipe(
-			take(1),
 			switchMap(user => {
 				return this.usersService.fireUser$.pipe(
-					take(1),
 					map(fireUser => ({ user, fireUser }))
 				);
 			})
 		).subscribe(({ user, fireUser }) => {
-			this.updatedDetails.uid = user?.id || fireUser?.uid;
+			if (this.isFormUpdated) return;
 
-			const firstName = this.form.value.firstName;
-			const lastName = this.form.value.lastName;
+			this.updatedDetails.uid = user?.id || fireUser?.uid;
 
 			const updatedName = (user?.name || fireUser?.displayName || 'Anonymous');
 			const updatedLastName = updatedName.split(' ').pop() || '';
 			const updatedFirstName = updatedName.split(' ').slice(0, -1).join(' ');
 
-			if (!!updatedFirstName && !firstName) {
+			if (!!updatedFirstName) {
 				this.updatedDetails.firstName = updatedFirstName;
 				this.form.patchValue({ firstName: updatedFirstName });
 			}
-			if (!!updatedLastName && !lastName) {
+			if (!!updatedLastName) {
 				this.updatedDetails.lastName = updatedLastName;
 				this.form.patchValue({ lastName: updatedLastName });
 			}
 
-			const email = this.form.value.email;
 			const updatedEmail = user?.email || fireUser?.email;
-			if (!!updatedEmail && email !== updatedEmail) {
+			if (!!updatedEmail) {
 				this.form.patchValue({ email: updatedEmail });
 			}
 
-			const phone = this.form.value.phone;
 			const updatedPhone = user?.details?.phoneNumber || fireUser?.phoneNumber;
-			if (!!updatedPhone && phone !== updatedPhone) {
+			if (!!updatedPhone) {
 				this.updatedDetails.phone = updatedPhone;
 				this.form.patchValue({ phone: updatedPhone });
 			}
 
-			const imgUrl = this.form.value.imgUrl;
 			const updatedImgUrl = user?.details?.imgUrl || fireUser?.photoURL;
-			if (!!updatedImgUrl && imgUrl !== updatedImgUrl) {
+			if (!!updatedImgUrl) {
 				this.updatedDetails.imgUrl = updatedImgUrl;
 				this.form.patchValue({ imgUrl: updatedImgUrl });
 			}
+			
+			this.isFormUpdated = true;
+			this.cdRef.markForCheck();
 		});
 
 		this.formSub = this.form.valueChanges.subscribe(() => {
@@ -105,7 +103,8 @@ export class ProfileComponent implements OnDestroy {
 				this.error = '';
 				this.cdRef.detectChanges();
 			}
-		})
+		});
+
 	}
 
 	get isFormEqual(): boolean {
@@ -169,6 +168,7 @@ export class ProfileComponent implements OnDestroy {
 					imgUrl: imgUrl,
 				}
 			});
+			this.isFormUpdated = false;
 
 			this.successMessage = 'Details updated successfully.';
 			this.cdRef.detectChanges();
