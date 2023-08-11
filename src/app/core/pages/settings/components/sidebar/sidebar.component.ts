@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -14,5 +15,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SidebarComponent {
+
+	constructor(
+		private authService: AuthenticationService,
+	) { }
+
+	signout(): void {
+		this.authService.signOut();
+	}
 
 }

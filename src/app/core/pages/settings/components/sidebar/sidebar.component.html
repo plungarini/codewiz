@@ -1,99 +1,116 @@
 <div class="flex flex-col max-h-full min-h-full p-6 pr-0 border-r border-zinc-800">
-	<div class="pr-6 shrink-0">
-		<h3>Settings</h3>
+	<div class="flex flex-col justify-between h-full pr-6 grow">
+		<div>
+			<h3>Settings</h3>
+		
+			<div class="flex flex-col w-full max-w-xs max-h-full mt-6 space-y-2 overflow-hidden shrink">
 	
-		<div class="flex flex-col w-full max-w-xs max-h-full mt-6 space-y-2 overflow-hidden shrink">
-
-			<a
-				routerLink="/app/settings"
-				routerLinkActive
-				#rla1="routerLinkActive"
-				[routerLinkActiveOptions]="{
-					exact: true,
-				}"
-				[ngClass]="{
-					'bg-zinc-800/80 text-zinc-200': rla1.isActive,
-					'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rla1.isActive,
-				}"
-				class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
-			>
-				<svg class="w-6 h-6 shrink-0"  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<circle cx="12.0929" cy="8.6925" r="4.6925" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
-					<path d="M14.2883 13.668H10.0124C7.58727 13.668 5.62131 15.6339 5.62131 18.0591C5.62131 18.1462 5.62047 18.2336 5.6193 18.3213C5.60627 19.2937 6.39631 19.9999 7.36883 19.9999H16.9318C17.9044 19.9999 18.6944 19.2937 18.6814 18.3213C18.6802 18.2336 18.6794 18.1462 18.6794 18.0591C18.6794 15.6339 16.7134 13.668 14.2883 13.668Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-
-				<span>Manage Profile</span>
-			</a>
-
-			<a
-				routerLink="/app/settings/usage"
-				routerLinkActive
-				#rla2="routerLinkActive"
-				[routerLinkActiveOptions]="{
-					exact: true,
-				}"
-				[ngClass]="{
-					'bg-zinc-800/80 text-zinc-200': rla2.isActive,
-					'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rla2.isActive,
-				}"
-				class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
-			>
-				<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path d="M3 18.7794C3 17.6133 3.9453 16.668 5.11139 16.668C6.27748 16.668 7.22279 17.6133 7.22279 18.7794C7.22279 19.9455 6.27748 20.8908 5.11139 20.8908C3.9453 20.8908 3 19.9455 3 18.7794Z" stroke="currentColor" stroke-width="1.5" />
-					<path d="M16.7773 6.11139C16.7773 4.9453 17.7226 4 18.8887 4C20.0548 4 21.0001 4.9453 21.0001 6.11139V18.7798C21.0001 19.9458 20.0548 20.8912 18.8887 20.8912C17.7226 20.8912 16.7773 19.9458 16.7773 18.7798V6.11139Z" stroke="currentColor" stroke-width="1.5" />
-					<path d="M9.69727 12.254C9.69727 11.0879 10.6426 10.1426 11.8087 10.1426C12.9748 10.1426 13.9201 11.0879 13.9201 12.254V18.7801C13.9201 19.9462 12.9748 20.8915 11.8087 20.8915C10.6426 20.8915 9.69727 19.9462 9.69727 18.7801V12.254Z" stroke="currentColor" stroke-width="1.5" />
-				</svg>
-
-				<span>Subscription Usage</span>
-			</a>
-
-			<a
-				routerLink="/app/settings/billing"
-				routerLinkActive
-				#rla3="routerLinkActive"
-				[routerLinkActiveOptions]="{
-					exact: true,
-				}"
-				[ngClass]="{
-					'bg-zinc-800/80 text-zinc-200': rla3.isActive,
-					'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rla3.isActive,
-				}"
-				class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
-			>
-				<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-					<path fill-rule="evenodd" clip-rule="evenodd" d="M7.32 3.6875H16.68C19.0657 3.6875 21 5.62177 21 8.0075V15.9888C21 18.3745 19.0657 20.3088 16.68 20.3088H7.32C4.93427 20.3088 3 18.3745 3 15.9888V8.0075C3 5.62177 4.93427 3.6875 7.32 3.6875Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-					<path fill-rule="evenodd" clip-rule="evenodd" d="M17.5688 14.009C17.5688 14.9976 16.7671 15.7993 15.7786 15.7993C14.79 15.7993 13.9893 14.9976 13.9893 14.009C13.9893 13.0205 14.79 12.2188 15.7786 12.2188C16.7671 12.2188 17.5688 13.0205 17.5688 14.009Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-					<path d="M6.23242 9.34314H6.24215L6.25091 9.33341L11.2637 6.19265C12.7873 5.24303 14.8092 5.70324 15.7685 7.23665L17.1424 9.42778" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-					<path d="M3 9.42789H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-				</svg>
-
-				<span>Manage Billing</span>
-			</a>
-
-			<a
-				routerLink="/app/settings/preferences"
-				routerLinkActive
-				#rla4="routerLinkActive"
-				[routerLinkActiveOptions]="{
-					exact: true,
-				}"
-				[ngClass]="{
-					'bg-zinc-800/80 text-zinc-200': rla4.isActive,
-					'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rla4.isActive,
-				}"
-				class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
-			>
-				<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-					<g id="Iconly/Light/Setting" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-						<g id="Setting" transform="translate(2.500000, 1.500000)" stroke="currentColor" stroke-width="1.5" >
-							<path d="M18.3066362,6.12356982 L17.6842106,5.04347829 C17.1576365,4.12955711 15.9906873,3.8142761 15.0755149,4.33867279 L15.0755149,4.33867279 C14.6398815,4.59529992 14.1200613,4.66810845 13.6306859,4.54104256 C13.1413105,4.41397667 12.7225749,4.09747295 12.4668193,3.66132725 C12.3022855,3.38410472 12.2138742,3.06835005 12.2105264,2.74599544 L12.2105264,2.74599544 C12.2253694,2.22917739 12.030389,1.72835784 11.6700024,1.3576252 C11.3096158,0.986892553 10.814514,0.777818938 10.2974829,0.778031878 L9.04347831,0.778031878 C8.53694532,0.778031878 8.05129106,0.97987004 7.69397811,1.33890085 C7.33666515,1.69793166 7.13715288,2.18454839 7.13958814,2.69107553 L7.13958814,2.69107553 C7.12457503,3.73688099 6.27245786,4.57676682 5.22654465,4.57665906 C4.90419003,4.57331126 4.58843537,4.48489995 4.31121284,4.32036615 L4.31121284,4.32036615 C3.39604054,3.79596946 2.22909131,4.11125048 1.70251717,5.02517165 L1.03432495,6.12356982 C0.508388616,7.03634945 0.819378585,8.20256183 1.72997713,8.73226549 L1.72997713,8.73226549 C2.32188101,9.07399614 2.68650982,9.70554694 2.68650982,10.3890161 C2.68650982,11.0724852 2.32188101,11.704036 1.72997713,12.0457667 L1.72997713,12.0457667 C0.820534984,12.5718952 0.509205679,13.7352837 1.03432495,14.645309 L1.03432495,14.645309 L1.6659039,15.7345539 C1.9126252,16.1797378 2.3265816,16.5082503 2.81617164,16.6473969 C3.30576167,16.7865435 3.83061824,16.7248517 4.27459956,16.4759726 L4.27459956,16.4759726 C4.71105863,16.2212969 5.23116727,16.1515203 5.71931837,16.2821523 C6.20746948,16.4127843 6.62321383,16.7330005 6.87414191,17.1716248 C7.03867571,17.4488473 7.12708702,17.764602 7.13043482,18.0869566 L7.13043482,18.0869566 C7.13043482,19.1435014 7.98693356,20.0000001 9.04347831,20.0000001 L10.2974829,20.0000001 C11.3504633,20.0000001 12.2054882,19.1490783 12.2105264,18.0961099 L12.2105264,18.0961099 C12.2080776,17.5879925 12.4088433,17.0999783 12.7681408,16.7406809 C13.1274382,16.3813834 13.6154524,16.1806176 14.1235699,16.1830664 C14.4451523,16.1916732 14.7596081,16.2797208 15.0389017,16.4393593 L15.0389017,16.4393593 C15.9516813,16.9652957 17.1178937,16.6543057 17.6475973,15.7437072 L17.6475973,15.7437072 L18.3066362,14.645309 C18.5617324,14.2074528 18.6317479,13.6859659 18.5011783,13.1963297 C18.3706086,12.7066935 18.0502282,12.2893121 17.6109841,12.0366133 L17.6109841,12.0366133 C17.17174,11.7839145 16.8513595,11.3665332 16.7207899,10.876897 C16.5902202,10.3872608 16.6602358,9.86577384 16.9153319,9.42791767 C17.0812195,9.13829096 17.3213574,8.89815312 17.6109841,8.73226549 L17.6109841,8.73226549 C18.5161253,8.20284891 18.8263873,7.04344892 18.3066362,6.13272314 L18.3066362,6.13272314 L18.3066362,6.12356982 Z" id="Path_33946"></path>
-							<circle id="Ellipse_737" cx="9.67505726" cy="10.3890161" r="2.63615562"></circle>
+				<a
+					routerLink="/app/settings"
+					routerLinkActive
+					#rla1="routerLinkActive"
+					[routerLinkActiveOptions]="{
+						exact: true,
+					}"
+					[ngClass]="{
+						'bg-zinc-800/80 text-zinc-200': rla1.isActive,
+						'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rla1.isActive,
+					}"
+					class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
+				>
+					<svg class="w-6 h-6 shrink-0"  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<circle cx="12.0929" cy="8.6925" r="4.6925" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M14.2883 13.668H10.0124C7.58727 13.668 5.62131 15.6339 5.62131 18.0591C5.62131 18.1462 5.62047 18.2336 5.6193 18.3213C5.60627 19.2937 6.39631 19.9999 7.36883 19.9999H16.9318C17.9044 19.9999 18.6944 19.2937 18.6814 18.3213C18.6802 18.2336 18.6794 18.1462 18.6794 18.0591C18.6794 15.6339 16.7134 13.668 14.2883 13.668Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+	
+					<span>Manage Profile</span>
+				</a>
+	
+				<a
+					routerLink="/app/settings/usage"
+					routerLinkActive
+					#rla2="routerLinkActive"
+					[routerLinkActiveOptions]="{
+						exact: true,
+					}"
+					[ngClass]="{
+						'bg-zinc-800/80 text-zinc-200': rla2.isActive,
+						'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rla2.isActive,
+					}"
+					class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
+				>
+					<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M3 18.7794C3 17.6133 3.9453 16.668 5.11139 16.668C6.27748 16.668 7.22279 17.6133 7.22279 18.7794C7.22279 19.9455 6.27748 20.8908 5.11139 20.8908C3.9453 20.8908 3 19.9455 3 18.7794Z" stroke="currentColor" stroke-width="1.5" />
+						<path d="M16.7773 6.11139C16.7773 4.9453 17.7226 4 18.8887 4C20.0548 4 21.0001 4.9453 21.0001 6.11139V18.7798C21.0001 19.9458 20.0548 20.8912 18.8887 20.8912C17.7226 20.8912 16.7773 19.9458 16.7773 18.7798V6.11139Z" stroke="currentColor" stroke-width="1.5" />
+						<path d="M9.69727 12.254C9.69727 11.0879 10.6426 10.1426 11.8087 10.1426C12.9748 10.1426 13.9201 11.0879 13.9201 12.254V18.7801C13.9201 19.9462 12.9748 20.8915 11.8087 20.8915C10.6426 20.8915 9.69727 19.9462 9.69727 18.7801V12.254Z" stroke="currentColor" stroke-width="1.5" />
+					</svg>
+	
+					<span>Subscription Usage</span>
+				</a>
+	
+				<a
+					routerLink="/app/settings/billing"
+					routerLinkActive
+					#rla3="routerLinkActive"
+					[routerLinkActiveOptions]="{
+						exact: true,
+					}"
+					[ngClass]="{
+						'bg-zinc-800/80 text-zinc-200': rla3.isActive,
+						'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rla3.isActive,
+					}"
+					class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
+				>
+					<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M7.32 3.6875H16.68C19.0657 3.6875 21 5.62177 21 8.0075V15.9888C21 18.3745 19.0657 20.3088 16.68 20.3088H7.32C4.93427 20.3088 3 18.3745 3 15.9888V8.0075C3 5.62177 4.93427 3.6875 7.32 3.6875Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M17.5688 14.009C17.5688 14.9976 16.7671 15.7993 15.7786 15.7993C14.79 15.7993 13.9893 14.9976 13.9893 14.009C13.9893 13.0205 14.79 12.2188 15.7786 12.2188C16.7671 12.2188 17.5688 13.0205 17.5688 14.009Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M6.23242 9.34314H6.24215L6.25091 9.33341L11.2637 6.19265C12.7873 5.24303 14.8092 5.70324 15.7685 7.23665L17.1424 9.42778" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M3 9.42789H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+	
+					<span>Manage Billing</span>
+				</a>
+	
+				<a
+					routerLink="/app/settings/preferences"
+					routerLinkActive
+					#rla4="routerLinkActive"
+					[routerLinkActiveOptions]="{
+						exact: true,
+					}"
+					[ngClass]="{
+						'bg-zinc-800/80 text-zinc-200': rla4.isActive,
+						'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rla4.isActive,
+					}"
+					class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md shrink"
+				>
+					<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<g id="Iconly/Light/Setting" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+							<g id="Setting" transform="translate(2.500000, 1.500000)" stroke="currentColor" stroke-width="1.5" >
+								<path d="M18.3066362,6.12356982 L17.6842106,5.04347829 C17.1576365,4.12955711 15.9906873,3.8142761 15.0755149,4.33867279 L15.0755149,4.33867279 C14.6398815,4.59529992 14.1200613,4.66810845 13.6306859,4.54104256 C13.1413105,4.41397667 12.7225749,4.09747295 12.4668193,3.66132725 C12.3022855,3.38410472 12.2138742,3.06835005 12.2105264,2.74599544 L12.2105264,2.74599544 C12.2253694,2.22917739 12.030389,1.72835784 11.6700024,1.3576252 C11.3096158,0.986892553 10.814514,0.777818938 10.2974829,0.778031878 L9.04347831,0.778031878 C8.53694532,0.778031878 8.05129106,0.97987004 7.69397811,1.33890085 C7.33666515,1.69793166 7.13715288,2.18454839 7.13958814,2.69107553 L7.13958814,2.69107553 C7.12457503,3.73688099 6.27245786,4.57676682 5.22654465,4.57665906 C4.90419003,4.57331126 4.58843537,4.48489995 4.31121284,4.32036615 L4.31121284,4.32036615 C3.39604054,3.79596946 2.22909131,4.11125048 1.70251717,5.02517165 L1.03432495,6.12356982 C0.508388616,7.03634945 0.819378585,8.20256183 1.72997713,8.73226549 L1.72997713,8.73226549 C2.32188101,9.07399614 2.68650982,9.70554694 2.68650982,10.3890161 C2.68650982,11.0724852 2.32188101,11.704036 1.72997713,12.0457667 L1.72997713,12.0457667 C0.820534984,12.5718952 0.509205679,13.7352837 1.03432495,14.645309 L1.03432495,14.645309 L1.6659039,15.7345539 C1.9126252,16.1797378 2.3265816,16.5082503 2.81617164,16.6473969 C3.30576167,16.7865435 3.83061824,16.7248517 4.27459956,16.4759726 L4.27459956,16.4759726 C4.71105863,16.2212969 5.23116727,16.1515203 5.71931837,16.2821523 C6.20746948,16.4127843 6.62321383,16.7330005 6.87414191,17.1716248 C7.03867571,17.4488473 7.12708702,17.764602 7.13043482,18.0869566 L7.13043482,18.0869566 C7.13043482,19.1435014 7.98693356,20.0000001 9.04347831,20.0000001 L10.2974829,20.0000001 C11.3504633,20.0000001 12.2054882,19.1490783 12.2105264,18.0961099 L12.2105264,18.0961099 C12.2080776,17.5879925 12.4088433,17.0999783 12.7681408,16.7406809 C13.1274382,16.3813834 13.6154524,16.1806176 14.1235699,16.1830664 C14.4451523,16.1916732 14.7596081,16.2797208 15.0389017,16.4393593 L15.0389017,16.4393593 C15.9516813,16.9652957 17.1178937,16.6543057 17.6475973,15.7437072 L17.6475973,15.7437072 L18.3066362,14.645309 C18.5617324,14.2074528 18.6317479,13.6859659 18.5011783,13.1963297 C18.3706086,12.7066935 18.0502282,12.2893121 17.6109841,12.0366133 L17.6109841,12.0366133 C17.17174,11.7839145 16.8513595,11.3665332 16.7207899,10.876897 C16.5902202,10.3872608 16.6602358,9.86577384 16.9153319,9.42791767 C17.0812195,9.13829096 17.3213574,8.89815312 17.6109841,8.73226549 L17.6109841,8.73226549 C18.5161253,8.20284891 18.8263873,7.04344892 18.3066362,6.13272314 L18.3066362,6.13272314 L18.3066362,6.12356982 Z" id="Path_33946"></path>
+								<circle id="Ellipse_737" cx="9.67505726" cy="10.3890161" r="2.63615562"></circle>
+							</g>
 						</g>
-					</g>
-				</svg>
+					</svg>
+	
+					<span>Manage Preferences</span>
+				</a>
+	
+			</div>
+		</div>
 
-				<span>Manage Preferences</span>
-			</a>
+		<div class="block pt-4 border-t border-zinc-800">
+			<button
+				(click)="signout()"
+				class="flex flex-row items-center w-full px-4 py-2 space-x-2 text-sm font-medium text-red-500 truncate transition-all duration-300 bg-transparent rounded-md hover:bg-zinc-900/80 shrink"
+			>
+				<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M9.51758 4.25H16.1013C18.2543 4.25 20.0002 5.99594 20.0002 8.14786V16.3506C20.0002 18.5035 18.2543 20.2494 16.1013 20.2494H9.51758" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M9.51738 8.66406L13.3792 12.2499M13.3792 12.2499L9.51738 15.8358M13.3792 12.2499L4 12.2504" stroke="currentColor" stroke-width="1.5" class="origin-center rotate-180 -translate-x-2" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+	
+				<span>Log out</span>
+			</button>
 		</div>
 	</div>
 </div>
