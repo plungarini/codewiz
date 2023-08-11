@@ -18,7 +18,12 @@
 				<div class="flex items-center justify-start pb-8 mb-8 space-x-4 border-b border-zinc-900">
 					<input #profilePicture class="hidden" type="file" (change)="uploadImage(fireUser.uid, $event.target, user.details?.imgUrl)" accept="image/png, image/jpeg">
 
-					<div class="relative overflow-hidden rounded-md group">
+					<div
+						[ngClass]="{
+							'hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-pink-600/80': !loadingImgBtn
+						}"
+						class="relative overflow-hidden transition-all duration-300 rounded-md group"
+					>
 						<ng-container *ngIf="form.value.imgUrl as imgUrl">
 							<img
 								ixImg
