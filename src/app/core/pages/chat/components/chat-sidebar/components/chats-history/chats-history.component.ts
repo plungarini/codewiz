@@ -97,7 +97,7 @@ export class ChatsHistoryComponent {
 		this.queue.add(id);
 
 		const sub = this.aiChatService.createChatTitle(repo, id)
-			.subscribe(async (d) => {
+			.subscribe( (d) => {
 				if (!d.shouldUpdate) return;
 				
 				const index = this.chatHistory.findIndex(c => c.id === id);
@@ -105,7 +105,7 @@ export class ChatsHistoryComponent {
 
 				if (!!d.finishReason) {
 					this.queue.delete(id);
-					await this.saveChatName(d.completion, id, oldTitle);
+					this.saveChatName(d.completion, id, oldTitle);
 					sub.unsubscribe();
 				};
 
