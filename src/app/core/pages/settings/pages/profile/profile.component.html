@@ -1,5 +1,5 @@
 <ng-template #noUserSkeleton>
-	<div class="flex items-center pb-8 mb-8 space-x-4 border-b border-zinc-900">
+	<div class="flex items-center justify-start px-4 pb-8 mb-8 space-x-4 border-b border-zinc-900">
 		<div
 			class="w-12 h-12 rounded-md bg-zinc-600 animate-pulse shrink-0"
 		></div>
@@ -15,14 +15,54 @@
 	<div class="max-w-2xl py-16 mx-auto sm:py-24">
 		<ng-container *ngIf="(user$ | async) as user; else noUserSkeleton">
 			<ng-container *ngIf="(fireUser$ | async) as fireUser; else noUserSkeleton">
-				<div class="flex items-center pb-8 mb-8 space-x-4 border-b border-zinc-900">
-					<img
-						[src]="user.details?.imgUrl || fireUser.photoURL"
-						[alt]="user.name || fireUser.displayName || 'Anonymous'"
-						width="1"
-						height="1"
-						class="object-cover object-center w-12 h-12 rounded-md"
-					>
+				<div class="flex items-center justify-start pb-8 mb-8 space-x-4 border-b border-zinc-900">
+					<input #profilePicture class="hidden" type="file" (change)="uploadImage(fireUser.uid, $event.target, user.details?.imgUrl)" accept="image/png, image/jpeg">
+
+					<div class="relative overflow-hidden rounded-md group">
+						<ng-container *ngIf="form.value.imgUrl as imgUrl">
+							<img
+								ixImg
+								[path]="imgUrl"
+								[alt]="user.name || fireUser.displayName || 'Anonymous'"
+								(click)="profilePicture.click()"
+								[width]="1"
+								[height]="1"
+								class="object-cover object-center w-12 h-12 cursor-pointer"
+							>
+						</ng-container>
+
+						<div
+							[ngClass]="{
+								'flex': !loadingImgBtn,
+								'hidden': loadingImgBtn,
+							}"
+							class="absolute inset-0 flex items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none group-hover:opacity-100 bg-zinc-900/60"
+						>
+							<svg class="w-7 h-7 text-zinc-50" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+								<g id="Iconly/Light/Paper-Upload" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+									<g id="Paper-Upload" transform="translate(3.500000, 2.000000)" stroke="currentColor" stroke-width="1.5" >
+										<path d="M11.2366,0.761771154 L4.5846,0.761771154 C2.5046,0.7538 0.8006,2.4108 0.7506,4.4908 L0.7506,15.2278 C0.7056,17.3298 2.3736,19.0698 4.4746,19.1148 C4.5116,19.1148 4.5486,19.1158 4.5846,19.1148 L12.5726,19.1148 C14.6626,19.0408 16.3146,17.3188 16.302665,15.2278 L16.302665,6.0378 L11.2366,0.761771154 Z" id="Stroke-1"></path>
+										<path d="M10.9749,0.7501 L10.9749,3.6591 C10.9749,5.0791 12.1239,6.2301 13.5439,6.2341 L16.2979,6.2341" id="Stroke-3"></path>
+										<line x1="8.1409" y1="7.9088" x2="8.1409" y2="13.9498" id="Stroke-5"></line>
+										<polyline id="Stroke-7" points="10.4866 10.2643 8.1416 7.9093 5.7966 10.2643"></polyline>
+									</g>
+								</g>
+							</svg>
+						</div>
+						
+						<div
+							[ngClass]="{
+								'opacity-100 pointer-events-auto': loadingImgBtn,
+								'opacity-0 pointer-events-none': !loadingImgBtn,
+							}"
+							class="absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-zinc-900/60 backdrop-blur-sm"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-7 h-7 shrink-0 animate-spin" style="shape-rendering: auto;">
+								<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-zinc-400">
+								</circle>
+							</svg>
+						</div>
+					</div>
 					<p class="max-w-full text-lg font-semibold leading-5 truncate shrink text-pink-500/80">
 						<span class="truncate">{{user.name || fireUser.displayName || 'Anonymous'}}</span>
 						<span class="block text-sm font-medium truncate text-zinc-500">{{fireUser.email}}</span>

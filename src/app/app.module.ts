@@ -7,6 +7,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
+import { getStorage, provideStorage } from '@angular/fire/storage';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ImgixAngularModule } from '@imgix/angular';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
@@ -27,6 +28,7 @@ import { markedOptionsFactory } from './core/pages/chat/components/chat-view/com
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
 		provideFunctions(() => getFunctions(undefined, 'europe-west2')),
+		provideStorage(() => getStorage()),
 		
 		ReactiveFormsModule,
 		HttpClientModule,

@@ -3,6 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import _isEqual from 'lodash-es/isEqual';
 import { map, Subscription, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
+import { StorageService } from 'src/app/shared/services/storage.service';
 
 
 @Component({
@@ -31,6 +32,7 @@ export class ProfileComponent implements OnDestroy {
 
 	error = '';
 	successMessage = '';
+	loadingImgBtn = false;
 
 	private updatedDetails: {
 		uid?: string;
@@ -52,6 +54,7 @@ export class ProfileComponent implements OnDestroy {
 	constructor(
 		private usersService: UsersService,
 		private cdRef: ChangeDetectorRef,
+		private storageService: StorageService,
 	) {
 		this.userSub = this.usersService.user$.pipe(
 			switchMap(user => {
@@ -88,20 +91,20 @@ export class ProfileComponent implements OnDestroy {
 				this.form.patchValue({ phone: updatedPhone });
 			}
 
-			const updatedImgUrl = user?.details?.imgUrl || fireUser?.photoURL;
+			const updatedImgUrl = user?.details?.imgUrl || fireUser?.photoURL || 'assets/404_pip_image.png';
 			if (!!updatedImgUrl) {
 				this.updatedDetails.imgUrl = updatedImgUrl;
 				this.form.patchValue({ imgUrl: updatedImgUrl });
 			}
 			
 			this.isFormUpdated = true;
-			this.cdRef.markForCheck();
+			this.cdRef.detectChanges();
 		});
 
 		this.formSub = this.form.valueChanges.subscribe(() => {
 			if (this.error) {
 				this.error = '';
-				this.cdRef.detectChanges();
+				this.cdRef.markForCheck();
 			}
 		});
 
@@ -182,5 +185,31 @@ export class ProfileComponent implements OnDestroy {
 			this.cdRef.markForCheck();
 		}
 	}
+
+	async uploadImage(uid: string, target: EventTarget | null, previousImgPath?: string): Promise<void> {
+		const input = target as HTMLInputElement;
+		if (!input || !input.files) return console.error('Invalid input');
+		this.loadingImgBtn = true;
+		this.cdRef.markForCheck();
+		
+  	const fileToUpload: File = input.files[0];
+		const mediaFolderPath = `users/${uid}/pip`;
+
+		const defaultImgUrl = 'assets/404_pip_image.png';
+		if (previousImgPath && previousImgPath !== defaultImgUrl) {
+			await this.storageService.deleteFile(previousImgPath);
+		}
+
+  	const path = await this.storageService.uploadFileAndGetPath(
+			mediaFolderPath,
+			fileToUpload,
+		);
+
+		this.form.patchValue({ imgUrl: path });
+		await this.saveDetails();
+		
+		this.loadingImgBtn = false;
+		window?.location?.reload();
+  }
 	
 }

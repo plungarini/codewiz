@@ -55,11 +55,9 @@ export class UsersService {
         disabled: false,
         details: (isSignup
           ? {
-              imgUrl: user.photoURL || undefined,
+              imgUrl: user.photoURL || 'assets/404_pip_image.png',
               phoneNumber:
                 user.phoneNumber || additionalDetails?.phoneNumber || undefined,
-              lastLogin: Timestamp.fromDate(new Date()),
-              profileUrlRef: additionalDetails?.profileUrlRef || undefined,
             }
           : {
               imgUrl: user.photoURL || undefined,
