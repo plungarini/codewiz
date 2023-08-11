@@ -16,7 +16,7 @@ import {
 	setDoc,
 	updateDoc
 } from '@angular/fire/firestore';
-import { Functions, httpsCallable } from '@angular/fire/functions';
+import { Functions, getFunctions, httpsCallable } from '@angular/fire/functions';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -31,9 +31,10 @@ export class FirebaseExtendedService {
 		private functions: Functions
 	) { }
 	
-	callFunction<T, Z>(name: string, timeout = 60_000) {
+	callFunction<T, Z>(name: string, region = 'europe-west1', timeout = 60_000) {
 		if (this.debug) console.log('[Firebase "callFunction"]', { name, timeout });
-		return httpsCallable<T, Z>(this.functions, name, { timeout });
+		const instance = this.functions.region === region ? this.functions : getFunctions(undefined, region);
+		return httpsCallable<T, Z>(instance, name, { timeout });
 	}
 	
 	async getColRef(path: string, ...queryConstraints: QueryConstraint[]): Promise<QuerySnapshot<DocumentData> | undefined> {
