@@ -38,7 +38,7 @@ export class AuthenticationService {
 	}
 	
 	/**
-		* Performs a Login with FACEBOOK provider through Firebase.
+		* Performs a Login with GITHUB provider through Firebase.
 		*/
 	githubLogin(): Promise<boolean> {
 		const provider = new GithubAuthProvider();
