@@ -11,7 +11,7 @@
 
 				<div class="grid grid-cols-2 gap-3 mt-1">
 					<div>
-						<a (click)="googleLogin()" class="inline-flex justify-center w-full px-3 py-2 transition-colors duration-300 rounded-md shadow-sm cursor-pointer bg-zinc-800 text-zinc-200 ring-1 ring-inset ring-zinc-600 hover:bg-zinc-700 focus:outline-offset-0">
+						<a (click)="googleLogin()" class="inline-flex justify-center w-full px-3 py-2 transition-colors duration-300 rounded-md shadow-sm cursor-pointer bg-zinc-900 text-zinc-200 ring-1 ring-inset ring-zinc-800 hover:bg-zinc-700 focus:outline-offset-0">
 							<span class="sr-only">Sign in with Google</span>
 							<svg class="w-6 h-6" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path fill-rule="evenodd" clip-rule="evenodd" d="M7.56386 15.1723C7.65999 15.0757 7.67806 14.9268 7.61406 14.8064C7.24805 14.1181 7.027 13.3418 7.027 12.5093C7.027 11.4873 7.34879 10.5459 7.88147 9.75758C7.96488 9.63413 7.95411 9.46792 7.84907 9.36227L5.04414 6.54077C4.92103 6.41693 4.71824 6.42374 4.60855 6.5596C3.29316 8.18885 2.5 10.2564 2.5 12.5093C2.5 14.5586 3.15875 16.453 4.26795 18.006C4.37341 18.1537 4.58569 18.167 4.71363 18.0383L7.56386 15.1723Z" fill="currentColor" />
@@ -24,7 +24,7 @@
 					</div>
 
 					<div>
-						<a (click)="githubLogin()" class="inline-flex justify-center w-full px-3 py-2 transition-colors duration-300 rounded-md shadow-sm cursor-pointer bg-zinc-800 text-zinc-200 ring-1 ring-inset ring-zinc-600 hover:bg-zinc-700 focus:outline-offset-0">
+						<a (click)="githubLogin()" class="inline-flex justify-center w-full px-3 py-2 transition-colors duration-300 rounded-md shadow-sm cursor-pointer bg-zinc-900 text-zinc-200 ring-1 ring-inset ring-zinc-800 hover:bg-zinc-700 focus:outline-offset-0">
 							<span class="sr-only">Sign in with GitHub</span>
 							<svg class="w-6 h-6" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 								<path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.20898C6.762 3.20898 2.5 7.47098 2.5 12.709C2.5 16.835 5.24 20.563 9.164 21.776C9.324 21.828 9.498 21.792 9.627 21.686C9.757 21.58 9.825 21.416 9.809 21.249C9.669 19.856 10.47 18.38 10.812 18.026C10.944 17.891 10.988 17.692 10.925 17.514C10.862 17.335 10.704 17.206 10.516 17.183C8.725 16.955 7.067 16.347 7.067 13.457C7.063 12.738 7.337 12.051 7.836 11.522C7.968 11.383 8.009 11.181 7.941 11.002C7.75 10.497 7.729 9.93198 7.877 9.40998C8.168 9.45798 8.731 9.62898 9.608 10.215C9.728 10.296 9.877 10.317 10.015 10.282C11.312 9.93398 12.682 9.93398 13.979 10.282C14.116 10.317 14.266 10.296 14.386 10.215C15.27 9.62398 15.835 9.45498 16.115 9.40598C16.264 9.92998 16.245 10.496 16.054 11.003C15.986 11.183 16.027 11.385 16.16 11.523C16.654 12.043 16.927 12.727 16.927 13.448C16.927 16.387 15.273 16.974 13.486 17.171C13.296 17.191 13.135 17.319 13.071 17.498C13.006 17.678 13.049 17.879 13.182 18.016C13.512 18.357 14.321 19.872 14.185 21.26C14.168 21.427 14.236 21.591 14.367 21.696C14.457 21.771 14.569 21.809 14.682 21.809C14.732 21.809 14.783 21.801 14.832 21.785C18.82 20.53 21.5 16.883 21.5 12.709C21.5 7.47098 17.238 3.20898 12 3.20898Z" fill="currentColor" />
@@ -37,10 +37,10 @@
 
 			<div class="relative mt-6">
 				<div class="absolute inset-0 flex items-center" aria-hidden="true">
-					<div class="w-full border-t border-zinc-600"></div>
+					<div class="w-full border-t border-zinc-800"></div>
 				</div>
 				<div class="relative flex justify-center text-sm">
-					<span class="px-2 bg-zinc-900 text-zinc-400">Or continue with</span>
+					<span class="px-2 bg-zinc-950 text-zinc-400">Or continue with</span>
 				</div>
 			</div>
 		</div>
@@ -50,14 +50,14 @@
 				<div>
 					<label for="email" class="block text-sm font-medium text-zinc-400">Email address</label>
 					<div class="mt-1">
-						<input formControlName="email" id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-md py-1.5 shadow-sm ring-inset border border-zinc-600 focus:border-highlight-600 placeholder:text-zinc-400 text-zinc-200 focus:outline-none outline-highlight-500 bg-zinc-800 focus:ring-2 transition-all duration-300 ring-0 ring-highlight-600 focus:ring-highlight-600 sm:text-sm sm:leading-6">
+						<input formControlName="email" id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-md py-1.5 shadow-sm ring-inset border border-zinc-800 focus:border-indigo-600 placeholder:text-zinc-400 text-zinc-200 focus:outline-none outline-indigo-500 bg-zinc-900 focus:ring-2 transition-all duration-300 ring-0 ring-indigo-600 focus:ring-indigo-600 sm:text-sm sm:leading-6">
 					</div>
 				</div>
 
 				<div class="space-y-1">
 					<label for="password" class="block text-sm font-medium text-zinc-400">Password</label>
 					<div class="mt-1">
-						<input formControlName="password" id="password" name="password" type="password" autocomplete="current-password" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{0,30}$" required class="block w-full rounded-md py-1.5 shadow-sm ring-inset border border-zinc-600 focus:border-highlight-600 placeholder:text-zinc-400 focus:outline-none outline-highlight-500 text-zinc-200 bg-zinc-800 focus:ring-2 transition-all duration-300 ring-0 ring-highlight-600 focus:ring-highlight-600 sm:text-sm sm:leading-6">
+						<input formControlName="password" id="password" name="password" type="password" autocomplete="current-password" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{0,30}$" required class="block w-full rounded-md py-1.5 shadow-sm ring-inset border border-zinc-800 focus:border-indigo-600 placeholder:text-zinc-400 focus:outline-none outline-indigo-500 text-zinc-200 bg-zinc-900 focus:ring-2 transition-all duration-300 ring-0 ring-indigo-600 focus:ring-indigo-600 sm:text-sm sm:leading-6">
 					</div>
 				</div>
 
@@ -100,13 +100,19 @@
 				<div class="flex items-center justify-between">
 					<div></div>
 					<div class="text-sm">
-						<a routerLink="/auth/reset/new-password" class="font-medium text-highlight-600 hover:text-highlight-500">Forgot your password?</a>
+						<a routerLink="/auth/reset/new-password" class="font-medium transition-colors duration-300 text-zinc-500 hover:text-indigo-500">Forgot your password?</a>
 					</div>
 				</div>
 
 				<div class="flex flex-col space-y-4">
-					<button type="submit" [disabled]="!form.valid" class="flex items-center justify-center w-full px-3 py-2 text-sm font-semibold text-white transition-all duration-300 rounded-md shadow-sm disabled:hover:bg-highlight-600 disabled:cursor-not-allowed disabled:opacity-80 bg-highlight-600 hover:bg-highlight-500 ring-1 ring-highlight-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-highlight-600">Sign in</button>
-					<p class="mt-0 text-center">Don't have an account? <a routerLink="/auth/signup" class="font-medium text-highlight-600 hover:text-highlight-400">Sign up</a> instead!</p>
+					<button
+						[disabled]="form.invalid"
+						type="submit"
+						class="inline-flex items-center justify-center w-full px-3 py-1.5 text-base font-medium text-white active:outline-none transition-all duration-300 bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 disabled:hover:bg-indigo-600 hover:ring-2 disabled:hover:ring-0 hover:ring-offset-2 disabled:hover:ring-offset-0 ring-offset-zinc-900 hover:ring-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+					>
+						<span>Sign in</span>
+					</button>
+					<p class="mt-0 text-center">Don't have an account? <a routerLink="/auth/signup" class="font-medium text-indigo-500 underline transition-colors duration-300 hover:text-indigo-400">Sign up</a> instead!</p>
 				</div>
 			</form>
 		</div>
