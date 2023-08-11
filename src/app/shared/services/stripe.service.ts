@@ -5,7 +5,7 @@ import { FirebaseExtendedService } from './firebase-ext.service';
 @Injectable({
   providedIn: 'root'
 })
-export class UserSubscriptionService {
+export class StripeService {
 
 	constructor(
 		private db: FirebaseExtendedService,

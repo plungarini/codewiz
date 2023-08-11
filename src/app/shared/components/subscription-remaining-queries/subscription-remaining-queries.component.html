@@ -1,0 +1,21 @@
+<div
+	[ngClass]="{
+		'bg-zinc-950': theme === 'dark',
+		'bg-zinc-900': theme === 'light',
+	}"
+	class="w-full h-4 overflow-hidden rounded-md cursor-pointer group"
+>
+	<div class="h-4 max-w-full transition-all duration-1000 ease-in-out bg-pink-600 rounded-md" [ngStyle]="{ 'width': percentage + '%' }"></div>
+	<div
+		*ngIf="label"
+		[ngClass]="{
+			'bg-zinc-900': theme === 'dark',
+			'bg-zinc-800': theme === 'light',
+		}"
+		class="absolute rounded-md shadow-xl px-2.5 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+		[style.left.px]="tooltipLeft"
+		[style.top.px]="tooltipTop"
+	>
+		<p class="text-xs">{{ label }}</p>
+	</div>
+</div>

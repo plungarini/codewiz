@@ -1,7 +1,12 @@
 <div class="relative w-12 h-12 max-w-full max-h-full">
   <svg viewBox="0 0 120 120" class="w-full h-full">
 		<!-- Background circle -->
-		<g class="text-zinc-950">
+		<g
+			[ngClass]="{
+				'text-zinc-950': theme === 'dark',
+				'text-zinc-900': theme === 'light'
+			}"
+		>
 			<circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="10"></circle>
 		</g>
 		<!-- Progress circle -->

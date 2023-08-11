@@ -3,7 +3,7 @@ import { of, switchMap } from 'rxjs';
 import { StripeSubscription } from 'src/app/auth/models/subscription.model';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
-import { UserSubscriptionService } from 'src/app/shared/services/stripe.service';
+import { StripeService } from 'src/app/shared/services/stripe.service';
 import { UserUsagesService } from 'src/app/shared/services/user-usages.service';
 
 @Component({
@@ -27,13 +27,13 @@ export class ProfileOverviewComponent {
 		switchMap((u) => {
 			const productId = u?.subscriptions?.at(0)?.items?.at(0)?.plan?.product;
 			if (!productId) return of(undefined);
-			return this.userSubscriptions.getProduct(productId);
+			return this.stripeService.getProduct(productId);
 		})
 	);
 
 	constructor(
 		private usersService: UsersService,
-		private userSubscriptions: UserSubscriptionService,
+		private stripeService: StripeService,
 		private userStats: UserUsagesService,
 	) { }
 	

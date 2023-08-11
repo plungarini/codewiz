@@ -1,1 +1,95 @@
-<p>usage works!</p>
+<ng-template #noUserSkeleton>
+	<div class="flex items-center justify-start px-4 pb-8 mb-8 space-x-4 border-b border-zinc-900">
+		<div
+			class="w-12 h-12 rounded-md bg-zinc-600 animate-pulse shrink-0"
+		></div>
+		<div class="max-w-full">
+			<span class="block h-6 max-w-full rounded-md w-36 bg-pink-600/80 animate-pulse"></span>
+			<span class="block w-24 h-4 max-w-full mt-1 rounded-md bg-zinc-600 animate-pulse"></span>
+		</div>
+	</div>
+</ng-template>
+
+
+<div class="px-6">
+	<div class="max-w-2xl py-16 mx-auto sm:py-24">
+		<ng-container>
+			<ng-container>
+				<div class="px-4 pb-10 mb-8 border-b border-zinc-900">
+					<h3 class="mb-4">Your plan</h3>
+					<div class="flex items-center justify-start space-x-4 ">
+						<app-subscription-remaining
+							[percentage]="(user$ | async) ? getRemainingDaysPerc((user$ | async)?.subscriptions?.at(0)) : 0"
+							[remaining]="(user$ | async) ? getRemainingDays((user$ | async)?.subscriptions?.at(0)) : 0"
+							theme="light"
+							class="shrink-0"
+						></app-subscription-remaining>
+	
+						<ng-container *ngIf="(product$ | async) as product; else noSubscriptionSkeleton">
+							<ng-container *ngIf="(user$ | async) as user; else noSubscriptionSkeleton">
+	
+								<div class="flex flex-col shrink">
+									<p class="text-sm font-medium truncate text-zinc-500">
+										Plan: <span class="text-base font-semibold shrink text-pink-500/80">{{getPlanName(product)}}</span>
+									</p>
+									<p class="text-sm font-medium truncate text-zinc-500">
+										Renew on: <span class="text-base font-semibold shrink text-pink-500/80">{{user.subscriptions?.at(0)?.current_period_end?.toDate() | date:'longDate'}}</span>
+									</p>
+								</div>
+	
+							</ng-container>
+						</ng-container>
+	
+						<ng-template #noSubscriptionSkeleton>
+							<div class="flex flex-col shrink">
+								<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500 py-0.5">
+									<span>Plan:</span> <span class="inline-block w-20 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
+								</p>
+								<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500 py-0.5">
+									<span>Renew on:</span> <span class="inline-block h-4 rounded-md w-28 bg-pink-500/80 animate-pulse"></span>
+								</p>
+							</div>
+						</ng-template>
+					</div>
+				</div>
+
+				<div class="px-4 pb-8 mb-8 border-b border-zinc-900">
+					<h3 class="mb-4">Queries usage</h3>
+					<ng-template #noQueriesSkeleton>
+						<div class="flex flex-col mb-4 shrink">
+							<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500">
+								<span>Queries in your plan:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
+							</p>
+							<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500">
+								<span>Used Queries:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
+							</p>
+						</div>
+					</ng-template>
+					
+
+					<ng-container *ngIf="(product$ | async) as product; else noQueriesSkeleton">
+						<ng-container *ngIf="(stats$ | async) as stats; else noQueriesSkeleton">
+
+							<div class="flex flex-col mb-4 shrink">
+								<p class="text-sm font-medium truncate text-zinc-500">
+									Queries in your plan: <span class="text-base font-semibold shrink text-pink-500/80">{{getTotalQueries(product)}}</span>
+								</p>
+								<p class="text-sm font-medium truncate text-zinc-500">
+									Used Queries: <span class="text-base font-semibold shrink text-pink-500/80">{{getUsedQueries(stats)}}</span>
+								</p>
+							</div>
+
+						</ng-container>
+					</ng-container>
+
+					<app-subscription-remaining-queries
+						[percentage]="(stats$ | async) && (product$ | async) ? getRemainingQueriesPerc((stats$ | async), (product$ | async)) : 0"
+						[label]="((stats$ | async) && (product$ | async) ? getRemainingQueries((stats$ | async), (product$ | async)) : 0) + ' queries remaining'"
+						theme="light"
+						class="max-w-sm"
+					></app-subscription-remaining-queries>
+				</div>
+			</ng-container>
+		</ng-container>
+	</div>
+</div>
