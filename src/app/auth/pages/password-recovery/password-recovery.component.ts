@@ -140,6 +140,7 @@ export class PasswordRecoveryComponent {
   			this.mode = 'verifyEmailCode';
 				this.sendPswEmailTries++;
 				this.showLoadingBtn = false;
+				this.linkDisabledTimer();
   			this.cdRef.detectChanges();
   		})
   		.catch((err: any) => {
@@ -148,7 +149,6 @@ export class PasswordRecoveryComponent {
 				this.showLoadingBtn = false;
   			this.cdRef.detectChanges();
   		});
-  	this.linkDisabledTimer();
   }
 
   sendAnotherLink(): void {

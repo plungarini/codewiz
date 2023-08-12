@@ -41,7 +41,7 @@ import { markedOptionsFactory } from './core/pages/chat/components/chat-view/com
 		}),
 
 		ImgixAngularModule.forRoot({
-      domain: 'codewizai.imgix.net',
+      domain: 'codewiz.imgix.net',
       defaultImgixParams: {
         auto: 'format,compress',
       },

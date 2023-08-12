@@ -9,7 +9,7 @@
 export class EmailTemplateOptions {
   resetLink?: string = '';
   pageTitle?: string = 'Reset your password | CodeWiz';
-  brandLogo?: string = 'https://codewiz.app/assets/logo/svg/codewiz_logo.svg';
+  brandLogo?: string = 'https://codewiz.app/assets/logo/png/codewiz_logo.png';
   brandLogoFull?: string = '';
   bodyTitle?: string = 'Reset your password';
   bodyText?: string = 'You received this email because you requested to change your password on your <b>CodeWiz</b> account.';
