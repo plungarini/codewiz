@@ -2,6 +2,9 @@
 	<div class="max-w-2xl py-16 mx-auto sm:py-24">
 		<div class="px-4 pb-10 mb-8 border-b border-zinc-900">
 			<h3 class="mb-4">Cookie Policy</h3>
+			<p class="mb-6 max-w-prose">
+				Ever wonder how websites remember your preferences? Our Cookie Policy explains how we use tiny data files, called cookies, to enhance your browsing experience and make our site work smoothly for you.
+			</p>
 			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
 
 				<ng-container *ngIf="(legal$ | async)?.cookiePolicy as cookiePolicy; else noCookiePolicy">
@@ -44,6 +47,9 @@
 		</div>
 		<div class="px-4 pb-10 mb-8 border-b border-zinc-900">
 			<h3 class="mb-4">Privacy Policy</h3>
+			<p class="mb-6 max-w-prose">
+				Your privacy matters to us! Our Privacy Policy outlines how we collect, use, and protect your personal information. It's our promise to keep your data safe and sound.
+			</p>
 			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
 
 				<ng-container *ngIf="(legal$ | async)?.privacyPolicy as privacyPolicy; else noPrivacyPolicy">
@@ -73,6 +79,9 @@
 		</div>
 		<div class="px-4 pb-10 mb-8 border-b border-zinc-900">
 			<h3 class="mb-4">Terms of Service</h3>
+			<p class="mb-6 max-w-prose">
+				Ever wonder about the guidelines we both follow while you use our site? Our Terms of Service is like our mutual agreement, outlining the promises we've made to each other. 
+			</p>
 			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
 
 				<ng-container *ngIf="(legal$ | async)?.termsConditions as termsConditions; else noTermsConditions">
@@ -102,6 +111,9 @@
 		</div>
 		<div class="px-4 pb-10 mb-8 border-b border-zinc-900">
 			<h3 class="mb-4">Data Subject Access Request (DSAR) Form</h3>
+			<p class="mb-6 max-w-prose">
+				Want to see the information we have about you? Use the DSAR form to ask for a copy of your data or to make changes. It's all about giving you control over your personal info! 
+			</p>
 			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
 
 				<ng-container *ngIf="(legal$ | async)?.dsarForm as dsarForm; else noDsarForm">
