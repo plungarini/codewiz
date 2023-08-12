@@ -22,6 +22,10 @@ const routes: Routes = [
 			{
 				path: 'preferences',
 				loadChildren: () => import('./pages/preferences/preferences.module').then(m => m.PreferencesModule),
+			},
+			{
+				path: 'legal',
+				loadChildren: () => import('./pages/legal/legal.module').then(m => m.LegalModule),
 			}
 		]
 	}
