@@ -2,6 +2,7 @@ import * as admin from 'firebase-admin';
 import { logger } from 'firebase-functions/v1';
 import * as nm from 'nodemailer';
 import { resetEmailTemplate } from './templates/reset-password.email';
+import Mail = require('nodemailer/lib/mailer');
 
 // TODO: Create email client
 const SENDER_EMAIL = process.env.EMAIL_USER;
@@ -16,7 +17,8 @@ export const sendEmailActionCode = async (email: string) => {
 	if (!SENDER_EMAIL || !SENDER_PASSW) throw new Error('Cannot login to nodemail.');
 
 	const transport = nm.createTransport({
-		host: 'smtpout.secureserver.net',
+		service: 'Zoho',
+		host: 'smtppro.zoho.com',
 		port: 465,
 		secure: true,
     auth: {
@@ -35,11 +37,13 @@ export const sendEmailActionCode = async (email: string) => {
 	const emailLink = await generateEmailActionCode(email);
 	const htmlTemplate = resetEmailTemplate({ resetLink: emailLink });
 
-	const mailOptions = {
-		from: '"CodeWhizAi 🪄" <support@codewhiz.club>',
-		to: `${email}`,
-		subject: 'Reset your password | CodeWhizAi',
-		text: 'Reset your password for your account on CodeWhizAi',
+	const mailOptions: Mail.Options = {
+		from: 'CodeWiz - Support Team <support@codewiz.app>',
+		to: email,
+		priority: 'high',
+		sender: 'CodeWiz - Support Team <support@codewiz.app>',
+		subject: 'Reset your password | CodeWiz',
+		text: 'Reset your password for your account on CodeWiz',
 		html: htmlTemplate,
 	};
 

@@ -48,7 +48,8 @@ import { markedOptionsFactory } from './core/pages/chat/components/chat-view/com
     }),
   ],
   providers: [
-    ScreenTrackingService,UserTrackingService
+		ScreenTrackingService,
+		UserTrackingService
   ],
   bootstrap: [AppComponent]
 })

@@ -8,15 +8,15 @@
 
 export class EmailTemplateOptions {
   resetLink?: string = '';
-  pageTitle?: string = 'Reset your password | CodeWhizAi';
-  brandLogo?: string = 'https://codewhizai.club/assets/logo/svg/codewhizai_icon.png';
+  pageTitle?: string = 'Reset your password | CodeWiz';
+  brandLogo?: string = 'https://codewhizai.app/assets/logo/svg/codewhiz_logo.svg';
   brandLogoFull?: string = '';
   bodyTitle?: string = 'Reset your password';
-  bodyText?: string = 'You received this email because you requested to change your password on your <b>CodeWhizAi</b> account.';
+  bodyText?: string = 'You received this email because you requested to change your password on your <b>CodeWiz</b> account.';
   ctaText?: string = 'Click on the following button to reset your password.';
   ctaBtnText?: string = 'Reset password';
   disclaimerText?: string = 'Ignore this email if you have not requested a Password Reset.';
-  footerDisclaimer?: string = 'If you need help with anything you can reply to this email or you can contact us at <a href="mailto:support@codewhizai.club" style="font-weight: 500; color: #ffffff">support@codewhizai.club</a>.';
+  footerDisclaimer?: string = 'If you need help with anything you can reply to this email or you can contact us at <a href="mailto:support@codewhizai.app" style="font-weight: 500; color: #ffffff">support@codewhizai.app</a>.';
 }
 export class EmailColorsOptions {
   bodyBg?: string = '#131418'; // #f4f4f5

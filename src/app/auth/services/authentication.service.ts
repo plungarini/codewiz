@@ -11,8 +11,8 @@ import {
 	signOut
 } from '@angular/fire/auth';
 import { doc, getDoc, getFirestore } from '@angular/fire/firestore';
-import { getFunctions, httpsCallable } from '@angular/fire/functions';
 import { Router } from '@angular/router';
+import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { FirebaseErrorHandling } from '../namespaces/error-auth';
 import { UsersService } from './users.service';
 	
@@ -26,7 +26,8 @@ export class AuthenticationService {
 	
 	constructor(
 		private userService: UsersService,
-		private router: Router
+		private router: Router,
+		private db: FirebaseExtendedService,
 	) {	}
 	
 	/**
@@ -74,10 +75,7 @@ export class AuthenticationService {
 		* @param email Requires user email to send a verification code.
 		*/
 	async sendResetPswEmail(email: string): Promise<any> {
-		const fn = httpsCallable(
-			getFunctions(undefined, 'europe-west2'),
-			'emailActionCode'
-		);
+		const fn = this.db.callFunction('emailActionCode');
 		return await fn(email);
 	}
 	

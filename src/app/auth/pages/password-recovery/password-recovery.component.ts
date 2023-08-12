@@ -130,6 +130,7 @@ export class PasswordRecoveryComponent {
   sendResPswEmail(): void {
 		const email = this.verifyEmail.get('verifyEmailInput')?.value;
 		this.showLoadingBtn = true;
+		this.serverErrMessage = '';
 		this.cdRef.detectChanges();
 		
 		if (!email) return;

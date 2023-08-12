@@ -31,7 +31,7 @@ export class FirebaseExtendedService {
 		private functions: Functions
 	) { }
 	
-	callFunction<T, Z>(name: string, region = 'europe-west1', timeout = 60_000) {
+	callFunction<T, Z>(name: string, region = 'europe-west2', timeout = 60_000) {
 		if (this.debug) console.log('[Firebase "callFunction"]', { name, timeout });
 		const instance = this.functions.region === region ? this.functions : getFunctions(undefined, region);
 		return httpsCallable<T, Z>(instance, name, { timeout });
