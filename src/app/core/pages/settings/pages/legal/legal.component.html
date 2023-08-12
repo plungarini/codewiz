@@ -1,1 +1,133 @@
-<p>legal works!</p>
+<div class="px-6">
+	<div class="max-w-2xl py-16 mx-auto sm:py-24">
+		<div class="px-4 pb-10 mb-8 border-b border-zinc-900">
+			<h3 class="mb-4">Cookie Policy</h3>
+			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
+
+				<ng-container *ngIf="(legal$ | async)?.cookiePolicy as cookiePolicy; else noCookiePolicy">
+					<a type="button" [href]="cookiePolicy" target="_blank" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+						<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M8.04403 20.999C5.9716 20.9533 4.32825 19.236 4.37398 17.1636V6.65646C4.42263 4.61711 6.09419 2.99128 8.13451 3.00004H13.7855C14.344 3.00004 14.8782 3.22674 15.2644 3.62955L19.0561 7.57884C19.4219 7.96121 19.6272 8.47008 19.6272 8.9984V17.1636C19.6409 19.2185 18.0238 20.9163 15.9698 21M8.04403 20.999C8.07419 20.999 8.10435 21 8.13451 21H15.9698M8.04403 20.999C8.07419 20.999 15.9698 21 15.9698 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M14.2695 3.0625V5.95514C14.2686 7.36692 15.4118 8.51211 16.8236 8.51503H19.5625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M8.51562 16.4818H12.9748M8.51562 13.0612H15.2427M8.51562 9.64062H11.4579" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+			
+						<span>Cookie Policy</span>
+					</a>
+				</ng-container>
+				
+				<ng-template #noCookiePolicy>
+					<button type="button" disabled="true" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md disabled:cursor-not-allowed disabled:opacity-50 hover:ring-2 disabled:ring-0 disabled:hover:ring-0 disabled:hover:ring-offset-0 disabled:hover:bg-zinc-900 disabled:hover:text-zinc-400 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+						<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-6 h-6 p-0.5 shrink-0 animate-spin" style="shape-rendering: auto;">
+							<circle cx="50" cy="50" fill="none" stroke-width="15" stroke="currentColor" r="42" stroke-dasharray="197.92033717615698 67.97344572538566">
+							</circle>
+						</svg>
+			
+						<span>Cookie Policy</span>
+					</button>
+				</ng-template>
+				
+
+				<button type="button" onclick="window.displayPreferenceModal(); return false;" id="termly-consent-preferences" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 bg-transparent rounded-md w-min hover:bg-zinc-900/80 text-zinc-400 shrink">
+					<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M7.78216 3H16.2169C19.165 3 21 5.08119 21 8.02638V15.9736C21 18.9188 19.165 21 16.2159 21H7.78216C4.83405 21 3 18.9188 3 15.9736V8.02638C3 5.08119 4.84281 3 7.78216 3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M12.707 15.3047H17.0173" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M7.4668 14.5997L8.28993 15.4228L9.89339 13.8203" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M7.4668 9.35748L8.28993 10.1806L9.89339 8.57812" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M12.707 10.0664H17.0173" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+		
+					<span>Manage Cookie Preferences</span>
+				</button>
+				
+			</div>
+		</div>
+		<div class="px-4 pb-10 mb-8 border-b border-zinc-900">
+			<h3 class="mb-4">Privacy Policy</h3>
+			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
+
+				<ng-container *ngIf="(legal$ | async)?.privacyPolicy as privacyPolicy; else noPrivacyPolicy">
+					<a type="button" [href]="privacyPolicy" target="_blank" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+						<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M8.04403 20.999C5.9716 20.9533 4.32825 19.236 4.37398 17.1636V6.65646C4.42263 4.61711 6.09419 2.99128 8.13451 3.00004H13.7855C14.344 3.00004 14.8782 3.22674 15.2644 3.62955L19.0561 7.57884C19.4219 7.96121 19.6272 8.47008 19.6272 8.9984V17.1636C19.6409 19.2185 18.0238 20.9163 15.9698 21M8.04403 20.999C8.07419 20.999 8.10435 21 8.13451 21H15.9698M8.04403 20.999C8.07419 20.999 15.9698 21 15.9698 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M14.2695 3.0625V5.95514C14.2686 7.36692 15.4118 8.51211 16.8236 8.51503H19.5625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M8.51562 16.4818H12.9748M8.51562 13.0612H15.2427M8.51562 9.64062H11.4579" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+			
+						<span>Privacy Policy</span>
+					</a>
+				</ng-container>
+				
+				<ng-template #noPrivacyPolicy>
+					<button type="button" disabled="true" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md disabled:cursor-not-allowed disabled:opacity-50 hover:ring-2 disabled:ring-0 disabled:hover:ring-0 disabled:hover:ring-offset-0 disabled:hover:bg-zinc-900 disabled:hover:text-zinc-400 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+						<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-6 h-6 p-0.5 shrink-0 animate-spin" style="shape-rendering: auto;">
+							<circle cx="50" cy="50" fill="none" stroke-width="15" stroke="currentColor" r="42" stroke-dasharray="197.92033717615698 67.97344572538566">
+							</circle>
+						</svg>
+			
+						<span>Privacy Policy</span>
+					</button>
+				</ng-template>
+				
+			</div>
+		</div>
+		<div class="px-4 pb-10 mb-8 border-b border-zinc-900">
+			<h3 class="mb-4">Terms of Service</h3>
+			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
+
+				<ng-container *ngIf="(legal$ | async)?.termsConditions as termsConditions; else noTermsConditions">
+					<a type="button" [href]="termsConditions" target="_blank" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+						<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M8.04403 20.999C5.9716 20.9533 4.32825 19.236 4.37398 17.1636V6.65646C4.42263 4.61711 6.09419 2.99128 8.13451 3.00004H13.7855C14.344 3.00004 14.8782 3.22674 15.2644 3.62955L19.0561 7.57884C19.4219 7.96121 19.6272 8.47008 19.6272 8.9984V17.1636C19.6409 19.2185 18.0238 20.9163 15.9698 21M8.04403 20.999C8.07419 20.999 8.10435 21 8.13451 21H15.9698M8.04403 20.999C8.07419 20.999 15.9698 21 15.9698 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M14.2695 3.0625V5.95514C14.2686 7.36692 15.4118 8.51211 16.8236 8.51503H19.5625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M8.51562 16.4818H12.9748M8.51562 13.0612H15.2427M8.51562 9.64062H11.4579" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+			
+						<span>Terms of Service</span>
+					</a>
+				</ng-container>
+				
+				<ng-template #noTermsConditions>
+					<button type="button" disabled="true" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md disabled:cursor-not-allowed disabled:opacity-50 hover:ring-2 disabled:ring-0 disabled:hover:ring-0 disabled:hover:ring-offset-0 disabled:hover:bg-zinc-900 disabled:hover:text-zinc-400 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+						<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-6 h-6 p-0.5 shrink-0 animate-spin" style="shape-rendering: auto;">
+							<circle cx="50" cy="50" fill="none" stroke-width="15" stroke="currentColor" r="42" stroke-dasharray="197.92033717615698 67.97344572538566">
+							</circle>
+						</svg>
+			
+						<span>Terms of Service</span>
+					</button>
+				</ng-template>
+				
+			</div>
+		</div>
+		<div class="px-4 pb-10 mb-8 border-b border-zinc-900">
+			<h3 class="mb-4">Data Subject Access Request (DSAR) Form</h3>
+			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
+
+				<ng-container *ngIf="(legal$ | async)?.dsarForm as dsarForm; else noDsarForm">
+					<a type="button" [href]="dsarForm" target="_blank" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+						<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M8.04403 20.999C5.9716 20.9533 4.32825 19.236 4.37398 17.1636V6.65646C4.42263 4.61711 6.09419 2.99128 8.13451 3.00004H13.7855C14.344 3.00004 14.8782 3.22674 15.2644 3.62955L19.0561 7.57884C19.4219 7.96121 19.6272 8.47008 19.6272 8.9984V17.1636C19.6409 19.2185 18.0238 20.9163 15.9698 21M8.04403 20.999C8.07419 20.999 8.10435 21 8.13451 21H15.9698M8.04403 20.999C8.07419 20.999 15.9698 21 15.9698 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M14.2695 3.0625V5.95514C14.2686 7.36692 15.4118 8.51211 16.8236 8.51503H19.5625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M8.51562 16.4818H12.9748M8.51562 13.0612H15.2427M8.51562 9.64062H11.4579" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+			
+						<span>DSAR Form</span>
+					</a>
+				</ng-container>
+				
+				<ng-template #noDsarForm>
+					<button type="button" disabled="true" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md disabled:cursor-not-allowed disabled:opacity-50 hover:ring-2 disabled:ring-0 disabled:hover:ring-0 disabled:hover:ring-offset-0 disabled:hover:bg-zinc-900 disabled:hover:text-zinc-400 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+						<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-6 h-6 p-0.5 shrink-0 animate-spin" style="shape-rendering: auto;">
+							<circle cx="50" cy="50" fill="none" stroke-width="15" stroke="currentColor" r="42" stroke-dasharray="197.92033717615698 67.97344572538566">
+							</circle>
+						</svg>
+			
+						<span>DSAR Form</span>
+					</button>
+				</ng-template>
+				
+			</div>
+		</div>
+	</div>
+</div>

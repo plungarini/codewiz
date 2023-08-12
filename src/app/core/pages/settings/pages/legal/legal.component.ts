@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { LegalService } from 'src/app/shared/services/legal.service';
 
 @Component({
   selector: 'app-legal',
@@ -13,5 +14,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LegalComponent {
+
+	legal$ = this.legalService.getDocuments();
+
+	constructor(
+		private legalService: LegalService,
+	) { }
 
 }
