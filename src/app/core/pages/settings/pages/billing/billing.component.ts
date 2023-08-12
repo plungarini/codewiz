@@ -47,7 +47,7 @@ export class BillingComponent {
 
 		const startHref = this.document.location.href;
 		const returnUrl = startHref.split('/').slice(0, -1).join('/');
-		const fn = this.db.callFunction<{ returnUrl: string }, { url: string }>('ext-firestore-stripe-payments-createPortalLink');
+		const fn = this.db.callFunction<{ returnUrl: string }, { url: string }>('ext-firestore-stripe-payments-createPortalLink', 'europe-west1');
 
 		try {
 			const { data } = await fn({ returnUrl });
