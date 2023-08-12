@@ -1,4 +1,4 @@
-<div class="overflow-hidden overflow-y-auto rounded-lg shadow h-72 max-h-72 md:rounded-r-none md:border-r border-zinc-800">
+<div class="overflow-hidden overflow-y-auto rounded-lg h-72 max-h-72 md:rounded-r-none md:border-r border-zinc-800">
 	<div *ngIf="(chats$ | async)?.length; else noChats" class="flex flex-col py-1 divide-y divide-zinc-800">
 		<ng-container *ngFor="let chat of (chats$ | async); trackBy: trackBy">
 			<div [routerLink]="['/app/chat/', chat.repo.id, chat.id]" class="flex items-center py-2.5 px-2.5 transition-colors duration-300 hover:bg-zinc-800 space-x-2 cursor-pointer">
