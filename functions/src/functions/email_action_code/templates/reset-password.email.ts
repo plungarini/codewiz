@@ -90,12 +90,12 @@ export const resetEmailTemplate = (opt?: EmailTemplateOptions, col?: EmailColors
                         <table align="center" cellpadding="0" cellspacing="0" class="page-center" style="text-align: left; padding-bottom: 88px; width: 100%; padding-left: 120px; padding-right: 120px;">
                           <tbody>
                             <tr>
-                              <td style="padding-top: 24px;">
+                              <td style="padding-top: 60px;">
                                 <img src="${opt?.brandLogo}" style="width: 56px;">
                               </td>
                             </tr>
                             <tr>
-                              <td colspan="2" style="padding-top: 72px; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; ${col?.bodyTitle ? 'color: ' + col?.bodyTitle + ';' : ''} font-family: 'Postmates Std', 'Helvetica', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 48px; font-style: normal; font-weight: 600; letter-spacing: -2.6px; line-height: 52px; text-decoration: none;">
+                              <td colspan="2" style="padding-top: 42px; -ms-text-size-adjust: 100%; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%; ${col?.bodyTitle ? 'color: ' + col?.bodyTitle + ';' : ''} font-family: 'Postmates Std', 'Helvetica', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif; font-size: 48px; font-style: normal; font-weight: 600; letter-spacing: -2.6px; line-height: 52px; text-decoration: none;">
                                 ${opt?.bodyTitle}
                               </td>
                             </tr>
@@ -148,8 +148,8 @@ export const resetEmailTemplate = (opt?: EmailTemplateOptions, col?: EmailColors
                               <td colspan="2" style="padding-top: 72px; padding-bottom: 24px; width: 100%;">
                                 ${
                                   opt?.brandLogoFull ?
-                                  '<img src="' + opt?.brandLogoFull + '" style="height: 100%; max-width: 124px; max-height: 20px">' :
-                                  '<img src="' + opt?.brandLogo + '" style="height: 100%; max-width: 124px; max-height: 20px">'
+                                  '<img src="' + opt?.brandLogoFull + '" style="height: 100%; max-width: 124px; max-height: 40px">' :
+                                  '<img src="' + opt?.brandLogo + '" style="height: 100%; max-width: 124px; max-height: 40px">'
                                 }
                               </td>
                             </tr>
