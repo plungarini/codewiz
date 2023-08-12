@@ -177,6 +177,7 @@
 			<tr class="border-b border-zinc-800">
 				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Name</th>
 				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Count</th>
+				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Cost</th>
 				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Question</th>
 				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Prompt</th>
 				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Completion</th>
@@ -213,6 +214,24 @@
 	
 						<div
 							*ngIf="getPriceDifference(getTotalCost([stat]), getTotalCostLastMonth([stat])) as difference"
+							[ngClass]="{
+								'text-teal-400': difference <= 0,
+								'text-red-400': difference > 0,
+							}"
+							class="hidden text-sm font-medium scale-90 lg:block"
+						>
+							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+						</div>
+					</div>
+				</td>
+				<td class="px-4 py-4 text-sm">
+					<div class="flex items-center justify-center w-full space-x-2">
+						<div [title]="getPricePerQuestion([stat])" class="text-sm font-semibold text-zinc-400">
+							${{getPricePerQuestion([stat]) | number:'1.4-4'}}
+						</div>
+	
+						<div
+							*ngIf="getPriceDifference(getPricePerQuestion([stat]), getPricePerQuestionLastMonth([stat])) as difference"
 							[ngClass]="{
 								'text-teal-400': difference <= 0,
 								'text-red-400': difference > 0,
@@ -266,6 +285,13 @@
 				<tr *ngFor="let stat of [1, 2, 3]">
 					<td class="px-4 py-4">
 						<div class="h-5 mx-auto rounded-md w-14 bg-zinc-100 animate-pulse"></div>
+					</td>
+					<td class="px-4 py-4 text-sm">
+						<div class="flex items-center justify-center w-full space-x-2">
+							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+		
+							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+						</div>
 					</td>
 					<td class="px-4 py-4 text-sm">
 						<div class="flex items-center justify-center w-full space-x-2">
