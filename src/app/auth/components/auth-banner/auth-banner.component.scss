@@ -51,12 +51,18 @@
 	}
 
 	@keyframes pulse2 {
+		0% {
+			opacity: 1;
+		}
 		50% {
-			opacity: .5;
+			opacity: 0;
+		}
+		80%, 100% {
+			opacity: 1;
 		}
 	}
 	.animate-pulse2 {
-		animation: pulse2 1.8s linear infinite;
+		animation: pulse2 1.3s steps(1) infinite;
 	}
 	
 	@keyframes aura-rotate {
