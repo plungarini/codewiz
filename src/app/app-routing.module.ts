@@ -12,6 +12,10 @@ const routes: Routes = [
 		path: 'auth',
 		loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
 	},
+	{
+		path: 'legal/:id',
+		loadChildren: () => import('./legal/legal.module').then(m => m.PrivacyModule)
+	},
 
 	// Redirects
 	{
