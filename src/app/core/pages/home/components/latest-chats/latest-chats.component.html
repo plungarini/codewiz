@@ -1,7 +1,7 @@
-<div class="overflow-hidden overflow-y-auto rounded-lg shadow h-72 bg-zinc-900 max-h-72 md:rounded-r-none md:border-r border-zinc-800">
+<div class="overflow-hidden overflow-y-auto rounded-lg shadow h-72 max-h-72 md:rounded-r-none md:border-r border-zinc-800">
 	<div *ngIf="(chats$ | async)?.length; else noChats" class="flex flex-col py-1 divide-y divide-zinc-800">
 		<ng-container *ngFor="let chat of (chats$ | async); trackBy: trackBy">
-			<div [routerLink]="['/app/chat/', chat.repo.id, chat.id]" class="flex items-center py-1.5 px-2.5 bg-zinc-900 hover:bg-zinc-800 space-x-2 cursor-pointer">
+			<div [routerLink]="['/app/chat/', chat.repo.id, chat.id]" class="flex items-center py-2.5 px-2.5 transition-colors duration-300 hover:bg-zinc-800 space-x-2 cursor-pointer">
 				<img
 					ixImg
 					[alt]="chat.repo"
@@ -20,7 +20,7 @@
 		</ng-container>
 	</div>
 	<ng-template #noChats>
-		<div class="flex items-center justify-center h-full">
+		<div class="flex items-center justify-center h-full bg-zinc-900/20">
 			<div class="text-center">
 				<svg class="w-12 h-12 mx-auto text-zinc-400" viewBox="0 0 25 26" fill="none" xmlns="http://www.w3.org/2000/svg">
 					<path d="M20.7529 9.83784C21.8303 12.8128 21.3013 16.2757 19.1979 18.7716C17.3785 20.9289 14.8268 21.9993 12.2771 21.9905C11.3834 21.9876 7.40519 21.9895 5.05675 21.9905C4.35951 21.9915 3.94623 21.2109 4.33423 20.6284C4.55206 20.3025 4.83017 19.9044 5.04897 19.5951C5.26874 19.2848 5.28722 18.8779 5.09857 18.5482C4.76502 17.9676 4.2681 17.0855 4.13877 16.7645C2.59746 13.4207 3.19259 9.33242 5.94264 6.57306C8.13257 4.37573 11.1753 3.54831 14.0071 4.09082" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
