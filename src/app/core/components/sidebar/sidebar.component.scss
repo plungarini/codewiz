@@ -1,12 +1,3 @@
 :host {
-	@apply w-fit;
-
-	/* .aura-circle {
-		filter: blur(20px);
-		opacity: 1;
-		transform-origin: center;
-		transform: scale(0.8);
-		animation: aura-rotate 3s ease-in-out;
-		transition: opacity 1s ease-in-out;
-	} */
+	@apply sm:w-fit max-w-full shrink-0;
 }

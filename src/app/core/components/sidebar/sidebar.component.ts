@@ -13,6 +13,8 @@ export class SidebarComponent implements OnDestroy {
 	routerSub: Subscription | undefined;
 	currentPage: string = 'home';
 
+	menuOpen = false;
+
 	isUserAdmin$: Observable<boolean>
 
 	constructor(
@@ -50,5 +52,10 @@ export class SidebarComponent implements OnDestroy {
 	ngOnDestroy(): void {
 		this.routerSub?.unsubscribe();
 	}
+
+	toggleMenu(state?: boolean): void {
+    this.menuOpen = state !== undefined ? state : !this.menuOpen;
+    this.cdRef.detectChanges();
+  }
 
 }
