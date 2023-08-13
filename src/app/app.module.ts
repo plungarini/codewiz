@@ -1,6 +1,7 @@
 import { NgModule, SecurityContext } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
+import { provideHttpClient } from '@angular/common/http';
 import { getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
@@ -46,7 +47,8 @@ import { markedOptionsFactory } from './core/pages/chat/components/chat-view/com
   providers: [
 		ScreenTrackingService,
 		UserTrackingService,
-  ],
+		provideHttpClient(),
+	],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
