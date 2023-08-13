@@ -14,7 +14,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   styles: [
     `
       :host {
-        @apply relative w-full;
+        @apply relative w-full max-h-full overflow-hidden;
 				display: inline-grid;
       }
     `
@@ -104,6 +104,8 @@ export class ChatViewComponent implements OnDestroy {
 				this.onMessageScroll(true, false);
 				this.cdRef.markForCheck();
 			};
+
+			this.onChatScroll();
 		});
 	}
 
@@ -116,8 +118,8 @@ export class ChatViewComponent implements OnDestroy {
 		const element = this.mainChatContainer?.nativeElement;
 		if (!element) return;
 		
-		const scrolledToTop = element.scrollTop === 0;
-		const isScrolledToBottom = element.scrollHeight - element.scrollTop === element.clientHeight;
+		const scrolledToTop = element.scrollTop <= 0;
+		const isScrolledToBottom = element.scrollHeight - element.scrollTop <= element.clientHeight;
 		if (!isScrolledToBottom && !this.showScrollToBottom) {
 			this.showScrollToBottom = true;
 			this.cdRef.markForCheck();

@@ -1,4 +1,4 @@
-<div class="max-w-5xl pr-4 mx-auto">
+<div class="max-w-5xl mx-auto sm:pr-4">
 	<ng-container *ngFor="let msg of chat; let i = index; trackBy: trackBy">
 		<ng-container *ngIf="msg && !msg?.hide">
 			<div
@@ -8,14 +8,13 @@
 					'pt-1': msg.role === msgRoles.User,
 				}"
 				[attr.message-id]="msg.id"
-				class="relative flex flex-row w-full pb-3 space-x-4 group/message"
+				class="relative flex flex-row w-full pb-3 sm:space-x-4 group/message"
 			>
 				<app-message-avatar
 					[name]="(user$ | async)?.name || 'Anonymous'"
 					[role]="msg.role"
 					[stopAnim]="msg.completed"
 					[ngClass]="{ 'pt-2.5': msg.role === msgRoles.Assistant }"
-					class="block w-fit"
 				></app-message-avatar>
 				
 				<div class="relative max-w-full pr-10">
