@@ -75,9 +75,11 @@ export class ChatViewComponent implements OnDestroy {
 						this.oldChat = [];
 						this.cdRef.markForCheck();
 					}
-
+					
 					if (!id || !repo) {
+						this.oldChat = [];
 						this.router.navigateByUrl(`/app/chat/${repo || 'angular'}/new`);
+						this.chatLoaded = false;
 						return of([])
 					};
 
@@ -89,23 +91,23 @@ export class ChatViewComponent implements OnDestroy {
 			});
 			this.cdRef.markForCheck();
 			
-			if (messages.length <= 0) {
+			if (this.chat.length <= 0) {
 				const repo = this.route.snapshot.paramMap.get('repo');
 				this.router.navigateByUrl(`/app/chat/${repo}/new`);
 				this.cdRef.markForCheck();
 			}
 
-			if (messages.length <= (this.messageLimit - 1)) {
+			if (this.chat.length <= (this.messageLimit - 1)) {
 				this.maxResultsLoaded = true;
 			}
 
 			if (!this.chatLoaded) {
 				this.chatLoaded = true;
 				this.onMessageScroll(true, false);
+				this.onChatScroll();
 				this.cdRef.markForCheck();
 			};
 
-			this.onChatScroll();
 		});
 	}
 
@@ -131,7 +133,7 @@ export class ChatViewComponent implements OnDestroy {
 			this.cdRef.markForCheck();
 		}		
 
-		if (scrolledToTop && this.chat.length >= (this.messageLimit - 1) && !this.maxResultsLoaded) {
+		if (scrolledToTop && !isScrolledToBottom && this.chat.length >= (this.messageLimit - 1) && !this.maxResultsLoaded) {
 			console.warn('Loading more messages...');
 			const now = new Date();
 			this.chatLoaded = false;
