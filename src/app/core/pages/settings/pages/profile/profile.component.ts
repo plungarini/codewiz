@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import _isEqual from 'lodash-es/isEqual';
 import { map, Subscription, switchMap } from 'rxjs';
+import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { StorageService } from 'src/app/shared/services/storage.service';
 
@@ -55,6 +56,7 @@ export class ProfileComponent implements OnDestroy {
 		private usersService: UsersService,
 		private cdRef: ChangeDetectorRef,
 		private storageService: StorageService,
+		private authService: AuthenticationService,
 	) {
 		this.userSub = this.usersService.user$.pipe(
 			switchMap(user => {
@@ -210,6 +212,10 @@ export class ProfileComponent implements OnDestroy {
 		
 		this.loadingImgBtn = false;
 		window?.location?.reload();
-  }
+	}
+	
+	signout(): void {
+		this.authService.signOut();
+	}
 	
 }
