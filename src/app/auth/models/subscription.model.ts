@@ -1,4 +1,6 @@
+import { StripeSubscriptionInvoice } from './subscription-invoices.model';
 import { Timestamp } from './timestamp.model';
+
 
 export interface StripeSubscription {
 	ended_at: Timestamp;
@@ -19,7 +21,8 @@ export interface StripeSubscription {
   prices: Price2[];
   role: string;
   price: Price3;
-  id: string
+	id: string;
+	invoices?: StripeSubscriptionInvoice[];
 }
 
 interface Product {
