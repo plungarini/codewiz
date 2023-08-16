@@ -9,6 +9,7 @@ import { AuthenticationService } from 'src/app/auth/services/authentication.serv
       :host {
         display: block;
 				height: 100%;
+				width: 100%;
       }
     `
   ],
