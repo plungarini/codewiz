@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Timestamp, where } from '@angular/fire/firestore';
+import { QueryConstraint, Timestamp, where } from '@angular/fire/firestore';
 import { getAuth, User } from '@firebase/auth';
 import { user } from 'rxfire/auth';
 import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
+import { StripeSubscriptionInvoice } from '../models/subscription-invoices.model';
 import { StripeSubscription } from '../models/subscription.model';
-import { User as DbUser, UserDetails } from '../models/user.model';
+import { User as DbUser, UserDetails, UserUsageDetails, UserUsages } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -98,18 +99,19 @@ export class UsersService {
    *
    * @returns an Observable with a list of Users.
    */
-  getAll(query?: any): Observable<DbUser[]> {
-    return this.db.getCol<DbUser>('users', query);
+  getAll(...queryConstraints: QueryConstraint[]): Observable<DbUser[]> {
+    return this.db.getCol<DbUser>('users', 'id', ...queryConstraints);
 	}
 	
+	
 	/**
-	 * Retrieves all users with subscriptions.
+	 * Retrieves all users with their subscriptions based on the provided query constraints.
 	 *
-	 * @param {any} query - Optional query parameters.
-	 * @return {Observable<any>} An observable that emits the combined results.
+	 * @param {...QueryConstraint[]} queryConstraints - The constraints to apply when querying the users.
+	 * @return {Observable<DbUser[]>} An observable that emits an array of users with their subscriptions.
 	 */
-	getAllWithSubscriptions(query?: any): Observable<DbUser[]> {
-		return this.db.getCol<DbUser>('users', query).pipe(
+	getAllWithSubscriptions(...queryConstraints: QueryConstraint[]): Observable<DbUser[]> {
+		return this.db.getCol<DbUser>('users', 'id', ...queryConstraints).pipe(
 			switchMap(users => {
 				const observables = users.map(user =>
 					this.db.getCol<StripeSubscription>(
@@ -122,6 +124,67 @@ export class UsersService {
 								...user,
 								subscriptions
 							};
+						})
+					)
+				);
+				return combineLatest(observables);
+			})
+		)
+	}
+
+	
+	/**
+	 * Retrieves all users with their respective usage details.
+	 *
+	 * @param {QueryConstraint[]} queryConstraints - the constraints to filter the users
+	 * @return {Observable<DbUser[]>} an observable emitting an array of users with their usage details
+	 */
+	getAllWithUsages(...queryConstraints: QueryConstraint[]): Observable<DbUser[]> {
+		return this.db.getCol<DbUser>('users', 'id', ...queryConstraints).pipe(
+			switchMap(users => {
+				const observables = users.map(user => {
+					return this.db.getCol<{ id: string }>('supported-docs').pipe(
+						switchMap(docs => {
+							const usages = docs.map(doc => {
+								return this.db.getCol<UserUsageDetails>(`users/${user.id}/protected/usages/${doc.id}`).pipe(
+									map(stats => ({ id: doc.id, stats } as UserUsages))
+								)
+							});
+							return combineLatest(usages);
+						}),
+						map(usages => ({ ...user, usages }))
+					)
+				});
+				return combineLatest(observables);
+			})
+		);
+	}
+
+	
+	/**
+	 * Retrieves all users with their invoices based on the provided query constraints.
+	 *
+	 * @param {QueryConstraint[]} ...queryConstraints - The query constraints to filter the users.
+	 * @return {Observable<DbUser[]>} - An observable that emits an array of DbUser objects with their associated invoices.
+	 */
+	getAllWithInvoices(...queryConstraints: QueryConstraint[]): Observable<DbUser[]> {
+		return this.getAllWithUsages(...queryConstraints).pipe(
+			switchMap(users => {
+				const observables = users.map(user =>
+					this.db.getCol<StripeSubscription>(`users/${user.id}/subscriptions`).pipe(
+						switchMap((subsc) => {
+							const invoicesObservables = subsc.map(sub => {
+								return this.db
+									.getCol<StripeSubscriptionInvoice>(`users/${user.id}/subscriptions/${sub.id}/invoices`)
+									.pipe(map((invoices) => ({ ...sub, invoices } as StripeSubscription)));
+							});
+							return combineLatest(invoicesObservables);
+						}),
+						map(subscriptions => {
+							return {
+								...user,
+								subscriptions
+							} as DbUser;
 						})
 					)
 				);
