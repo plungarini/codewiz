@@ -211,6 +211,8 @@ export class ChatViewComponent implements OnDestroy {
 			await this.ai.saveNewMessage(this.selectedRepo, this.chatId, userQuery);
 		}
 
+		this.onMessageScroll(true);
+
 		const assistantId = this.ai.getNewRandomId();
 		const assistantQuery: AiChatMessage = {
 			id: assistantId,
@@ -222,8 +224,6 @@ export class ChatViewComponent implements OnDestroy {
 		}
 
 		await this.ai.saveNewMessage(this.selectedRepo, this.chatId, assistantQuery, true);
-
-		this.onMessageScroll(true);
 
 		this.gettingQuery = true;
 		this.chat = [...this.chat]
