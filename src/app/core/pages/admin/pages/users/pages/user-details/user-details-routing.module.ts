@@ -4,9 +4,13 @@ import { UserDetailsComponent } from './user-details.component';
 
 const routes: Routes = [
 	{
+		path: ':id',
+		component: UserDetailsComponent,
+	},
+	{
 		path: '',
 		component: UserDetailsComponent,
-	}
+	},
 ];
 
 @NgModule({
