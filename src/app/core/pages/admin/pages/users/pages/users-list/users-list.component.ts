@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { BehaviorSubject, map, Observable, switchMap } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { FormControl } from '@angular/forms';
+import { BehaviorSubject, map, Subscription, switchMap } from 'rxjs';
 import { User } from 'src/app/auth/models/user.model';
 import { UsersService } from 'src/app/auth/services/users.service';
 
@@ -17,23 +18,25 @@ type FilterOrSortConfig = {
   styles: [
     `
       :host {
-        display: block;
+        @apply block;
       }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UsersListComponent {
+export class UsersListComponent implements OnDestroy {
 
-	users$: Observable<User[]>;
+	searchControl = new FormControl('');
 
 	statsTimeframe: 'total' | 'current' = 'total';
-
 	sortBy: FilterOrSortConfig['sort']['field'] = 'joinDate';
 	order: FilterOrSortConfig['sort']['order'] = 'desc';
 
 	loading = true;
 
+	filteredUsers: User[] = [];
+	private users: User[] = [];
+	
 	private defaultFilterOrSort: FilterOrSortConfig = {
 		search: '',
 		sort: {
@@ -43,10 +46,14 @@ export class UsersListComponent {
 	};
 	private onFilterOrSort$ = new BehaviorSubject(this.defaultFilterOrSort);
 
+	private usersSub: Subscription;
+	private searchSub: Subscription;
+
 	constructor(
 		private usersService: UsersService,
+		private cdRef: ChangeDetectorRef,
 	) {
-		this.users$ = this.onFilterOrSort$.asObservable().pipe(
+		this.usersSub = this.onFilterOrSort$.asObservable().pipe(
 			switchMap(sortBy => {
 				this.loading = true;
 				return this.usersService.getAllWithInvoices().pipe(
@@ -58,11 +65,25 @@ export class UsersListComponent {
 					}),
 					map(users => {
 						this.loading = false;
+						this.users = users;
 						return this.filterOrSort(users, sortBy)
 					}),
 				);
 			})
-		)
+		).subscribe(users => {
+			this.filteredUsers = users;
+			this.cdRef.detectChanges();
+		});
+
+		this.searchSub = this.searchControl.valueChanges.subscribe(search => {
+			this.filteredUsers = this.filterOrSort(this.users, { ...this.defaultFilterOrSort, search: search || '' });
+			this.cdRef.detectChanges();
+		});
+	}
+
+	ngOnDestroy(): void {
+		this.usersSub.unsubscribe();
+		this.searchSub.unsubscribe();
 	}
 
 	calculateUserRevenue(user: User): User {
@@ -122,6 +143,10 @@ export class UsersListComponent {
 				order: this.order,
 			},
 		});
+	}
+
+	private onFilter(): void {
+
 	}
 
 	private filterOrSort(users: User[], options: FilterOrSortConfig): User[] {

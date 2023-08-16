@@ -1,3 +1,13 @@
+<div class="mt-4">
+	<input
+		[formControl]="searchControl"
+		type="text"
+		name="search"
+		[placeholder]="'Search in ' + filteredUsers.length + ' users'"
+		class="relative z-20 block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+	/>
+</div>
+
 <div class="flex items-center justify-between w-full px-4 py-2 mt-4 space-x-2 bg-zinc-900 rounded-t-md">
 
 	<div class="flex items-center space-x-1 cursor-pointer group" (click)="onSort('name')">
@@ -152,7 +162,7 @@
 
 </div>
 
-<ng-container *ngIf="users$ | async as users">
+<ng-container *ngIf="filteredUsers as users">
 	<div *ngIf="users.length > 0; else noRepos" class="flex flex-col overflow-hidden overflow-y-auto border border-t-0 divide-y rounded-b-md divide-zinc-800 border-zinc-800 max-h-96">
 
 		<a
@@ -198,6 +208,6 @@
 	</div>
 
 	<ng-template #noRepos>
-		<p class="mt-4">No users to show...</p>
+		<p class="px-4 py-2 border border-t-0 rounded-md rounded-t-none border-zinc-800">No users to show...</p>
 	</ng-template>
 </ng-container>
