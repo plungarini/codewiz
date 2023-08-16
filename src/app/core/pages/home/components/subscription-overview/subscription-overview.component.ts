@@ -1,14 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { StripeSubscription } from 'functions/src/models/subscription/subscription.model';
 import { of, switchMap } from 'rxjs';
-import { StripeSubscription } from 'src/app/auth/models/subscription.model';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
 import { StripeService } from 'src/app/shared/services/stripe.service';
-import { UserUsagesService } from 'src/app/shared/services/user-usages.service';
 
 @Component({
-  selector: 'app-profile-overview',
-  templateUrl: './profile-overview.component.html',
+  selector: 'app-subscription-overview',
+  templateUrl: './subscription-overview.component.html',
   styles: [
     `
       :host {
@@ -18,11 +17,9 @@ import { UserUsagesService } from 'src/app/shared/services/user-usages.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProfileOverviewComponent {
+export class SubscriptionOverviewComponent {
 
 	user$ = this.usersService.user$;
-	fireUser$ = this.usersService.fireUser$;
-	stats$ = this.userStats.getUsage();
 	product$ = this.user$.pipe(
 		switchMap((u) => {
 			const productId = u?.subscriptions?.at(0)?.items?.at(0)?.plan?.product;
@@ -34,9 +31,8 @@ export class ProfileOverviewComponent {
 	constructor(
 		private usersService: UsersService,
 		private stripeService: StripeService,
-		private userStats: UserUsagesService,
 	) { }
-	
+
 	getRemainingDays(subscription?: StripeSubscription) {
 		if (!subscription) return 0;
 		const diff = subscription?.current_period_end?.toDate()?.getTime() - new Date().getTime();

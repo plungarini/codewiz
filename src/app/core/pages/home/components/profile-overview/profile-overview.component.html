@@ -21,76 +21,34 @@
 	</dd>
 </ng-template>
 
-
-<div>
-  <h3 class="sr-only">Your profile</h3>
-  <dl class="grid grid-cols-1 mt-3 overflow-hidden divide-y rounded-lg divide-zinc-800 md:grid-cols-2 md:divide-x md:divide-y-0">
-    <div class="pt-4 pb-8 overflow-hidden md:pr-8">
-      <dt class="text-base font-normal text-zinc-100">Profile details</dt>
-			<ng-container *ngIf="(user$ | async) as user; else noUserSkeleton">
-				<ng-container *ngIf="(fireUser$ | async) as fireUser; else noUserSkeleton">
-					<dd class="flex items-center mt-4 space-x-4 shrink-0">
-						<img
-							ixImg
-							[path]="user.details?.imgUrl || fireUser.photoURL || 'assets/404_pip_image.png'"
-							[alt]="user.name || fireUser.displayName || 'Anonymous'"
-							[width]="1"
-							[height]="1"
-							class="object-cover object-center w-12 h-12 rounded-md"
-						>
-						<p class="max-w-full text-lg font-semibold leading-5 truncate shrink text-pink-500/80">
-							<span class="truncate">{{user.name || fireUser.displayName || 'Anonymous'}}</span>
-							<span class="block text-sm font-medium truncate text-zinc-500">{{fireUser.email}}</span>
-						</p>
-						<div class="flex-1"></div>
-						<a routerLink="/app/settings" class="self-start p-1 transition-all duration-300 rounded-md cursor-pointer shrink-0 hover:bg-zinc-700 text-zinc-600 hover:text-zinc-50">
-							<svg class="w-6 h-6" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-								<g id="Iconly/Light/Setting" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-									<g id="Setting" transform="translate(2.500000, 1.500000)" stroke="currentColor" stroke-width="1.5" >
-										<path d="M18.3066362,6.12356982 L17.6842106,5.04347829 C17.1576365,4.12955711 15.9906873,3.8142761 15.0755149,4.33867279 L15.0755149,4.33867279 C14.6398815,4.59529992 14.1200613,4.66810845 13.6306859,4.54104256 C13.1413105,4.41397667 12.7225749,4.09747295 12.4668193,3.66132725 C12.3022855,3.38410472 12.2138742,3.06835005 12.2105264,2.74599544 L12.2105264,2.74599544 C12.2253694,2.22917739 12.030389,1.72835784 11.6700024,1.3576252 C11.3096158,0.986892553 10.814514,0.777818938 10.2974829,0.778031878 L9.04347831,0.778031878 C8.53694532,0.778031878 8.05129106,0.97987004 7.69397811,1.33890085 C7.33666515,1.69793166 7.13715288,2.18454839 7.13958814,2.69107553 L7.13958814,2.69107553 C7.12457503,3.73688099 6.27245786,4.57676682 5.22654465,4.57665906 C4.90419003,4.57331126 4.58843537,4.48489995 4.31121284,4.32036615 L4.31121284,4.32036615 C3.39604054,3.79596946 2.22909131,4.11125048 1.70251717,5.02517165 L1.03432495,6.12356982 C0.508388616,7.03634945 0.819378585,8.20256183 1.72997713,8.73226549 L1.72997713,8.73226549 C2.32188101,9.07399614 2.68650982,9.70554694 2.68650982,10.3890161 C2.68650982,11.0724852 2.32188101,11.704036 1.72997713,12.0457667 L1.72997713,12.0457667 C0.820534984,12.5718952 0.509205679,13.7352837 1.03432495,14.645309 L1.03432495,14.645309 L1.6659039,15.7345539 C1.9126252,16.1797378 2.3265816,16.5082503 2.81617164,16.6473969 C3.30576167,16.7865435 3.83061824,16.7248517 4.27459956,16.4759726 L4.27459956,16.4759726 C4.71105863,16.2212969 5.23116727,16.1515203 5.71931837,16.2821523 C6.20746948,16.4127843 6.62321383,16.7330005 6.87414191,17.1716248 C7.03867571,17.4488473 7.12708702,17.764602 7.13043482,18.0869566 L7.13043482,18.0869566 C7.13043482,19.1435014 7.98693356,20.0000001 9.04347831,20.0000001 L10.2974829,20.0000001 C11.3504633,20.0000001 12.2054882,19.1490783 12.2105264,18.0961099 L12.2105264,18.0961099 C12.2080776,17.5879925 12.4088433,17.0999783 12.7681408,16.7406809 C13.1274382,16.3813834 13.6154524,16.1806176 14.1235699,16.1830664 C14.4451523,16.1916732 14.7596081,16.2797208 15.0389017,16.4393593 L15.0389017,16.4393593 C15.9516813,16.9652957 17.1178937,16.6543057 17.6475973,15.7437072 L17.6475973,15.7437072 L18.3066362,14.645309 C18.5617324,14.2074528 18.6317479,13.6859659 18.5011783,13.1963297 C18.3706086,12.7066935 18.0502282,12.2893121 17.6109841,12.0366133 L17.6109841,12.0366133 C17.17174,11.7839145 16.8513595,11.3665332 16.7207899,10.876897 C16.5902202,10.3872608 16.6602358,9.86577384 16.9153319,9.42791767 C17.0812195,9.13829096 17.3213574,8.89815312 17.6109841,8.73226549 L17.6109841,8.73226549 C18.5161253,8.20284891 18.8263873,7.04344892 18.3066362,6.13272314 L18.3066362,6.13272314 L18.3066362,6.12356982 Z" id="Path_33946"></path>
-										<circle id="Ellipse_737" cx="9.67505726" cy="10.3890161" r="2.63615562"></circle>
-									</g>
-								</g>
-							</svg>
-						</a>
-					</dd>
-				</ng-container>
-			</ng-container>			
-    </div>
-    <div class="pt-4 pb-8 overflow-hidden md:pl-6">
-      <div class="text-base font-normal text-zinc-100">Subscription details</div>
-
-			<div class="flex items-center w-full max-w-full mt-4 space-x-4">
-				<app-subscription-remaining
-					[percentage]="getRemainingDaysPerc((user$ | async)?.subscriptions?.at(0))"
-					[remaining]="getRemainingDays((user$ | async)?.subscriptions?.at(0))"
-					theme="light"
-					class="shrink-0"
-				></app-subscription-remaining>
-
-				<ng-container *ngIf="(product$ | async) as product; else noSubscriptionSkeleton">
-					<ng-container *ngIf="(user$ | async) as user; else noSubscriptionSkeleton">
-
-						<div class="flex flex-col shrink">
-							<p class="text-sm font-medium truncate text-zinc-500">
-								Plan: <span class="text-base font-semibold shrink text-pink-500/80">{{getPlanName(product)}}</span>
-							</p>
-							<p class="text-sm font-medium truncate text-zinc-500">
-								Renew on: <span class="text-base font-semibold shrink text-pink-500/80">{{user.subscriptions?.at(0)?.current_period_end?.toDate() | date:'longDate'}}</span>
-							</p>
-						</div>
-
-					</ng-container>
-				</ng-container>
-
-				<ng-template #noSubscriptionSkeleton>
-					<div class="max-w-full">
-						<div class="h-6 max-w-full rounded-md bg-pink-600/80 w-44 animate-pulse"></div>
-						<div class="w-32 h-4 max-w-full mt-1 rounded-md bg-zinc-600 animate-pulse"></div>
-					</div>
-				</ng-template>
-				
+<div class="overflow-hidden md:pb-5 md:rounded-r-none md:pr-4 md:border-r border-zinc-800">
+	<ng-container *ngIf="(user$ | async) as user; else noUserSkeleton">
+		<ng-container *ngIf="(fireUser$ | async) as fireUser; else noUserSkeleton">
+			<div class="flex items-center mt-4 space-x-4 shrink-0">
+				<img
+					ixImg
+					[path]="user.details?.imgUrl || fireUser.photoURL || 'assets/404_pip_image.png'"
+					[alt]="user.name || fireUser.displayName || 'Anonymous'"
+					[width]="1"
+					[height]="1"
+					class="object-cover object-center w-12 h-12 rounded-md"
+				>
+				<p class="max-w-full text-lg font-semibold leading-5 truncate shrink text-pink-500/80">
+					<span class="truncate">{{user.name || fireUser.displayName || 'Anonymous'}}</span>
+					<span class="block text-sm font-medium truncate text-zinc-500">{{fireUser.email}}</span>
+				</p>
+				<div class="flex-1"></div>
+				<a routerLink="/app/settings" class="self-start p-1 transition-all duration-300 rounded-md cursor-pointer shrink-0 hover:bg-zinc-700 text-zinc-600 hover:text-zinc-50">
+					<svg class="w-6 h-6" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<g id="Iconly/Light/Setting" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+							<g id="Setting" transform="translate(2.500000, 1.500000)" stroke="currentColor" stroke-width="1.5" >
+								<path d="M18.3066362,6.12356982 L17.6842106,5.04347829 C17.1576365,4.12955711 15.9906873,3.8142761 15.0755149,4.33867279 L15.0755149,4.33867279 C14.6398815,4.59529992 14.1200613,4.66810845 13.6306859,4.54104256 C13.1413105,4.41397667 12.7225749,4.09747295 12.4668193,3.66132725 C12.3022855,3.38410472 12.2138742,3.06835005 12.2105264,2.74599544 L12.2105264,2.74599544 C12.2253694,2.22917739 12.030389,1.72835784 11.6700024,1.3576252 C11.3096158,0.986892553 10.814514,0.777818938 10.2974829,0.778031878 L9.04347831,0.778031878 C8.53694532,0.778031878 8.05129106,0.97987004 7.69397811,1.33890085 C7.33666515,1.69793166 7.13715288,2.18454839 7.13958814,2.69107553 L7.13958814,2.69107553 C7.12457503,3.73688099 6.27245786,4.57676682 5.22654465,4.57665906 C4.90419003,4.57331126 4.58843537,4.48489995 4.31121284,4.32036615 L4.31121284,4.32036615 C3.39604054,3.79596946 2.22909131,4.11125048 1.70251717,5.02517165 L1.03432495,6.12356982 C0.508388616,7.03634945 0.819378585,8.20256183 1.72997713,8.73226549 L1.72997713,8.73226549 C2.32188101,9.07399614 2.68650982,9.70554694 2.68650982,10.3890161 C2.68650982,11.0724852 2.32188101,11.704036 1.72997713,12.0457667 L1.72997713,12.0457667 C0.820534984,12.5718952 0.509205679,13.7352837 1.03432495,14.645309 L1.03432495,14.645309 L1.6659039,15.7345539 C1.9126252,16.1797378 2.3265816,16.5082503 2.81617164,16.6473969 C3.30576167,16.7865435 3.83061824,16.7248517 4.27459956,16.4759726 L4.27459956,16.4759726 C4.71105863,16.2212969 5.23116727,16.1515203 5.71931837,16.2821523 C6.20746948,16.4127843 6.62321383,16.7330005 6.87414191,17.1716248 C7.03867571,17.4488473 7.12708702,17.764602 7.13043482,18.0869566 L7.13043482,18.0869566 C7.13043482,19.1435014 7.98693356,20.0000001 9.04347831,20.0000001 L10.2974829,20.0000001 C11.3504633,20.0000001 12.2054882,19.1490783 12.2105264,18.0961099 L12.2105264,18.0961099 C12.2080776,17.5879925 12.4088433,17.0999783 12.7681408,16.7406809 C13.1274382,16.3813834 13.6154524,16.1806176 14.1235699,16.1830664 C14.4451523,16.1916732 14.7596081,16.2797208 15.0389017,16.4393593 L15.0389017,16.4393593 C15.9516813,16.9652957 17.1178937,16.6543057 17.6475973,15.7437072 L17.6475973,15.7437072 L18.3066362,14.645309 C18.5617324,14.2074528 18.6317479,13.6859659 18.5011783,13.1963297 C18.3706086,12.7066935 18.0502282,12.2893121 17.6109841,12.0366133 L17.6109841,12.0366133 C17.17174,11.7839145 16.8513595,11.3665332 16.7207899,10.876897 C16.5902202,10.3872608 16.6602358,9.86577384 16.9153319,9.42791767 C17.0812195,9.13829096 17.3213574,8.89815312 17.6109841,8.73226549 L17.6109841,8.73226549 C18.5161253,8.20284891 18.8263873,7.04344892 18.3066362,6.13272314 L18.3066362,6.13272314 L18.3066362,6.12356982 Z" id="Path_33946"></path>
+								<circle id="Ellipse_737" cx="9.67505726" cy="10.3890161" r="2.63615562"></circle>
+							</g>
+						</g>
+					</svg>
+				</a>
 			</div>
-    </div>
-  </dl>
+		</ng-container>
+	</ng-container>		
 </div>

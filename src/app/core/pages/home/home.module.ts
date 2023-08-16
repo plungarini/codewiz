@@ -9,6 +9,7 @@ import { LatestChatsComponent } from './components/latest-chats/latest-chats.com
 import { ProfileOverviewComponent } from './components/profile-overview/profile-overview.component';
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
+import { SubscriptionOverviewComponent } from './components/subscription-overview/subscription-overview.component';
 
 
 @NgModule({
@@ -18,6 +19,7 @@ import { HomeComponent } from './home.component';
 		BannerComponent,
 		LatestChatsComponent,
 		IdeasComponent,
+  SubscriptionOverviewComponent,
 	],
   imports: [
     CommonModule,
