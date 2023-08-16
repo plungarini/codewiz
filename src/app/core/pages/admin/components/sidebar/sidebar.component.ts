@@ -8,6 +8,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       :host {
         display: block;
 				height: 100%;
+				width: 100%;
       }
     `
   ],
