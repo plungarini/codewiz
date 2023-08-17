@@ -72,7 +72,6 @@ export class UsersService {
 
 			if (forceEdits || isSignup) {
 				await this.db.upsert(`/users/${user.uid}`, toFirebaseUser);
-				await this.db.upsert(`/users/${user.uid}/protected/role`, { permissions: [] });
 			}
 			
 			if (isSignup) {
@@ -160,6 +159,30 @@ export class UsersService {
 		);
 	}
 
+	/**
+	 * Retrieves a user with their usage details from the database.
+	 *
+	 * @param {string} id - The id of the user to retrieve.
+	 * @return {Observable<DbUser | undefined>} An observable that emits the user with their usage details, or undefined if the user does not exist.
+	 */
+	getWithUsage(id: string): Observable<DbUser | undefined> {
+		return this.db.getDoc<DbUser>(`users/${id}`).pipe(
+			switchMap(user => {
+				if (!user) return of(undefined);
+				return this.db.getCol<{ id: string }>('supported-docs').pipe(
+					switchMap(docs => {
+						const usages = docs.map(doc => {
+							return this.db.getCol<UserUsageDetails>(`users/${user.id}/protected/usages/${doc.id}`).pipe(
+								map(stats => ({ id: doc.id, stats } as UserUsages))
+							)
+						});
+						return combineLatest(usages);
+					}),
+					map(usages => ({ ...user, usages }))
+				)
+			})
+		)
+	}
 	
 	/**
 	 * Retrieves all users with their invoices based on the provided query constraints.
@@ -189,6 +212,36 @@ export class UsersService {
 					)
 				);
 				return combineLatest(observables);
+			})
+		)
+	}
+
+	/**
+	 * Retrieves a user with their associated invoices from the database.
+	 *
+	 * @param {string} id - The ID of the user to retrieve.
+	 * @return {Observable<DbUser | undefined>} An observable that emits the user object with associated invoices, or undefined if the user is not found.
+	 */
+	getWithInvoice(id: string): Observable<DbUser | undefined> {
+		return this.getWithUsage(id).pipe(
+			switchMap(user => {
+				if (!user) return of(undefined);
+				return this.db.getCol<StripeSubscription>(`users/${user.id}/subscriptions`).pipe(
+					switchMap((subsc) => {
+						const invoicesObservables = subsc.map(sub => {
+							return this.db
+								.getCol<StripeSubscriptionInvoice>(`users/${user.id}/subscriptions/${sub.id}/invoices`)
+								.pipe(map((invoices) => ({ ...sub, invoices } as StripeSubscription)));
+						});
+						return combineLatest(invoicesObservables);
+					}),
+					map(subscriptions => {
+						return {
+							...user,
+							subscriptions
+						};
+					})
+				)
 			})
 		)
 	}
