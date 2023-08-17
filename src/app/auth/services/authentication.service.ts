@@ -109,9 +109,15 @@ export class AuthenticationService {
 		signOut(this.auth);
 	}
 
-	async disableUser(id: string, value: boolean): Promise<void> {
-		const fn = this.db.callFunction<{ uid: string, disabled: boolean }, void>('disableUser');
-		await fn({ uid: id, disabled: value });
+	async disableUser(id: string): Promise<void> {
+		const fn = this.db.callFunction<{ uid: string }, void>('disableUser');
+		await fn({ uid: id });
+	}
+
+	async isUserDisabled(id: string): Promise<boolean> {
+		const fn = this.db.callFunction<{ uid: string }, boolean>('isUserDisabled');
+		const { data } = await fn({ uid: id });
+		return data;
 	}
 	
 	private async oAuthLogin(provider: AuthProvider): Promise<any> {
