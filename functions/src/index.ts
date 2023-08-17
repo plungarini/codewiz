@@ -1,13 +1,15 @@
 import * as functions from 'firebase-functions';
 import { error, warn } from 'firebase-functions/logger';
+import { HttpsError } from 'firebase-functions/v1/auth';
 import { checkUserSubscription } from './functions/checkUserSubscription';
+import { disableUser as disableUserFn, isUserDisabled as isUserDisabledFn } from './functions/disableUser';
 import { sendEmailActionCode } from './functions/email_action_code';
 import { elaborateEmbeddings, getAllEmbeddings } from './functions/embeddings';
 import { githubFolderFetcher } from './functions/githubFetcher';
 import { scrapeDocumentedPage } from './functions/scraper';
 import { calculateTokens } from './functions/tiktoken';
 import { AiChatMessage } from './models/tiktoken/tiktoken.model';
-import { auth, firestore } from './utils';
+
 
 const FFN = functions.region('europe-west2');
 
@@ -163,19 +165,31 @@ export const setDefaultPermissions = FFN
 export const disableUser = FFN
 	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
 	.https.onCall(async (data, context) => {
-		const { uid, disabled } = data;
-		if (!uid || typeof disabled !== 'boolean') return;
-
+		const { uid } = data;
+		if (!uid ) throw new HttpsError('invalid-argument', 'UID is required');
 		const contextUid = context.auth?.uid;
-		if (!contextUid) return;
+		if (!contextUid) throw new HttpsError('invalid-argument', 'Context UID is required');
 
-		const adminRef = firestore.doc(`users/${contextUid}/protected/role`);
-		const doc = await adminRef.get();
-		const isAdmin = (doc.data()?.permissions || []).includes('admin');
+		try {
+			await disableUserFn(uid, contextUid);
+		} catch (err) {
+			error(err);
+			throw err;
+		}
+	});
 
-		if (!isAdmin) return;
+export const isUserDisabled = FFN
+	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
+	.https.onCall(async (data) => {
+		const { uid } = data;
+		if (!uid) throw new HttpsError('invalid-argument', 'UID is required');
 
-		await auth.updateUser(uid, { disabled });
+		try {
+			return await isUserDisabledFn(uid);
+		} catch (err) {
+			error(err);
+			throw err;
+		}
 	});
 
 
