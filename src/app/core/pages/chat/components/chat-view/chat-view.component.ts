@@ -225,6 +225,8 @@ export class ChatViewComponent implements OnDestroy {
 
 		await this.ai.saveNewMessage(this.selectedRepo, this.chatId, assistantQuery, true);
 
+		this.onMessageScroll(true);
+
 		this.gettingQuery = true;
 		this.chat = [...this.chat]
 		this.cdRef.detectChanges();
