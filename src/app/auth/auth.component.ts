@@ -38,7 +38,7 @@ export class AuthComponent implements OnInit, OnDestroy {
 							const alreadyAdded = document.body.querySelector('iframe[data-autoblock-bypass="true"]');
 							const isDifferent = newSrc !== alreadyAdded?.getAttribute('src');
 
-							if (isDifferent || !newSrc) return;
+							if (!isDifferent || !newSrc) return;
 							
 							const newIframe = document.createElement('iframe');
 							Array.from(node.attributes).forEach((attr) => {
