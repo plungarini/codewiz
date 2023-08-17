@@ -24,9 +24,13 @@ const routes: Routes = [
 				loadChildren: () => import('./pages/preferences/preferences.module').then(m => m.PreferencesModule),
 			}, */
 			{
+				path: 'feedback',
+				loadChildren: () => import('./pages/feedback/feedback.module').then(m => m.FeedbackModule),
+			},
+			{
 				path: 'legal',
 				loadChildren: () => import('./pages/legal/legal.module').then(m => m.LegalModule),
-			}
+			},
 		]
 	}
 ];
