@@ -1,0 +1,43 @@
+<div class="w-full h-full max-w-3xl max-h-full px-6 py-6 mx-auto overflow-hidden">
+	<h2 class="sm:mt-6">Maintenance</h2>
+
+	<form [formGroup]="form" class="max-w-prose">
+		<textarea 
+			type="text"
+			name="search"
+			formControlName="reason"
+			placeholder="Write here a reason for the maintenance"
+			class="relative z-20 block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-900 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm ng-pristine ng-valid ng-touched"
+		></textarea>
+
+		<div class="flex items-center justify-end mt-4 space-x-4">
+			<button
+				type="button"
+				(click)="saveForm(true)"
+				[disabled]="!form.value.active || loading"
+				class="inline-flex items-center px-3 py-1 overflow-hidden text-base font-semibold text-white transition-all duration-300 bg-red-500 rounded-md shadow-sm hover:bg-red-400 disabled:hover:bg-red-500 hover:ring-red-500 hover:ring-2 disabled:hover:ring-0 hover:ring-offset-2 disabled:hover:ring-offset-0 ring-offset-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
+			>
+				<svg [ngClass]="{ '-ml-6 opacity-0': !loading, '-ml-0 opacity-100': loading }" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-4 h-4 mr-2 transition-all duration-300 pointer-events-none shrink-0 animate-spin" style="shape-rendering: auto;">
+					<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-white">
+					</circle>
+				</svg>
+
+				<span>Disable maintenance</span>
+			</button>
+			<button
+				type="button"
+				(click)="saveForm()"
+				[disabled]="!form.valid || loading"
+				class="inline-flex items-center px-3 py-1 overflow-hidden text-base font-semibold text-white transition-all duration-300 bg-teal-600 rounded-md shadow-sm hover:bg-teal-500 disabled:hover:bg-teal-600 hover:ring-teal-600 hover:ring-2 disabled:hover:ring-0 hover:ring-offset-2 disabled:hover:ring-offset-0 ring-offset-zinc-900 disabled:cursor-not-allowed disabled:opacity-50"
+			>
+				<svg [ngClass]="{ '-ml-6 opacity-0': !loading, '-ml-0 opacity-100': loading }" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-4 h-4 mr-2 transition-all duration-300 pointer-events-none shrink-0 animate-spin" style="shape-rendering: auto;">
+					<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-white">
+					</circle>
+				</svg>
+
+				<span>{{form.value.active ? 'Update' : 'Enable'}}</span>
+			</button>
+		</div>
+		
+	</form>
+</div>
