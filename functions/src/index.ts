@@ -143,6 +143,22 @@ export const canUserQuery = FFN
 		}
 	});
 
+export const setDefaultPermissions = FFN
+	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
+	.firestore.document('users/{uid}').onCreate(async (snap) => {
+		const rolesRef = snap.ref.collection('protected').doc('roles');
+		const doc = await rolesRef.get();
+		const data = doc.data();
+
+		const newData = {
+			...data,
+			permissions: data?.permissions || [],
+		};
+
+		newData.permissions.push('user');
+		await rolesRef.set(newData, { merge: true });
+	});
+
 
 export const emailActionCode = FFN.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 }).https.onCall(async (data) => {
 	return await sendEmailActionCode(data);
