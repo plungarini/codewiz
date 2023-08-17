@@ -19,6 +19,7 @@ export namespace FirebaseErrorHandling {
     		'invalid-email': 'L\'indirizzo email fornito non è valido. Riprova.',
 				'cannot-delete-own-user-account': 'Non è possibile eliminare il proprio account. Contatta l\'assistenza.',
 				'account-exists-with-different-credential': 'Un account con queste credenziali esiste già. Effettua il login con un altro provider.',
+				'popup-closed-by-user': 'Controlla che tu abbia accettato i popup per questo sito.',
     	},
     	en: {
     		default: 'Unknown error. Please check that you have done an allowed operation and try again, or contact support.',
@@ -36,6 +37,7 @@ export namespace FirebaseErrorHandling {
     		'invalid-email': 'The email address is invalid.',
 				'cannot-delete-own-user-account': 'You cannot delete your account.',
 				'account-exists-with-different-credential': 'An account already exists with the same email address but different sign-in credentials. Sign in using a different provider',
+				'popup-closed-by-user': 'Ensure that you have allowed popups for this site.',
     	}
     };
 
