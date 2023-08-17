@@ -108,6 +108,11 @@ export class AuthenticationService {
 		localStorage.clear();
 		signOut(this.auth);
 	}
+
+	async disableUser(id: string, value: boolean): Promise<void> {
+		const fn = this.db.callFunction<{ uid: string, disabled: boolean }, void>('disableUser');
+		await fn({ uid: id, disabled: value });
+	}
 	
 	private async oAuthLogin(provider: AuthProvider): Promise<any> {
 		try {
@@ -124,7 +129,8 @@ export class AuthenticationService {
 			);
 			this.redirectAfterSignIn();
 		} catch (err: any) {
-			return FirebaseErrorHandling.convertMessage(err.code);
+			console.error(err);
+			throw FirebaseErrorHandling.convertMessage(err.code);
 		}
 	}
 	

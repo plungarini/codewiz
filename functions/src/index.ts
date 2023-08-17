@@ -7,6 +7,7 @@ import { githubFolderFetcher } from './functions/githubFetcher';
 import { scrapeDocumentedPage } from './functions/scraper';
 import { calculateTokens } from './functions/tiktoken';
 import { AiChatMessage } from './models/tiktoken/tiktoken.model';
+import { auth, firestore } from './utils';
 
 const FFN = functions.region('europe-west2');
 
@@ -157,6 +158,24 @@ export const setDefaultPermissions = FFN
 
 		newData.permissions.push('user');
 		await rolesRef.set(newData, { merge: true });
+	});
+
+export const disableUser = FFN
+	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
+	.https.onCall(async (data, context) => {
+		const { uid, disabled } = data;
+		if (!uid || typeof disabled !== 'boolean') return;
+
+		const contextUid = context.auth?.uid;
+		if (!contextUid) return;
+
+		const adminRef = firestore.doc(`users/${contextUid}/protected/role`);
+		const doc = await adminRef.get();
+		const isAdmin = (doc.data()?.permissions || []).includes('admin');
+
+		if (!isAdmin) return;
+
+		await auth.updateUser(uid, { disabled });
 	});
 
 
