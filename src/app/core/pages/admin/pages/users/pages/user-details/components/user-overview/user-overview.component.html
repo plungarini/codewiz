@@ -1,0 +1,46 @@
+<ng-container *ngIf="user">
+	<div class="flex space-x-4 md:space-x-8">
+
+		<div class="shrink-0">
+			<p class="text-sm font-medium text-zinc-500">Joined on</p>
+			<p class="text-zinc-100">{{user.createdAt?.toDate() | date}}</p>
+		</div>
+
+		<div class="shrink-0 grow">
+			<p class="text-sm font-medium text-zinc-500">Status</p>
+			<p
+				*ngIf="getSubscriptionStatus(user) as status"
+				[ngClass]="{
+					'text-teal-500': status === 'Active',
+					'text-red-500': status === 'Inactive',
+					'text-amber-500': status === 'Trialing',
+					'text-zinc-500': status !== 'Active' && status !== 'Trialing' && status !== 'Inactive',
+				}"
+			>{{status}}</p>
+		</div>
+
+		<div class="flex flex-1 space-x-4 md:space-x-8">
+			<div class="shrink-0 grow">
+				<p class="text-sm font-medium text-zinc-500">In</p>
+				<p class="text-zinc-100" title="€{{user.revenueDetails?.totalPaid}}">{{user.revenueDetails?.totalPaid || 0 | currency:'EUR'}}</p>
+			</div>
+	
+			<div class="shrink-0 grow">
+				<p class="text-sm font-medium text-zinc-500">Out</p>
+				<p class="text-zinc-100" title="${{user.revenueDetails?.totalCost}}">{{user.revenueDetails?.totalCost || 0 | currency:'USD'}}</p>
+			</div>
+	
+			<div class="shrink-0 grow">
+				<p class="text-sm font-medium text-zinc-500">Revenue</p>
+				<p
+					[ngClass]="{
+						'text-teal-400': getRevenue(user.revenueDetails?.totalPaid || 0, user.revenueDetails?.totalCost || 0 ) > 0,
+						'text-red-400': getRevenue(user.revenueDetails?.totalPaid || 0, user.revenueDetails?.totalCost || 0 ) < 0,
+						'text-amber-400': getRevenue(user.revenueDetails?.totalPaid || 0, user.revenueDetails?.totalCost || 0 ) === 0,
+					}"
+				>{{getRevenue(user.revenueDetails?.totalPaid || 0, user.revenueDetails?.totalCost || 0 ) | currency:'USD'}}</p>
+			</div>
+		</div>
+
+	</div>
+</ng-container>
