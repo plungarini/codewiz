@@ -12,17 +12,6 @@
 						<p class="text-sm text-left">{{status.reason}}</p>
 					</div>
 				</div>
-
-				<div *ngIf="status.start && status.end" class="flex items-center justify-between px-6 mx-auto mt-12 space-x-4 opacity-60 max-w-prose">
-					<div class="grow shrink-0" *ngIf="status.start">
-						<p class="text-sm font-medium text-left text-white">Started on:</p>
-						<p class="text-sm text-left">{{status.start.toDate() | date:'short'}}</p>
-					</div>
-					<div class="grow-0 shrink-0" *ngIf="status.end">
-						<p class="text-sm font-medium text-left text-white">Ends on:</p>
-						<p class="text-sm text-left">{{status.end.toDate() | date:'short'}}</p>
-					</div>
-				</div>
 			</ng-container>
 			
 		</div>
