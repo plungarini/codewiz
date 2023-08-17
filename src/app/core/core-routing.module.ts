@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { MaintenanceGuard } from '../shared/guards/maintenance.guard';
 import { CoreComponent } from './core.component';
 
 const routes: Routes = [
@@ -9,11 +10,27 @@ const routes: Routes = [
 		component: CoreComponent,
 		children: [
 			{
+				path: 'unauthorized',
+				loadChildren: () => import('./pages/no-permissions/no-permissions.module').then(m => m.NoPermissionsModule),
+			},
+			{
+				path: 'maintenance',
+				loadChildren: () => import('./pages/maintenance/maintenance.module').then(m => m.MaintenanceModule),
+			},
+			{
 				path: '',
+				data: {
+					permissions: ['user']
+				},
+				canActivate: [PermissionsGuard, MaintenanceGuard],
 				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
 			},
 			{
 				path: 'settings',
+				data: {
+					permissions: ['user']
+				},
+				canActivate: [PermissionsGuard, MaintenanceGuard],
 				loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsModule),
 			},
 			{
@@ -26,6 +43,10 @@ const routes: Routes = [
 			},
 			{
 				path: 'chat/:repo/:id',
+				data: {
+					permissions: ['user']
+				},
+				canActivate: [PermissionsGuard, MaintenanceGuard],
 				loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatModule),
 			},
 			{
