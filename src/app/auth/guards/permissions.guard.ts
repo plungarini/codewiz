@@ -14,7 +14,7 @@ export const PermissionsGuard: CanActivateFn = (route, state) => {
 			tap((canActivate) => {
 				if (!canActivate) {
 					console.error(`You are not allowed to access this page, you need the following permissions: "${requires.join(', ')}"`);
-					router.navigate(['/app'], {
+					router.navigate(['/app/unauthorized'], {
 						queryParams: {
 							returnUrl: state.url,
 						},
