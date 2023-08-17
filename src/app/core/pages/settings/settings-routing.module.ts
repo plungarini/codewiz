@@ -19,10 +19,10 @@ const routes: Routes = [
 				path: 'billing',
 				loadChildren: () => import('./pages/billing/billing.module').then(m => m.BillingModule),
 			},
-			{
+			/* {
 				path: 'preferences',
 				loadChildren: () => import('./pages/preferences/preferences.module').then(m => m.PreferencesModule),
-			},
+			}, */
 			{
 				path: 'legal',
 				loadChildren: () => import('./pages/legal/legal.module').then(m => m.LegalModule),
