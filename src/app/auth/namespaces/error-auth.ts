@@ -17,7 +17,8 @@ export namespace FirebaseErrorHandling {
     		'phone-number-already-exists': 'Questo numero di telefono è già in uso da un\'altro utente.',
     		'invalid-phone-number': 'Il numero di telefono non è valido. Impossibile completare la richiesta.',
     		'invalid-email': 'L\'indirizzo email fornito non è valido. Riprova.',
-    		'cannot-delete-own-user-account': 'Non è possibile eliminare il proprio account. Contatta l\'assistenza.',
+				'cannot-delete-own-user-account': 'Non è possibile eliminare il proprio account. Contatta l\'assistenza.',
+				'account-exists-with-different-credential': 'Un account con queste credenziali esiste già. Effettua il login con un altro provider.',
     	},
     	en: {
     		default: 'Unknown error. Please check that you have done an allowed operation and try again, or contact support.',
@@ -33,7 +34,8 @@ export namespace FirebaseErrorHandling {
     		'phone-number-already-exists': 'This phone number is already in use by another user.',
     		'invalid-phone-number': 'This phone number is not valid. Unable to continue with request.',
     		'invalid-email': 'The email address is invalid.',
-    		'cannot-delete-own-user-account': 'You cannot delete your account.',
+				'cannot-delete-own-user-account': 'You cannot delete your account.',
+				'account-exists-with-different-credential': 'An account already exists with the same email address but different sign-in credentials. Sign in using a different provider',
     	}
     };
 
@@ -42,7 +44,7 @@ export namespace FirebaseErrorHandling {
     	language = language ? language : 'en';
     	const formattedCode = code.split('/')[1];
 
-    	if (code.includes('auth/') && formattedCode && formattedCode in i18n[language]) {
+			if (code.includes('auth/') && formattedCode && formattedCode in i18n[language]) {
     		return i18n[language][formattedCode];
     	}
 

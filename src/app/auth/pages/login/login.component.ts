@@ -41,12 +41,24 @@ export class LoginComponent implements OnInit {
     private cdRef: ChangeDetectorRef
 	) { }
 
-	googleLogin(): void {
-		this.auth.googleLogin();
+	async googleLogin(): Promise<void> {
+		this.loginError = '';
+		try {
+			await this.auth.googleLogin();
+		} catch (error: any) {
+			this.loginError = error;
+  		this.cdRef.detectChanges();
+		}
 	}
 
-	githubLogin(): void {
-		this.auth.githubLogin();
+	async githubLogin(): Promise<void> {
+		this.loginError = '';
+		try {
+			await this.auth.githubLogin();
+		} catch (error: any) {
+			this.loginError = error;
+  		this.cdRef.detectChanges();
+		}
 	}
 
 	ngOnInit(): void {
