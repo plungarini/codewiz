@@ -15,4 +15,8 @@ export class MaintenanceService {
 	getStatus(): Observable<AppStatus | undefined> {
 		return this.db.getDoc<AppStatus>('app/status');
 	}
+
+	setStatus(data: Partial<AppStatus>) {
+		return this.db.upsert('app/status', data);
+	}
 }
