@@ -86,7 +86,23 @@ export class UsersListComponent implements OnDestroy {
 		this.searchSub.unsubscribe();
 	}
 
-	calculateUserRevenue(user: User): User {
+	trackBy(index: number, user: User) {
+		return user.id || index;
+	}
+
+	onSort(sortBy: FilterOrSortConfig['sort']['field']) {
+		this.order = this.sortBy === sortBy ? (this.order === 'desc' ? 'asc' : 'desc') : 'desc';
+		this.sortBy = sortBy;
+		this.onFilterOrSort$.next({
+			...this.defaultFilterOrSort,
+			sort: {
+				field: this.sortBy,
+				order: this.order,
+			},
+		});
+	}
+
+	private calculateUserRevenue(user: User): User {
 		let totalCost = 0;
 		let currentTotalCost = 0;
 		let totalPaid = 0;
@@ -127,26 +143,6 @@ export class UsersListComponent implements OnDestroy {
 		};
 
 		return { ...user, revenueDetails: revenue };
-	}
-
-	trackBy(index: number, user: User) {
-		return user.id || index;
-	}
-
-	onSort(sortBy: FilterOrSortConfig['sort']['field']) {
-		this.order = this.sortBy === sortBy ? (this.order === 'desc' ? 'asc' : 'desc') : 'desc';
-		this.sortBy = sortBy;
-		this.onFilterOrSort$.next({
-			...this.defaultFilterOrSort,
-			sort: {
-				field: this.sortBy,
-				order: this.order,
-			},
-		});
-	}
-
-	private onFilter(): void {
-
 	}
 
 	private filterOrSort(users: User[], options: FilterOrSortConfig): User[] {
