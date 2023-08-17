@@ -38,6 +38,8 @@ export type User = {
 	onboardingCompleted?: boolean;
 	details?: UserDetails;
 	permissions?: string[];
+	stripeId?: string;
+	stripeLink?: string;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
 }
