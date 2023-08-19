@@ -16,6 +16,7 @@ export type CompletionStat = {
 		totalTokens: number;
 		totalUSD: number;
 	};
+	chatCount?: number;
 	createdAt: Timestamp;
 	updatedAt: Timestamp;
 }

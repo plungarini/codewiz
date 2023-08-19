@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RepoStat } from '../../../../../../../shared/models/chat-stats.model';
-import { ChatStatsService } from '../../services/chat-stats.service';
+import { ChatStatsService } from '../../../../../../../shared/services/chat-stats.service';
 
 @Component({
   selector: 'app-chat-stats',
