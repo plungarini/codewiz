@@ -72,6 +72,7 @@ export class ChatViewComponent implements OnDestroy {
 					if (id && id !== this.chatId) {
 						this.chatId = id;
 						this.chatLoaded = false;
+						this.maxResultsLoaded = false;
 						this.oldChat = [];
 						this.cdRef.markForCheck();
 					}
@@ -131,7 +132,7 @@ export class ChatViewComponent implements OnDestroy {
 		} else if (isScrolledToBottom && this.showScrollToBottom) {
 			this.showScrollToBottom = false;
 			this.cdRef.markForCheck();
-		}		
+		}
 
 		if (scrolledToTop && !isScrolledToBottom && this.chat.length >= (this.messageLimit - 1) && !this.maxResultsLoaded) {
 			console.warn('Loading more messages...');
