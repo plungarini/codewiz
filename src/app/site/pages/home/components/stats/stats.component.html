@@ -1,0 +1,42 @@
+<div class="relative py-24 isolate sm:py-32">
+  <div class="relative px-6 mx-auto max-w-7xl lg:px-8">
+    <div class="absolute -bottom-8 -left-96 -z-10 transform-gpu blur-3xl sm:-bottom-64 sm:-left-40 lg:-bottom-32 lg:left-8 xl:-left-10" aria-hidden="true">
+      <div class="aspect-[1266/975] w-[79.125rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+    </div>
+    <div class="max-w-2xl mx-auto lg:mx-0 lg:max-w-xl">
+      <span class="relative inline-flex items-center px-2 py-1 space-x-2 text-xs font-medium text-white rounded-md bg-red-400/10 ring-1 ring-inset ring-red-400/20">
+				<div class="relative w-2 h-2">
+					<div class="absolute left-0 w-2 h-2 origin-center bg-red-400 rounded-full animate-ping"></div>
+					<div class="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
+				</div>
+				<span>Realtime Data</span>
+				<span class="absolute top-0 text-sm font-normal text-white/40 -right-3" aria-hidden="true">*</span>
+			</span>
+      <h3 class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+				<span class="inline text-transparent bg-gradient-to-r from-[#ec4899] to-[#8B5CF6] bg-clip-text">CodeWiz</span> Unwrapped: See the Buzz!
+			</h3>
+      <p class="mt-6 text-lg leading-8 text-zinc-300">Envision a realm where coding languages flourish, queries soar, and each interaction ignites fresh insights. Join the celebration of our collective journey!</p>
+    </div>
+    <dl class="grid max-w-2xl grid-cols-1 mx-auto mt-16 text-white gap-x-8 gap-y-10 sm:mt-20 sm:grid-cols-2 sm:gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-4">
+      <div class="flex flex-col pl-6 border-l gap-y-3 border-white/10">
+        <dt class="text-sm leading-6">Frameworks Blooming</dt>
+        <dd class="order-first text-3xl font-semibold tracking-tight">{{formatNumber(stats.reposCount)}}<span class="inline-block pl-1 text-white/40">+</span></dd>
+      </div>
+      <div class="flex flex-col pl-6 border-l gap-y-3 border-white/10">
+        <dt class="text-sm leading-6">Questions Fielded</dt>
+        <dd class="order-first text-3xl font-semibold tracking-tight">{{formatNumber(stats.promptCount)}}<span class="inline-block pl-1 text-white/40">+</span></dd>
+      </div>
+      <div class="flex flex-col pl-6 border-l gap-y-3 border-white/10">
+        <dt class="text-sm leading-6">Active Chats</dt>
+        <dd class="order-first text-3xl font-semibold tracking-tight">{{formatNumber(stats.chatCount)}}<span class="inline-block pl-1 text-white/40">+</span></dd>
+      </div>
+      <div class="flex flex-col pl-6 border-l gap-y-3 border-white/10">
+        <dt class="relative text-sm leading-6 w-fit">Onboarded Users<span class="absolute top-0 text-sm font-normal text-white/40 -right-4" aria-hidden="true">**</span></dt>
+        <dd class="order-first text-3xl font-semibold tracking-tight">{{formatNumber(stats.usersCount)}}<span class="inline-block pl-1 text-white/40">+</span></dd>
+      </div>
+    </dl>
+
+		<p class="mt-8 text-xs font-normal text-white/40">* Realtime data last updated at: {{stats.updatedAt | date:'medium'}}</p>
+		<p class="mt-2 text-xs font-normal text-white/40">** Realtime users count is calculated after the public release (on {{publicReleaseDate | date:'mediumDate'}})</p>
+  </div>
+</div>
