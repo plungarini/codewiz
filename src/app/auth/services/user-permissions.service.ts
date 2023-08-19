@@ -61,27 +61,4 @@ export class UserPermissionsService {
 			})
 		)
 	}
-
-	/**
-	 * Sets the permissions for the user and updates the database.
-	 *
-	 * @param {string[]} permissions - An array of strings representing the permissions to be set. Defaults to ['customer'] if not provided.
-	 * @return {Promise<void>} A Promise that resolves when the permissions have been successfully set in the database.
-	 * @throws {Error} Will throw an error if permissions are invalid for this route or if UID is not defined and unable to set permissions.
-	 */
-	async setPermissions(permissions: string[] = ['authenticated']): Promise<void> {
-		if (!permissions || permissions.length <= 0) throw new Error('Permissions are invalid for this route.');
-		const ref = await firstValueFrom(this.user.pipe(map(u => u && u.id ? `users/${u.id}/protected/role` : undefined)));
-		if (!ref) throw new Error('UID is not defined, unable to set permissions');
-		try {
-			const currentArr = (await firstValueFrom(this.user))?.permissions || [];
-			const normPermissions = new Set([
-				currentArr.map(p => p.toLowerCase().trim()),
-				...permissions.map(p => p.toLowerCase().trim())
-			]);
-			await this.db.upsert(ref, { permissions: normPermissions });
-		} catch (err) {
-			console.error(err);
-		}
-	}
 }
