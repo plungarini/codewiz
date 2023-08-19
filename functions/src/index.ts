@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import { error, warn } from 'firebase-functions/logger';
 import { HttpsError } from 'firebase-functions/v1/auth';
+import { addChatCountOnStats } from './functions/addChatCountOnStats';
 import { checkUserSubscription } from './functions/checkUserSubscription';
 import { disableUser as disableUserFn, isUserDisabled as isUserDisabledFn } from './functions/disableUser';
 import { sendEmailActionCode } from './functions/email_action_code';
@@ -9,6 +10,7 @@ import { githubFolderFetcher } from './functions/githubFetcher';
 import { scrapeDocumentedPage } from './functions/scraper';
 import { calculateTokens } from './functions/tiktoken';
 import { AiChatMessage } from './models/tiktoken/tiktoken.model';
+import { firestore } from './utils';
 
 
 const FFN = functions.region('europe-west2');
@@ -121,6 +123,13 @@ export const calculateOpenaiTokensOnReply = FFN
 		}
 	});
 
+export const calculateTotalChats = FFN
+	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
+	.firestore.document('users/{uid}/repos/{repo}/chats/{chatId}').onCreate(async (snap, ctx) => {
+		const { repo } = ctx.params;
+		await addChatCountOnStats(repo);
+	});
+
 export const canUserQuery = FFN
 	.runWith({ memory: '256MB', timeoutSeconds: 60, maxInstances: 100 })
 	.https.onRequest(async (req, res) => {
@@ -149,9 +158,20 @@ export const canUserQuery = FFN
 export const setDefaultPermissions = FFN
 	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
 	.firestore.document('users/{uid}').onCreate(async (snap) => {
-		const rolesRef = snap.ref.collection('protected').doc('roles');
+		const rolesRef = snap.ref.collection('protected').doc('role');
 		const doc = await rolesRef.get();
 		const data = doc.data();
+
+		const statsRef = firestore.doc('stats/users');
+		const statsDoc = await statsRef.get();
+		const statsData = statsDoc.data();
+
+		const statsNewData = {
+			...statsData,
+			usersCount: (statsData?.usersCount || 0) + 1,
+		};
+
+		await statsRef.set(statsNewData, { merge: true });
 
 		const newData = {
 			...data,
