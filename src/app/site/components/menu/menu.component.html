@@ -1,0 +1,276 @@
+<header class="w-full">
+	<nav
+		class="items-center justify-between hidden max-w-full p-6 mx-auto transition-all duration-300 ease-in-out rounded-md lg:px-8 md:flex"
+		aria-label="Global"
+	>
+		<div
+			[ngClass]="{
+				'opacity-100 -translate-y-0': !isScrolled,
+				'md:opacity-0 md:-translate-y-4': isScrolled,
+			}"
+			class="flex transition-all duration-300 ease-in-out md:flex-1"
+		>
+			<a routerLink="/" class="-m-1.5 p-1.5">
+				<span class="sr-only">CodeWiz</span>
+				<img src="assets/logo/svg/codewiz_logo.svg" class="w-auto h-8" width="1" height="1" alt="CodeWiz">
+			</a>
+		</div>
+		<div class="flex md:hidden">
+			<button type="button" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-zinc-400">
+				<span class="sr-only">Open main menu</span>
+				<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+				</svg>
+			</button>
+		</div>
+		<div
+			[ngClass]="{
+				'md:gap-x-0': !isScrolled,
+				'md:gap-x-8 bg-black/[0.85] shadow-2xl ring-2 ring-black': isScrolled,
+			}"
+			class="items-center hidden px-1 py-1 overflow-hidden transition-all duration-300 ease-in-out rounded-full shadow-black md:flex backdrop-blur"
+		>
+			<div class="flex px-8 gap-x-12">
+				<a
+					[ngClass]="{
+						'text-white': currentPage === 'home',
+						'text-white/50 hover:text-white/70': currentPage !== 'home',
+					}"
+					routerLink="/"
+					class="text-sm font-semibold tracking-wide transition-colors duration-300"
+				>Home</a>
+				<a
+					[ngClass]="{
+						'text-white': currentPage === 'features',
+						'text-white/50 hover:text-white/70': currentPage !== 'features',
+					}"
+					routerLink="/features"
+					class="text-sm font-semibold tracking-wide transition-colors duration-300"
+				>Features</a>
+				<a
+					[ngClass]="{
+						'text-white': currentPage === 'pricing',
+						'text-white/50 hover:text-white/70': currentPage !== 'pricing',
+					}"
+					routerLink="/pricing"
+					class="text-sm font-semibold tracking-wide transition-colors duration-300"
+				>Pricing</a>
+			</div>
+			<a
+				[ngClass]="{
+					'opacity-0 -mr-[9.75rem] pointer-events-none': !isScrolled,
+					'opacity-100 -mr-0': isScrolled,
+				}"
+				routerLink="/auth/signup"
+				class="flex items-center px-3 py-1 space-x-2 text-xs font-semibold text-white transition-all duration-500 bg-teal-600 rounded-full shadow-sm backdrop-blur-sm hover:bg-teal-500 ring-2 ring-offset-1 ring-offset-zinc-950 ring-teal-400 hover:ring-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+			>
+				<span>Get Instant Answers</span>
+				<svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+						<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+							<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+							<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+						</g>
+					</g>
+				</svg>
+			</a>
+		</div>
+		<div
+			[ngClass]="{
+				'opacity-100 -translate-y-0 delay-300': !isScrolled,
+				'opacity-0 -translate-y-4': isScrolled,
+			}"
+			class="hidden transition-all duration-300 ease-in-out md:flex md:flex-1 md:justify-end"
+		>
+			<a
+				routerLink="/auth/signup"
+				class="rounded-full bg-teal-600 backdrop-blur-sm px-3 py-1.5 flex items-center space-x-2 text-xs font-semibold text-white shadow-sm hover:bg-teal-500 hover:ring-2 hover:ring-offset-1 ring-offset-zinc-950 ring-teal-400 hover:ring-teal-400 transition-all duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+			>
+				<span>Get Instant Answers</span>
+				<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+						<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+							<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+							<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+						</g>
+					</g>
+				</svg>
+			</a>
+		</div>
+	</nav>
+
+	<div
+		[ngClass]="{
+			'pointer-events-auto opacity-50': menuOpen,
+			'pointer-events-none opacity-0': !menuOpen,
+		}"
+		class="fixed inset-0 w-screen h-screen transition-opacity duration-300 bg-black md:hidden"
+		(click)="toggleMenu(false)"
+	></div>
+
+	<div class="relative z-10 w-full pt-6 md:hidden">
+		<div class="w-full px-4">
+			<div
+				[ngClass]="{
+					'bg-black/70 ring-1 shadow-lg overflow-hidden': isScrolled,
+					'bg-transparent': !isScrolled
+				}"
+				class="flex items-center justify-between w-full py-1 space-x-8 z-[60] transition-all duration-300 ring-zinc-900 relative shadow-zinc-800/5 rounded-md backdrop-blur text-zinc-200"
+			>
+				<a routerLink="/app" class="block h-full pl-4 w-fit max-h-7 grow-0 shrink-0">
+					<img src="assets/logo/svg/codewiz_logo.svg" class="w-auto h-7" width="1" height="1" alt="CodeWiz">
+				</a>
+
+				<div class="flex-1 h-7"></div>
+
+				<div class="px-4 py-2 cursor-pointer" (click)="toggleMenu()">
+					<div
+						[ngClass]="{
+							'opacity-40': menuOpen,
+							'opacity-100': !menuOpen,
+						}"
+						class="flex flex-col items-center justify-between w-5 h-5 transition-all duration-300 shrink-0 py-[2px]">
+						<div
+							[ngClass]="{
+								'translate-y-[0.435rem] rotate-45 bg-zinc-50': menuOpen,
+								'translate-y-0 rotate-0 bg-zinc-500': !menuOpen,
+							}"
+							class="transition-all duration-300 origin-center w-full bg-zinc-500 rounded-md h-[2px]"
+						></div>
+						<div
+							[ngClass]="{
+								'-rotate-45': menuOpen,
+								'-rotate-0': !menuOpen,
+							}"
+							class="transition-all duration-300 origin-center bg-zinc-50 w-full h-[2px]"
+						></div>
+						<div
+							[ngClass]="{
+								'translate-y-1.5 opacity-0': menuOpen,
+								'translate-y-0 opacity-100': !menuOpen,
+							}"
+							class="transition-all duration-300 bg-zinc-500 rounded-md w-full h-[2px]"
+						></div>
+					</div>
+				</div>
+			</div>
+			<div
+				[ngClass]="{
+					'pointer-events-none': !menuOpen,
+					'pointer-events-auto': menuOpen
+				}"
+				class="transition-all duration-300"
+			>
+				<div
+					[ngClass]="{
+						'opacity-0 !top-14': !menuOpen,
+						'opacity-100 !top-20': menuOpen
+					}"
+					class="fixed z-50 p-4 transition-all duration-300 origin-top scale-100 rounded-md opacity-100 inset-x-4 ring-1 bg-black/80 backdrop-blur-md ring-zinc-900"
+					tabindex="-1"
+				>
+					
+					<nav>
+						<ul class="-my-2 space-y-2 text-base text-zinc-300">
+							
+							<li class="w-full">
+								<a
+									routerLink="/"
+									(click)="toggleMenu(false)"
+									[ngClass]="{
+										'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'home',
+										'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'home'
+									}"
+									class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
+								>
+									Home
+								</a>
+							</li>
+							
+							<li class="w-full">
+								<a
+									routerLink="/features"
+									(click)="toggleMenu(false)"
+									[ngClass]="{
+										'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'features',
+										'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'features'
+									}"
+									class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
+								>
+									Features
+								</a>
+							</li>
+							
+							<li class="w-full">
+								<a
+									routerLink="/pricing"
+									(click)="toggleMenu(false)"
+									[ngClass]="{
+										'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'pricing',
+										'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'pricing'
+									}"
+									class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
+								>
+									Pricing
+								</a>
+							</li>
+							
+							<li class="w-full pb-2">
+								<div class="mb-2 border-b border-zinc-100/5"></div>
+
+								<a
+									routerLink="/auth/signup"
+									class="flex items-center justify-center px-3 py-2 mt-4 space-x-2 text-sm font-semibold text-white transition-all duration-500 bg-teal-600 rounded-md shadow-sm backdrop-blur-sm hover:bg-teal-500 ring-2 ring-offset-1 ring-offset-zinc-950 ring-teal-400 hover:ring-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+								>
+									<span>Get Instant Answers</span>
+									<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+										<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+											<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+												<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+												<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+											</g>
+										</g>
+									</svg>
+								</a>
+							</li>
+							
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- <div class="hidden lg:hidden" role="dialog" aria-modal="true">
+
+		<div class="fixed inset-0 z-50"></div>
+		<div class="fixed inset-y-0 right-0 z-50 w-full px-6 py-6 overflow-y-auto bg-white sm:max-w-sm sm:ring-1 sm:ring-zinc-100/10">
+			<div class="flex items-center justify-between">
+				<a routerLink="/" class="-m-1.5 p-1.5">
+					<span class="sr-only">CodeWiz</span>
+					<img class="w-auto h-8" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="">
+				</a>
+				<button type="button" class="-m-2.5 rounded-md p-2.5 text-zinc-400">
+					<span class="sr-only">Close menu</span>
+					<svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</div>
+			<div class="flow-root mt-6">
+				<div class="-my-6 divide-y divide-zinc-500/10">
+					<div class="py-6 space-y-2">
+						<a href="#" class="block px-3 py-2 -mx-3 text-base font-semibold leading-7 rounded-lg text-zinc-100 hover:bg-zinc-50">Product</a>
+						<a href="#" class="block px-3 py-2 -mx-3 text-base font-semibold leading-7 rounded-lg text-zinc-100 hover:bg-zinc-50">Features</a>
+						<a href="#" class="block px-3 py-2 -mx-3 text-base font-semibold leading-7 rounded-lg text-zinc-100 hover:bg-zinc-50">Marketplace</a>
+						<a href="#" class="block px-3 py-2 -mx-3 text-base font-semibold leading-7 rounded-lg text-zinc-100 hover:bg-zinc-50">Company</a>
+					</div>
+					<div class="py-6">
+						<a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-zinc-100 hover:bg-zinc-50">Log in</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> -->
+</header>
