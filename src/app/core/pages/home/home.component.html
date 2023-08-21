@@ -1,29 +1,37 @@
-<div class="w-full h-full max-h-full py-6 pt-24 sm:overflow-hidden sm:overflow-y-auto sm:pt-6">
-	<app-banner
-		[name]="getName((user$ | async)?.displayName)"
-	></app-banner>
+<div class="absolute inset-x-0 overflow-hidden opacity-40 -top-32 -z-10 transform-gpu blur-3xl sm:-top-80" aria-hidden="true">
+	<div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+</div>
 
-	<div class="px-6 py-6">
-		<div class="grid w-full max-w-2xl grid-cols-1 mx-auto mb-8 space-y-8 md:space-y-0 md:grid-cols-2">
-			<div>
-				<h3 class="text-base font-semibold leading-6 text-zinc-500">Profile details</h3>
-				<app-profile-overview></app-profile-overview>
-			</div>
-			<div>
-				<h3 class="text-base font-semibold leading-6 text-zinc-500">Subscription details</h3>
-				<app-subscription-overview></app-subscription-overview>
-			</div>
-		</div>
+<div class="w-full h-full max-h-full px-6 py-6 pt-24 sm:overflow-hidden sm:overflow-y-auto sm:pt-6">
 
-		<div class="grid w-full max-w-2xl grid-cols-1 mx-auto space-y-8 md:space-y-0 md:grid-cols-2">
-			<div>
-				<h3 class="text-base font-semibold leading-6 text-zinc-500">Latest chats</h3>
-				<app-latest-chats></app-latest-chats>
+	<div class="relative max-w-2xl mx-auto sm:mt-16">
+		<h2 class="relative z-10 flex-1 mt-12 mb-8 text-4xl">Welcome back<span *ngIf="getName((user$ | async)?.displayName) as name">,<br/>{{name}}</span></h2>
+	
+		<div>
+			<div class="flex flex-col w-full max-w-2xl mx-auto mt-4 mb-8 gap-x-0 gap-y-8 sm:gap-x-4 sm:gap-y-0 sm:flex-row">
+				<div>
+					<app-profile-overview></app-profile-overview>
+				</div>
+				<div>
+					<app-subscription-overview></app-subscription-overview>
+				</div>
 			</div>
-			<div>
-				<h3 class="text-base font-semibold leading-6 text-zinc-500">Community ideas</h3>
-				<app-ideas></app-ideas>
+	
+			<div class="grid w-full max-w-2xl grid-cols-1 mx-auto space-y-8 md:space-y-0 md:grid-cols-2">
+				<div>
+					<h3 class="text-base font-semibold leading-6 text-zinc-500">Latest chats</h3>
+					<app-latest-chats></app-latest-chats>
+				</div>
+				<div>
+					<h3 class="text-base font-semibold leading-6 text-zinc-500">Community ideas</h3>
+					<app-ideas></app-ideas>
+				</div>
 			</div>
 		</div>
 	</div>
+
+</div>
+
+<div class="absolute inset-x-0 opacity-40 top-[calc(100%-13rem)] sm:block hidden -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+	<div class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
 </div>
