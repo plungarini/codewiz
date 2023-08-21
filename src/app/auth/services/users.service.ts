@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { QueryConstraint, Timestamp, where } from '@angular/fire/firestore';
 import { getAuth, User } from '@firebase/auth';
 import { user } from 'rxfire/auth';
-import { combineLatest, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import { combineLatest, defaultIfEmpty, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { StripeSubscriptionInvoice } from '../models/subscription-invoices.model';
 import { StripeSubscription } from '../models/subscription.model';
@@ -146,12 +146,12 @@ export class UsersService {
 						switchMap(docs => {
 							const usages = docs.map(doc => {
 								return this.db.getCol<UserUsageDetails>(`users/${user.id}/protected/usages/${doc.id}`).pipe(
-									map(stats => ({ id: doc.id, stats } as UserUsages))
+									map(stats => ({ id: doc.id, stats } as UserUsages)),
 								)
 							});
 							return combineLatest(usages);
 						}),
-						map(usages => ({ ...user, usages }))
+						map(usages => ({ ...user, usages })),
 					)
 				});
 				return combineLatest(observables);
@@ -195,14 +195,20 @@ export class UsersService {
 			switchMap(users => {
 				const observables = users.map(user =>
 					this.db.getCol<StripeSubscription>(`users/${user.id}/subscriptions`).pipe(
+						defaultIfEmpty([]),
 						switchMap((subsc) => {
 							const invoicesObservables = subsc.map(sub => {
 								return this.db
 									.getCol<StripeSubscriptionInvoice>(`users/${user.id}/subscriptions/${sub.id}/invoices`)
-									.pipe(map((invoices) => ({ ...sub, invoices } as StripeSubscription)));
+									.pipe(
+										defaultIfEmpty([]),
+										map((invoices) => ({ ...sub, invoices } as StripeSubscription)),
+									);
 							});
-							return combineLatest(invoicesObservables);
+							return combineLatest(invoicesObservables)
+								.pipe(defaultIfEmpty([]));
 						}),
+						defaultIfEmpty([]),
 						map(subscriptions => {
 							return {
 								...user,
@@ -211,7 +217,8 @@ export class UsersService {
 						})
 					)
 				);
-				return combineLatest(observables);
+				return combineLatest(observables)
+					.pipe(defaultIfEmpty([]));
 			})
 		)
 	}
@@ -227,13 +234,14 @@ export class UsersService {
 			switchMap(user => {
 				if (!user) return of(undefined);
 				return this.db.getCol<StripeSubscription>(`users/${user.id}/subscriptions`).pipe(
+					defaultIfEmpty([]),
 					switchMap((subsc) => {
 						const invoicesObservables = subsc.map(sub => {
 							return this.db
 								.getCol<StripeSubscriptionInvoice>(`users/${user.id}/subscriptions/${sub.id}/invoices`)
 								.pipe(map((invoices) => ({ ...sub, invoices } as StripeSubscription)));
 						});
-						return combineLatest(invoicesObservables);
+						return combineLatest(invoicesObservables).pipe(defaultIfEmpty([]));
 					}),
 					map(subscriptions => {
 						return {
