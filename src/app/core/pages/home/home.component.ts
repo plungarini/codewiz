@@ -6,7 +6,7 @@ import { UsersService } from 'src/app/auth/services/users.service';
   styles: [
     `
       :host {
-        @apply block w-full max-h-full;
+        @apply block w-full sm:max-h-full;
       }
     `
   ],
