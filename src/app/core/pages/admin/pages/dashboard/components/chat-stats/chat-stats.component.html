@@ -172,157 +172,159 @@
       </dd>
     </div>
   </dl>
-	<table class="w-full max-w-full mt-2 rounded-lg shadow bg-zinc-900">
-		<thead class="max-h-full overflow-y-auto">
-			<tr class="border-b border-zinc-800">
-				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Name</th>
-				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Count</th>
-				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Cost</th>
-				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Question</th>
-				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Prompt</th>
-				<th class="px-4 py-3 text-sm font-normal text-zinc-100">Completion</th>
-			</tr>
-		</thead>
-		<tbody *ngIf="(stats$ | async)?.length; else repoStatsSkeleton">
-			<tr *ngFor="let stat of (stats$ | async); trackBy: trackBy">
-				<td class="px-4 py-4 text-sm text-center no-underline transition-colors duration-300 hover:underline decoration-indigo-400 text-zinc-100 hover:text-indigo-400">
-					<a [routerLink]="['/app/admin/repos/edit', stat.id]">{{stat.id}}</a>
-				</td>
-				<td class="px-4 py-4 text-sm">
-					<div class="flex items-center justify-center w-full space-x-2">
-						<div class="text-sm font-semibold text-zinc-400">
-							{{getTotalCount([stat])}}
-						</div>
-	
-						<div
-							*ngIf="getPriceDifference(getTotalCount([stat]), getTotalCountLastMonth([stat])) as difference"
-							[ngClass]="{
-								'text-teal-400': difference > 0,
-								'text-red-400': difference <= 0,
-							}"
-							class="hidden text-sm font-medium scale-90 lg:block"
-						>
-							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
-						</div>
-					</div>
-				</td>
-				<td class="px-4 py-4 text-sm">
-					<div class="flex items-center justify-center w-full space-x-2">
-						<div [title]="getTotalCost([stat])" class="text-sm font-semibold text-zinc-400">
-							${{getTotalCost([stat]) | number:'1.4-4'}}
-						</div>
-	
-						<div
-							*ngIf="getPriceDifference(getTotalCost([stat]), getTotalCostLastMonth([stat])) as difference"
-							[ngClass]="{
-								'text-teal-400': difference <= 0,
-								'text-red-400': difference > 0,
-							}"
-							class="hidden text-sm font-medium scale-90 lg:block"
-						>
-							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
-						</div>
-					</div>
-				</td>
-				<td class="px-4 py-4 text-sm">
-					<div class="flex items-center justify-center w-full space-x-2">
-						<div [title]="getPricePerQuestion([stat])" class="text-sm font-semibold text-zinc-400">
-							${{getPricePerQuestion([stat]) | number:'1.4-4'}}
-						</div>
-	
-						<div
-							*ngIf="getPriceDifference(getPricePerQuestion([stat]), getPricePerQuestionLastMonth([stat])) as difference"
-							[ngClass]="{
-								'text-teal-400': difference <= 0,
-								'text-red-400': difference > 0,
-							}"
-							class="hidden text-sm font-medium scale-90 lg:block"
-						>
-							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
-						</div>
-					</div>
-				</td>
-				<td class="px-4 py-4 text-sm">
-					<div class="flex items-center justify-center w-full space-x-2">
-						<div [title]="getPricePerPrompt([stat])" class="text-sm font-semibold text-zinc-400">
-							${{getPricePerPrompt([stat]) | number:'1.4-4'}}
-						</div>
-	
-						<div
-							*ngIf="getPriceDifference(getPricePerPrompt([stat]), getPricePerPromptLastMonth([stat])) as difference"
-							[ngClass]="{
-								'text-teal-400': difference <= 0,
-								'text-red-400': difference > 0,
-							}"
-							class="hidden text-sm font-medium scale-90 lg:block"
-						>
-							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
-						</div>
-					</div>
-				</td>
-				<td class="px-4 py-4 text-sm">
-					<div class="flex items-center justify-center w-full space-x-2">
-						<div [title]="getPricePerCompletion([stat])" class="text-sm font-semibold text-zinc-400">
-							${{getPricePerCompletion([stat]) | number:'1.4-4'}}
-						</div>
-	
-						<div
-							*ngIf="getPriceDifference(getPricePerCompletion([stat]), getPricePerCompletionLastMonth([stat])) as difference"
-							[ngClass]="{
-								'text-teal-400': difference <= 0,
-								'text-red-400': difference > 0,
-							}"
-							class="hidden text-sm font-medium scale-90 lg:block"
-						>
-							{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
-						</div>
-					</div>
-				</td>
-			</tr>
-		</tbody>
-		<ng-template #repoStatsSkeleton>
-			<tbody>
-				<tr *ngFor="let stat of [1, 2, 3]">
-					<td class="px-4 py-4">
-						<div class="h-5 mx-auto rounded-md w-14 bg-zinc-100 animate-pulse"></div>
+	<dl class="w-full max-w-full overflow-y-auto">
+		<table class="w-full max-w-full mt-2 rounded-lg shadow bg-zinc-900">
+			<thead class="max-h-full overflow-y-auto">
+				<tr class="border-b border-zinc-800">
+					<th class="px-4 py-3 text-sm font-normal text-zinc-100">Name</th>
+					<th class="px-4 py-3 text-sm font-normal text-zinc-100">Count</th>
+					<th class="px-4 py-3 text-sm font-normal text-zinc-100">Cost</th>
+					<th class="px-4 py-3 text-sm font-normal text-zinc-100">Question</th>
+					<th class="px-4 py-3 text-sm font-normal text-zinc-100">Prompt</th>
+					<th class="px-4 py-3 text-sm font-normal text-zinc-100">Completion</th>
+				</tr>
+			</thead>
+			<tbody *ngIf="(stats$ | async)?.length; else repoStatsSkeleton">
+				<tr *ngFor="let stat of (stats$ | async); trackBy: trackBy">
+					<td class="px-4 py-4 text-sm text-center no-underline transition-colors duration-300 hover:underline decoration-indigo-400 text-zinc-100 hover:text-indigo-400">
+						<a [routerLink]="['/app/admin/repos/edit', stat.id]">{{stat.id}}</a>
 					</td>
 					<td class="px-4 py-4 text-sm">
 						<div class="flex items-center justify-center w-full space-x-2">
-							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+							<div class="text-sm font-semibold text-zinc-400">
+								{{getTotalCount([stat])}}
+							</div>
 		
-							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							<div
+								*ngIf="getPriceDifference(getTotalCount([stat]), getTotalCountLastMonth([stat])) as difference"
+								[ngClass]="{
+									'text-teal-400': difference > 0,
+									'text-red-400': difference <= 0,
+								}"
+								class="hidden text-sm font-medium scale-90 lg:block"
+							>
+								{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+							</div>
 						</div>
 					</td>
 					<td class="px-4 py-4 text-sm">
 						<div class="flex items-center justify-center w-full space-x-2">
-							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+							<div [title]="getTotalCost([stat])" class="text-sm font-semibold text-zinc-400">
+								${{getTotalCost([stat]) | number:'1.4-4'}}
+							</div>
 		
-							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							<div
+								*ngIf="getPriceDifference(getTotalCost([stat]), getTotalCostLastMonth([stat])) as difference"
+								[ngClass]="{
+									'text-teal-400': difference <= 0,
+									'text-red-400': difference > 0,
+								}"
+								class="hidden text-sm font-medium scale-90 lg:block"
+							>
+								{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+							</div>
 						</div>
 					</td>
 					<td class="px-4 py-4 text-sm">
 						<div class="flex items-center justify-center w-full space-x-2">
-							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+							<div [title]="getPricePerQuestion([stat])" class="text-sm font-semibold text-zinc-400">
+								${{getPricePerQuestion([stat]) | number:'1.4-4'}}
+							</div>
 		
-							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							<div
+								*ngIf="getPriceDifference(getPricePerQuestion([stat]), getPricePerQuestionLastMonth([stat])) as difference"
+								[ngClass]="{
+									'text-teal-400': difference <= 0,
+									'text-red-400': difference > 0,
+								}"
+								class="hidden text-sm font-medium scale-90 lg:block"
+							>
+								{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+							</div>
 						</div>
 					</td>
 					<td class="px-4 py-4 text-sm">
 						<div class="flex items-center justify-center w-full space-x-2">
-							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+							<div [title]="getPricePerPrompt([stat])" class="text-sm font-semibold text-zinc-400">
+								${{getPricePerPrompt([stat]) | number:'1.4-4'}}
+							</div>
 		
-							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							<div
+								*ngIf="getPriceDifference(getPricePerPrompt([stat]), getPricePerPromptLastMonth([stat])) as difference"
+								[ngClass]="{
+									'text-teal-400': difference <= 0,
+									'text-red-400': difference > 0,
+								}"
+								class="hidden text-sm font-medium scale-90 lg:block"
+							>
+								{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+							</div>
 						</div>
 					</td>
 					<td class="px-4 py-4 text-sm">
 						<div class="flex items-center justify-center w-full space-x-2">
-							<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+							<div [title]="getPricePerCompletion([stat])" class="text-sm font-semibold text-zinc-400">
+								${{getPricePerCompletion([stat]) | number:'1.4-4'}}
+							</div>
 		
-							<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							<div
+								*ngIf="getPriceDifference(getPricePerCompletion([stat]), getPricePerCompletionLastMonth([stat])) as difference"
+								[ngClass]="{
+									'text-teal-400': difference <= 0,
+									'text-red-400': difference > 0,
+								}"
+								class="hidden text-sm font-medium scale-90 lg:block"
+							>
+								{{difference > 0 ? '+': ''}}{{difference | integerNumber}}%
+							</div>
 						</div>
 					</td>
 				</tr>
 			</tbody>
-		</ng-template>
-	</table>
+			<ng-template #repoStatsSkeleton>
+				<tbody>
+					<tr *ngFor="let stat of [1, 2, 3]">
+						<td class="px-4 py-4">
+							<div class="h-5 mx-auto rounded-md w-14 bg-zinc-100 animate-pulse"></div>
+						</td>
+						<td class="px-4 py-4 text-sm">
+							<div class="flex items-center justify-center w-full space-x-2">
+								<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+			
+								<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							</div>
+						</td>
+						<td class="px-4 py-4 text-sm">
+							<div class="flex items-center justify-center w-full space-x-2">
+								<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+			
+								<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							</div>
+						</td>
+						<td class="px-4 py-4 text-sm">
+							<div class="flex items-center justify-center w-full space-x-2">
+								<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+			
+								<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							</div>
+						</td>
+						<td class="px-4 py-4 text-sm">
+							<div class="flex items-center justify-center w-full space-x-2">
+								<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+			
+								<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							</div>
+						</td>
+						<td class="px-4 py-4 text-sm">
+							<div class="flex items-center justify-center w-full space-x-2">
+								<div class="h-5 rounded-md animate-pulse bg-zinc-400 w-9"></div>
+			
+								<div class="hidden w-8 h-5 text-sm font-medium scale-90 rounded-md bg-zinc-500 lg:block animate-pulse"></div>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</ng-template>
+		</table>
+	</dl>
 </div>
