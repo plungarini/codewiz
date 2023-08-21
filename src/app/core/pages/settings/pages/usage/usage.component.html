@@ -20,7 +20,7 @@
 					[percentage]="(user$ | async) ? getRemainingDaysPerc((user$ | async)?.subscriptions?.at(0)) : 0"
 					[remaining]="(user$ | async) ? getRemainingDays((user$ | async)?.subscriptions?.at(0)) : 0"
 					theme="light"
-					class="shrink-0"
+					class="w-10 shrink-0"
 				></app-subscription-remaining>
 
 				<ng-container *ngIf="(product$ | async) as product; else noSubscriptionSkeleton">
