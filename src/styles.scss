@@ -8,6 +8,7 @@
 
 // Scrollbar
 html,
+body,
 ul {
 	.no-scrollbar::-webkit-scrollbar-thumb {
 		border: 0px;
@@ -94,13 +95,11 @@ input[type=number] {
 // Add media query for mobile
 @media (max-width: 640px) {
 	html {
-		overflow: hidden;
+		overflow-x: hidden;
 		width: 100%;
 	}
 	body {
-		height: 100%;
 		width: 100%;
-		position: fixed;
-		overflow-y: auto;
+		overflow-x: hidden;
 	}
 }
