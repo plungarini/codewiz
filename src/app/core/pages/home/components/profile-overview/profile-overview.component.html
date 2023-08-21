@@ -1,11 +1,11 @@
 <ng-template #noUserSkeleton>
-	<dd class="flex items-center mt-4 space-x-4 shrink-0">
-		<div
-			class="w-12 h-12 rounded-md bg-zinc-600 animate-pulse shrink-0"
-		></div>
+	<h3 class="mb-10 text-sm font-semibold text-zinc-500">Profile Details</h3>
+	<div class="w-8 h-8 rounded-md bg-zinc-600 animate-pulse shrink-0"></div>
+
+	<div class="flex items-center mt-4 space-x-4 shrink-0">
 		<div class="max-w-full">
-			<span class="block h-6 max-w-full rounded-md w-36 bg-pink-600/80 animate-pulse"></span>
-			<span class="block w-24 h-4 max-w-full mt-1 rounded-md bg-zinc-600 animate-pulse"></span>
+			<span class="block h-6 max-w-full rounded-md w-36 bg-zinc-300 animate-pulse"></span>
+			<span class="block w-24 h-3 max-w-full mt-1 rounded-md bg-zinc-600 animate-pulse"></span>
 		</div>
 		<div class="flex-1"></div>
 		<a class="self-start p-1 transition-all duration-300 rounded-md cursor-pointer shrink-0 hover:bg-zinc-700 text-zinc-600 hover:text-zinc-50">
@@ -18,27 +18,29 @@
 				</g>
 			</svg>
 		</a>
-	</dd>
+	</div>
 </ng-template>
 
-<div class="overflow-hidden md:pb-5 md:rounded-r-none md:pr-4 md:border-r border-zinc-800">
+<div class="px-5 py-4 overflow-hidden transition-all duration-300 shadow-2xl rounded-xl border-zinc-800 from-black/60 to-zinc-900/90 bg-gradient-to-tr backdrop-blur hover:ring-4 ring-zinc-900 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950 ring-offset-zinc-950">
 	<ng-container *ngIf="(user$ | async) as user; else noUserSkeleton">
 		<ng-container *ngIf="(fireUser$ | async) as fireUser; else noUserSkeleton">
-			<div class="flex items-center mt-4 space-x-4 shrink-0">
-				<img
-					ixImg
-					[path]="user.details?.imgUrl || fireUser.photoURL || 'assets/404_pip_image.png'"
-					[alt]="user.name || fireUser.displayName || 'Anonymous'"
-					[width]="1"
-					[height]="1"
-					class="object-cover object-center w-12 h-12 rounded-md"
-				>
-				<p class="max-w-full text-lg font-semibold leading-5 truncate shrink text-pink-500/80">
+			<h3 class="mb-10 text-sm font-semibold text-zinc-500">Profile Details</h3>
+
+			<img
+				ixImg
+				[path]="user.details?.imgUrl || fireUser.photoURL || 'assets/404_pip_image.png'"
+				[alt]="user.name || fireUser.displayName || 'Anonymous'"
+				[width]="1"
+				[height]="1"
+				class="object-cover object-center w-8 h-8 rounded-md"
+			>
+			<div class="flex items-center justify-between mt-4 space-x-4 md:space-x-8 shrink-0">
+				<p class="max-w-full text-lg font-semibold leading-5 text-white truncate shrink">
 					<span class="truncate">{{user.name || fireUser.displayName || 'Anonymous'}}</span>
 					<span class="block text-sm font-medium truncate text-zinc-500">{{fireUser.email}}</span>
 				</p>
-				<div class="flex-1"></div>
-				<a routerLink="/app/settings" class="self-start p-1 transition-all duration-300 rounded-md cursor-pointer shrink-0 hover:bg-zinc-700 text-zinc-600 hover:text-zinc-50">
+				
+				<a routerLink="/app/settings" class="p-1 transition-all duration-300 rounded-md cursor-pointer shrink-0 hover:bg-zinc-700 text-zinc-600 hover:text-zinc-50">
 					<svg class="w-6 h-6" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 						<g id="Iconly/Light/Setting" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
 							<g id="Setting" transform="translate(2.500000, 1.500000)" stroke="currentColor" stroke-width="1.5" >
