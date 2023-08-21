@@ -109,12 +109,11 @@
 	(click)="toggleMenu(false)"
 ></div>
 
-<div class="fixed top-0 z-[1000] w-screen left-0 pt-6 md:hidden">
-
+<div class="fixed top-0 z-[1000] w-screen left-0 md:hidden bg-zinc-950/90 border-b border-zinc-900 shadow-lg shadow-black/10 backdrop-blur">
 	<div class="w-full px-4">
-		<div class="flex items-center justify-between bg-black/70 ring-1 shadow-lg overflow-hidden w-full py-1 space-x-8 z-[60] transition-all duration-300 ring-zinc-900 relative shadow-zinc-800/5 rounded-md backdrop-blur text-zinc-200">
+		<div class="flex items-center justify-between pt-5 pb-3 overflow-hidden w-full py-1 space-x-8 z-[1002] transition-all duration-300 relative text-zinc-200">
 			<a routerLink="/app" class="block h-full pl-4 w-fit max-h-7 grow-0 shrink-0">
-				<img src="assets/logo/svg/codewiz_logo.svg" alt="CodeWiz" class="w-full max-h-7">
+				<img src="assets/logo/svg/codewiz_logo.svg" alt="CodeWiz" class="w-auto h-7">
 			</a>
 
 			<div class="flex-1 h-7"></div>
@@ -150,19 +149,20 @@
 				</div>
 			</div>
 		</div>
+
 		<div
 			[ngClass]="{
 				'pointer-events-none': !menuOpen,
 				'pointer-events-auto': menuOpen
 			}"
-			class="transition-all duration-300"
+			class="relative z-[1001] transition-all duration-300"
 		>
 			<div
 				[ngClass]="{
 					'opacity-0 !top-14': !menuOpen,
 					'opacity-100 !top-20': menuOpen
 				}"
-				class="fixed z-50 p-4 transition-all duration-300 origin-top scale-100 rounded-md opacity-100 inset-x-4 ring-1 bg-black/80 backdrop-blur-md ring-zinc-900"
+				class="fixed p-4 transition-all duration-300 origin-top scale-100 rounded-md opacity-100 inset-x-4 ring-1 bg-black/80 backdrop-blur-md ring-zinc-900"
 				tabindex="-1"
 			>
 				<h3 class="text-sm font-medium text-zinc-400">Menu</h3>
@@ -175,7 +175,7 @@
 								routerLink="/app"
 								(click)="toggleMenu(false)"
 								[ngClass]="{
-									'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'app',
+									'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'app',
 									'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'app'
 								}"
 								class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
@@ -197,7 +197,7 @@
 								routerLink="/app/chat"
 								(click)="toggleMenu(false)"
 								[ngClass]="{
-									'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'chat',
+									'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'chat',
 									'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'chat'
 								}"
 								class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
@@ -223,7 +223,7 @@
 									routerLink="/app/admin"
 									(click)="toggleMenu(false)"
 									[ngClass]="{
-										'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'admin',
+										'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'admin',
 										'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'admin'
 									}"
 									class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
@@ -249,7 +249,7 @@
 								routerLink="/app/settings"
 								(click)="toggleMenu(false)"
 								[ngClass]="{
-									'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'settings',
+									'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'settings',
 									'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'settings'
 								}"
 								class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"

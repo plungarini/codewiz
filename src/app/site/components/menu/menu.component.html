@@ -57,14 +57,15 @@
 				>Pricing</a>
 			</div>
 			<a
+				*ngIf="(user$ | async) as user; else fallback1"
 				[ngClass]="{
 					'opacity-0 -mr-[9.75rem] pointer-events-none': !isScrolled,
 					'opacity-100 -mr-0': isScrolled,
 				}"
-				routerLink="/auth/signup"
+				routerLink="/app"
 				class="flex items-center px-3 py-1 space-x-2 text-xs font-semibold text-white transition-all duration-500 bg-teal-600 rounded-full shadow-sm backdrop-blur-sm hover:bg-teal-500 ring-2 ring-offset-1 ring-offset-zinc-950 ring-teal-400 hover:ring-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
 			>
-				<span>Get Instant Answers</span>
+				<span>Head to Your Hub</span>
 				<svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
 						<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
@@ -74,6 +75,26 @@
 					</g>
 				</svg>
 			</a>
+			<ng-template #fallback1>
+				<a
+					[ngClass]="{
+						'opacity-0 -mr-[9.75rem] pointer-events-none': !isScrolled,
+						'opacity-100 -mr-0': isScrolled,
+					}"
+					routerLink="/auth/signup"
+					class="flex items-center px-3 py-1 space-x-2 text-xs font-semibold text-white transition-all duration-500 bg-teal-600 rounded-full shadow-sm backdrop-blur-sm hover:bg-teal-500 ring-2 ring-offset-1 ring-offset-zinc-950 ring-teal-400 hover:ring-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+				>
+					<span>Get Instant Answers</span>
+					<svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+							<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+								<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+								<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+							</g>
+						</g>
+					</svg>
+				</a>
+			</ng-template>
 		</div>
 		<div
 			[ngClass]="{
@@ -83,10 +104,11 @@
 			class="hidden transition-all duration-300 ease-in-out md:flex md:flex-1 md:justify-end"
 		>
 			<a
-				routerLink="/auth/signup"
+				*ngIf="(user$ | async) as user; else fallback2"
+				routerLink="/app"
 				class="rounded-full bg-teal-600 backdrop-blur-sm px-3 py-1.5 flex items-center space-x-2 text-xs font-semibold text-white shadow-sm hover:bg-teal-500 hover:ring-2 hover:ring-offset-1 ring-offset-zinc-950 ring-teal-400 hover:ring-teal-400 transition-all duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
 			>
-				<span>Get Instant Answers</span>
+				<span>Head to Your Hub</span>
 				<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
 						<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
@@ -96,6 +118,22 @@
 					</g>
 				</svg>
 			</a>
+			<ng-template #fallback2>
+				<a
+					routerLink="/auth/signup"
+					class="rounded-full bg-teal-600 backdrop-blur-sm px-3 py-1.5 flex items-center space-x-2 text-xs font-semibold text-white shadow-sm hover:bg-teal-500 hover:ring-2 hover:ring-offset-1 ring-offset-zinc-950 ring-teal-400 hover:ring-teal-400 transition-all duration-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+				>
+					<span>Get Instant Answers</span>
+					<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+							<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+								<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+								<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+							</g>
+						</g>
+					</svg>
+				</a>
+			</ng-template>
 		</div>
 	</nav>
 
@@ -108,15 +146,14 @@
 		(click)="toggleMenu(false)"
 	></div>
 
-	<div class="relative z-10 w-full pt-6 md:hidden">
+	<div
+		[ngClass]="{
+			'bg-zinc-950/90 shadow-lg backdrop-blur border-zinc-900': isScrolled,
+			'bg-transparent border-transparent': !isScrolled
+		}"
+		class="relative z-10 w-full transition-all -mt-[1px] duration-300 border-b md:hidden shadow-black/10">
 		<div class="w-full px-4">
-			<div
-				[ngClass]="{
-					'bg-black/70 ring-1 shadow-lg overflow-hidden': isScrolled,
-					'bg-transparent': !isScrolled
-				}"
-				class="flex items-center justify-between w-full py-1 space-x-8 z-[60] transition-all duration-300 ring-zinc-900 relative shadow-zinc-800/5 rounded-md backdrop-blur text-zinc-200"
-			>
+			<div class="flex items-center justify-between w-full pt-5 pb-3 py-1 space-x-8 z-[5002] overflow-hidden relative text-zinc-200">
 				<a routerLink="/app" class="block h-full pl-4 w-fit max-h-7 grow-0 shrink-0">
 					<img src="assets/logo/svg/codewiz_logo.svg" class="w-auto h-7" width="1" height="1" alt="CodeWiz">
 				</a>
@@ -159,14 +196,14 @@
 					'pointer-events-none': !menuOpen,
 					'pointer-events-auto': menuOpen
 				}"
-				class="transition-all duration-300"
+				class="transition-all duration-300 z-[5001] relative"
 			>
 				<div
 					[ngClass]="{
 						'opacity-0 !top-14': !menuOpen,
 						'opacity-100 !top-20': menuOpen
 					}"
-					class="fixed z-50 p-4 transition-all duration-300 origin-top scale-100 rounded-md opacity-100 inset-x-4 ring-1 bg-black/80 backdrop-blur-md ring-zinc-900"
+					class="fixed p-4 transition-all duration-300 origin-top scale-100 rounded-md opacity-100 inset-x-4 ring-1 bg-black/80 backdrop-blur-md ring-zinc-900"
 					tabindex="-1"
 				>
 					
@@ -178,7 +215,7 @@
 									routerLink="/"
 									(click)="toggleMenu(false)"
 									[ngClass]="{
-										'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'home',
+										'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'home',
 										'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'home'
 									}"
 									class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
@@ -192,7 +229,7 @@
 									routerLink="/features"
 									(click)="toggleMenu(false)"
 									[ngClass]="{
-										'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'features',
+										'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'features',
 										'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'features'
 									}"
 									class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
@@ -206,7 +243,7 @@
 									routerLink="/pricing"
 									(click)="toggleMenu(false)"
 									[ngClass]="{
-										'bg-gradient-to-tr from-zinc-900/40 to-zinc-950/30 shadow-xl text-white': currentPage === 'pricing',
+										'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'pricing',
 										'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'pricing'
 									}"
 									class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
@@ -219,10 +256,11 @@
 								<div class="mb-2 border-b border-zinc-100/5"></div>
 
 								<a
-									routerLink="/auth/signup"
+									*ngIf="(user$ | async) as user; else fallback3"
+									routerLink="/app"
 									class="flex items-center justify-center px-3 py-2 mt-4 space-x-2 text-sm font-semibold text-white transition-all duration-500 bg-teal-600 rounded-md shadow-sm backdrop-blur-sm hover:bg-teal-500 ring-2 ring-offset-1 ring-offset-zinc-950 ring-teal-400 hover:ring-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
 								>
-									<span>Get Instant Answers</span>
+									<span>Head to Your Hub</span>
 									<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 										<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
 											<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
@@ -232,6 +270,22 @@
 										</g>
 									</svg>
 								</a>
+								<ng-template #fallback3>
+									<a
+										routerLink="/auth/signup"
+										class="flex items-center justify-center px-3 py-2 mt-4 space-x-2 text-sm font-semibold text-white transition-all duration-500 bg-teal-600 rounded-md shadow-sm backdrop-blur-sm hover:bg-teal-500 ring-2 ring-offset-1 ring-offset-zinc-950 ring-teal-400 hover:ring-teal-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+									>
+										<span>Get Instant Answers</span>
+										<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+											<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+												<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+													<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+													<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+												</g>
+											</g>
+										</svg>
+									</a>
+								</ng-template>
 							</li>
 							
 						</ul>

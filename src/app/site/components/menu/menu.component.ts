@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { UsersService } from 'src/app/auth/services/users.service';
 
 @Component({
 	selector: 'app-menu',
@@ -20,10 +21,13 @@ export class MenuComponent implements OnDestroy {
 	currentPage = 'home';
 	menuOpen = false;
 
+	user$ = this.users.user$;
+
 	private routerSub: Subscription;
 
 	constructor(
 		private router: Router,
+		private users: UsersService,
 		private cdRef: ChangeDetectorRef,
 	) {
 		this.routerSub = this.router.events.subscribe(() => {
@@ -41,12 +45,14 @@ export class MenuComponent implements OnDestroy {
 	}
 
   @HostListener('window:scroll')
-  onWindowScroll() {
+	onWindowScroll() {
+		console.log('window scroll');
 		this.manageScroll();
 	}
 
-	@HostListener('body:scroll')
+  @HostListener('document:scroll')
 	onDocumentScroll() {
+		console.log('document scroll');
 		this.manageScroll();
 	}
 
