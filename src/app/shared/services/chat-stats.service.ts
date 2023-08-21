@@ -19,7 +19,7 @@ export class ChatStatsService {
 		return this.db.getDoc<CompletionStat>(`stats/completions/repos/${repo}`).pipe(
 			switchMap((stat) => {
 				return this.db.getCol<CompletionStat>(`stats/completions/repos/${repo}/byDate`, 'id', orderBy('createdAt')).pipe(
-					map((date) => ({ ...stat, history: date }))
+					map((history) => ({ ...stat, history })),
 				);
 			}),
 		)
