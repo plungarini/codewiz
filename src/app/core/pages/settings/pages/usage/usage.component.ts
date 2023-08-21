@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StripeSubscription } from 'functions/src/models/subscription/subscription.model';
 import { of, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
@@ -34,19 +34,11 @@ export class UsageComponent {
 		})
 	);
 
-	perc = 20;
-
 	constructor(
 		private usersService: UsersService,
 		private stripeService: StripeService,
 		private userStats: UserUsagesService,
-		private cdRef: ChangeDetectorRef,
-	) {
-		setTimeout(() => {
-			this.perc = 80;
-			this.cdRef.markForCheck();
-		}, 3000);
-	}
+	) { }
 
 	getRemainingDays(subscription?: StripeSubscription) {
 		if (!subscription) return 0;
