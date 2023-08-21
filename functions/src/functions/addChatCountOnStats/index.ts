@@ -16,10 +16,12 @@ export const addChatCountOnStats = async (repo?: string) => {
 
 	const newData = {
 		...data,
+		createdAt: data?.createdAt || new Date(),
 		chatCount: (data?.chatCount || 0) + 1,
 	};
 	const newDataByDate = {
 		...statsByDateData,
+		createdAt: data?.createdAt || new Date(),
 		chatCount: (statsByDateData?.chatCount || 0) + 1,
 	};
 

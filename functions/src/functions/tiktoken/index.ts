@@ -151,6 +151,7 @@ const saveUsageToStats = async (repo: string, usage: { usedTokens: number, usedU
 		} else {
 			await docRef.update({
 				prompt,
+				createdAt,
 				updatedAt: new Date(),
 			});
 		}
@@ -178,6 +179,7 @@ const saveUsageToStats = async (repo: string, usage: { usedTokens: number, usedU
 		} else {
 			await docRef.update({
 				completion,
+				createdAt,
 				updatedAt: new Date(),
 			});
 		}
@@ -236,6 +238,7 @@ const setUsageToMonthlyStats = async (repo: string, usage: { usedTokens: number,
 		} else {
 			await docRef.update({
 				prompt,
+				createdAt,
 				updatedAt: new Date(),
 			});
 		}
@@ -263,6 +266,7 @@ const setUsageToMonthlyStats = async (repo: string, usage: { usedTokens: number,
 		} else {
 			await docRef.update({
 				completion,
+				createdAt,
 				updatedAt: new Date(),
 			});
 		}
