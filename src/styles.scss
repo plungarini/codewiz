@@ -103,3 +103,13 @@ input[type=number] {
 		overflow-x: hidden;
 	}
 }
+
+// Fix h-screen for ios
+@supports (-webkit-touch-callout: none) {
+  .h-screen {
+    height: -webkit-fill-available !important;
+  }
+	.max-h-screen {
+		max-height: -webkit-fill-available !important;
+	}
+}

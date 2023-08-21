@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 
 @Component({
@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angu
   styles: [
     `
       :host {
-				@apply w-full max-h-full overflow-hidden;
+				@apply w-full max-h-screen sm:max-h-full overflow-hidden;
 			}
     `
   ],
@@ -14,7 +14,6 @@ import { ChangeDetectionStrategy, Component, ElementRef, ViewChild } from '@angu
 })
 export class ChatComponent {
 
-	@ViewChild('mainChatContainer', { static: true }) mainChatContainer: ElementRef<HTMLDivElement> | undefined;
-
-	constructor( ) { }
+	constructor() { }
+	
 }
