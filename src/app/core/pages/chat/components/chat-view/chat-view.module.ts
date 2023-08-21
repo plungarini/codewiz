@@ -6,6 +6,7 @@ import { ClipboardModule } from 'ngx-clipboard';
 import { MarkdownModule } from 'ngx-markdown';
 import { ChatViewRoutingModule } from './chat-view-routing.module';
 import { ChatViewComponent } from './chat-view.component';
+import { LoaderComponent } from './components/loader/loader.component';
 import { AiToolbarComponent } from './components/messages/components/ai-toolbar/ai-toolbar.component';
 import { MessageAvatarComponent } from './components/messages/components/message-avatar/message-avatar.component';
 import { MessageToolbarComponent } from './components/messages/components/message-toolbar/message-toolbar.component';
@@ -13,7 +14,6 @@ import { PagesectionsSelectorComponent } from './components/messages/components/
 import { MessagesComponent } from './components/messages/messages.component';
 import { QueryInputComponent } from './components/query-input/query-input.component';
 import { StatusComponent } from './components/status/status.component';
-import { LoaderComponent } from './components/loader/loader.component';
 
 
 @NgModule({
@@ -26,7 +26,7 @@ import { LoaderComponent } from './components/loader/loader.component';
 		AiToolbarComponent,
     PagesectionsSelectorComponent,
 		MessageToolbarComponent,
-  LoaderComponent,
+  	LoaderComponent,
   ],
   imports: [
 		CommonModule,
