@@ -19,8 +19,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges
 export class SubscriptionRemainingComponent implements OnChanges {
 	
 	@Input() percentage = 0;
-	@Input() remaining = 0;
-	@Input() label = 'days';
+	@Input() remaining: string | number = 0;
+	@Input() label: string | 'undefined' = 'days';
 	@Input() theme: 'light' | 'dark' = 'dark';
 
   // Assuming the circle radius is 50 and cx, cy (the center of the circle) is 50, 50
