@@ -17,7 +17,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 })
 export class LatestChatsComponent {
 
-	chats$: Observable<AiUserRepoChat[]> = this.ai.getAllUserChats(new Date().getMonth());
+	chats$: Observable<AiUserRepoChat[]> = this.ai.getAllUserChats(10);
 
 	constructor(
 		private ai: AiChatService,
