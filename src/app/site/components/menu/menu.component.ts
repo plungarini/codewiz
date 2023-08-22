@@ -24,6 +24,7 @@ export class MenuComponent implements OnDestroy {
 	user$ = this.users.user$;
 
 	private routerSub: Subscription;
+	private pages = ['features', 'pricing'];
 
 	constructor(
 		private router: Router,
@@ -32,11 +33,18 @@ export class MenuComponent implements OnDestroy {
 	) {
 		this.routerSub = this.router.events.subscribe(() => {
 			const url = this.router.url;
-			const id = url.split('/')[1] || 'home';
-			if (id && id !== this.currentPage) {
-				this.currentPage = id;
+			let newPage = 'home';
+			for (const page of this.pages) {
+				if (url.includes(page)) {
+					newPage = page;
+					break;
+				}
+			}
+			if (newPage !== this.currentPage) {
+				this.currentPage = newPage;
 				this.cdRef.markForCheck();
 			}
+
 		})
 	}
 
