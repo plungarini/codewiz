@@ -13,7 +13,7 @@ const routes: Routes = [
 			},
 			{
 				path: 'features',
-				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
+				loadChildren: () => import('./pages/features/features.module').then(m => m.FeaturesModule),
 			},
 			{
 				path: 'pricing',
