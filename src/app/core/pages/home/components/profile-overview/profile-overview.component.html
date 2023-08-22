@@ -21,7 +21,7 @@
 	</div>
 </ng-template>
 
-<div class="px-5 py-4 overflow-hidden transition-all duration-300 shadow-2xl rounded-xl border-zinc-800 from-black/60 to-zinc-900/90 bg-gradient-to-tr backdrop-blur hover:ring-4 ring-zinc-900 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950 ring-offset-zinc-950">
+<div class="px-5 py-4 overflow-hidden transition-all duration-300 shadow-2xl rounded-xl from-black/60 to-zinc-900/90 bg-gradient-to-tr backdrop-blur hover:ring-4 ring-zinc-900 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950 ring-offset-zinc-950">
 	<ng-container *ngIf="(user$ | async) as user; else noUserSkeleton">
 		<ng-container *ngIf="(fireUser$ | async) as fireUser; else noUserSkeleton">
 			<h3 class="mb-10 text-sm font-semibold text-zinc-500">Profile Details</h3>
