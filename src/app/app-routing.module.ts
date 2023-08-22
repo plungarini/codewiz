@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth/guards/auth.guard';
+import { CustomPreloadingStrategyService } from './shared/services/custom-preloading-strategy.service';
 
 const routes: Routes = [
 	{
 		path: '',
+		data: { preload: true },
 		loadChildren: () => import('./site/site.module').then(m => m.SiteModule),
 	},
 	{
@@ -14,6 +16,7 @@ const routes: Routes = [
 	},
 	{
 		path: 'auth',
+		data: { preload: true },
 		loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
 	},
 	{
@@ -40,7 +43,11 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+	imports: [RouterModule.forRoot(routes, {
+		anchorScrolling: 'enabled',
+		scrollPositionRestoration: 'enabled',
+		preloadingStrategy: CustomPreloadingStrategyService,
+	})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

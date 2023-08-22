@@ -9,6 +9,7 @@ const routes: Routes = [
 		children: [
 			{
 				path: '',
+				data: { preload: true },
 				loadChildren: () => import('./components/chat-view/chat-view.module').then((m) => m.ChatViewModule),
 			},
 			{

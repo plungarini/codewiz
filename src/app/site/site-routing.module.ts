@@ -9,14 +9,17 @@ const routes: Routes = [
 		children: [
 			{
 				path: '',
+				data: { preload: true },
 				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
 			},
 			{
 				path: 'features',
+				data: { preload: true },
 				loadChildren: () => import('./pages/features/features.module').then(m => m.FeaturesModule),
 			},
 			{
 				path: 'pricing',
+				data: { preload: true },
 				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
 			},
 		]
@@ -24,7 +27,9 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+	imports: [
+		RouterModule.forChild(routes)
+	],
   exports: [RouterModule]
 })
 export class SiteRoutingModule { }

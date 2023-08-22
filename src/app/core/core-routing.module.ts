@@ -11,16 +11,19 @@ const routes: Routes = [
 		children: [
 			{
 				path: 'unauthorized',
+				data: { preload: true },
 				loadChildren: () => import('./pages/no-permissions/no-permissions.module').then(m => m.NoPermissionsModule),
 			},
 			{
 				path: 'maintenance',
+				data: { preload: true },
 				loadChildren: () => import('./pages/maintenance/maintenance.module').then(m => m.MaintenanceModule),
 			},
 			{
 				path: '',
 				data: {
-					permissions: ['user']
+					permissions: ['user'],
+					preload: true,
 				},
 				canActivate: [PermissionsGuard, MaintenanceGuard],
 				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
@@ -28,7 +31,8 @@ const routes: Routes = [
 			{
 				path: 'settings',
 				data: {
-					permissions: ['user']
+					permissions: ['user'],
+					preload: true,
 				},
 				canActivate: [PermissionsGuard, MaintenanceGuard],
 				loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsModule),
@@ -44,7 +48,8 @@ const routes: Routes = [
 			{
 				path: 'chat/:repo/:id',
 				data: {
-					permissions: ['user']
+					permissions: ['user'],
+					preload: true,
 				},
 				canActivate: [PermissionsGuard, MaintenanceGuard],
 				loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatModule),
