@@ -1,6 +1,8 @@
-import * as functions from 'firebase-functions';
 import { error, warn } from 'firebase-functions/logger';
 import { HttpsError } from 'firebase-functions/v1/auth';
+import { setGlobalOptions } from 'firebase-functions/v2';
+import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import { onCall, onRequest } from 'firebase-functions/v2/https';
 import { addChatCountOnStats } from './functions/addChatCountOnStats';
 import { checkUserSubscription } from './functions/checkUserSubscription';
 import { disableUser as disableUserFn, isUserDisabled as isUserDisabledFn } from './functions/disableUser';
@@ -12,77 +14,93 @@ import { calculateTokens } from './functions/tiktoken';
 import { AiChatMessage } from './models/tiktoken/tiktoken.model';
 import { firestore } from './utils';
 
+setGlobalOptions({
+	concurrency: 100,
+	maxInstances: 10,
+	memory: '128MiB',
+	region: 'europe-west2',
+	timeoutSeconds: 60,
+});
 
-const FFN = functions.region('europe-west2');
-
-export const scrapePage = FFN.runWith({
-  memory: '1GB',
+export const scrapePage = onCall({
+	/* cors: [
+		/^https?:\/\/codewiz\.app$/,
+		/^https?:\/\/.*\.codewiz\.app$/,
+	], */
+	memory: '1GiB',
 	timeoutSeconds: 540,
 	maxInstances: 10,
-}).https.onCall(async (req) => {
-  /**
+}, async (req) => {
+	/**
    * page_link: string;
    * body_selector: string;
    * excluded_selectors: string[];
    */
+	const data = req.data;
 	try {
-		return await scrapeDocumentedPage(req);
+		return await scrapeDocumentedPage(data);
 	} catch (err) {
 		error(err);
 		return err;
 	}
 });
 
-export const createEmbedding = FFN.runWith({
-  memory: '256MB',
-	timeoutSeconds: 60,
-	maxInstances: 10,
-}).https.onCall(async (req) => {
-  /**
-   * title: string;
-   * link: string;
-   * content: string;
-   * id: string;
-   */
-  warn('request', req);
+export const createEmbedding = onCall({
+	/* cors: [
+		/^https?:\/\/codewiz\.app$/,
+		/^https?:\/\/.*\.codewiz\.app$/,
+	], */
+	memory: '256MiB',
+}, async (req) => {
+	/**
+	 * title: string;
+	 * link: string;
+	 * content: string;
+	 * id: string;
+	 */
+	const data = req.data;
+	warn('request', data);
 	try {
-		return await elaborateEmbeddings(req);
+		return await elaborateEmbeddings(data);
 	} catch (err) {
 		error(err);
 		return err;
 	}
 });
 
-export const githubFetcher = FFN.runWith({
-  memory: '256MB',
-	timeoutSeconds: 60,
+export const githubFetcher = onCall({
+	/* cors: [
+		/^https?:\/\/codewiz\.app$/,
+		/^https?:\/\/.*\.codewiz\.app$/,
+	], */
+	memory: '256MiB',
 	maxInstances: 50,
-}).https.onCall(async (req) => {
-  /**
+}, async (req) => {
+	/**
 	 * author: string;
 	 * folder: string;
-   */
-  warn('request', req);
+	 */
+	const data = req.data;
+	warn('request', data);
 	try {
-		return await githubFolderFetcher(req);
+		return await githubFolderFetcher(data);
 	} catch (err) {
 		error(err);
 		return err;
 	}
 });
 
-export const calculateOpenaiTokens = FFN.runWith({
-  memory: '256MB',
-	timeoutSeconds: 60,
-	maxInstances: 10,
-}).https.onRequest(async (req, res) => {
-  /**
+export const calculateOpenaiTokens = onRequest({
+	cors: true,
+	memory: '256MiB',
+}, async (req, res) => {
+	/**
 	 * uid: string,
 	 * repo: string,
 	 * model: supportModelType,
 	 * messages: AiChatMessage[],
 	 * authorization: string,
-   */
+	 */
 	warn('request', req.body);
 
 	const key = process.env.EXTERNAL_FUNCTIONS_KEY;
@@ -101,15 +119,14 @@ export const calculateOpenaiTokens = FFN.runWith({
 	}
 });
 
-export const calculateOpenaiTokensOnReply = FFN
-	.runWith({ memory: '256MB', timeoutSeconds: 60, maxInstances: 10 }).firestore
-	.document('users/{uid}/repos/{repo}/chats/{chatId}/messages/{messageId}')
-	.onUpdate(async (change, context) => {
+export const calculateOpenaiTokensOnReply = onDocumentUpdated(
+	'users/{uid}/repos/{repo}/chats/{chatId}/messages/{messageId}',
+	async (event) => {
 		try {
-			const { uid, repo, chatId, messageId } = context.params;
+			const { uid, repo, chatId, messageId } = event.params;
 			if (messageId === 'init') return;
-			const message = change.after.data() as AiChatMessage;
-			if (!message.role || message.role === 'user' || !!message.usage || !message.content || message.content.length <= 1) return;
+			const message = event.data?.after.data() as AiChatMessage | undefined;
+			if (!message || !message.role || message.role === 'user' || !!message.usage || !message.content || message.content.length <= 1) return;
 			warn('New message at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, message);
 			await calculateTokens({
 				messages: [{ role: message.role, content: message.content }],
@@ -119,104 +136,132 @@ export const calculateOpenaiTokensOnReply = FFN
 			});
 		} catch (err) {
 			error(err);
-			return err;
 		}
-	});
+	}
+);
 
-export const calculateTotalChats = FFN
-	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
-	.firestore.document('users/{uid}/repos/{repo}/chats/{chatId}').onCreate(async (snap, ctx) => {
-		const { repo } = ctx.params;
-		await addChatCountOnStats(repo);
-	});
-
-export const canUserQuery = FFN
-	.runWith({ memory: '256MB', timeoutSeconds: 60, maxInstances: 100 })
-	.https.onRequest(async (req, res) => {
-		/**
-		 * uid: string,
-		 * authorization: string,
-		 */
-		warn('request', req.body);
-
-		const key = process.env.EXTERNAL_FUNCTIONS_KEY;
-		if (!key) {
-			res.status(501);
-		} else if (key !== req.body.authorization) {
-			res.status(401);
-		}
-
+export const calculateTotalChats = onDocumentCreated(
+	'users/{uid}/repos/{repo}/chats/{chatId}',
+	async (event) => {
+		const { repo } = event.params;
 		try {
-			const result = await checkUserSubscription(req.body.uid);
-			res.status(200).json(result);
+			await addChatCountOnStats(repo);
 		} catch (err) {
 			error(err);
-			res.status(400);
 		}
-	});
+	}
+);
 
-export const setDefaultPermissions = FFN
-	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
-	.firestore.document('users/{uid}').onCreate(async (snap) => {
-		const rolesRef = snap.ref.collection('protected').doc('role');
-		const doc = await rolesRef.get();
-		const data = doc.data();
+export const canUserQuery = onRequest({
+	cors: true,
+	memory: '256MiB',
+	maxInstances: 100,
+}, async (req, res) => {
+	/**
+	 * uid: string,
+	 * authorization: string,
+	 */
+	warn('request', req.body);
 
-		const statsRef = firestore.doc('stats/users');
-		const statsDoc = await statsRef.get();
-		const statsData = statsDoc.data();
+	const key = process.env.EXTERNAL_FUNCTIONS_KEY;
+	if (!key) {
+		res.status(501);
+	} else if (key !== req.body.authorization) {
+		res.status(401);
+	}
 
-		const statsNewData = {
-			...statsData,
-			usersCount: (statsData?.usersCount || 0) + 1,
-		};
-
-		await statsRef.set(statsNewData, { merge: true });
-
-		const newData = {
-			...data,
-			permissions: data?.permissions || [],
-		};
-
-		newData.permissions.push('user');
-		await rolesRef.set(newData, { merge: true });
-	});
-
-export const disableUser = FFN
-	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
-	.https.onCall(async (data, context) => {
-		const { uid } = data;
-		if (!uid ) throw new HttpsError('invalid-argument', 'UID is required');
-		const contextUid = context.auth?.uid;
-		if (!contextUid) throw new HttpsError('invalid-argument', 'Context UID is required');
-
-		try {
-			await disableUserFn(uid, contextUid);
-		} catch (err) {
-			error(err);
-			throw err;
-		}
-	});
-
-export const isUserDisabled = FFN
-	.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 })
-	.https.onCall(async (data) => {
-		const { uid } = data;
-		if (!uid) throw new HttpsError('invalid-argument', 'UID is required');
-
-		try {
-			return await isUserDisabledFn(uid);
-		} catch (err) {
-			error(err);
-			throw err;
-		}
-	});
-
-
-export const emailActionCode = FFN.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 }).https.onCall(async (data) => {
-	return await sendEmailActionCode(data);
+	try {
+		const result = await checkUserSubscription(req.body.uid);
+		res.status(200).json(result);
+	} catch (err) {
+		error(err);
+		res.status(400);
+	}
 });
 
-export const getEmbeddings = FFN.runWith({ memory: '128MB', timeoutSeconds: 60, maxInstances: 10 }).https.onCall(async (data) => {
-	return await getAllEmbeddings(data);
+export const setDefaultPermissions = onDocumentCreated(
+	'users/{uid}',
+	async (event) => {
+		try {
+			const { uid } = event.params;
+			const rolesRef = firestore.doc(`users/${uid}/protected/role`);
+			const doc = await rolesRef.get();
+			const data = doc.data();
+
+			const statsRef = firestore.doc('stats/users');
+			const statsDoc = await statsRef.get();
+			const statsData = statsDoc.data();
+
+			const statsNewData = {
+				...statsData,
+				usersCount: (statsData?.usersCount || 0) + 1,
+			};
+
+			await statsRef.set(statsNewData, { merge: true });
+
+			const newData = {
+				...data,
+				permissions: data?.permissions || [],
+			};
+
+			newData.permissions.push('user');
+			await rolesRef.set(newData, { merge: true });
+		} catch (err) {
+			error(err);
+		}
+	}
+);
+
+export const disableUser = onCall({
+	/* cors: [
+		/^https?:\/\/codewiz\.app$/,
+		/^https?:\/\/.*\.codewiz\.app$/,
+	], */
+	memory: '128MiB',
+}, async (req) => {
+	const { uid } = req.data;
+	try {
+		if (!uid ) throw new HttpsError('invalid-argument', 'UID is required');
+		const contextUid = req.auth?.uid;
+		if (!contextUid) throw new HttpsError('invalid-argument', 'Context UID is required');
+
+		await disableUserFn(uid, contextUid);
+	} catch (err) {
+		error(err);
+		throw err;
+	}
+});
+
+export const isUserDisabled = onCall({
+	/* cors: [
+		/^https?:\/\/codewiz\.app$/,
+		/^https?:\/\/.*\.codewiz\.app$/,
+	], */
+}, async (req) => {
+	const { uid } = req.data;
+	try {
+		if (!uid) throw new HttpsError('invalid-argument', 'UID is required');
+		return await isUserDisabledFn(uid);
+	} catch (err) {
+		error(err);
+		throw err;
+	}
+});
+
+export const emailActionCode = onCall({
+	/* cors: [
+		/^https?:\/\/codewiz\.app$/,
+		/^https?:\/\/.*\.codewiz\.app$/,
+	], */
+}, async (req) => {
+	return await sendEmailActionCode(req.data);
+});
+
+export const getEmbeddings = onCall({
+	/* cors: [
+		/^https?:\/\/codewiz\.app$/,
+		/^https?:\/\/.*\.codewiz\.app$/,
+	], */
+}, async (req) => {
+	return await getAllEmbeddings(req.data);
 });
