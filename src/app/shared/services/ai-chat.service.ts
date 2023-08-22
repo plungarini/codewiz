@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
-import { limit, orderBy, startAfter, Timestamp, where } from '@angular/fire/firestore';
+import { limit, orderBy, startAfter, where } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { combineLatest, filter, firstValueFrom, interval, lastValueFrom, map, Observable, of, startWith, switchMap, take } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
@@ -525,17 +525,7 @@ export class AiChatService {
 		return this.db.generateId();
 	}
 
-	getAllUserChats(month?: number): Observable<AiUserRepoChat[]> {
-		let startOfMonth: Date;
-      
-		if (month !== undefined && !isNaN(month || NaN) && month >= 1 && month <= 12) {
-			const currentYear = new Date().getFullYear();
-			startOfMonth = new Date(currentYear, month, 1); // Set the specified month
-		} else {
-			const currentDate = new Date();
-			startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() - 3, 1); // Fallback to the latest 3 months
-		}
-
+	getAllUserChats(limitRes = 20): Observable<AiUserRepoChat[]> {
 		return this._$getCurrentUid().pipe(
 			switchMap((uid) => {
 				return this.db.getCol<{ id: string }>(
@@ -547,9 +537,8 @@ export class AiChatService {
 					return this.db.getCol<AiUserRepoChat>(
 						`users/${uid}/repos/${repo.id}/chats`,
 						'id',
-						orderBy('updatedAt', 'asc'),
-						startAfter(Timestamp.fromDate(startOfMonth)),
-						limit(20),
+						orderBy('updatedAt', 'desc'),
+						limit(limitRes),
 					).pipe(
 						map(chat => chat.map(c => ({ ...c, repo })).reverse()),
 					);
@@ -557,9 +546,10 @@ export class AiChatService {
 				return combineLatest(observables).pipe(
 					map(chatGroups => {
 						const unified = chatGroups.flat();
-						return unified.sort((a, b) => {
+						const sorted = unified.sort((a, b) => {
 							return (b.updatedAt || new Date()).toDate().getTime() - (a.updatedAt || new Date()).toDate().getTime();
-						})
+						}).slice(0, limitRes);
+						return sorted;
 					})
 				);
 			})
