@@ -46,13 +46,11 @@ export class MenuComponent implements OnDestroy {
 
   @HostListener('window:scroll')
 	onWindowScroll() {
-		console.log('window scroll');
 		this.manageScroll();
 	}
 
   @HostListener('document:scroll')
 	onDocumentScroll() {
-		console.log('document scroll');
 		this.manageScroll();
 	}
 
