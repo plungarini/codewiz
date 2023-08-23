@@ -69,9 +69,9 @@ export class ProfileComponent implements OnDestroy {
 
 			this.updatedDetails.uid = user?.id || fireUser?.uid;
 
-			const updatedName = (user?.name || fireUser?.displayName || 'Anonymous');
-			const updatedLastName = updatedName.split(' ').pop() || '';
-			const updatedFirstName = updatedName.split(' ').slice(0, -1).join(' ');
+			const updatedName = (user?.name?.trim() || fireUser?.displayName?.trim() || 'Anonymous');
+			const updatedLastName = updatedName.split(' ').pop()?.trim() || '';
+			const updatedFirstName = updatedName.split(' ').slice(0, -1).join(' ').trim();
 
 			if (!!updatedFirstName) {
 				this.updatedDetails.firstName = updatedFirstName;
@@ -167,9 +167,9 @@ export class ProfileComponent implements OnDestroy {
 
 		try {
 			await this.usersService.edit(this.updatedDetails.uid, {
-				name: `${firstName} ${lastName}`,
+				name: `${firstName.trim()} ${lastName.trim()}`,
 				details: {
-					phoneNumber: phone,
+					phoneNumber: phone?.trim(),
 					imgUrl: imgUrl,
 				}
 			});
