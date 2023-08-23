@@ -142,14 +142,14 @@
 			'pointer-events-auto opacity-50': menuOpen,
 			'pointer-events-none opacity-0': !menuOpen,
 		}"
-		class="fixed inset-0 w-screen h-screen transition-opacity duration-300 bg-black md:hidden"
+		class="fixed inset-0 transition-opacity duration-300 bg-black md:hidden"
 		(click)="toggleMenu(false)"
 	></div>
 
 	<div
 		[ngClass]="{
-			'bg-zinc-950/90 shadow-lg backdrop-blur border-zinc-900': isScrolled,
-			'bg-transparent border-transparent': !isScrolled
+			'bg-zinc-950/90 shadow-lg backdrop-blur border-zinc-900': isScrolled || menuOpen,
+			'bg-transparent border-transparent': !isScrolled && !menuOpen,
 		}"
 		class="relative z-10 w-full transition-all -mt-[1px] duration-300 border-b md:hidden shadow-black/10">
 		<div class="w-full px-4">
