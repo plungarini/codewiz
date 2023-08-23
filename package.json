@@ -1,13 +1,14 @@
 {
-  "name": "code-whiz-ai",
+  "name": "codewiz",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "deploy": "ng deploy",
+    "deploy:dev": "ng build --configuration=staging && firebase deploy -P dev",
+    "deploy": "ng build --configuration=production && firebase deploy -P prod",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "watch": "ng build --watch --configuration=development",
     "test": "ng test",
     "deploySupabase": "yarn updateSecrets && yarn sb-aiSearch && yarn sb-search && yarn sb-chatTitle",
     "sb-chatTitle": "npx supabase functions deploy chat-title --project-ref rbikifjpcodmtsgggpbk",

@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "code-whiz-ai": {
+    "codewiz": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/code-whiz-ai",
+            "outputPath": "dist/codewiz",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -70,6 +70,27 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "staging": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500mb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2mb",
+                  "maximumError": "4mb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -78,10 +99,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "code-whiz-ai:build:production"
+              "browserTarget": "codewiz:build:production"
             },
             "development": {
-              "browserTarget": "code-whiz-ai:build:development"
+              "browserTarget": "codewiz:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -89,7 +110,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "code-whiz-ai:build"
+            "browserTarget": "codewiz:build"
           }
         },
         "test": {
@@ -114,11 +135,8 @@
         "deploy": {
           "builder": "@angular/fire:deploy",
           "options": {
-            "prerender": false,
-            "ssr": false,
-            "browserTarget": "code-whiz-ai:build:production",
-            "firebaseProject": "code-whiz-ai",
-            "firebaseHostingSite": "code-whiz-ai"
+            "version": 2,
+            "browserTarget": "codewiz:build:production"
           }
         }
       }

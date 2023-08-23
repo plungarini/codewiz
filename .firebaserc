@@ -1,14 +1,20 @@
 {
-  "targets": {
-    "code-whiz-ai": {
+  "projects": {
+    "default": "codewiz-staging",
+    "prod": "codewiz-prod",
+    "dev": "codewiz-staging"
+  },
+	"targets": {
+    "codewiz-staging": {
       "hosting": {
-        "code-whiz-ai": [
-          "code-whiz-ai"
+        "dev": [
+          "codewiz-staging"
+        ],
+        "prod": [
+          "codewiz-prod"
         ]
       }
     }
   },
-  "projects": {
-    "default": "code-whiz-ai"
-  }
+  "etags": {}
 }
