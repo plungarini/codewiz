@@ -17,7 +17,7 @@ export class UserHeaderComponent {
 
 	@Input() user: User | undefined;
 
-	firebaseBaseUrl = 'https://console.firebase.google.com/u/0/project/code-whiz-ai/firestore/data/~2Fusers~2F';
+	firebaseBaseUrl = 'https://console.firebase.google.com/u/0/project/codewiz-prod/firestore/data/~2Fusers~2F';
 	stripeBaseUrl = 'https://dashboard.stripe.com/customers/';
 
 }
