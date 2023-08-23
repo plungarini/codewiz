@@ -22,6 +22,7 @@ export class SignupComponent {
   };
 
   form = new FormGroup({
+  	name: new FormControl('', []),
   	email: new FormControl('', [Validators.required, Validators.email]),
   	password: new FormControl('', [
   		Validators.required,
@@ -91,7 +92,8 @@ export class SignupComponent {
 		try {
 			await this.auth.emailSignup(
 				form.value.email,
-				form.value.password
+				form.value.password,
+				{ fullName: form.value.name || '' }
 			);
 		} catch (error) {
 			this.loginError = FirebaseErrorHandling.convertMessage((error as any).code, 'it');
