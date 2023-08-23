@@ -3,11 +3,14 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { provideHttpClient } from '@angular/common/http';
 import { getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
-import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
+import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
-import { getFirestore, provideFirestore } from '@angular/fire/firestore';
+import { provideFirestore } from '@angular/fire/firestore';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
+import { getPerformance, providePerformance } from '@angular/fire/performance';
+import { getRemoteConfig, provideRemoteConfig } from '@angular/fire/remote-config';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from '@firebase/firestore';
 import { ImgixAngularModule } from '@imgix/angular';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { environment } from '../environments/environment';
@@ -25,9 +28,18 @@ import { markedOptionsFactory } from './core/pages/chat/components/chat-view/com
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAnalytics(() => getAnalytics()),
     provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()),
+		provideFirestore(() => {
+			return initializeFirestore(getApp(), {
+				ignoreUndefinedProperties: true,
+				localCache: persistentLocalCache({
+					tabManager: persistentMultipleTabManager(),
+				})
+			})
+		}),
 		provideFunctions(() => getFunctions(undefined, 'europe-west2')),
 		provideStorage(() => getStorage()),
+		providePerformance(() => getPerformance()),
+		provideRemoteConfig(() => getRemoteConfig()),
 		
 		MarkdownModule.forRoot({
 			sanitize: SecurityContext.HTML,
