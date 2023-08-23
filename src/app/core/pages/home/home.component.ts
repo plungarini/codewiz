@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { map, of, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 
 @Component({
@@ -14,14 +15,21 @@ import { UsersService } from 'src/app/auth/services/users.service';
 })
 export class HomeComponent {
 
-	user$ = this.usersService.fireUser$;
+	name$ = this.usersService.user$.pipe(
+		switchMap((user) => {
+			if (user?.name) return of(user.name);
+			return this.usersService.fireUser$.pipe(
+				map(fire => fire?.displayName)
+			)
+		})
+	);
 
 	constructor(
 		private usersService: UsersService,
 	) { }
 
 	getName(name?: string | null): string {
-		return name?.split(' ')?.at(0) || 'fella';
+		return name?.split(' ')?.at(0) || 'Little Wizard';
 	}
 
 }
