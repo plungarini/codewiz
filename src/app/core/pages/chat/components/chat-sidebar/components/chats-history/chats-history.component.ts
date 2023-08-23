@@ -94,6 +94,8 @@ export class ChatsHistoryComponent {
 
 		if (chatLen < 2) return;
 
+		// Ensure that the chat is not in the queue
+		if (this.queue.has(id)) return;
 		this.queue.add(id);
 
 		const sub = this.aiChatService.createChatTitle(repo, id)

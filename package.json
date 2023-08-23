@@ -5,8 +5,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "deploy:dev": "ng build --configuration=staging && firebase deploy -P dev",
-    "deploy": "ng build --configuration=production && firebase deploy -P prod",
+    "deploy:dev": "ng build --configuration=staging && firebase deploy --only hosting -P dev",
+    "deploy": "ng build --configuration=production && firebase deploy --only hosting -P prod",
     "build": "ng build",
     "watch": "ng build --watch --configuration=development",
     "test": "ng test",
