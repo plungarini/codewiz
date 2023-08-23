@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Analytics, logEvent } from '@angular/fire/analytics';
 import {
 	AuthProvider,
 	confirmPasswordReset,
@@ -26,6 +27,7 @@ export class AuthenticationService {
 	
 	constructor(
 		private userService: UsersService,
+		private analytics: Analytics,
 		private router: Router,
 		private db: FirebaseExtendedService,
 	) {	}
@@ -51,6 +53,10 @@ export class AuthenticationService {
 		*/
 	async emailLogin(email: string, password: string): Promise<void> {
 		await signInWithEmailAndPassword(this.auth, email, password);
+
+		const uid = this.auth.currentUser?.uid;
+		logEvent(this.analytics, 'login', { provider: 'email', uid });
+		
 		this.redirectAfterSignIn();
 	}
 	
@@ -62,6 +68,14 @@ export class AuthenticationService {
 			const credential = await createUserWithEmailAndPassword(this.auth, email, password);
 			if (!credential.user) throw new Error('User has not been created');
 			await this.userService.editOrCreate(credential.user, true, additionalDetails, true);
+			
+			logEvent(this.analytics, 'sign_up', {
+				provider: credential.providerId,
+				uid: credential.user.uid,
+				name: credential.user.displayName,
+				email: credential.user.email,
+			});
+
 			this.redirectAfterSignIn();
 			return true;
 		} catch (e: any) {
@@ -103,10 +117,12 @@ export class AuthenticationService {
 	/**
 		* Signs out the user from the App.
 		*/
-	signOut(): void {
+	async signOut(): Promise<void> {
+		const uid = this.auth.currentUser?.uid;
 		this.router.navigateByUrl('/auth/login');
 		localStorage.clear();
-		signOut(this.auth);
+		await signOut(this.auth);
+		logEvent(this.analytics, 'sign_out', { uid });
 	}
 
 	async disableUser(id: string): Promise<void> {
@@ -127,6 +143,14 @@ export class AuthenticationService {
 			const userSnap = await getDoc(userRef);
 			const isSignup = !userSnap.exists();
 			if (!credential.user) return;
+
+			logEvent(this.analytics, 'login', {
+				provider: credential.providerId,
+				uid: credential.user.uid,
+				name: credential.user.displayName,
+				email: credential.user.email,
+			});
+
 			if (!isSignup) return this.redirectAfterSignIn();
 			await this.userService.editOrCreate(
 				credential.user, isSignup,

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
+import { Analytics, setUserId, setUserProperties } from '@angular/fire/analytics';
 import { QueryConstraint, Timestamp, where } from '@angular/fire/firestore';
 import { getAuth, User } from '@firebase/auth';
 import { user } from 'rxfire/auth';
-import { combineLatest, defaultIfEmpty, firstValueFrom, map, Observable, of, switchMap } from 'rxjs';
+import { combineLatest, defaultIfEmpty, firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { StripeSubscriptionInvoice } from '../models/subscription-invoices.model';
 import { StripeSubscription } from '../models/subscription.model';
@@ -16,13 +17,21 @@ export class UsersService {
 
 	constructor(
 		private db: FirebaseExtendedService,
+		private analytics: Analytics,
 	) {	}
 
 	get user$(): Observable<DbUser | undefined> {
 		return user(this.auth).pipe(
 			switchMap(user => {
 				if (user && user?.uid) {
-					return this.getWithSubscription(user.uid);
+					setUserId(this.analytics, user.uid);
+					return this.getWithSubscription(user.uid)
+						.pipe(tap((user) => {
+							if (!user) return;
+							setUserProperties(this.analytics, {
+								...user,
+							})
+						}));
 				} else {
 					return of(undefined);
 				}
