@@ -15,7 +15,6 @@ export const checkUserSubscription = async (uid: string) => {
 		.where('status', 'in', ['active', 'trialing']);
 	const doc = await docRef.get();
 	const subscription = doc.docs.at(0)?.data() as StripeSubscription | undefined;
-	if (!subscription) return false;
 
 	totalRepos = totalRepos.length > 0 ? totalRepos : (await firestore.collection('supported-docs').get()).docs.map((doc) => doc.id);
 	const thisMonth = new Date().getMonth();
@@ -36,8 +35,10 @@ export const checkUserSubscription = async (uid: string) => {
 	warn(`User ${uid} has ${totalCount} completions in repos`);
 
 	try {
-		const productRef = await (subscription.product as unknown as DocumentReference)?.get();
-		const productData = productRef.data();
+		let productRef = subscription?.product as unknown as DocumentReference | undefined;
+		productRef = productRef ? productRef : firestore.doc('products/prod_OV9WZx4H6x0iOZ'); // Fallback to free plan
+		const productDoc = await productRef.get();
+		const productData = productDoc.data();
 		const maxCountPerProd = productData?.metadata.maxPromptCountMonth as string | undefined;
 		const normMaxCount = maxCountPerProd ? isNaN(parseInt(maxCountPerProd)) ? 0 : parseInt(maxCountPerProd) : 0;
 		canQuery = totalCount <= normMaxCount;
