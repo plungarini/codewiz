@@ -20,7 +20,7 @@ const routes: Routes = [
 			{
 				path: 'pricing',
 				data: { preload: true },
-				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
+				loadChildren: () => import('./pages/pricing/pricing.module').then(m => m.PricingModule),
 			},
 		]
 	}
