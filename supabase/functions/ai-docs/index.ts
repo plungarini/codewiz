@@ -79,7 +79,7 @@ serve(async (req) => {
 		// Intentionally log the request data
 		console.log({ requestData })
 
-		const res = await fetch('https://europe-west2-code-whiz-ai.cloudfunctions.net/canUserQuery', {
+		const res = await fetch('https://europe-west2-codewiz-prod.cloudfunctions.net/canUserQuery', {
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -295,7 +295,7 @@ serve(async (req) => {
 
 		// Calculate openai tokens
 		if (!!canQueryJson)
-			fetch('https://europe-west2-code-whiz-ai.cloudfunctions.net/calculateOpenaiTokens', {
+			fetch('https://europe-west2-codewiz-prod.cloudfunctions.net/calculateOpenaiTokens', {
 				headers: {
 					'Content-Type': 'application/json',
 					'Accept': 'application/json',
