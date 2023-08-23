@@ -17,6 +17,7 @@
 			<h3 class="mb-4">Your plan</h3>
 			<div class="flex items-center justify-start space-x-4 ">
 				<app-subscription-remaining
+					*ngIf="((product$ | async)?.role || '') !== 'apprentice_plan'"
 					[percentage]="(user$ | async) ? getRemainingDaysPerc((user$ | async)?.subscriptions?.at(0)) : 0"
 					[remaining]="(user$ | async) ? getRemainingDays((user$ | async)?.subscriptions?.at(0)) : 0"
 					theme="light"
@@ -30,9 +31,14 @@
 							<p class="text-sm font-medium truncate text-zinc-500">
 								Plan: <span class="text-base font-semibold shrink text-pink-500/80">{{getPlanName(product)}}</span>
 							</p>
-							<p class="text-sm font-medium truncate text-zinc-500">
+							<p *ngIf="product.role !== 'apprentice_plan'; else freePlan" class="text-sm font-medium truncate text-zinc-500">
 								Renew on: <span class="text-base font-semibold shrink text-pink-500/80">{{user.subscriptions?.at(0)?.current_period_end?.toDate() | date:'longDate'}}</span>
 							</p>
+							<ng-template #freePlan>
+								<span class="block text-sm font-medium truncate text-zinc-500">
+									Forever Free Plan
+								</span>
+							</ng-template>
 						</div>
 
 					</ng-container>
