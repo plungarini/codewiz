@@ -17,14 +17,26 @@
 </ng-template>
 
 <div class="relative h-full px-5 py-4 overflow-hidden transition-all duration-300 shadow-2xl rounded-xl border-zinc-800 from-black/60 to-zinc-900/90 bg-gradient-to-tr backdrop-blur hover:ring-4 ring-zinc-900 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950 ring-offset-zinc-950">
-	<!-- <div class="absolute -z-10 bg-gradient-to-br from-[#695ca5] via-[#e74b94] to-[#f59e11] inset-0 opacity-10"></div> -->
-	<div class="absolute inset-0 flex items-center justify-end text-white -z-10 opacity-[0.03]">
-		<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-48 h-48 -rotate-[32deg] translate-x-11 -translate-y-7">
-			<path d="M3.57919 16.3063L3.00123 7.32852C2.96912 6.82548 3.57335 6.54818 3.93336 6.89943L6.55363 9.45451C6.55363 9.45451 9.5485 6.47325 11.1072 4.91452C11.6083 4.41245 12.4188 4.4144 12.917 4.91744C14.4611 6.4752 17.4463 9.45937 17.4463 9.45937C17.4463 9.45937 18.9904 7.94442 20.0685 6.88775C20.4285 6.53455 21.0318 6.81575 20.9987 7.31879L20.4207 16.3054C20.3069 18.0781 18.8348 19.4579 17.059 19.4579H6.94185C5.16517 19.4579 3.694 18.0781 3.57919 16.3063Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-			<path d="M3.48438 14.8438H20.5137" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-			<path d="M12.0001 10.1998V10.2466M12.1893 10.2099C12.1893 10.315 12.104 10.4002 11.9989 10.4002C11.8938 10.4002 11.8086 10.315 11.8086 10.2099C11.8086 10.1048 11.8938 10.0195 11.9989 10.0195C12.104 10.0195 12.1893 10.1048 12.1893 10.2099Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-		</svg>
-	</div>
+
+	<ng-template #subBgIcon let-subRole="subRole">
+		<div
+			[ngClass]="{
+				'text-white opacity-[0.03]': subRole.includes('apprentice'),
+				'text-amber-400 opacity-[0.05]': subRole.includes('wizard'),
+				'text-pink-400 opacity-[0.08]': subRole.includes('master'),
+			}"
+			class="absolute inset-0 flex items-center justify-end -z-10"
+		>
+			<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-48 h-48 -rotate-[32deg] translate-x-11 -translate-y-7">
+				<path d="M3.57919 16.3063L3.00123 7.32852C2.96912 6.82548 3.57335 6.54818 3.93336 6.89943L6.55363 9.45451C6.55363 9.45451 9.5485 6.47325 11.1072 4.91452C11.6083 4.41245 12.4188 4.4144 12.917 4.91744C14.4611 6.4752 17.4463 9.45937 17.4463 9.45937C17.4463 9.45937 18.9904 7.94442 20.0685 6.88775C20.4285 6.53455 21.0318 6.81575 20.9987 7.31879L20.4207 16.3054C20.3069 18.0781 18.8348 19.4579 17.059 19.4579H6.94185C5.16517 19.4579 3.694 18.0781 3.57919 16.3063Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+				<path d="M3.48438 14.8438H20.5137" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+				<path d="M12.0001 10.1998V10.2466M12.1893 10.2099C12.1893 10.315 12.104 10.4002 11.9989 10.4002C11.8938 10.4002 11.8086 10.315 11.8086 10.2099C11.8086 10.1048 11.8938 10.0195 11.9989 10.0195C12.104 10.0195 12.1893 10.1048 12.1893 10.2099Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+			</svg>
+		</div>
+	</ng-template>
+
+	<ng-container *ngTemplateOutlet="subBgIcon; context: { subRole: (product$ | async)?.role || 'apprentice' }"></ng-container>
+	
 
 	<h3 class="mb-10 text-sm font-semibold text-zinc-500">Subscription Details</h3>
 	

@@ -66,13 +66,13 @@ export class SubscriptionOverviewComponent {
 
 	getRemainingQueries(usage?: null | CompletionStat[], product?: null | StripeProduct) {
 		if (!usage || !product) return 0;
-		const totalCount = usage.reduce((a, b) => (isNaN(a) ? 0 : a) + (isNaN(b.prompt.count) ? 0 : b.prompt.count), 0);
+		const totalCount = usage.reduce((a, b) => (isNaN(a) ? 0 : a) + (isNaN(b.prompt?.count) ? 0 : b.prompt?.count || 0), 0);
 		return (parseInt(product.metadata.maxPromptCountMonth || '0')) - totalCount;
 	}
 
 	getRemainingQueriesPerc(usage?: null | CompletionStat[], product?: null | StripeProduct) {
 		if (!usage || !product) return 0;
-		const totalCount = usage.reduce((a, b) => (isNaN(a) ? 0 : a) + (isNaN(b.prompt.count) ? 0 : b.prompt.count), 0);
+		const totalCount = usage.reduce((a, b) => (isNaN(a) ? 0 : a) + (isNaN(b.prompt?.count) ? 0 : b.prompt?.count || 0), 0);
 		return (totalCount / parseInt(product.metadata.maxPromptCountMonth || '0')) * 100;
 	}
 
