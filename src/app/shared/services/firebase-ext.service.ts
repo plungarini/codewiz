@@ -16,29 +16,37 @@ import {
 	setDoc,
 	updateDoc
 } from '@angular/fire/firestore';
-import { Functions, getFunctions, httpsCallable } from '@angular/fire/functions';
-import { Observable, of } from 'rxjs';
+import { Functions, getFunctions, httpsCallable, httpsCallableFromURL } from '@angular/fire/functions';
+import { traceUntilFirst } from '@angular/fire/performance';
+import { catchError, Observable, of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirebaseExtendedService {
 
-	private debug = false;
+	private debug = !environment.production;
+	private cloudId = environment.production ? 'am6pkcy5gq-nw' : 'ik2jh2ngra-ew';
+	privateProjectName = 'codewiz-prod';
 
 	constructor(
 		private firestore: Firestore,
 		private functions: Functions
 	) { }
 	
-	callFunction<T, Z>(name: string, region = 'europe-west2', timeout = 60_000) {
-		if (this.debug) console.log('[Firebase "callFunction"]', { name, timeout });
+	callFunction<T, Z>(name: string, region = 'europe-west1', version: number = 2, timeout = 60_000) {
 		const instance = this.functions.region === region ? this.functions : getFunctions(undefined, region);
-		return httpsCallable<T, Z>(instance, name, { timeout });
+
+		if (version === 1) {
+			return httpsCallable<T, Z>(instance, name, { timeout });
+		} else {
+			const url = this._buildFunctionUrl(name, region, version);
+			return httpsCallableFromURL<T, Z>(instance, url, { timeout });
+		}
 	}
 	
 	async getColRef(path: string, ...queryConstraints: QueryConstraint[]): Promise<QuerySnapshot<DocumentData> | undefined> {
-		if (this.debug) console.log('[Firebase "getColRef"]', { path, queryConstraints });
 		if (!path) return undefined;
 
     let ref: Query;
@@ -48,37 +56,60 @@ export class FirebaseExtendedService {
 	}
 
 	async getDocPromise<T>(path: string): Promise<T | undefined> {
-		if (this.debug) console.log('[Firebase "getDocPromise"]', { path });
     if (!path) return undefined;
 		const docRef = doc(this.firestore, path) as DocumentReference<T>;
 		return (await getDocFb<T>(docRef)).data();
 	}
 	
 	getDoc<T>(path: string): Observable<T | undefined> {
-		if (this.debug) console.log('[Firebase "getDoc"]', { path });
     if (!path) return of(undefined);
-    const docRef = doc(this.firestore, path) as DocumentReference<T>;
-    return docData<T>(docRef, { idField: 'id' });
+		const docRef = doc(this.firestore, path) as DocumentReference<T>;
+		let debugLogged = !this.debug;
+		return docData<T>(docRef, { idField: 'id' }).pipe(
+			traceUntilFirst(`[getDoc] ${path}`),
+			catchError((err, caught) => {
+				if (this.debug && !debugLogged) {
+					console.error('[Firebase "getDoc"]', {
+						err,
+						...arguments,
+					});
+					debugLogged = true;
+				}
+				return caught;
+			}),
+		);
 	}
 	
 	async getColPromise<T>(path: string, ...queryConstraints: QueryConstraint[]): Promise<T[]> {
-		if (this.debug) console.log('[Firebase "getColPromise"]', { path, queryConstraints });
     if (!path) return [];
 
     let ref: Query<T>;
     const colRef = collection(this.firestore, path) as CollectionReference<T>;
 		ref = query<T>(colRef, ...queryConstraints);
-		return (await getDocs<T>(ref)).docs.map(d => ({ id: d.id, ...d.data()}))
+		return (await getDocs<T>(ref)).docs.map(d => ({ id: d.id, ...d.data() }))
   }
 
 	getCol<T>(path: string, idField = 'id', ...queryConstraints: QueryConstraint[]): Observable<T[]> {
-		if (this.debug) console.log('[Firebase "getCol"]', { path, idField, queryConstraints });
 		if (!path) return of([]);
 
 		let ref: Query<T>;
 		const colRef = collection(this.firestore, path) as CollectionReference<T>;
 		ref = query<T>(colRef, ...queryConstraints);
-		return collectionData<T>(ref, { idField });
+		
+		let debugLogged = !this.debug;
+		return collectionData<T>(ref, { idField }).pipe(
+			traceUntilFirst(`[getDoc] ${path}`),
+			catchError((err, caught) => {
+				if (this.debug && !debugLogged) {
+					console.error('[Firebase "getDoc"]', {
+						err,
+						...arguments,
+					});
+					debugLogged = true;
+				}
+				return caught;
+			}),
+		);
 	}
 
   generateId(): string {
@@ -93,7 +124,6 @@ export class FirebaseExtendedService {
   }
 
 	async upsert<T>(path: string, obj: Partial<T>): Promise<void> {
-		if (this.debug) console.log('[Firebase "upsert"]', { path, obj });
     if (!path) return;
 
     const docRef = doc(this.firestore, path);
@@ -121,7 +151,6 @@ export class FirebaseExtendedService {
   }
 
 	async delete(path: string): Promise<void> {
-		if (this.debug) console.log('[Firebase "delete"]', { path });
     if (!path) return;
 
     const docRef = doc(this.firestore, path);
@@ -129,7 +158,6 @@ export class FirebaseExtendedService {
   }
 
 	async deleteCollection(path: string, ...queryConstraints: QueryConstraint[]): Promise<void> {
-		if (this.debug) console.log('[Firebase "deleteCollection"]', { path, queryConstraints });
 		if (!path) return;
 		
 		const colRef = await this.getColRef(path, ...queryConstraints);
@@ -139,5 +167,13 @@ export class FirebaseExtendedService {
 					console.warn(`Unable to delete doc at ${path}/${d.id}`, err);
 				});
 		});
+	}
+
+	private _buildFunctionUrl(name: string, region: string, version = 2): string {
+		if (version === 1) {
+			return `https://${region}-${this.privateProjectName}.cloudfunctions.net/${name}`;
+		} else {
+			return `https://${name.toLowerCase().trim()}-${this.cloudId}.a.run.app`;
+		}
 	}
 }
