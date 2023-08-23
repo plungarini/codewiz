@@ -6,7 +6,13 @@ import { PasswordResetAlertService } from './services/password-reset-alert.servi
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
-  styleUrls: []
+	styles: [
+		`
+			:host {
+				@apply block h-full;
+			}
+		`
+	]
 })
 export class AuthComponent implements OnInit, OnDestroy {
 
