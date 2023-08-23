@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { StripeSubscription } from 'functions/src/models/subscription/subscription.model';
-import { of, switchMap } from 'rxjs';
+import { switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { CompletionStat } from 'src/app/shared/models/chat-stats.model';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
@@ -26,9 +26,8 @@ export class SubscriptionOverviewComponent {
 	product$ = this.user$.pipe(
 		switchMap((u) => {
 			const productId = u?.subscriptions?.at(0)?.items?.at(0)?.plan?.product;
-			if (!productId) return of(undefined);
 			return this.stripeService.getProduct(productId);
-		})
+		}),
 	);
 
 	constructor(
