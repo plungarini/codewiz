@@ -13,9 +13,10 @@ export class StorageService {
 
 	async uploadFileAndGetPath(
 		mediaFolderPath: string,
-		fileToUpload: File,
+		fileToUpload: Blob | Uint8Array | ArrayBuffer | File,
+		fileName?: string,
 	) {
-		const { name } = fileToUpload;
+		const name = 'name' in fileToUpload ? fileToUpload.name : fileName;
 		const filePath = `${mediaFolderPath}/${name}`;
 		const reference = ref(this.storage, filePath);
 

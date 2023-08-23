@@ -5,6 +5,7 @@ import { getAuth, User } from '@firebase/auth';
 import { user } from 'rxfire/auth';
 import { combineLatest, defaultIfEmpty, firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
+import { StorageService } from 'src/app/shared/services/storage.service';
 import { StripeSubscriptionInvoice } from '../models/subscription-invoices.model';
 import { StripeSubscription } from '../models/subscription.model';
 import { User as DbUser, UserDetails, UserUsageDetails, UserUsages } from '../models/user.model';
@@ -17,6 +18,7 @@ export class UsersService {
 
 	constructor(
 		private db: FirebaseExtendedService,
+		private storage: StorageService,
 		private analytics: Analytics,
 	) {	}
 
@@ -57,15 +59,18 @@ export class UsersService {
     additionalDetails?: any,
     isSignup?: boolean
   ): Promise<boolean> {
-    try {
+		try {
+			if (!user.uid) return false;
+			const img = user.photoURL ? await this.sanitizePhotoUrl(user.photoURL, `users/${user.uid}/pip`) : 'assets/404_pip_image.png';
+
       const toFirebaseUser: DbUser = {
-        id: user.uid || '',
+        id: user.uid,
         name: user.displayName || additionalDetails?.fullName || '',
         email: user.email || '',
         disabled: false,
         details: (isSignup
           ? {
-              imgUrl: user.photoURL || 'assets/404_pip_image.png',
+              imgUrl: img,
               phoneNumber:
                 user.phoneNumber || additionalDetails?.phoneNumber || undefined,
             }
@@ -312,5 +317,78 @@ export class UsersService {
 				map((a) => a || undefined)
 			)
 		);
+	}
+
+
+	private async sanitizePhotoUrl(url: string, path: string): Promise<string> {
+		try {
+			if (url.startsWith('https://') || url.startsWith('http://') || url.startsWith('www.')) {
+				// Fetch the image as blob in angular
+				const response = await fetch(url);
+				const blob = await response.blob();
+				const fileName = await this.getFileName(blob, url);
+				console.log({ fileName });
+				
+				return this.storage.uploadFileAndGetPath(path, blob, fileName);
+			}
+	
+			if (url.startsWith('assets/') || url.startsWith('/assets')) {
+				return url;
+			}
+	
+			return 'assets/404_pip_image.png';
+		} catch (err) {
+			console.log(err);
+			return 'assets/404_pip_image.png';
+		}
+	}
+
+	private async getFileName(blob: Blob | File, url: string = ''): Promise<string> {
+    // If the blob is a File object, use its name property
+		if (blob instanceof File) {
+			return blob.name;
+    }
+
+		const filenameFromUrl = url?.split('/').pop();
+		const extension = this.mimeToExtension(blob.type);
+		if (extension) {
+			return `${filenameFromUrl}.${extension}`;
+    }
+
+    // Fetch the blob from the URL and check for Content-Disposition header
+    try {
+			const response = await fetch(url);
+			const contentDisposition = response.headers.get('Content-Disposition');
+			if (contentDisposition) {
+				const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+				if (match && match[1]) {
+					const filenameFromHeader = match[1].replace(/['"]/g, '');
+					if (filenameFromHeader) {
+						return filenameFromHeader;
+					}
+				}
+			}
+    } catch (error) {
+			if (url) {
+				if (filenameFromUrl && filenameFromUrl.includes('.')) {
+					console.log({ filenameFromUrl, includes: true });
+					return filenameFromUrl;
+				}
+			}
+    }
+
+    // If all fails, return a default name (considering you can't deduce a more meaningful name)
+    return `${filenameFromUrl}.png`;
+	}
+
+	private mimeToExtension(mimeType: string): string | null {
+    const mimeMap: { [key: string]: string } = {
+			'image/jpeg': 'jpg',
+			'image/png': 'png',
+			'image/gif': 'gif',
+			'image/webp': 'webp',
+    };
+
+    return mimeMap[mimeType] || null;
 	}
 }
