@@ -9,16 +9,16 @@ import { disableUser as disableUserFn, isUserDisabled as isUserDisabledFn } from
 import { sendEmailActionCode } from './functions/email_action_code';
 import { elaborateEmbeddings, getAllEmbeddings } from './functions/embeddings';
 import { githubFolderFetcher } from './functions/githubFetcher';
+import { initUser as initUserFn } from './functions/initUser';
 import { scrapeDocumentedPage } from './functions/scraper';
 import { calculateTokens } from './functions/tiktoken';
 import { AiChatMessage } from './models/tiktoken/tiktoken.model';
-import { firestore } from './utils';
 
 setGlobalOptions({
 	concurrency: 100,
 	maxInstances: 10,
 	memory: '128MiB',
-	region: 'europe-west2',
+	region: 'europe-west1',
 	timeoutSeconds: 60,
 });
 
@@ -179,33 +179,12 @@ export const canUserQuery = onRequest({
 	}
 });
 
-export const setDefaultPermissions = onDocumentCreated(
+export const initUser = onDocumentCreated(
 	'users/{uid}',
 	async (event) => {
 		try {
 			const { uid } = event.params;
-			const rolesRef = firestore.doc(`users/${uid}/protected/role`);
-			const doc = await rolesRef.get();
-			const data = doc.data();
-
-			const statsRef = firestore.doc('stats/users');
-			const statsDoc = await statsRef.get();
-			const statsData = statsDoc.data();
-
-			const statsNewData = {
-				...statsData,
-				usersCount: (statsData?.usersCount || 0) + 1,
-			};
-
-			await statsRef.set(statsNewData, { merge: true });
-
-			const newData = {
-				...data,
-				permissions: data?.permissions || [],
-			};
-
-			newData.permissions.push('user');
-			await rolesRef.set(newData, { merge: true });
+			await initUserFn(uid);
 		} catch (err) {
 			error(err);
 		}
