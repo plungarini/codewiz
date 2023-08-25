@@ -6,35 +6,60 @@ import { environment } from 'src/environments/environment';
 })
 export class BrevoService {
 
+	private production = environment.production;
 	private initialized = false;
-	private brevo = (window as any)?.BrevoConversations as any | undefined;
+	private killTries = 0;
 
 	constructor() { }
 	
 	hide(): void {
+		const brevo = (window as any)?.BrevoConversations as any | undefined;
+		if (!brevo) return;
 		this.initialize();
-		const visible = this.brevo?._visible;
+		const visible = brevo?._visible;
 		if (!visible) return;
-		this.brevo?.minimizeWidget();
-		this.brevo?.hide();
+		const hasMethod = brevo.hasOwnProperty('minimizeWidget') && brevo.hasOwnProperty('hide');
+		if (!hasMethod) return console.warn('[BREVO CONVERSATIONS] Unable to hide widget.');
+		brevo?.minimizeWidget();
+		brevo?.hide();
 	}
 
 	show(): void {
+		if (!this.production) return;
+		const brevo = (window as any)?.BrevoConversations as any | undefined;
+		if (!brevo) return;
 		this.initialize();
-		const visible = this.brevo?._visible;
+		const visible = brevo?._visible;
 		if (visible) return;
-		this.brevo?.show();
+		const hasMethod = brevo.hasOwnProperty('show');
+		if (!hasMethod) return console.warn('[BREVO CONVERSATIONS] Unable to show widget.');
+		brevo?.show();
 	}
 
 	remove(): void {
-		this.initialize();
-		this.brevo.kill();
+		const brevo = (window as any)?.BrevoConversations as any | undefined;
+		if (!brevo) return;
+		try {
+			const hasMethod = brevo.hasOwnProperty('kill');
+			if (!hasMethod) throw Error();
+			brevo?.kill();
+		} catch (err) {
+			this.killTries++;
+			if (this.killTries > 5) {
+				console.warn('[BREVO CONVERSATIONS] Unable to kill widget. Reload the page.')
+				return;
+			}
+ 			setTimeout(() => {
+				this.remove();
+			}, 500 * this.killTries);
+		}
 	}
 
-	private initialize(): void {
+	initialize(): void {
+		const brevo = (window as any)?.BrevoConversations as any | undefined;
+		if (!brevo) return;
 		if (this.initialized) return;
-		const prod = environment.production;
-		if (!prod) this.brevo?.kill();
+		if (!this.production) this.remove();
 		this.initialized = true;
 	}
 }
