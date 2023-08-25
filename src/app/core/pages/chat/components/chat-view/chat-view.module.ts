@@ -14,6 +14,7 @@ import { PagesectionsSelectorComponent } from './components/messages/components/
 import { MessagesComponent } from './components/messages/messages.component';
 import { QueryInputComponent } from './components/query-input/query-input.component';
 import { StatusComponent } from './components/status/status.component';
+import { EmptyChatPlaceholderComponent } from './components/empty-chat-placeholder/empty-chat-placeholder.component';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { StatusComponent } from './components/status/status.component';
     PagesectionsSelectorComponent,
 		MessageToolbarComponent,
   	LoaderComponent,
+   EmptyChatPlaceholderComponent,
   ],
   imports: [
 		CommonModule,

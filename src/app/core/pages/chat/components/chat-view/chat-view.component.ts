@@ -117,6 +117,10 @@ export class ChatViewComponent implements OnDestroy {
 		this.chatSub?.unsubscribe();
 	}
 
+	get isChatEmpty(): boolean {
+		return this.chat.filter(m => m.content !== 'init').length <= 0;
+	}
+
 	async onChatScroll(event?: any): Promise<void> {
 		const element = this.mainChatContainer?.nativeElement;
 		if (!element) return;

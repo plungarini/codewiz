@@ -17,13 +17,20 @@
 	#mainChatContainer
 >
 	<app-messages
+		*ngIf="!isChatEmpty; else chatPlaceholder"
 		[chat]="chat"
 		[repoId]="this.selectedRepo"
 		(onQueryRefresh)="createQuery($event.query, $event.queryId)"
 	></app-messages>
+
+	<ng-template #chatPlaceholder>
+		<app-empty-chat-placeholder></app-empty-chat-placeholder>
+	</ng-template>
 </div>
 
 <app-query-input
+	[repoId]="selectedRepo"
+	[showSuggestions]="isChatEmpty"
 	[gettingQuery]="gettingQuery"
 	[showScrollToBottom]="showScrollToBottom"
 	(onQuery)="createQuery($event)"
