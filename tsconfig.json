@@ -30,6 +30,7 @@
 		"imgix-url-params/dist/parameters.json",
 	],
   "angularCompilerOptions": {
+		"enableIvy": true,
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
