@@ -2,7 +2,58 @@
 
 <div class="relative z-50 flex flex-row w-full pointer-events-none">
 
+	
 	<div class="w-full mb-4 pointer-events-auto">
+		<ng-container *ngIf="repo?.querySuggestions as suggestions">
+			<ng-container *ngIf="suggestions.length > 0">
+				<div
+					[ngClass]="{
+						'pointer-events-none': (!_showSuggestions || !showSuggestions)
+					}"
+					class="grid max-w-3xl grid-cols-1 pb-2 mx-auto gap-x-2 gap-y-2 md:grid-cols-2"
+				>
+	
+					<ng-container *ngFor="let suggestion of suggestions; let i = index">
+						<div
+							[ngClass]="{
+								'opacity-100 translate-y-0': _showSuggestions && showSuggestions,
+								'opacity-0 translate-y-4': (!_showSuggestions || !showSuggestions),
+							}"
+							[ngStyle]="{
+								'transition-delay': (100 * (i + 1)) + 'ms',
+							}"
+							class="transition-all duration-300"
+						>
+							<div
+								[ngClass]="{
+									'hidden': i >= 2,
+									'flex': i < 2,
+								}"
+								[title]="suggestion"
+								(click)="submitSuggestion(suggestion)"
+								class="items-center px-2 py-2 transition-all duration-300 rounded-md cursor-pointer sm:py-1 md:flex group bg-zinc-950 hover:bg-zinc-900 ring-1 ring-zinc-800 gap-x-2"
+							>
+								<svg class="w-5 h-5 transition-colors duration-300 shrink-0 text-zinc-600 group-hover:text-zinc-500" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path fill-rule="evenodd" clip-rule="evenodd" d="M10.1418 16.1912C7.70948 15.1657 6.00391 12.7567 6.00391 9.94394C6.00391 5.71357 9.86553 2.39388 14.2457 3.28121C16.8386 3.81147 18.9363 5.89746 19.4782 8.49134C20.1817 11.8801 18.337 15.0042 15.5018 16.2029V18.4563C15.5018 19.9303 14.2954 21.1367 12.8223 21.1367C11.3483 21.1367 10.1418 19.9303 10.1418 18.4563V16.1912Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M13.0684 16.207H15.5066" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M9.96875 9.22955C9.96875 7.98709 11.1022 7.0122 12.3885 7.27295" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+								<p class="text-sm transition-colors duration-300 line-clamp-2 group-hover:text-zinc-400 text-zinc-500">
+									{{suggestion}}
+								</p>
+								<svg class="hidden w-5 h-5 transition-opacity duration-300 opacity-0 sm:block shrink-0 text-zinc-300 group-hover:opacity-100" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M19.8321 13.4622L6.31843 20.8701C5.09345 21.5418 3.65442 20.4396 3.97647 19.0767L5.63929 12.0427L3.97647 5.00676C3.65442 3.64389 5.09345 2.54266 6.31843 3.21433L19.8321 10.6222C20.951 11.2363 20.951 12.8481 19.8321 13.4622Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M14.0113 12.0195L5.67773 12.0635" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+							</div>
+						</div>
+					</ng-container>
+					
+				</div>
+			</ng-container>
+		</ng-container>
+		
+
 		<div contenteditable="false" class="relative w-full max-w-3xl mx-auto rounded-md shadow-2xl bg-zinc-800/80 backdrop-blur-sm border-2 border-zinc-700 py-2.5">
 			<div
 				(input)="handleDummyInputChange($event)"
@@ -30,9 +81,9 @@
 			'opacity-100 pointer-events-auto translate-y-0': showScrollToBottom
 		}"
 		(click)="scrollToBottom()"
-		class="absolute right-0 flex items-center justify-center w-10 h-10 transition-all duration-300 rounded-full select-none ring-1 hover:ring-2 ring-offset-0 hover:ring-zinc-600 ring-zinc-800 hover:ring-offset-1 ring-offset-zinc-950 hover:bg-zinc-800 group bg-zinc-900 bottom-20 sm:bottom-32 xl:bottom-24"
+		class="absolute right-0 flex items-center justify-center w-8 h-8 transition-all duration-300 rounded-full select-none sm:w-10 sm:h-10 ring-1 hover:ring-2 ring-offset-0 hover:ring-zinc-600 ring-zinc-800 hover:ring-offset-1 ring-offset-zinc-950 hover:bg-zinc-800 group bg-zinc-900 bottom-20 sm:bottom-32 xl:bottom-24"
 	>
-		<svg class="w-5 h-5 transition-colors duration-300 text-zinc-300 group-hover:text-zinc-50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<svg class="w-4 h-4 transition-colors duration-300 shrink-0 sm:w-5 sm:h-5 text-zinc-300 group-hover:text-zinc-50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path d="M18.4265 13.5469L12.0003 20L5.57422 13.5469" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 			<path d="M12 20V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 		</svg>
