@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Repo } from 'src/app/shared/models/repo.model';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
+import { UserRepoService } from '../../../../services/user-repo.service';
 
 
 @Component({
@@ -38,23 +39,12 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 	constructor(
 		private cdRef: ChangeDetectorRef,
 		private db: FirebaseExtendedService,
+		private repoService: UserRepoService,
 		private route: ActivatedRoute,
 	) {
-		this.docsListSub = this.db.getCol<Repo>('supported-docs').subscribe(d => {
+		this.docsListSub = this.repoService.getAllSupportedDocs().subscribe(d => {
 			if (!this.docsListLoaded) this.docsListLoaded = true;
-			this.docs = d.sort((a, b) => {
-				// Convert to uppercase for case-insensitive sorting
-				const nameA = a.name.toUpperCase();
-				const nameB = b.name.toUpperCase();
-
-				if (nameA < nameB) {
-					return -1;
-				}
-				if (nameA > nameB) {
-					return 1;
-				}
-				return 0;
-			});
+			this.docs = d;
 
 			this.filteredDocs = this._filterDocs(this.searchInput.value);
 			const repoParam = this.route.snapshot.paramMap.get('repo');
