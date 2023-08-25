@@ -33,14 +33,12 @@
 				class="relative inline-flex w-2.5 h-2.5 rounded-full"></span>
 		</span>
 	
-		<div class="max-w-full px-2">
-			<p *ngIf="status.title" class="inline-block max-w-full pt-0 text-xs truncate transition-all group-hover:whitespace-normal">
-				<span *ngIf="status.title" class="font-normal text-zinc-100">{{status.title}}</span>
-				<span *ngIf="status.title && status.message" class="font-normal text-zinc-100">:</span>
-				<span *ngIf="status.message" class="font-normal text-zinc-400">
-					{{status.message}}
-				</span>
-			</p>
-		</div>
+		<p *ngIf="status.title" class="inline-block max-w-full px-2 py-1 text-xs truncate transition-all group-hover:whitespace-normal">
+			<span *ngIf="status.title" class="font-normal text-zinc-100">{{status.title}}</span>
+			<span *ngIf="status.title && status.message" class="font-normal text-zinc-100">:</span>
+			<span *ngIf="status.message" class="font-normal text-zinc-400">
+				{{status.message}}
+			</span>
+		</p>
 	</a>
 </div>
