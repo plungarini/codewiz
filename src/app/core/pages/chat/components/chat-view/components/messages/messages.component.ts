@@ -12,7 +12,7 @@ import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.se
   templateUrl: './messages.component.html',
 	styles: [`
 		:host {
-			@apply block pb-36 pt-16 sm:pt-8 relative w-full overflow-y-visible overflow-x-hidden px-6;
+			@apply block pb-36 pt-16 md:pt-8 relative w-full overflow-y-visible overflow-x-hidden px-6;
 		}
 	`],
   changeDetection: ChangeDetectionStrategy.OnPush
