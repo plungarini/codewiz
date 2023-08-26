@@ -1,0 +1,66 @@
+<div
+	class="block w-full opacity-0 shrink-0 grow"
+></div>
+
+<div
+	[ngClass]="{
+		'opacity-100 translate-y-0': show,
+		'opacity-0 translate-y-14': !show,
+	}"
+	class="flex-1 py-6 transition-all duration-300 ease-in-out shadow-2xl pointer-events-auto bg-zinc-900/70 backdrop-blur rounded-t-xl"
+>
+	<div class="flex flex-col max-h-[60vh] min-h-full">
+		<div class="px-6 shrink-0">
+			<div class="flex items-center justify-between mb-2">
+				<h3 class="mb-0 text-2xl">Wiz chat</h3>
+
+				<div (click)="closeMobileMenu()" class="flex items-center justify-center w-6 h-6 rounded-md bg-zinc-950 shrink-0 ring-1 ring-zinc-800">
+					<svg class="w-4 h-4 text-zinc-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</div>
+			</div>
+		
+			<!-- Language dropdown -->
+			<app-mobile-search-repo-autocomplete
+				(onRepo)="updateSelectedDoc($event)"
+			></app-mobile-search-repo-autocomplete>
+		
+			<div class="flex flex-col mt-2 space-y-2">
+				
+				<p *ngIf="selectedDoc" class="flex flex-row justify-between px-2 space-x-1 text-sm">
+					<b class="whitespace-nowrap">Website:</b>
+					<a [href]="selectedDoc.url" target="_blank" class="truncate transition-colors duration-300 text-zinc-500 hover:text-sky-500">
+						{{selectedDoc.url}}
+					</a>
+				</p>
+		
+				<p *ngIf="selectedDoc" class="flex flex-row justify-between px-2 space-x-1 text-sm">
+					<b class="whitespace-nowrap">Last update:</b>
+					<span class="truncate text-zinc-500">{{selectedDoc.embeddingsUpdatedAt?.toDate() || selectedDoc.updatedAt?.toDate() | date:'mediumDate'}}</span>
+				</p>
+		
+			</div>
+		
+			<hr class="my-6 border-zinc-800">
+		
+			<button (click)="startNewChat()" class="flex flex-row items-center justify-center w-full px-4 py-3 text-sm transition-all duration-300 border rounded-md outline-none gap-x-2 focus:outline-none bg-zinc-950 hover:bg-zinc-900 text-zinc-400 border-zinc-600 hover:border-zinc-200 hover:text-zinc-200">
+				<svg class="w-5 h-5" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M11.9759 21.7737C14.5257 21.7825 17.0784 20.7121 18.8969 18.5547C21.6179 15.3269 21.7035 10.4832 19.0905 7.16759C15.6888 2.84986 9.40565 2.57957 5.64219 6.35576C2.89107 9.11521 2.29689 13.2036 3.83826 16.5476C3.96662 16.8686 4.46356 17.7507 4.79711 18.3313C4.98675 18.6611 4.9673 19.068 4.74849 19.3782C4.52871 19.6885 4.25059 20.0857 4.03373 20.4116C3.64571 20.9941 4.05804 21.7747 4.75627 21.7737L5.29761 21.7735C7.67191 21.7725 11.1486 21.771 11.9759 21.7737Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M14.575 12.7419H9.42188M11.9993 15.3336V10.1543" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span>Start new chat</span>
+			</button>
+		</div>
+
+		<div *ngIf="$reposChats | async as chats" class="flex w-full max-h-full pl-6 overflow-hidden grow-0 shrink">
+			<app-mobile-chat-history
+				[chatHistory]="chats"
+				(onDelete)="deleteChat($event)"
+				(onLinkClick)="closeMobileMenu()"
+				class="w-full"
+			></app-mobile-chat-history>
+		</div>
+	</div>
+</div>
