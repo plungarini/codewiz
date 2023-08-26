@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
-import { animationFrameScheduler, catchError, finalize, of, Subscription, switchMap } from 'rxjs';
+import { Subscription, animationFrameScheduler, catchError, finalize, of, switchMap } from 'rxjs';
 import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
@@ -14,7 +14,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   styles: [
     `
       :host {
-        @apply relative w-full max-h-full overflow-hidden;
+        @apply md:relative w-full max-h-full md:overflow-hidden;
 				display: inline-grid;
       }
     `
@@ -27,6 +27,7 @@ export class ChatViewComponent implements OnDestroy {
 	gettingQuery = false;
 	autoscroll: boolean = true;
 	chat: AiChatMessage[] = [];
+	showMobileMenu = false;
 
 	private oldChat: AiChatMessage[] = [];
 	private maxResultsLoaded = false;
@@ -359,7 +360,12 @@ export class ChatViewComponent implements OnDestroy {
 				sub.unsubscribe();
 			})
     }
-  }
+	}
+	
+	toggleMobileMenu(value: boolean) {
+		this.showMobileMenu = value;
+		this.cdRef.detectChanges();
+	}
 
 	private async pingStatus(): Promise<void> {
 		const s = await this.ai.getStatusPromise();

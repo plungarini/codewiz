@@ -28,11 +28,18 @@
 	</ng-template>
 </div>
 
+<app-chat-mobile-navigation
+	class="hidden md:flex"
+	*ngIf="showMobileMenu"
+	(onHideMobileMenu)="toggleMobileMenu(false)"
+></app-chat-mobile-navigation>
+
 <app-query-input
 	[repoId]="selectedRepo"
 	[showSuggestions]="isChatEmpty"
 	[gettingQuery]="gettingQuery"
 	[showScrollToBottom]="showScrollToBottom"
 	(onQuery)="createQuery($event)"
-	(onScrollBottom)="onMessageScroll(true, true);"
+	(onScrollBottom)="onMessageScroll(true, true)"
+	(onShowMobileMenu)="toggleMobileMenu(true)"
 ></app-query-input>
