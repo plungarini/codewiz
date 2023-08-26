@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styles: [
     `
       :host {
-				@apply w-full max-h-screen sm:max-h-full overflow-hidden;
+				@apply w-full max-h-screen md:max-h-full overflow-hidden;
 			}
     `
   ],
