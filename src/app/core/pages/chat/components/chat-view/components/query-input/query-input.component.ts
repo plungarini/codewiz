@@ -11,7 +11,7 @@ import { UserRepoService } from '../../../../services/user-repo.service';
   styles: [
     `
       :host {
-				@apply absolute bottom-0 left-0 w-full px-6;
+				@apply fixed md:absolute bottom-0 left-0 w-full px-6;
       }
     `
   ],
@@ -31,6 +31,7 @@ export class QueryInputComponent implements OnInit, OnDestroy {
 	}
 	@Output() onQuery = new EventEmitter<string>();
 	@Output() onScrollBottom = new EventEmitter<void>();
+	@Output() onShowMobileMenu = new EventEmitter<void>();
 
 	@ViewChild('textArea') textAreaComponent: ElementRef<HTMLDivElement> | undefined;
 
@@ -127,6 +128,10 @@ export class QueryInputComponent implements OnInit, OnDestroy {
 
 	trackBy(index: number): number {
 		return index;
+	}
+
+	showMobileMenu(): void {
+		this.onShowMobileMenu.emit();
 	}
 
 	private resetTextInput(): void {

@@ -2,7 +2,6 @@
 
 <div class="relative z-50 flex flex-row w-full pointer-events-none">
 
-	
 	<div class="w-full mb-4 pointer-events-auto">
 		<ng-container *ngIf="repo?.querySuggestions as suggestions">
 			<ng-container *ngIf="suggestions.length > 0">
@@ -31,14 +30,14 @@
 								}"
 								[title]="suggestion"
 								(click)="submitSuggestion(suggestion)"
-								class="items-center px-2 py-2 transition-all duration-300 rounded-md cursor-pointer sm:py-1 md:flex group bg-zinc-950 hover:bg-zinc-900 ring-1 ring-zinc-800 gap-x-2"
+								class="items-center px-2 py-2 transition-all duration-300 rounded-md cursor-pointer md:py-1 md:flex group bg-zinc-950 hover:bg-zinc-900 ring-1 ring-zinc-800 gap-x-2"
 							>
 								<svg class="w-5 h-5 transition-colors duration-300 shrink-0 text-zinc-600 group-hover:text-zinc-500" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path fill-rule="evenodd" clip-rule="evenodd" d="M10.1418 16.1912C7.70948 15.1657 6.00391 12.7567 6.00391 9.94394C6.00391 5.71357 9.86553 2.39388 14.2457 3.28121C16.8386 3.81147 18.9363 5.89746 19.4782 8.49134C20.1817 11.8801 18.337 15.0042 15.5018 16.2029V18.4563C15.5018 19.9303 14.2954 21.1367 12.8223 21.1367C11.3483 21.1367 10.1418 19.9303 10.1418 18.4563V16.1912Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 									<path d="M13.0684 16.207H15.5066" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 									<path d="M9.96875 9.22955C9.96875 7.98709 11.1022 7.0122 12.3885 7.27295" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 								</svg>
-								<p class="text-sm transition-colors duration-300 line-clamp-2 group-hover:text-zinc-400 text-zinc-500">
+								<p class="flex-1 text-sm transition-colors duration-300 line-clamp-2 group-hover:text-zinc-400 text-zinc-500">
 									{{suggestion}}
 								</p>
 								<svg class="hidden w-5 h-5 transition-opacity duration-300 opacity-0 sm:block shrink-0 text-zinc-300 group-hover:opacity-100" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,26 +52,43 @@
 			</ng-container>
 		</ng-container>
 		
-
-		<div contenteditable="false" class="relative w-full max-w-3xl mx-auto rounded-md shadow-2xl bg-zinc-800/80 backdrop-blur-sm border-2 border-zinc-700 py-2.5">
-			<div
-				(input)="handleDummyInputChange($event)"
-				(keypress)="handleKeypress($event)"
-				#textArea
-				contenteditable="true"
-				contenteditable="plaintext-only"
-				name="query"
-				id="query"
-				tabindex="1"
-				spellcheck="true"
-				class="relative block w-full px-4 overflow-y-auto text-base border-0 outline-none max-h-52 h-fit focus:border-0 focus:ring-0 text-zinc-50"
-			></div>
-			<ng-container *ngIf="!textInput.value">
-				<p class="absolute top-2.5 pt-0 mt-0 pointer-events-none text-zinc-500 left-4 pl-[0.05rem] z-20">Ask something...</p>
-			</ng-container>
+		<div class="flex w-full max-w-3xl gap-x-2">
+			<div (click)="showMobileMenu()" class="block px-3 py-3 transition-colors duration-300 border-2 rounded-md cursor-pointer group hover:bg-zinc-800 md:hidden h-fit bg-zinc-900 border-zinc-800">
+				<svg class="w-5 h-5 shrink-0 text-zinc-300 group-hover:text-zinc-100" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<g id="Iconly/Light/Filter" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+						<g id="Filter" transform="translate(4.000000, 4.500000)" stroke="currentColor" stroke-width="1.5" >
+							<line x1="6.33015655" y1="12.0929063" x2="0.0294393477" y2="12.0929063" id="Stroke-1"></line>
+							<line x1="9.14048198" y1="2.40037662" x2="15.4411992" y2="2.40037662" id="Stroke-3"></line>
+							<path d="M4.72628792,2.34625359 C4.72628792,1.05059752 3.66812728,1.79725516e-14 2.36314396,1.79725516e-14 C1.05816064,1.79725516e-14 1.25389895e-15,1.05059752 1.25389895e-15,2.34625359 C1.25389895e-15,3.64190965 1.05816064,4.69250717 2.36314396,4.69250717 C3.66812728,4.69250717 4.72628792,3.64190965 4.72628792,2.34625359 Z" id="Stroke-5"></path>
+							<path d="M16,12.0537464 C16,10.7580903 14.942654,9.70749283 13.6376706,9.70749283 C12.3318727,9.70749283 11.2737121,10.7580903 11.2737121,12.0537464 C11.2737121,13.3494025 12.3318727,14.4 13.6376706,14.4 C14.942654,14.4 16,13.3494025 16,12.0537464 Z" id="Stroke-7"></path>
+						</g>
+					</g>
+				</svg>
+			</div>
+			<div class="flex-1">
+				<div contenteditable="false" class="relative w-full max-w-3xl mx-auto rounded-md shadow-2xl bg-zinc-800/80 backdrop-blur-sm border-2 border-zinc-700 py-2.5">
+					<div
+						(input)="handleDummyInputChange($event)"
+						(keypress)="handleKeypress($event)"
+						#textArea
+						contenteditable="true"
+						contenteditable="plaintext-only"
+						name="query"
+						id="query"
+						tabindex="1"
+						spellcheck="true"
+						class="relative block w-full px-4 overflow-y-auto text-base border-0 outline-none max-h-52 h-fit focus:border-0 focus:ring-0 text-zinc-50"
+					></div>
+					<ng-container *ngIf="!textInput.value">
+						<p class="absolute top-2.5 pt-0 mt-0 pointer-events-none text-zinc-500 left-4 pl-[0.05rem] z-20">Ask something...</p>
+					</ng-container>
+				</div>
+		
+			</div>
 		</div>
-
+		
 		<p class="hidden max-w-3xl mx-auto mt-3 text-xs font-medium text-center pointer-events-none sm:block text-zinc-500">CodeWiz is experimental and may produce incorrect answers. Always verify the output before executing.</p>
+
 	</div>
 	
 	<button
@@ -80,7 +96,8 @@
 			'opacity-0 pointer-events-none translate-y-4': !showScrollToBottom,
 			'opacity-100 pointer-events-auto translate-y-0': showScrollToBottom
 		}"
-		(click)="scrollToBottom()"
+		#scrollBottomBtn
+		(click)="scrollToBottom(); scrollBottomBtn.blur()"
 		class="absolute right-0 flex items-center justify-center w-8 h-8 transition-all duration-300 rounded-full select-none sm:w-10 sm:h-10 ring-1 hover:ring-2 ring-offset-0 hover:ring-zinc-600 ring-zinc-800 hover:ring-offset-1 ring-offset-zinc-950 hover:bg-zinc-800 group bg-zinc-900 bottom-20 sm:bottom-32 xl:bottom-24"
 	>
 		<svg class="w-4 h-4 transition-colors duration-300 shrink-0 sm:w-5 sm:h-5 text-zinc-300 group-hover:text-zinc-50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
