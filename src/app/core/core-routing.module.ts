@@ -20,6 +20,10 @@ const routes: Routes = [
 				loadChildren: () => import('./pages/maintenance/maintenance.module').then(m => m.MaintenanceModule),
 			},
 			{
+				path: 'setup',
+				loadChildren: () => import('./pages/onboarding/onboarding.module').then(m => m.OnboardingModule),
+			},
+			{
 				path: '',
 				data: {
 					permissions: ['user'],
