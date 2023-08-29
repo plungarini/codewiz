@@ -1,0 +1,35 @@
+<div class="px-4 py-3 rounded-full bg-zinc-700/40 w-fit">
+	<div class="flex items-center gap-x-1.5">
+
+		<div
+			[ngClass]="{
+				'bg-zinc-200 w-4': page === 'welcome',
+				'bg-zinc-500 w-1.5': page !== 'welcome'
+			}"
+			class="w-4 h-1 transition-all duration-500 rounded-full bg-zinc-200"
+		></div>
+		<div
+			[ngClass]="{
+				'bg-zinc-200 w-4': page === 'interests',
+				'bg-zinc-500 w-1.5': page !== 'interests'
+			}"
+			class="w-4 h-1 transition-all duration-500 rounded-full bg-zinc-200"
+		></div>
+		<div
+			[ngClass]="{
+				'bg-zinc-200 w-4': page === 'experience',
+				'bg-zinc-500 w-1.5': page !== 'experience'
+			}"
+			class="w-4 h-1 transition-all duration-500 rounded-full bg-zinc-200"
+		></div>
+		<div
+			[ngClass]="{
+				'bg-zinc-200 w-4': page === 'goals',
+				'bg-zinc-500 w-1.5': page !== 'goals'
+			}"
+			class="w-4 h-1 transition-all duration-500 rounded-full bg-zinc-200"
+		></div>
+		
+
+	</div>
+</div>
