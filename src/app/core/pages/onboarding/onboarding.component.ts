@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-onboarding',
@@ -6,12 +8,34 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styles: [
     `
       :host {
-        display: block;
+        @apply block w-full h-full relative;
       }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OnboardingComponent {
+export class OnboardingComponent implements OnDestroy {
+
+	currentPage = 'welcome';
+
+	private routerSub: Subscription;
+
+	constructor(
+		private router: Router,
+		private cdRef: ChangeDetectorRef,
+	) {
+		this.routerSub = this.router.events.subscribe(() => {
+			const url = this.router.url;
+			const newPage = url.split('/app/setup').pop()?.replaceAll('/', '') || 'welcome';
+			if (newPage !== this.currentPage) {
+				this.currentPage = newPage;
+				this.cdRef.markForCheck();
+			}
+		})
+	}
+
+	ngOnDestroy(): void {
+		this.routerSub.unsubscribe();
+	}
 
 }
