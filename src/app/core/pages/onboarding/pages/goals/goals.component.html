@@ -1,0 +1,146 @@
+<h2>Let's Talk Goals 🎯</h2>
+<p class="mt-8">
+	Why did you choose CodeWiz? Share your coding dreams, and let us amplify your journey with a splash of wizardry!
+</p>
+
+<fieldset class="mt-4">
+  <legend class="sr-only">Your goals with CodeWiz</legend>
+  <div class="space-y-4">
+    <label
+			[ngClass]="{
+				'border-indigo-600 ring-2 ring-indigo-600': selectedGoals.has('chat'),
+				'border-zinc-800': !selectedGoals.has('chat'),
+			}"
+			class="relative block px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/6 focus:outline-none sm:flex sm:justify-between">
+      <input type="checkbox" (click)="selectGoal('chat')" name="goals" value="chat" class="sr-only" aria-labelledby="goals-chat">
+      <span class="flex items-start gap-x-2">
+        <svg class="w-6 h-6 shrink-0 text-zinc-200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M10.955 20.2064L9.53351 18.7849C9.12876 18.3801 8.58 18.1534 8.00789 18.1534H6.93957C4.764 18.1534 3 16.3894 3 14.2139V7.29894C3 5.12337 4.764 3.35938 6.93957 3.35938H17.0614C19.237 3.35938 21 5.12337 21 7.29894V14.2139C21 16.3894 19.237 18.1534 17.0614 18.1534H15.9931C15.421 18.1534 14.8722 18.3801 14.4675 18.7849L13.045 20.2064C12.468 20.7834 11.533 20.7834 10.955 20.2064Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M8.85485 8.88672L6.56836 11.1732L8.85485 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M15.1445 8.88672L17.431 11.1732L15.1445 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M12.8192 8.88672L11.1826 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span>
+					<span class="block font-medium text-zinc-200" id="goals-chat">AI Guru Chat</span>
+					<span class="block text-sm font-normal text-zinc-400" id="goals-chat">I desire a chat coding guru fluent in my framework, ready to assist me anytime.</span>
+				</span>
+      </span>
+      <span
+				[ngClass]="{
+					'border-indigo-600': selectedGoals.has('chat'),
+					'border-transparent': !selectedGoals.has('chat'),
+				}"
+				class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+				aria-hidden="true"
+			></span>
+    </label>
+    <label
+			[ngClass]="{
+				'border-indigo-600 ring-2 ring-indigo-600': selectedGoals.has('articles'),
+				'border-zinc-800': !selectedGoals.has('articles'),
+			}"
+			class="relative block px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/6 focus:outline-none sm:flex sm:justify-between">
+      <input type="checkbox" (click)="selectGoal('articles')" name="goals" value="articles" class="sr-only" aria-labelledby="goals-articles">
+      <span class="flex items-start gap-x-2">
+        <svg class="w-6 h-6 shrink-0 text-zinc-200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M10.955 20.2064L9.53351 18.7849C9.12876 18.3801 8.58 18.1534 8.00789 18.1534H6.93957C4.764 18.1534 3 16.3894 3 14.2139V7.29894C3 5.12337 4.764 3.35938 6.93957 3.35938H17.0614C19.237 3.35938 21 5.12337 21 7.29894V14.2139C21 16.3894 19.237 18.1534 17.0614 18.1534H15.9931C15.421 18.1534 14.8722 18.3801 14.4675 18.7849L13.045 20.2064C12.468 20.7834 11.533 20.7834 10.955 20.2064Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M8.85485 8.88672L6.56836 11.1732L8.85485 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M15.1445 8.88672L17.431 11.1732L15.1445 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M12.8192 8.88672L11.1826 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span>
+					<span class="block font-medium text-zinc-200" id="goals-articles">Insightful Investigator</span>
+					<span class="block text-sm font-normal text-zinc-400" id="goals-articles">I want instant answers to my issues, paired with detailed articles from my framework docs for more depth.</span>
+				</span>
+      </span>
+      <span
+				[ngClass]="{
+					'border-indigo-600': selectedGoals.has('articles'),
+					'border-transparent': !selectedGoals.has('articles'),
+				}"
+				class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+				aria-hidden="true"
+			></span>
+    </label>
+    <label
+			[ngClass]="{
+				'border-indigo-600 ring-2 ring-indigo-600': selectedGoals.has('projects'),
+				'border-zinc-800': !selectedGoals.has('projects'),
+			}"
+			class="relative block px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/6 focus:outline-none sm:flex sm:justify-between">
+      <input type="checkbox" (click)="selectGoal('projects')" name="goals" value="projects" class="sr-only" aria-labelledby="goals-projects">
+      <span class="flex items-start gap-x-2">
+        <svg class="w-6 h-6 shrink-0 text-zinc-200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M10.955 20.2064L9.53351 18.7849C9.12876 18.3801 8.58 18.1534 8.00789 18.1534H6.93957C4.764 18.1534 3 16.3894 3 14.2139V7.29894C3 5.12337 4.764 3.35938 6.93957 3.35938H17.0614C19.237 3.35938 21 5.12337 21 7.29894V14.2139C21 16.3894 19.237 18.1534 17.0614 18.1534H15.9931C15.421 18.1534 14.8722 18.3801 14.4675 18.7849L13.045 20.2064C12.468 20.7834 11.533 20.7834 10.955 20.2064Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M8.85485 8.88672L6.56836 11.1732L8.85485 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M15.1445 8.88672L17.431 11.1732L15.1445 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M12.8192 8.88672L11.1826 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span>
+					<span class="block font-medium text-zinc-200" id="goals-projects">Project Partner</span>
+					<span class="block text-sm font-normal text-zinc-400" id="goals-projects">I'm crafting a web app/website and need tailored support for my specific project.</span>
+				</span>
+      </span>
+      <span
+				[ngClass]="{
+					'border-indigo-600': selectedGoals.has('projects'),
+					'border-transparent': !selectedGoals.has('projects'),
+				}"
+				class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+				aria-hidden="true"
+			></span>
+    </label>
+    <label
+			[ngClass]="{
+				'border-indigo-600 ring-2 ring-indigo-600': selectedGoals.has('learn'),
+				'border-zinc-800': !selectedGoals.has('learn'),
+			}"
+			class="relative block px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/6 focus:outline-none sm:flex sm:justify-between">
+      <input type="checkbox" (click)="selectGoal('learn')" name="goals" value="learn" class="sr-only" aria-labelledby="goals-learn">
+      <span class="flex items-start gap-x-2">
+        <svg class="w-6 h-6 shrink-0 text-zinc-200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M10.955 20.2064L9.53351 18.7849C9.12876 18.3801 8.58 18.1534 8.00789 18.1534H6.93957C4.764 18.1534 3 16.3894 3 14.2139V7.29894C3 5.12337 4.764 3.35938 6.93957 3.35938H17.0614C19.237 3.35938 21 5.12337 21 7.29894V14.2139C21 16.3894 19.237 18.1534 17.0614 18.1534H15.9931C15.421 18.1534 14.8722 18.3801 14.4675 18.7849L13.045 20.2064C12.468 20.7834 11.533 20.7834 10.955 20.2064Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M8.85485 8.88672L6.56836 11.1732L8.85485 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M15.1445 8.88672L17.431 11.1732L15.1445 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M12.8192 8.88672L11.1826 13.4587" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<span>
+					<span class="block font-medium text-zinc-200" id="goals-learn">Language Explorer</span>
+					<span class="block text-sm font-normal text-zinc-400" id="goals-learn">Eager to conquer new horizons, I'm here to learn fresh languages and frameworks.</span>
+				</span>
+      </span>
+      <span
+				[ngClass]="{
+					'border-indigo-600': selectedGoals.has('learn'),
+					'border-transparent': !selectedGoals.has('learn'),
+				}"
+				class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+				aria-hidden="true"
+			></span>
+    </label>
+
+  </div>
+</fieldset>
+
+
+<button
+	[disabled]="!canProceed || loading"
+	(click)="submit()"
+	class="rounded-md disabled:opacity-40 ml-auto disabled:cursor-not-allowed px-3.5 py-2.5 mt-6 flex items-center justify-center space-x-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600 text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+>
+	<svg [ngClass]="{ '-ml-8 opacity-0': !loading, '-ml-0 opacity-100': loading }" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-4 h-4 mr-2 transition-all duration-300 pointer-events-none shrink-0 animate-spin" style="shape-rendering: auto;">
+		<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-white">
+		</circle>
+	</svg>
+
+	<span>Continue</span>
+	
+	<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+			<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+				<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+				<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+			</g>
+		</g>
+	</svg>
+</button>
