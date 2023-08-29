@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { MaintenanceGuard } from '../shared/guards/maintenance.guard';
 import { CoreComponent } from './core.component';
+import { ActiveOnboardingGuard } from './pages/onboarding/guard/onboarding-activate.guard';
+import { DeactiveOnboardingGuard } from './pages/onboarding/guard/onboarding-deactivate.guard';
 
 const routes: Routes = [
 	{
@@ -21,6 +23,7 @@ const routes: Routes = [
 			},
 			{
 				path: 'setup',
+				canDeactivate: [DeactiveOnboardingGuard],
 				loadChildren: () => import('./pages/onboarding/onboarding.module').then(m => m.OnboardingModule),
 			},
 			{
@@ -29,7 +32,7 @@ const routes: Routes = [
 					permissions: ['user'],
 					preload: true,
 				},
-				canActivate: [PermissionsGuard, MaintenanceGuard],
+				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard],
 				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
 			},
 			{
@@ -38,7 +41,7 @@ const routes: Routes = [
 					permissions: ['user'],
 					preload: true,
 				},
-				canActivate: [PermissionsGuard, MaintenanceGuard],
+				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard],
 				loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsModule),
 			},
 			{
@@ -55,7 +58,7 @@ const routes: Routes = [
 					permissions: ['user'],
 					preload: true,
 				},
-				canActivate: [PermissionsGuard, MaintenanceGuard],
+				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard],
 				loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatModule),
 			},
 			{
