@@ -12,11 +12,16 @@ import { getRemoteConfig, provideRemoteConfig } from '@angular/fire/remote-confi
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from '@firebase/firestore';
 import { ImgixAngularModule } from '@imgix/angular';
+import { LottieModule } from 'ngx-lottie';
 import { MarkdownModule, MarkedOptions } from 'ngx-markdown';
 import { environment } from '../environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { markedOptionsFactory } from './core/pages/chat/components/chat-view/components/messages/md-blocks';
+
+export function playerFactory() {
+  return import('lottie-web');
+}
 
 @NgModule({
   declarations: [
@@ -32,6 +37,7 @@ import { markedOptionsFactory } from './core/pages/chat/components/chat-view/com
 			return initializeFirestore(getApp(), {
 				ignoreUndefinedProperties: true,
 				localCache: persistentLocalCache({
+					cacheSizeBytes: 10,
 					tabManager: persistentMultipleTabManager(),
 				})
 			})
@@ -55,6 +61,8 @@ import { markedOptionsFactory } from './core/pages/chat/components/chat-view/com
         auto: 'format,compress',
       },
     }),
+
+		LottieModule.forRoot({ player: playerFactory }),
   ],
   providers: [
 		ScreenTrackingService,
