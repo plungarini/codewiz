@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { filter, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, filter } from 'rxjs';
 import { UserPermissionsService } from 'src/app/auth/services/user-permissions.service';
 
 @Component({
@@ -39,6 +39,8 @@ export class SidebarComponent implements OnDestroy {
 						this.currentPage = 'admin';
 					} else if (e.url.includes('settings')) {
 						this.currentPage = 'settings';
+					} else if (e.url.includes('setup')) {
+						this.currentPage = 'setup';
 					} else if (e.url.includes('app')) {
 						this.currentPage = 'app';
 					} else {
