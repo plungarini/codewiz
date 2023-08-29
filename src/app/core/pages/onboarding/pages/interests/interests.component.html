@@ -1,0 +1,68 @@
+<h2>Your Coding Interests 🖥️</h2>
+<p class="mt-8">
+	Time to spill the beans! 🕵️‍♂️ What programming languages or frameworks tickle your coding fancy?
+</p>
+
+<fieldset>
+	<div class="mt-4 border-t border-b divide-y border-zinc-900 divide-zinc-900">
+		<div *ngFor="let repo of (repos$ | async)" class="relative flex items-center">
+			<div class="flex-1 min-w-0 py-4 text-sm leading-6">
+				<label for="repo-{{repo.name}}" class="flex-1 inline-block w-full font-medium cursor-pointer select-none text-zinc-100">{{ repo.name }}</label>
+			</div>
+			<div class="flex items-center h-6 ml-3">
+				<input (click)="selectDoc(repo.name)" id="repo-{{repo.name}}" name="repo-{{repo.name}}" type="checkbox" class="w-4 h-4 text-indigo-600 transition-colors duration-300 rounded cursor-pointer ring-offset-zinc-950 focus:ring-offset-zinc-950 bg-zinc-900 border-zinc-800 focus:ring-indigo-600">
+			</div>
+		</div>
+		<div *ngFor="let repo of (customDocs); let i = index" class="relative flex items-center">
+			<div class="flex-1 min-w-0 py-4 text-sm leading-6">
+				<label for="repo-{{getCustomDocId(customDocsValues[i])}}-{{i}}" class="flex-1 inline-block w-full font-medium cursor-pointer select-none text-zinc-100">
+					<input
+						type="text"
+						(input)="handleInputChange($event, i)"
+						name="repo-{{getCustomDocId(customDocsValues[i])}}-{{i}}-input"
+						class="px-0 py-0 text-sm font-medium leading-6 bg-transparent border-0 outline-none text-zinc-100 focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0"
+						placeholder="eg. 'Angular'"
+					>
+				</label>
+			</div>
+			<div class="flex items-center h-6 ml-3">
+				<input [disabled]="!customDocsValues[i]" (click)="selectDoc(customDocsValues[i])" id="repo-{{getCustomDocId(customDocsValues[i])}}-{{i}}" name="repo-{{getCustomDocId(customDocsValues[i])}}-{{i}}" type="checkbox" class="w-4 h-4 text-indigo-600 transition-all duration-300 rounded cursor-pointer disabled:opacity-50 ring-offset-zinc-950 focus:ring-offset-zinc-950 bg-zinc-900 border-zinc-800 focus:ring-indigo-600">
+			</div>
+		</div>
+
+	</div>
+</fieldset>
+
+<button
+	(click)="addCustomDoc()"
+	class="rounded-md disabled:opacity-40 disabled:cursor-not-allowed px-2.5 py-1.5 mt-6 flex items-center justify-center space-x-2 text-sm font-semibold bg-zinc-600 hover:bg-zinc-500 disabled:hover:bg-zinc-600 ring-zinc-400 hover:ring-zinc-400 focus-visible:outline-zinc-600 text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+>
+	<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<path d="M14.2709 4.16406H7.78216C4.84281 4.16406 3 6.24525 3 9.19044V14.8064C3 17.7516 4.83405 19.8328 7.78216 19.8328H16.2159C19.165 19.8328 21 17.7516 21 14.8064V11.1364" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<path d="M17.0977 6.11476H20.9993M19.0488 4.16406V8.06568" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		<path d="M8.38477 9.88281H11.7221M8.38477 14.1187H15.614" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+	</svg>
+	<span>Add another</span>
+</button>
+
+<button
+	[disabled]="!canProceed || loading"
+	(click)="submit()"
+	class="rounded-md disabled:opacity-40 ml-auto disabled:cursor-not-allowed px-3.5 py-2.5 mt-6 flex items-center justify-center space-x-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600 text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+>
+	<svg [ngClass]="{ '-ml-8 opacity-0': !loading, '-ml-0 opacity-100': loading }" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-4 h-4 mr-2 transition-all duration-300 pointer-events-none shrink-0 animate-spin" style="shape-rendering: auto;">
+		<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-white">
+		</circle>
+	</svg>
+
+	<span>Continue</span>
+	
+	<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+			<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+				<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+				<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+			</g>
+		</g>
+	</svg>
+</button>
