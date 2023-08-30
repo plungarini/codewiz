@@ -31,7 +31,7 @@
 			</span>
 		</p>
 		
-		<div *ngIf="(product?.monthly?.role || '').includes('master')" class="relative flex items-center justify-center p-3 mt-6 border rounded-xl border-zinc-800 bg-zinc-900">
+		<div *ngIf="(product?.role || '').includes('master')" class="relative flex items-center justify-center p-3 mt-6 border rounded-xl border-zinc-800 bg-zinc-900">
 			<svg class="w-6 h-6 text-amber-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 				<path d="M5.35742 17.5027L7.07861 15.7805M18.0853 17.5027L16.3642 15.7805M6.12962 5.54695L7.07861 6.49591" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 				<path d="M11.7206 3.8594V4.57718M11.7206 20.1428V17.7084M20.7206 11.1428H18.2863M3.2793 11.1428H5.155" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -43,7 +43,7 @@
 
 		<button
 			[routerLink]="hasCurrentSubscription ? null : '/signup'"
-			[disabled]="(product?.monthly?.role || '').includes('master')"
+			[disabled]="(product?.role || '').includes('master')"
 			[ngClass]="{
 				'bg-teal-600 hover:bg-teal-500 disabled:hover:bg-teal-600 ring-teal-400 hover:ring-teal-400 focus-visible:outline-teal-600': hasCurrentSubscription,
 				'bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600': !hasCurrentSubscription,
@@ -95,14 +95,14 @@
       <p>
 				<span class="flex justify-between">
 					<strong class="block font-semibold text-zinc-100">Wiz Chat</strong>
-					<span class="px-2 py-1 text-xs font-medium -translate-y-px rounded-md text-zinc-400 w-fit bg-zinc-400/10 ring-1 ring-inset ring-zinc-400/30"><b>{{product?.monthly?.metadata?.maxPromptCountMonth || 0}}</b> answers /m</span>
+					<span class="px-2 py-1 text-xs font-medium -translate-y-px rounded-md text-zinc-400 w-fit bg-zinc-400/10 ring-1 ring-inset ring-zinc-400/30"><b>{{product?.metadata?.maxPromptCountMonth || 0}}</b> answers /m</span>
 				</span>
 				<span class="block">Elevate your coding experience with Wiz Chat. The AI-powered guru for every developer.</span>
       </p>
     </div>
   </div>
 
-	<div class="flex mt-8" [class.opacity-20]="(product?.monthly?.role || '').includes('wizard')">
+	<div class="flex mt-8" [class.opacity-20]="(product?.role || '').includes('wizard')">
     <svg class="flex-none w-8 h-8 text-zinc-300" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 			<path d="M18.5139 20.9792C19.1794 20.9792 19.7184 20.4489 19.7184 19.7844L19.7097 16.0082L19.7093 4.19582C19.7093 3.53028 19.1702 3 18.5144 3H7.42903C5.99969 3 4.84863 4.15982 4.84863 5.58915V18.4989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 			<path d="M19.7087 16.0078L8.64235 16.0086H7.32978C5.95396 16.0086 4.84766 17.1227 4.84766 18.4986C4.84766 19.1816 5.12691 19.8024 5.57643 20.2519C6.02596 20.7014 6.637 20.9797 7.32978 20.9797H8.39035" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

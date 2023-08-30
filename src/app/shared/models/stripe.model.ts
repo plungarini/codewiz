@@ -10,7 +10,7 @@ export type StripeProduct = {
 	};
 	role?: string;
 	tax_code: string;
-	price?: StripeProductPrice;
+	prices?: StripeProductPrice[];
 }
 
 export type StripeProductPrice = {

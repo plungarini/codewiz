@@ -25,7 +25,7 @@ export class StripeService {
 			switchMap(products => {
 				const observables = products.map(prod => {
 					return this.db.getCol<StripeProductPrice>(`products/${prod.id}/prices`).pipe(
-						map((prices) => ({ ...prod, price: prices.filter(p => p.active)[0] }))
+						map((prices) => ({ ...prod, price: prices.filter(p => p.active)[0], prices }))
 					)
 				});
 				return combineLatest(observables);

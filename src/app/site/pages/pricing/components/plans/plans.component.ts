@@ -22,25 +22,16 @@ export class PlansComponent {
 	user$ = this.users.user$.pipe(
 		tap((user) => {
 			if (!user) return;
-			this.userSubscriptionRole = user.subscriptions?.at(0)?.role.replace('_annual', '') || 'apprentice';
+			this.userSubscriptionRole = user.subscriptions?.at(0)?.role || 'apprentice';
 			this.cdRef.markForCheck();
 		})
 	);
 	products$ = this.stripe.getAllProducts().pipe(
 		map(products => {
 			return {
-				apprentice: {
-					monthly: products.find(product => product.role?.includes('apprentice') && !product.role?.includes('annual')),
-					yearly: products.find(product => product.role?.includes('apprentice') && product.role?.includes('annual'))
-				},
-				wizard: {
-					monthly: products.find(product => product.role?.includes('wizard') && !product.role?.includes('annual')),
-					yearly: products.find(product => product.role?.includes('wizard') && product.role?.includes('annual'))
-				},
-				master: {
-					monthly: products.find(product => product.role?.includes('master') && !product.role?.includes('annual')),
-					yearly: products.find(product => product.role?.includes('master') && product.role?.includes('annual'))
-				}
+				apprentice: products.find(product => product.role?.includes('apprentice')),
+				wizard: products.find(product => product.role?.includes('wizard')),
+				master: products.find(product => product.role?.includes('master')),
 			}
 		})
 	);

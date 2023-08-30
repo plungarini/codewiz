@@ -14,10 +14,7 @@ import { StripeProduct } from 'src/app/shared/models/stripe.model';
 export class PlanCardComponent {
 
 	@Input() theme: 'dark' | 'light' = 'light';
-	@Input() product: {
-		monthly: StripeProduct | undefined;
-		yearly: StripeProduct | undefined;
-	} | undefined;
+	@Input() product: StripeProduct | undefined
 	@Input() subscriptions: StripeSubscription[] | undefined = [];
 	@Input() timeframe: 'monthly' | 'yearly' | null = 'yearly';
 
@@ -25,42 +22,46 @@ export class PlanCardComponent {
 		if (!this.subscriptions?.at(0) || !this.product) return false;
 		const normedSubRole = this.subscriptions?.at(0)?.role?.replace('_annual', '');
 		if (!normedSubRole) return false;
-		return (normedSubRole) === (this.product?.monthly?.role);
+		return (normedSubRole) === (this.product?.role);
 	}
 
 	getNormedName(): string {
-		const prod = this.timeframe === 'monthly' ? this.product?.monthly : this.product?.yearly;
-		return prod?.name?.replace('Annual', '').replace('Plan', '').trim() || '';
+		return this.product?.name?.replace('Plan', '').trim() || '';
 	}
 
 	getProdDescription(): string {
-		const prod = this.timeframe === 'monthly' ? this.product?.monthly : this.product?.yearly;
-		return prod?.description || '';
+		return this.product?.description?.trim() || '';
 	}
 
 	getTotalPrice(): number {
-		const prod = this.timeframe === 'monthly' ? this.product?.monthly : this.product?.yearly;
-		const unit_amount = prod?.price?.unit_amount;
+		const monthly = this.product?.prices?.find((p) => p.recurring.interval === 'month');
+		const yearly = this.product?.prices?.find((p) => p.recurring.interval === 'year');
+		const price = this.timeframe === 'monthly' ? monthly : yearly;
+		if (!price) return 0;
+		const unit_amount = price?.unit_amount;
+		if (!unit_amount) return 0;
 		return unit_amount ? (unit_amount / 100) : 0;		
 	}
 
 	getProdCurrency(): string {
-		const prod = this.timeframe === 'monthly' ? this.product?.monthly : this.product?.yearly;
-		return prod?.price?.currency?.toUpperCase() || 'EUR';
+		const monthly = this.product?.prices?.find((p) => p.recurring.interval === 'month');
+		const yearly = this.product?.prices?.find((p) => p.recurring.interval === 'year');
+		const price = this.timeframe === 'monthly' ? monthly : yearly;
+		return price?.currency?.toUpperCase() || 'EUR';
 	}
 
 	getPricePerQuestionMonthly(): number {
-		const prod = this.product?.monthly;
-		const unit_amount = prod?.price?.unit_amount || 0;
-		const questions = parseInt(prod?.metadata.maxPromptCountMonth || '0');
-		return (prod && unit_amount && questions) ? ((unit_amount / 100) / questions) : 0;
+		const monthly = this.product?.prices?.find((p) => p.recurring.interval === 'month');
+		const unit_amount = monthly?.unit_amount || 0;
+		const questions = parseInt(this.product?.metadata.maxPromptCountMonth || '0');
+		return (this.product && unit_amount && questions) ? ((unit_amount / 100) / questions) : 0;
 	}
 
 	getPricePerQuestionYearly(): number {
-		const prod = this.product?.yearly;
-		const unit_amount = prod?.price?.unit_amount || 0;
-		const questions = parseInt(prod?.metadata.maxPromptCountMonth || '0') * 12;
-		return (prod && unit_amount && questions) ? ((unit_amount / 100) / questions) : 0;
+		const yearly = this.product?.prices?.find((p) => p.recurring.interval === 'year');
+		const unit_amount = yearly?.unit_amount || 0;
+		const questions = parseInt(this.product?.metadata.maxPromptCountMonth || '0') * 12;
+		return (this.product && unit_amount && questions) ? ((unit_amount / 100) / questions) : 0;
 	}
 
 	getAnnualySavingPerc(): number {
