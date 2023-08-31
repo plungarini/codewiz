@@ -2,6 +2,11 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { StripeSubscription } from 'functions/src/models/subscription/subscription.model';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
 
+type PaymentLinks = {
+	monthly: string;
+	yearly: string;
+}
+
 @Component({
   selector: 'app-plan-card',
   templateUrl: './plan-card.component.html',
@@ -17,6 +22,7 @@ export class PlanCardComponent {
 	@Input() product: StripeProduct | undefined
 	@Input() subscriptions: StripeSubscription[] | undefined = [];
 	@Input() timeframe: 'monthly' | 'yearly' | null = 'yearly';
+	@Input() paymentLinks: PaymentLinks | undefined;
 
 	get hasCurrentSubscription(): boolean {
 		if (!this.subscriptions?.at(0) || !this.product) return false;

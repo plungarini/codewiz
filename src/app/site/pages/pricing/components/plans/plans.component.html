@@ -31,12 +31,14 @@
 				<app-plan-card
 					theme="dark"
 					class="hidden md:block"
+					[paymentLinks]="paymentLinks.master"
 					[subscriptions]="(user$ | async)?.subscriptions"
 					[product]="(products$ | async)?.master"
 					[timeframe]="timeframe$ | async"
 				></app-plan-card>
 				<app-plan-card
 					theme="light"
+					[paymentLinks]="paymentLinks.wizard"
 					[subscriptions]="(user$ | async)?.subscriptions"
 					[product]="(products$ | async)?.wizard"
 					[timeframe]="timeframe$ | async"

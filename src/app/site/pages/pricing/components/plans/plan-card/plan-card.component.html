@@ -41,29 +41,35 @@
 			</p>
 		</div>
 
-		<button
-			[routerLink]="hasCurrentSubscription ? null : '/signup'"
-			[disabled]="(product?.role || '').includes('master')"
-			[ngClass]="{
-				'bg-teal-600 hover:bg-teal-500 disabled:hover:bg-teal-600 ring-teal-400 hover:ring-teal-400 focus-visible:outline-teal-600': hasCurrentSubscription,
-				'bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600': !hasCurrentSubscription,
-			}"
-			class="rounded-md disabled:opacity-40 disabled:cursor-not-allowed px-3.5 py-2.5 mt-6 flex items-center justify-center space-x-2 text-sm font-semibold text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+		<a
+			class="block w-full"
+			target="_self"
+			rel="noopener noreferrer"
+			[attr.href]="(product?.role || '').includes('master') ? null : timeframe === 'yearly' ? paymentLinks?.yearly : paymentLinks?.monthly"
 		>
-			<span *ngIf="hasCurrentSubscription; else planName">You already have this plan 💫</span>
-			<ng-template #planName>
-				<span>Get {{getNormedName() ? getNormedName() + ' Kit' : 'it'}} Now</span>
-			</ng-template>
-			
-			<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-				<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
-					<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
-						<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
-						<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+			<button
+				[disabled]="(product?.role || '').includes('master')"
+				[ngClass]="{
+					'bg-teal-600 hover:bg-teal-500 disabled:hover:bg-teal-600 ring-teal-400 hover:ring-teal-400 focus-visible:outline-teal-600': hasCurrentSubscription,
+					'bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600': !hasCurrentSubscription,
+				}"
+				class="rounded-md w-full disabled:opacity-40 disabled:cursor-not-allowed px-3.5 py-2.5 mt-6 flex items-center justify-center space-x-2 text-sm font-semibold text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+			>
+				<span *ngIf="hasCurrentSubscription; else planName">You already have this plan 💫</span>
+				<ng-template #planName>
+					<span>Get {{getNormedName() ? getNormedName() + ' Kit' : 'it'}} Now</span>
+				</ng-template>
+				
+				<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+					<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+						<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+							<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+							<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+						</g>
 					</g>
-				</g>
-			</svg>
-		</button>
+				</svg>
+			</button>
+		</a>
 
 		<p class="flex justify-center mt-4 -mx-1 text-sm font-medium leading-6 text-indigo-400 sm:space-x-2">
 			<span>{{getTotalPrice() | currency:(getProdCurrency()):'symbol':'1.2-2'}} paid {{timeframe}}</span>
