@@ -8,7 +8,7 @@
 			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
 
 				<ng-container *ngIf="(legal$ | async)?.cookiePolicy as cookiePolicy; else noCookiePolicy">
-					<a type="button" [href]="cookiePolicy" target="_blank" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+					<a type="button" [href]="cookiePolicy" target="_blank" rel="noopener noreferrer" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
 						<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M8.04403 20.999C5.9716 20.9533 4.32825 19.236 4.37398 17.1636V6.65646C4.42263 4.61711 6.09419 2.99128 8.13451 3.00004H13.7855C14.344 3.00004 14.8782 3.22674 15.2644 3.62955L19.0561 7.57884C19.4219 7.96121 19.6272 8.47008 19.6272 8.9984V17.1636C19.6409 19.2185 18.0238 20.9163 15.9698 21M8.04403 20.999C8.07419 20.999 8.10435 21 8.13451 21H15.9698M8.04403 20.999C8.07419 20.999 15.9698 21 15.9698 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 							<path d="M14.2695 3.0625V5.95514C14.2686 7.36692 15.4118 8.51211 16.8236 8.51503H19.5625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -53,7 +53,7 @@
 			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
 
 				<ng-container *ngIf="(legal$ | async)?.privacyPolicy as privacyPolicy; else noPrivacyPolicy">
-					<a type="button" [href]="privacyPolicy" target="_blank" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+					<a type="button" [href]="privacyPolicy" target="_blank" rel="noopener noreferrer" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
 						<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M8.04403 20.999C5.9716 20.9533 4.32825 19.236 4.37398 17.1636V6.65646C4.42263 4.61711 6.09419 2.99128 8.13451 3.00004H13.7855C14.344 3.00004 14.8782 3.22674 15.2644 3.62955L19.0561 7.57884C19.4219 7.96121 19.6272 8.47008 19.6272 8.9984V17.1636C19.6409 19.2185 18.0238 20.9163 15.9698 21M8.04403 20.999C8.07419 20.999 8.10435 21 8.13451 21H15.9698M8.04403 20.999C8.07419 20.999 15.9698 21 15.9698 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 							<path d="M14.2695 3.0625V5.95514C14.2686 7.36692 15.4118 8.51211 16.8236 8.51503H19.5625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -85,7 +85,7 @@
 			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
 
 				<ng-container *ngIf="(legal$ | async)?.termsConditions as termsConditions; else noTermsConditions">
-					<a type="button" [href]="termsConditions" target="_blank" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+					<a type="button" [href]="termsConditions" target="_blank" rel="noopener noreferrer" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
 						<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M8.04403 20.999C5.9716 20.9533 4.32825 19.236 4.37398 17.1636V6.65646C4.42263 4.61711 6.09419 2.99128 8.13451 3.00004H13.7855C14.344 3.00004 14.8782 3.22674 15.2644 3.62955L19.0561 7.57884C19.4219 7.96121 19.6272 8.47008 19.6272 8.9984V17.1636C19.6409 19.2185 18.0238 20.9163 15.9698 21M8.04403 20.999C8.07419 20.999 8.10435 21 8.13451 21H15.9698M8.04403 20.999C8.07419 20.999 15.9698 21 15.9698 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 							<path d="M14.2695 3.0625V5.95514C14.2686 7.36692 15.4118 8.51211 16.8236 8.51503H19.5625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -117,7 +117,7 @@
 			<div class="flex flex-col flex-wrap justify-start space-y-4 lg:space-y-0 lg:space-x-4 lg:items-center lg:flex-row ">
 
 				<ng-container *ngIf="(legal$ | async)?.dsarForm as dsarForm; else noDsarForm">
-					<a type="button" [href]="dsarForm" target="_blank" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
+					<a type="button" [href]="dsarForm" target="_blank" rel="noopener noreferrer" class="flex flex-row items-center px-4 py-2 space-x-2 text-sm truncate transition-all duration-300 rounded-md cursor-pointer hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-zinc-700 bg-zinc-900 w-min hover:bg-zinc-800/80 text-zinc-400 shrink hover:text-white">
 						<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 							<path d="M8.04403 20.999C5.9716 20.9533 4.32825 19.236 4.37398 17.1636V6.65646C4.42263 4.61711 6.09419 2.99128 8.13451 3.00004H13.7855C14.344 3.00004 14.8782 3.22674 15.2644 3.62955L19.0561 7.57884C19.4219 7.96121 19.6272 8.47008 19.6272 8.9984V17.1636C19.6409 19.2185 18.0238 20.9163 15.9698 21M8.04403 20.999C8.07419 20.999 8.10435 21 8.13451 21H15.9698M8.04403 20.999C8.07419 20.999 15.9698 21 15.9698 21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 							<path d="M14.2695 3.0625V5.95514C14.2686 7.36692 15.4118 8.51211 16.8236 8.51503H19.5625" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>

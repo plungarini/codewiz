@@ -11,7 +11,7 @@
 			
 			<p *ngIf="selectedDoc" class="flex flex-row justify-between px-2 space-x-1 text-sm">
 				<b class="whitespace-nowrap">Website:</b>
-				<a [href]="selectedDoc.url" target="_blank" class="truncate transition-colors duration-300 text-zinc-500 hover:text-sky-500">
+				<a [href]="selectedDoc.url" target="_blank" rel="noopener noreferrer" class="truncate transition-colors duration-300 text-zinc-500 hover:text-sky-500">
 					{{selectedDoc.url}}
 				</a>
 			</p>
