@@ -31,6 +31,12 @@ export class PlanCardComponent {
 		return (normedSubRole) === (this.product?.role);
 	}
 
+	get paymentLink(): string | null {
+		const link = this.timeframe === 'yearly' ? this.paymentLinks?.yearly : this.paymentLinks?.monthly;
+		if (this.hasCurrentSubscription) return '/app';
+		return link || null;
+	}
+
 	getNormedName(): string {
 		return this.product?.name?.replace('Plan', '').trim() || '';
 	}

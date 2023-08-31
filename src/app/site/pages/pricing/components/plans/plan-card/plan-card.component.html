@@ -45,7 +45,7 @@
 			class="block w-full"
 			target="_self"
 			rel="noopener noreferrer"
-			[attr.href]="(product?.role || '').includes('master') ? null : timeframe === 'yearly' ? paymentLinks?.yearly : paymentLinks?.monthly"
+			[attr.href]="(product?.role || '').includes('master') ? null : paymentLink"
 		>
 			<button
 				[disabled]="(product?.role || '').includes('master')"
