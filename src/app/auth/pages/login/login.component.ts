@@ -9,7 +9,7 @@ import { AuthenticationService } from '../../services/authentication.service';
   styles: [
     `
       :host {
-        display: block;
+        @apply block w-full;
       }
     `
   ],

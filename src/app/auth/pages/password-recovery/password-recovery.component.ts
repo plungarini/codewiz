@@ -11,7 +11,7 @@ import { PasswordResetAlertService } from '../../services/password-reset-alert.s
   styles: [
     `
       :host {
-        display: block;
+        @apply block w-full pb-12;
       }
     `
   ],
