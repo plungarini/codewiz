@@ -18,7 +18,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@supabase/supabase-js": "^2.22.0",
-    "axios": "^1.4.0",
+    "axios": "^1.5.0",
     "firebase-admin": "^10.0.2",
     "firebase-functions": "^4.4.1",
     "gpt-tokens": "^1.1.2",
