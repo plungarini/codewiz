@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { StripeSubscription } from 'functions/src/models/subscription/subscription.model';
+import { StripeSubscription } from 'src/app/auth/models/subscription.model';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
 
 type PaymentLinks = {

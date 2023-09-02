@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { StripeSubscription } from 'functions/src/models/subscription/subscription.model';
 import { switchMap } from 'rxjs';
+import { StripeSubscription } from 'src/app/auth/models/subscription.model';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { CompletionStat } from 'src/app/shared/models/chat-stats.model';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
