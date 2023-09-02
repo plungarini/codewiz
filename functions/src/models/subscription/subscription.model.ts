@@ -1,9 +1,9 @@
-import { Timestamp } from 'firebase-admin/firestore';
+import { DocumentReference, Timestamp } from 'firebase-admin/firestore';
 
 export interface StripeSubscription {
 	ended_at: Timestamp;
   stripeLink: string;
-  product: Product;
+  product: DocumentReference;
   cancel_at_period_end: boolean;
   canceled_at: Timestamp;
   trial_start: Timestamp;
@@ -20,73 +20,6 @@ export interface StripeSubscription {
   role: string;
   price: Price3;
   id: string
-}
-
-interface Product {
-  converter: Record<string, any>;
-  _key: Key;
-  type: string;
-  firestore: Firestore
-}
-
-interface Key {
-  path: Path
-}
-
-interface Path {
-  segments: string[];
-  offset: number;
-  len: number
-}
-
-interface Firestore {
-  app: App;
-  databaseId: DatabaseId;
-  settings: Settings
-}
-
-interface App {
-  _isDeleted: boolean;
-  _options: Options;
-  _config: Config;
-  _name: string;
-  _automaticDataCollectionEnabled: boolean;
-  _container: Container
-}
-
-interface Options {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
-  storageBucket: string;
-  messagingSenderId: string;
-  appId: string
-}
-
-interface Config {
-  name: string;
-  automaticDataCollectionEnabled: boolean
-}
-
-interface Container {
-  name: string;
-	providers: Record<string, any>;
-}
-
-interface DatabaseId {
-  projectId: string;
-  database: string
-}
-
-interface Settings {
-  host: string;
-  ssl: boolean;
-  ignoreUndefinedProperties: boolean;
-  cacheSizeBytes: number;
-  experimentalForceLongPolling: boolean;
-  experimentalAutoDetectLongPolling: boolean;
-  experimentalLongPollingOptions: Record<string, any>;
-  useFetchStreams: boolean
 }
 
 interface Item {
