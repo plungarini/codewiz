@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { limit, orderBy, startAfter, where } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { combineLatest, filter, firstValueFrom, interval, lastValueFrom, map, Observable, of, startWith, switchMap, take } from 'rxjs';
+import { Observable, combineLatest, filter, firstValueFrom, interval, lastValueFrom, map, of, startWith, switchMap, take } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
@@ -230,6 +230,7 @@ export class AiChatService {
 					repo,
 					onlyPrompt: false,
 					stream: true,
+					environment: environment.production ? 'production' : 'development',
 				}
 	
 				const ev = new SSE(

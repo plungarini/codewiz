@@ -33,8 +33,8 @@ interface RequestData {
 
 const firebaseKey = Deno.env.get('FIREBASE_FUNCTIONS_KEY')
 const openAiKey = Deno.env.get('OPENAI_KEY')
-const supabaseUrl = Deno.env.get('SUPABASE_URL')
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+const supabaseUrl = Deno.env.get('SB_URL')
+const supabaseServiceKey = Deno.env.get('SB_SERVICE_ROLE_KEY')
 
 export const corsHeaders = {
 	'Access-Control-Allow-Origin': '*',
@@ -53,11 +53,11 @@ serve(async (req) => {
 		}
 
 		if (!supabaseUrl) {
-			throw new ApplicationError('Missing environment variable SUPABASE_URL')
+			throw new ApplicationError('Missing environment variable SB_URL')
 		}
 
 		if (!supabaseServiceKey) {
-			throw new ApplicationError('Missing environment variable SUPABASE_SERVICE_ROLE_KEY')
+			throw new ApplicationError('Missing environment variable SB_SERVICE_ROLE_KEY')
 		}
 
 		const requestData: RequestData = await req.json()
@@ -66,7 +66,7 @@ serve(async (req) => {
 			throw new UserError('Missing request data', { code: 'INVALID_REQUEST_DATA' })
 		}
 
-		const { messages, repo, uid, repoHost, onlyPrompt, stream } = requestData
+		const { messages, repo, uid, repoHost, onlyPrompt, stream, environment } = requestData
 
 		if (!uid) {
 			throw new UserError('Missing uid in request data', { code: 'MISSING_UID' })
@@ -79,7 +79,8 @@ serve(async (req) => {
 		// Intentionally log the request data
 		console.log({ requestData })
 
-		const res = await fetch('https://canuserquery-ytzgrgrjxq-ew.a.run.app', {
+		const canUserQueryUrl = environment === 'production' ? 'https://canuserquery-ytzgrgrjxq-ew.a.run.app' : 'https://canuserquery-ik2jh2ngra-ew.a.run.app';
+		const res = await fetch(canUserQueryUrl, {
 			headers: {
 				'Content-Type': 'application/json',
 				'Accept': 'application/json',
@@ -137,7 +138,7 @@ serve(async (req) => {
 				throw new UserError('Flagged content', {
 					flagged: true,
 					categories: results.categories,
-				}, 'FLAGGED_PROMPT')
+				})
 			}
 		}
 
@@ -295,8 +296,9 @@ serve(async (req) => {
 		}
 
 		// Calculate openai tokens
-		if (!!canQueryJson)
-			fetch('https://calculateopenaitokens-ytzgrgrjxq-ew.a.run.app', {
+		if (!!canQueryJson) {
+			const calculateOpenaiTokensUrl = environment === 'production' ? 'https://calculateopenaitokens-ytzgrgrjxq-ew.a.run.app' : 'https://calculateopenaitokens-ik2jh2ngra-ew.a.run.app';
+			fetch(calculateOpenaiTokensUrl, {
 				headers: {
 					'Content-Type': 'application/json',
 					'Accept': 'application/json',
@@ -320,6 +322,7 @@ serve(async (req) => {
 			}).catch((err) => {
 				console.error('calculateOpenaiTokens()', err);
 			})
+		}
 
 		const originalStream = response.body;
 

@@ -52,6 +52,7 @@ export type AiChatRequestData = {
 	messages: AiChatMessageReqItem[];
 	onlyPrompt: boolean;
 	stream: boolean;
+	environment: 'production' | 'development',
 }
 
 export type AiChatTitleRequestData = {
