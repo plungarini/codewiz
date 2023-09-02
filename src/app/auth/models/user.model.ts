@@ -9,23 +9,6 @@ export type UserDetails = {
   firstLogin?: boolean;
 }
 
-export type UserRole = {
-	id: string;
-	name: string;
-	permissions: string[]
-}
-
-export type HypixelDetails = {
-	apiKey?: string;
-	ign?: string;
-	uuid?: string;
-	defaultProfileId?: string;
-}
-
-export type DiscordDetails = {
-	did?: string;
-}
-
 export type User = {
   id?: string;
 	name?: string;
@@ -35,9 +18,7 @@ export type User = {
 	revenueDetails?: RevenueDetails; 
   email?: string;
   disabled?: boolean;
-	onboardingCompleted?: boolean;
 	details?: UserDetails;
-	permissions?: string[];
 	stripeId?: string;
 	stripeLink?: string;
   createdAt?: Timestamp;
