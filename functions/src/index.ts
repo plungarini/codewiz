@@ -1,7 +1,7 @@
 import { error, warn } from 'firebase-functions/logger';
 import { HttpsError } from 'firebase-functions/v1/auth';
 import { setGlobalOptions } from 'firebase-functions/v2';
-import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onCall, onRequest } from 'firebase-functions/v2/https';
 import { addChatCountOnStats } from './functions/addChatCountOnStats';
 import { checkUserSubscription } from './functions/checkUserSubscription';
@@ -10,6 +10,7 @@ import { sendEmailActionCode } from './functions/email_action_code';
 import { elaborateEmbeddings, getAllEmbeddings } from './functions/embeddings';
 import { githubFolderFetcher } from './functions/githubFetcher';
 import { initUser as initUserFn } from './functions/initUser';
+import { upsertAcUser } from './functions/marketing';
 import { scrapeDocumentedPage } from './functions/scraper';
 import { calculateTokens } from './functions/tiktoken';
 import { AiChatMessage } from './models/tiktoken/tiktoken.model';
@@ -17,7 +18,7 @@ import { AiChatMessage } from './models/tiktoken/tiktoken.model';
 setGlobalOptions({
 	concurrency: 100,
 	maxInstances: 10,
-	memory: '128MiB',
+	memory: '256MiB',
 	region: 'europe-west1',
 	timeoutSeconds: 60,
 });
@@ -178,6 +179,62 @@ export const canUserQuery = onRequest({
 		res.status(400);
 	}
 });
+
+export const onUserOnboardingUpdate = onDocumentWritten(
+	'users/{uid}/onboarding/data',
+	async (event) => {
+		const uid = event.params.uid;
+		if (!uid) {
+			error('User id is undefined');
+			return;
+		}
+
+		try {
+			await upsertAcUser(uid);
+		} catch (err) {
+			error(err);
+			return;
+		}
+	}
+);
+
+export const onUserSubscriptionsUpdate = onDocumentWritten(
+	'users/{uid}/subscriptions/{subId}',
+	async (event) => {
+		const uid = event.params.uid;
+		if (!uid) {
+			error('User id is undefined');
+			return;
+		}
+
+		try {
+			await upsertAcUser(uid);
+		} catch (err) {
+			error(err);
+			return;
+		}
+	}
+);
+
+export const onUserUpdate = onDocumentUpdated(
+	'users/{uid}',
+	async (event) => {
+		const doc = event.data?.after;
+		const uid = doc?.id;
+		const user = doc?.data();
+		if (!uid) {
+			error('User id is undefined');
+			return;
+		}
+
+		try {
+			await upsertAcUser(uid, user);
+		} catch (err) {
+			error(err);
+			return;
+		}
+	}
+);
 
 export const initUser = onDocumentCreated(
 	'users/{uid}',
