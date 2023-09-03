@@ -38,7 +38,9 @@
             ],
             "allowedCommonJsDependencies": [
               "sse.js",
-              "highlight.js"
+              "highlight.js",
+							"imgix-core-js",
+							"lottie-web"
             ]
           },
           "configurations": {
