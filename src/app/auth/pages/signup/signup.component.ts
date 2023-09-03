@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { FirebaseErrorHandling } from '../../namespaces/error-auth';
 import { AuthenticationService } from '../../services/authentication.service';
 
@@ -14,12 +15,12 @@ import { AuthenticationService } from '../../services/authentication.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit {
 
 	passwordValidators = {
   	minLength: 8,
   	maxLength: 30
-  };
+	};
 
   form = new FormGroup({
   	name: new FormControl('', []),
@@ -33,12 +34,20 @@ export class SignupComponent {
   	termsAndConditions: new FormControl(false)
   });
   loginError: string = '';
-  hide = true;
+	hide = true;
+	
+	returnUrl: string | null = null;
 
 	constructor(
 		private auth: AuthenticationService,
+		private route: ActivatedRoute,
 		private cdRef: ChangeDetectorRef
 	) { }
+
+	ngOnInit(): void {
+		this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || localStorage.getItem('returnUrl');
+		localStorage.setItem('returnUrl', this.returnUrl || '/app');
+	}
 
 	async googleLogin(): Promise<void> {
 		this.loginError = '';

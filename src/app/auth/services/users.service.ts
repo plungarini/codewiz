@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Analytics, setUserId, setUserProperties } from '@angular/fire/analytics';
 import { QueryConstraint, Timestamp, where } from '@angular/fire/firestore';
-import { getAuth, User } from '@firebase/auth';
+import { User, getAuth } from '@firebase/auth';
 import { user } from 'rxfire/auth';
-import { combineLatest, defaultIfEmpty, firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
+import { Observable, combineLatest, defaultIfEmpty, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { StorageService } from 'src/app/shared/services/storage.service';
+import { TidioService } from 'src/app/shared/services/tidio.service';
 import { StripeSubscriptionInvoice } from '../models/subscription-invoices.model';
 import { StripeSubscription } from '../models/subscription.model';
 import { User as DbUser, UserDetails, UserUsageDetails, UserUsages } from '../models/user.model';
@@ -20,6 +21,7 @@ export class UsersService {
 		private db: FirebaseExtendedService,
 		private storage: StorageService,
 		private analytics: Analytics,
+		private tidioService: TidioService,
 	) {	}
 
 	get user$(): Observable<DbUser | undefined> {
@@ -30,6 +32,12 @@ export class UsersService {
 					return this.getWithSubscription(user.uid)
 						.pipe(tap((user) => {
 							if (!user) return;
+							this.tidioService.identify({
+								distinct_id: user.id,
+								email: user.email,
+								name: user.name,
+								phone: user.details?.phoneNumber,
+							})
 							setUserProperties(this.analytics, {
 								...user,
 							})
@@ -88,8 +96,9 @@ export class UsersService {
 				await this.db.upsert(`/users/${user.uid}`, toFirebaseUser);
 			}
 			
-			if (isSignup) {
-				localStorage.setItem('returnUrl', '/onboarding');
+			const returnUrl = localStorage.getItem('returnUrl');
+			if (isSignup && !returnUrl) {
+				localStorage.setItem('returnUrl', '/app/setup');
 			}
 
       return true;

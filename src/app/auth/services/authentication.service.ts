@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import {
 	AuthProvider,
+	GithubAuthProvider,
+	GoogleAuthProvider,
 	confirmPasswordReset,
 	createUserWithEmailAndPassword,
 	getAuth,
-	GithubAuthProvider,
-	GoogleAuthProvider,
 	signInWithEmailAndPassword,
 	signInWithPopup,
 	signOut
@@ -144,7 +144,9 @@ export class AuthenticationService {
 			const isSignup = !userSnap.exists();
 			if (!credential.user) return;
 
-			logEvent(this.analytics, 'login', {
+			const eventName = isSignup ? 'sign_up' : 'login';
+
+			logEvent(this.analytics, eventName as string, {
 				provider: credential.providerId,
 				uid: credential.user.uid,
 				name: credential.user.displayName,

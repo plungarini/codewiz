@@ -32,7 +32,6 @@ export class LoginComponent implements OnInit {
   }, { updateOn: 'change' });
   loginError: string = '';
   hide = true;
-	hasResetPsw = this.route.snapshot.queryParams['resetPassword'];
 	returnUrl: string | null = null;
 
 	constructor(
@@ -62,13 +61,8 @@ export class LoginComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-  	this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-  	if (this.returnUrl) {
-  		localStorage.setItem('returnUrl', this.returnUrl);
-  	}
-  	if (this.hasResetPsw) {
-  		// TODO Manage alert to proceed after password reset.
-  	}
+  	this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || localStorage.getItem('returnUrl');
+		localStorage.setItem('returnUrl', this.returnUrl || '/app');
   }
 
   getEmailErrMsg(): string {
