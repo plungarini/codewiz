@@ -72,14 +72,14 @@
 			
 
 			<ng-container *ngIf="(product$ | async) as product; else noQueriesSkeleton">
-				<ng-container *ngIf="(stats$ | async) as stats; else noQueriesSkeleton">
+				<ng-container *ngIf="(usedPrompts$ | async) as stats; else noQueriesSkeleton">
 
 					<div class="flex flex-col mb-4 shrink">
 						<p class="text-sm font-medium truncate text-zinc-500">
 							Queries in your plan: <span class="text-base font-semibold shrink text-pink-500/80">{{getTotalQueries(product)}}</span>
 						</p>
 						<p class="text-sm font-medium truncate text-zinc-500">
-							Used Queries: <span class="text-base font-semibold shrink text-pink-500/80">{{getUsedQueries(stats)}}</span>
+							Used Queries: <span class="text-base font-semibold shrink text-pink-500/80">{{(usedPrompts$ | async)}}</span>
 						</p>
 					</div>
 
@@ -87,8 +87,8 @@
 			</ng-container>
 
 			<app-subscription-remaining-queries
-				[percentage]="(stats$ | async) && (product$ | async) ? getRemainingQueriesPerc((stats$ | async), (product$ | async)) : 0"
-				[label]="((stats$ | async) && (product$ | async) ? getRemainingQueries((stats$ | async), (product$ | async)) : 0) + ' queries remaining'"
+				[percentage]="(usedPrompts$ | async) && (product$ | async) ? getRemainingQueriesPerc((usedPrompts$ | async), (product$ | async)) : 0"
+				[label]="((usedPrompts$ | async) && (product$ | async) ? getRemainingQueries((usedPrompts$ | async), (product$ | async)) : 0) + ' queries remaining'"
 				theme="light"
 				class="max-w-sm"
 			></app-subscription-remaining-queries>

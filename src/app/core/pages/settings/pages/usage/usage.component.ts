@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { switchMap } from 'rxjs';
 import { StripeSubscription } from 'src/app/auth/models/subscription.model';
 import { UsersService } from 'src/app/auth/services/users.service';
-import { CompletionStat } from 'src/app/shared/models/chat-stats.model';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
 import { StripeService } from 'src/app/shared/services/stripe.service';
 import { UserUsagesService } from 'src/app/shared/services/user-usages.service';
@@ -25,7 +24,7 @@ export class UsageComponent {
 
 	user$ = this.usersService.user$;
 	fireUser$ = this.usersService.fireUser$;
-	stats$ = this.userStats.getUsage();
+	usedPrompts$ = this.userStats.getThisPeriodPrompts();
 	product$ = this.user$.pipe(
 		switchMap((u) => {
 			const productId = u?.subscriptions?.at(0)?.items?.at(0)?.plan?.product;
@@ -67,16 +66,14 @@ export class UsageComponent {
 		return perc;
 	}
 
-	getRemainingQueries(usage?: null | CompletionStat[], product?: null | StripeProduct) {
-		if (!usage || !product) return 0;
-		const totalCount = usage.reduce((a, b) => (isNaN(a) ? 0 : a) + (isNaN((b.prompt?.count || 0)) ? 0 : (b.prompt?.count || 0)), 0);
-		return (parseInt(product.metadata.maxPromptCountMonth || '0')) - totalCount;
+	getRemainingQueries(used?: number | null, product?: null | StripeProduct) {
+		if (used === undefined || used === null || !product) return 0;
+		return (parseInt(product.metadata.maxPromptCountMonth || '0')) - used;
 	}
 
-	getRemainingQueriesPerc(usage?: null | CompletionStat[], product?: null | StripeProduct) {
-		if (!usage || !product) return 0;
-		const totalCount = usage.reduce((a, b) => (isNaN(a) ? 0 : a) + (isNaN((b.prompt?.count || 0)) ? 0 : (b.prompt?.count || 0)), 0);
-		return (totalCount / parseInt(product.metadata.maxPromptCountMonth || '0')) * 100;
+	getRemainingQueriesPerc(used?: number | null, product?: null | StripeProduct) {
+		if (used === undefined || used === null || !product) return 0;
+		return (used / parseInt(product.metadata.maxPromptCountMonth || '0')) * 100;
 	}
 
 	getPlanName(product: StripeProduct): string {
@@ -85,12 +82,6 @@ export class UsageComponent {
 
 	getTotalQueries(product: StripeProduct): number {
 		return parseInt(product.metadata.maxPromptCountMonth || '0');
-	}
-
-	getUsedQueries(usage?: null | CompletionStat[]) {
-		if (!usage) return 0;
-		const totalCount = usage.reduce((a, b) => (isNaN(a) ? 0 : a) + (isNaN((b.prompt?.count || 0)) ? 0 : (b.prompt?.count || 0)), 0);
-		return totalCount;
 	}
 
 }

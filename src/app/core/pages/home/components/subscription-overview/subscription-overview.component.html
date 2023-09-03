@@ -41,8 +41,8 @@
 	<h3 class="mb-10 text-sm font-semibold text-zinc-500">Subscription Details</h3>
 	
 	<app-subscription-remaining
-		[percentage]="getRemainingQueriesPerc((stats$ | async), (product$ | async)) || 0"
-		[remaining]="(getRemainingQueriesPerc((stats$ | async), (product$ | async)) || 0).toFixed(0) + '%'"
+		[percentage]="getRemainingQueriesPerc((usedPrompts$ | async), (product$ | async)) || 0"
+		[remaining]="(getRemainingQueriesPerc((usedPrompts$ | async), (product$ | async)) || 0).toFixed(0) + '%'"
 		theme="light"
 		class="-mt-0.5 w-9 shrink-0"
 		label=""

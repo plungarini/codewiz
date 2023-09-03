@@ -22,7 +22,6 @@ export class ProfileOverviewComponent {
 
 	user$ = this.usersService.user$;
 	fireUser$ = this.usersService.fireUser$;
-	stats$ = this.userStats.getUsage();
 	product$ = this.user$.pipe(
 		switchMap((u) => {
 			const productId = u?.subscriptions?.at(0)?.items?.at(0)?.plan?.product;

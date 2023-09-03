@@ -126,26 +126,25 @@ export class FirebaseExtendedService {
 	async upsert<T>(path: string, obj: Partial<T>): Promise<void> {
     if (!path) return;
 
-    const docRef = doc(this.firestore, path);
-		const exist = (await getDocFb(docRef)).exists();
-		
-		obj = JSON.parse(JSON.stringify(obj, function(k, v) {
-			if (v === undefined) { return null; } return v; 
-		}));
+		const docRef = doc(this.firestore, path);
+		const get = await getDocFb(docRef);
+		const exist = get.exists();
+		const createdAt = get.data()?.['createdAt'] || new Date();
 
     if (!exist)
       return await setDoc(
         docRef,
         {
           ...obj,
-          createdAt: new Date(),
+          createdAt,
           updatedAt: new Date(),
         },
         { merge: true }
       );
 
     return await updateDoc(docRef, {
-      ...obj,
+			...obj,
+			createdAt,
       updatedAt: new Date(),
     });
   }

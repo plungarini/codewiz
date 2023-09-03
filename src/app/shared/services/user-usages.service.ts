@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { combineLatest, map, Observable, switchMap } from 'rxjs';
+import { limit, orderBy } from '@angular/fire/firestore';
+import { Observable, map, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
-import { CompletionStat } from '../models/chat-stats.model';
 import { FirebaseExtendedService } from './firebase-ext.service';
 
 @Injectable({
@@ -14,7 +14,7 @@ export class UserUsagesService {
 		private users: UsersService,
 	) { }
 	
-	getUsage(): Observable<CompletionStat[]> {
+	/* getUsage(): Observable<CompletionStat[]> {
 		return this._getCurrentUid$().pipe(
 			switchMap(uid => {
 				return this.db.getCol<{ id: string }>('supported-docs').pipe(
@@ -35,6 +35,15 @@ export class UserUsagesService {
 					map(stats => stats.filter(s => !!s) as CompletionStat[]),
 				);
 			}),
+		)
+	} */
+
+	getThisPeriodPrompts() {
+		return this._getCurrentUid$().pipe(
+			switchMap(uid => {
+				return this.db.getCol<{ count: number }>(`users/${uid}/protected/usages/bySubscription`, 'id', orderBy('createdAt', 'desc'), limit(1))
+					.pipe(map(docs => docs?.at(0)?.count || 0))
+			})
 		)
 	}
 
