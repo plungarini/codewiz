@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import { Router } from '@angular/router';
 import { StripeSubscription } from 'src/app/auth/models/subscription.model';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
+import { CheckoutService } from '../../../services/checkout.service';
 
 type PaymentLinks = {
 	monthly: string;
@@ -22,19 +24,52 @@ export class PlanCardComponent {
 	@Input() product: StripeProduct | undefined
 	@Input() subscriptions: StripeSubscription[] | undefined = [];
 	@Input() timeframe: 'monthly' | 'yearly' | null = 'yearly';
-	@Input() paymentLinks: PaymentLinks | undefined;
+
+	loading = false;
+
+	constructor(
+		private checkoutService: CheckoutService,
+		private cdRef: ChangeDetectorRef,
+		private router: Router,
+	) { }
 
 	get hasCurrentSubscription(): boolean {
 		if (!this.subscriptions?.at(0) || !this.product) return false;
-		const normedSubRole = this.subscriptions?.at(0)?.role?.replace('_annual', '');
-		if (!normedSubRole) return false;
-		return (normedSubRole) === (this.product?.role);
+		const subPriceId = this.subscriptions?.at(0)?.items.at(0)?.price.id;
+		const currentPriceId = this.timeframe === 'monthly' ?
+			this.product?.prices?.find((p) => p.recurring.interval === 'month')?.id :
+			this.product?.prices?.find((p) => p.recurring.interval === 'year')?.id;
+		return subPriceId === currentPriceId;
 	}
 
-	get paymentLink(): string | null {
-		const link = this.timeframe === 'yearly' ? this.paymentLinks?.yearly : this.paymentLinks?.monthly;
-		if (this.hasCurrentSubscription) return '/app';
-		return link || null;
+	async buyNow() {
+		if (this.loading) return;
+		if (this.hasCurrentSubscription) {
+			this.router.navigate(['/app']);
+			return;
+		}
+
+		
+		this.loading = true;
+		this.cdRef.markForCheck();
+		
+		try {
+			const priceTimeframe = this.timeframe === 'monthly' ? 'month' : 'year';
+			const priceId = this.product?.prices?.find((p) => p.recurring.interval === priceTimeframe)?.id;
+			if (!priceId) {
+				this.loading = false;
+				this.cdRef.markForCheck();
+				return;
+			};
+			const url = await this.checkoutService.checkout(priceId);
+			this.loading = false;
+			this.cdRef.markForCheck();
+			window.open(url, '_self');
+		} catch (err) {
+			console.error(err);
+			this.loading = false;
+			this.cdRef.markForCheck();
+		}
 	}
 
 	getNormedName(): string {
