@@ -93,6 +93,7 @@ export const githubFetcher = onCall({
 
 export const calculateOpenaiTokens = onRequest({
 	cors: true,
+	timeoutSeconds: 540,
 	memory: '256MiB',
 }, async (req, res) => {
 	/**

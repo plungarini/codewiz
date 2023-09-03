@@ -2,6 +2,7 @@ import { error, warn } from 'firebase-functions/logger';
 import { GPTTokens, supportModelType } from 'gpt-tokens';
 import { AiChatMessage } from '../../models/tiktoken/tiktoken.model';
 import { firestore } from '../../utils';
+import { setSubscriptionPeriodUsage } from '../userSubscriptions';
 
 export const calculateTokens = async (data: {
 	uid: string;
@@ -55,29 +56,32 @@ const setUsageToUser = async (
 	warn(`Setting usage to ${uid} for ${type}...`);
 
 	const month = new Date().getMonth();
-	const date = `${month < 10 ? '0' : ''}${month}_${new Date().getFullYear()}`;
-	const docRef = firestore.doc(`users/${uid}/protected/usages/${repo}/${date}`);
-	const doc = await docRef.get();
-	const docData = doc.data();
-	const exists = doc.exists;
+	const dateId = `${month < 10 ? '0' : ''}${month}_${new Date().getFullYear()}`;
 
-	const createdAt = docData?.createdAt || new Date();
-	const prompt = docData?.prompt || { usedTokens: 0, usedUSD: 0, count: 0 };
-	const completion = docData?.completion || { usedTokens: 0, usedUSD: 0, count: 0 };
+	if (type === 'prompt') await setSubscriptionPeriodUsage(uid);
+
+	const usagesDocRef = firestore.doc(`users/${uid}/protected/usages/${repo}/${dateId}`);
+	const usagesDoc = await usagesDocRef.get();
+	const usagesDocData = usagesDoc.data();
+	const usagesExists = usagesDoc.exists;
+
+	const createdAt = usagesDocData?.createdAt || new Date();
+	const prompt = usagesDocData?.prompt || { usedTokens: 0, usedUSD: 0, count: 0 };
+	const completion = usagesDocData?.completion || { usedTokens: 0, usedUSD: 0, count: 0 };
 
 	if (type === 'prompt') {
 		prompt.usedTokens = prompt.usedTokens + usage.usedTokens;
 		prompt.usedUSD = parseFloat((prompt.usedUSD + usage.usedUSD).toFixed(10));
 		prompt.count = (isNaN(prompt.count) ? 0 : prompt.count) + 1;
 
-		if (!exists) {
-			await docRef.set({
+		if (!usagesExists) {
+			await usagesDocRef.set({
 				prompt,
 				createdAt,
 				updatedAt: new Date(),
 			}, { merge: true });
 		} else {
-			await docRef.update({
+			await usagesDocRef.update({
 				prompt,
 				updatedAt: new Date(),
 			});
@@ -87,14 +91,14 @@ const setUsageToUser = async (
 		completion.usedUSD = parseFloat((completion.usedUSD + usage.usedUSD).toFixed(10));
 		completion.count = (isNaN(completion.count) ? 0 : completion.count) + 1;
 
-		if (!exists) {
-			await docRef.set({
+		if (!usagesExists) {
+			await usagesDocRef.set({
 				completion,
 				createdAt,
 				updatedAt: new Date(),
 			}, { merge: true });
 		} else {
-			await docRef.update({
+			await usagesDocRef.update({
 				completion,
 				updatedAt: new Date(),
 			});
