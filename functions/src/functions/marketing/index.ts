@@ -1,4 +1,4 @@
-import { info, warn } from 'firebase-functions/logger';
+import { warn } from 'firebase-functions/logger';
 import { StripeProduct } from '../../models/subscription/stripe-product.model';
 import { StripeSubscription } from '../../models/subscription/subscription.model';
 import { OnboardingData } from '../../models/user/onboarding.model';
@@ -36,23 +36,19 @@ const getUsedQueries = async (uid: string) => {
 
 	warn({ usages });
 
-	const month = new Date().getMonth();
-	const year = new Date().getFullYear();
-	const dateId = `${month < 10 ? '0' : ''}${month}_${year}`;
-	const filtered = usages.map((s) => {
-		return s?.stats
-			.filter((stat) => (stat.prompt?.count || -1) >= 0)
-			.filter((stat) => stat.id === dateId)
-			.reduce((a, b) => a + (b.prompt?.count || 0), 0);
-	});
-	info({ filtered });
-	const thisMonthSum = filtered.reduce((a, b) => (a || 0) + (b || 0), 0);
+	const thisMonthUsageRef = firestore
+		.collection(`users/${uid}/protected/usages/bySubscription`)
+		.orderBy('createdAt', 'desc')
+		.limit(1);
+	const thisMonthDoc = await thisMonthUsageRef.get();
+	const thisMonthUsage = thisMonthDoc.docs.at(0)?.data()?.count || 0;
+	warn({ thisMonthUsage });
 
 	const nonFiltered = usages.map((s) => {
 		return s?.stats.reduce((a, b) => a + (b.prompt?.count || 0), 0);
 	});
 	const totalSum = nonFiltered.reduce((a, b) => (a || 0) + (b || 0), 0);
-	return { month: thisMonthSum, total: totalSum };
+	return { month: thisMonthUsage, total: totalSum };
 };
 
 export const upsertAcUser = async (
@@ -100,7 +96,7 @@ export const upsertAcUser = async (
 		attributes: {
 			appId: id,
 			stripeId: stripeId,
-			membership: product?.role,
+			membership: product?.role || 'apprentice',
 			onboarding: {
 				interests: onboarding?.codingInterests.join(', '),
 				experience: onboarding?.experience,

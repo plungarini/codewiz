@@ -181,6 +181,24 @@ export const canUserQuery = onRequest({
 	}
 });
 
+export const onUserUsageUpdate = onDocumentWritten(
+	'users/{uid}/protected/usages/bySubscription/{periodId}',
+	async (event) => {
+		const uid = event.params.uid;
+		if (!uid) {
+			error('User id is undefined');
+			return;
+		}
+
+		try {
+			await upsertAcUser(uid);
+		} catch (err) {
+			error(err);
+			return;
+		}
+	}
+);
+
 export const onUserOnboardingUpdate = onDocumentWritten(
 	'users/{uid}/onboarding/data',
 	async (event) => {
