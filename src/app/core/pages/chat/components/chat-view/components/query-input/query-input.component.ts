@@ -11,7 +11,7 @@ import { UserRepoService } from '../../../../services/user-repo.service';
   styles: [
     `
       :host {
-				@apply fixed md:absolute bottom-0 left-0 w-full px-6;
+				@apply fixed md:absolute bottom-0 left-0 w-full px-6 pointer-events-none;
       }
     `
   ],

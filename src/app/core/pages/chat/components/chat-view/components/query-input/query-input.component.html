@@ -2,7 +2,7 @@
 
 <div class="relative z-50 flex flex-row w-full pointer-events-none">
 
-	<div class="w-full mb-4 pointer-events-auto">
+	<div class="w-full mb-4 pointer-events-none">
 		<ng-container *ngIf="repo?.querySuggestions as suggestions">
 			<ng-container *ngIf="suggestions.length > 0">
 				<div
@@ -52,7 +52,7 @@
 			</ng-container>
 		</ng-container>
 		
-		<div class="flex w-full max-w-3xl gap-x-2">
+		<div class="flex w-full max-w-3xl pointer-events-auto gap-x-2">
 			<div (click)="showMobileMenu()" class="block px-3 py-3 transition-colors duration-300 border-2 rounded-md cursor-pointer group hover:bg-zinc-800 md:hidden h-fit bg-zinc-900 border-zinc-800">
 				<svg class="w-5 h-5 shrink-0 text-zinc-300 group-hover:text-zinc-100" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 					<g id="Iconly/Light/Filter" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
