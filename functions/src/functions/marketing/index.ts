@@ -88,7 +88,7 @@ export const upsertAcUser = async (
 
 	const sdk = new ActiveCampaign();
 
-	await sdk.addContact({
+	const addContact = await sdk.addContact({
 		email,
 		firstName,
 		lastName,
@@ -111,4 +111,15 @@ export const upsertAcUser = async (
 			},
 		},
 	});
+
+	warn({ addContact });
+	const addedId = addContact?.contact?.id;
+	if (!addedId) return warn('User added to ActiveCampaign but id is undefined');
+	const lists = await sdk.getContactLists(addedId);
+
+	const hasList = lists?.contactLists.find((l) => l.id === '2');
+	if (hasList) return;
+
+	await sdk.addContactToList(addedId, '2', 'active');
+	warn('User added to Platform Users List.');
 };
