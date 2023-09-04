@@ -7,7 +7,8 @@
 			<ng-container *ngIf="suggestions.length > 0">
 				<div
 					[ngClass]="{
-						'pointer-events-none': (!_showSuggestions || !showSuggestions)
+						'pointer-events-none': (!_showSuggestions || !showSuggestions),
+						'pointer-events-auto': (_showSuggestions && showSuggestions),
 					}"
 					class="grid max-w-3xl grid-cols-1 pb-2 mx-auto gap-x-2 gap-y-2 md:grid-cols-2"
 				>
