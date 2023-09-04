@@ -11,9 +11,9 @@
 	<div class="flex-1 py-2 pb-4 overflow-x-auto">
 		<div *ngIf="(chats$ | async)?.length; else noChats" class="flex flex-row w-full pl-2 space-x-4 overflow-visible">
 			<ng-container *ngFor="let chat of (chats$ | async); trackBy: trackBy">
-				<div [routerLink]="['/app/chat/', chat.repo?.id, chat.id]" class="flex flex-col px-5 py-5 space-x-2 transition-all duration-300 rounded-lg shadow cursor-pointer group/chat h-72 hover:shadow-2xl bg-zinc-900/40 backdrop-blur hover:ring-4 ring-zinc-900 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950 ring-offset-zinc-950">
+				<div [routerLink]="['/app/chat/', chat.repo?.id, chat.id]" class="flex flex-col w-56 px-5 py-5 space-x-2 transition-all duration-300 rounded-lg shadow cursor-pointer group/chat h-72 hover:shadow-2xl bg-zinc-900/40 backdrop-blur hover:ring-4 ring-zinc-900 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950 ring-offset-zinc-950">
 					<p class="text-xs text-zinc-600 shrink-0">{{getTimeDifference(chat.updatedAt.toDate())}}</p>
-					<div class="flex-1 w-44"></div>
+					<div class="flex-1 w-56"></div>
 					<div *ngIf="chat.repo?.logo as logo" class="pb-4 shrink-0">
 						<img
 							ixImg
