@@ -13,7 +13,7 @@
 				class="absolute top-0 left-0 z-10 w-full max-w-full px-4 py-2 m-0 text-sm text-white bg-transparent border-0 outline-none pointer-events-auto focus:outline-none focus:ring-0"
 			>
 			<a
-				[routerLink]="['/app/chat/', chat.repo, chat.id]"
+				[routerLink]="['/app/chat/', chat.repo?.id, chat.id]"
 				routerLinkActive
 				#rla="routerLinkActive"
 				(click)="toggleClickLink()"

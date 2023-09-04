@@ -17,7 +17,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 })
 export class MobileChatHistoryComponent {
 
-	@Input('chatHistory') set setChatHistory(value: AiUserRepoChat[]) {
+	@Input('chatHistory') set setChatHistory(value: AiUserRepoChat[] | null) {
 		if (!value) {
 			this.chatHistory = [];
 			return

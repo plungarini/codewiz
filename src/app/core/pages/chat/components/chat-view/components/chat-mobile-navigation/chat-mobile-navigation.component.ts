@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, switchMap } from 'rxjs';
-import { AiUserRepoChat } from 'src/app/shared/models/ai-chat/ai-chat.model';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { Repo } from 'src/app/shared/models/repo.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
@@ -20,22 +19,20 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 export class ChatMobileNavigationComponent implements OnInit {
 
 	@Output() onHideMobileMenu = new EventEmitter<void>();
-
+	private _$selectedRepo = new BehaviorSubject<string>('angular');
+	
 	show = false;
-	$reposChats: Observable<AiUserRepoChat[]>;
+	$reposChats = this._$selectedRepo.asObservable().pipe(
+		switchMap((repo) => this.chatService.getRepoChats(repo))
+	);
 	selectedDoc: Repo | undefined;
 
-	private _$selectedRepo = new Subject<string>();
 
 	constructor(
 		private chatService: AiChatService,
 		private router: Router,
 		private cdRef: ChangeDetectorRef,
-	) {
-		this.$reposChats = this._$selectedRepo.asObservable().pipe(
-			switchMap((repo) => this.chatService.getRepoChats(repo))
-		)
-	}
+	) { }
 
 	ngOnInit(): void {
 		setTimeout(() => {

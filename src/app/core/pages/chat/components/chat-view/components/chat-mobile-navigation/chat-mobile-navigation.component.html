@@ -54,13 +54,30 @@
 			</button>
 		</div>
 
-		<div *ngIf="$reposChats | async as chats" class="flex w-full max-h-full pl-6 overflow-hidden grow-0 shrink">
-			<app-mobile-chat-history
-				[chatHistory]="chats"
-				(onDelete)="deleteChat($event)"
-				(onLinkClick)="closeMobileMenu()"
-				class="w-full"
-			></app-mobile-chat-history>
-		</div>
+		
+		<ng-container *ngIf="(($reposChats | async)?.length || 0) > 0; else noChats">
+			<div class="flex w-full max-h-full pl-6 overflow-hidden grow-0 shrink">
+				<app-mobile-chat-history
+					[chatHistory]="$reposChats | async"
+					(onDelete)="deleteChat($event)"
+					(onLinkClick)="closeMobileMenu()"
+					class="w-full"
+				></app-mobile-chat-history>
+			</div>
+		</ng-container>
+		
+		<ng-template #noChats>
+			<div class="flex items-center justify-center w-full max-h-full overflow-hidden h-72 opacity-60 grow shrink">
+				<div class="flex flex-col items-center gap-y-2">
+					<svg class="w-12 h-12 text-zinc-500" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M11.2558 20.4939L9.83429 19.0676C9.42954 18.6614 8.88078 18.434 8.30867 18.434H7.24035C5.06478 18.434 3.30078 16.664 3.30078 14.4811V7.54177C3.30078 5.35884 5.06478 3.58984 7.24035 3.58984H17.3622C19.5378 3.58984 21.3008 5.35884 21.3008 7.54177V14.4811C21.3008 16.664 19.5378 18.434 17.3622 18.434H16.2939C15.7218 18.434 15.173 18.6614 14.7682 19.0676L13.3458 20.4939C12.7688 21.0738 11.8338 21.0738 11.2558 20.4939Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M9.10938 12.707H12.7716" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M9.10938 8.88281H15.4921" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+					<p class="text-sm font-medium text-zinc-300">Start your journey</p>
+					<p class="max-w-xs px-12 mx-auto text-sm text-center">Select a repository and start your first chat...</p>
+				</div>
+			</div>
+		</ng-template>
 	</div>
 </div>
