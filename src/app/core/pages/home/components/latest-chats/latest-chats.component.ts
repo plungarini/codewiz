@@ -23,7 +23,8 @@ export class LatestChatsComponent {
 		private ai: AiChatService,
 	) { }
 
-	getTimeDifference(date: Date): string {
+	getTimeDifference(date?: Date): string {
+		if (!date) return 'Few secs ago';
 		const currentTime = new Date();
 		const diffInMinutes = Math.floor((currentTime.getTime() - date.getTime()) / (1000 * 60));
 		const diffInHours = Math.floor(diffInMinutes / 60);
@@ -41,7 +42,7 @@ export class LatestChatsComponent {
 	}
 
 	trackBy(i: number, item: AiUserRepoChat): string {
-		return item.id || i;
+		return item.id || i.toString();
 	}
 
 }

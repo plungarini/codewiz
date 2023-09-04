@@ -17,7 +17,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatsHistoryComponent {
-	@Input('chatHistory') set setChatHistory(value: AiUserRepoChat[]) {
+	@Input('chatHistory') set setChatHistory(value: AiUserRepoChat[] | null) {
 		if (!value) {
 			this.chatHistory = [];
 			return
@@ -25,7 +25,7 @@ export class ChatsHistoryComponent {
 		this.chatHistory = value;
 		this.chatHistory.forEach((c) => {
 			if (!c.name || c.name === 'New Chat') {
-				this.getChatTitle(c.repo, c.id);
+				this.getChatTitle(c.repo?.id || '', c.id);
 			}
 		})
 
@@ -80,7 +80,8 @@ export class ChatsHistoryComponent {
 		return obj?.id || i.toString();
 	}
 
-	async getChatTitle(repo: string, id: string): Promise<void> {
+	async getChatTitle(repo?: string, id?: string): Promise<void> {
+		if (!repo || !id) return console.error('Error on getChatTitle, chat repo or chat id is undefined', { repo, id });
 		if (this.queue.has(id)) return;
 		
 		const chatIndex = this.chatHistory.findIndex(c => c.id === id);
@@ -115,7 +116,7 @@ export class ChatsHistoryComponent {
 			});
 	}
 
-	deleteChat(repo: string, id: string): void {
+	deleteChat(repo?: string, id?: string): void {
 		if (!repo || !id) return console.error('Error on delete, chat repo or chat id is undefined', { repo, id });
 		this.onDelete.emit({ repo, id });
 	}
@@ -156,10 +157,10 @@ export class ChatsHistoryComponent {
 		if (!newTitle) return;
 
 		const chat = this.chatHistory.find(c => c.id === id);
-		const condition = newTitle !== (oldTitle || chat.name);
+		const condition = newTitle !== (oldTitle || chat?.name);
 
-		if (condition)
-			await this.aiChatService.saveChatName(newTitle, chat.repo, id);
+		if (condition && !!chat)
+			await this.aiChatService.saveChatName(newTitle, chat.repo?.id || '', id);
 	}
 
 }

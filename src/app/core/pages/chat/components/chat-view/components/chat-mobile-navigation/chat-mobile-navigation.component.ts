@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, Subject, switchMap } from 'rxjs';
+import { AiUserRepoChat } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { Repo } from 'src/app/shared/models/repo.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 
@@ -21,7 +22,7 @@ export class ChatMobileNavigationComponent implements OnInit {
 	@Output() onHideMobileMenu = new EventEmitter<void>();
 
 	show = false;
-	$reposChats: Observable<unknown[]>;
+	$reposChats: Observable<AiUserRepoChat[]>;
 	selectedDoc: Repo | undefined;
 
 	private _$selectedRepo = new Subject<string>();

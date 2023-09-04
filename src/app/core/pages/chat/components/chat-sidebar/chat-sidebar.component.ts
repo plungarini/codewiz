@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, Subject, switchMap } from 'rxjs';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 import { Repo } from '../../../../../shared/models/repo.model';
 
@@ -19,20 +19,19 @@ import { Repo } from '../../../../../shared/models/repo.model';
 })
 export class ChatSidebarComponent {
 
-	$reposChats: Observable<unknown[]>;
+	private _$selectedRepo = new BehaviorSubject<string>('angular');
+
+	$reposChats = this._$selectedRepo.asObservable().pipe(
+		switchMap((repo) => this.chatService.getRepoChats(repo))
+	);
 	selectedDoc: Repo | undefined;
 
-	private _$selectedRepo = new Subject<string>();
 
 	constructor(
 		private chatService: AiChatService,
 		private router: Router,
 		private cdRef: ChangeDetectorRef,
-	) {
-		this.$reposChats = this._$selectedRepo.asObservable().pipe(
-			switchMap((repo) => this.chatService.getRepoChats(repo))
-		)
-	}
+	) {	}
 
 	thisDate = () => Date.now();
 

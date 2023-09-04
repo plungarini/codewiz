@@ -1,4 +1,5 @@
 import { Timestamp } from '@angular/fire/firestore';
+import { Repo } from '../repo.model';
 
 export enum AiChatMessageRole {
   User = 'user',
@@ -79,5 +80,10 @@ export type AiChatResponseData = {
 	finishReason?: AiChatFinishReason;
 }
 
-// TODO: Replace with proper type
-export type AiUserRepoChat = any;
+export type AiUserRepoChat = {
+	id: string;
+	name: string;
+	repo?: Partial<Repo>;
+	createdAt: Timestamp;
+	updatedAt: Timestamp;
+};

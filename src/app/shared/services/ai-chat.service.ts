@@ -443,6 +443,7 @@ export class AiChatService {
 	}
 
 	async saveChatName(name: string, repo: string, chatId: string): Promise<void> {
+		if (!name || !repo || !chatId) return console.error('Missing name, repo or chatId: unable to save chat name.', { name, repo, chatId });
 		const uid = await this._getCurrentUid();
 		this.db.upsert<AiUserRepoChat>(`users/${uid}/repos/${repo}/chats/${chatId}`, { name });
 	}
@@ -564,7 +565,7 @@ export class AiChatService {
 					`users/${uid}/repos/${repo}/chats`,
 					'id', orderBy('updatedAt', 'desc')
 				).pipe(
-					map(chat => chat.map(c => ({ ...c, repo }))),
+					map(chat => chat.map(c => ({ ...c, repo: { id: repo } }))),
 				)
 			)
 		);
