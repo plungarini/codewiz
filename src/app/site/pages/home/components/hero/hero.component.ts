@@ -6,7 +6,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 	styles: [
     `
 			:host {
-				@pply block;
+				@apply block;
 			}
     `
   ],
