@@ -1,5 +1,6 @@
-import { warn } from 'firebase-functions/logger';
+import { production } from '../../../utils';
 import { AcContact } from './models/ac-contact.model';
+import { CreateTag, GetContact, GetContactLists, ListAllTags, SyncContact } from './models/ac-responses.model';
 
 /* eslint-disable require-jsdoc */
 export class ActiveCampaign {
@@ -11,7 +12,8 @@ export class ActiveCampaign {
 		'content-type': 'application/json',
 	};
 
-	private async api(endPoint: string, options?: RequestInit, method = 'GET') {
+	private async api<T>(endPoint: string, options?: RequestInit, method = 'GET'): Promise<T | undefined> {
+		if (!production()) return;
 		const opt = Object.assign({ method: method, headers: this._AC_HEADERS }, options);
 		const res = await fetch(endPoint, opt);
 		return res.json();
@@ -19,12 +21,12 @@ export class ActiveCampaign {
 
 	async listAllTags() {
     const endPoint = this._AC_URL + 'tags';
-    return await this.api(endPoint);
+    return await this.api<ListAllTags>(endPoint);
 	}
 
 	async getContact(email: string) {
     const endPoint = this._AC_URL + `contacts?email=${email}`;
-    return await this.api(endPoint);
+    return await this.api<GetContact>(endPoint);
 	}
 
 	async addTag(tagName: string) {
@@ -36,10 +38,10 @@ export class ActiveCampaign {
 			},
     };
     const endPoint = this._AC_URL + 'tags';
-    return await this.api(endPoint, { body: JSON.stringify(tag) }, 'POST');
+    return await this.api<CreateTag>(endPoint, { body: JSON.stringify(tag) }, 'POST');
 	}
 
-	async addTagToContact(contactId: string, tagId: string) {
+	async addTagToContact(contactId: number | string, tagId: string) {
     const contactTag = {
 			contactTag: {
 				tag: tagId,
@@ -50,16 +52,22 @@ export class ActiveCampaign {
     return await this.api(endPoint, { body: JSON.stringify(contactTag) }, 'POST');
 	}
 
-	async addContactToList(contactId: string, listId: number, status: 0 | 1) {
+	async getContactLists(contactId: number | string) {
+		const endPoint = this._AC_URL + `contacts/${contactId}/contactLists`;
+		return await this.api<GetContactLists>(endPoint);
+	}
+
+	async addContactToList(contactId: number | string, listId: number | string, status: 'active' | 'inactive') {
+		const normedStatus = status === 'active' ? 1 : 2;
     const contactList = {
 			contactList: {
 				list: listId,
 				contact: contactId,
-				status: status,
+				status: normedStatus,
 			},
     };
     const endPoint = this._AC_URL + 'contactLists';
-    return await this.api(endPoint, { body: JSON.stringify(contactList) }, 'POST');
+    return await this.api<void>(endPoint, { body: JSON.stringify(contactList) }, 'POST');
 	}
 
 	async addContact(contact: AcContact) {
@@ -134,7 +142,6 @@ export class ActiveCampaign {
 			},
     };
     const endPoint = this._AC_URL + 'contact/sync';
-		const addContact = await this.api(endPoint, { body: JSON.stringify(options) }, 'POST');
-		warn({ addContact });
+		return await this.api<SyncContact>(endPoint, { body: JSON.stringify(options) }, 'POST');
 	}
 }
