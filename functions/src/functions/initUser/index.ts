@@ -1,4 +1,5 @@
 import { firestore } from '../../utils';
+import { upsertAcUser } from '../marketing';
 import { getCurrentPeriodId } from '../userSubscriptions/period';
 
 export const initUser = async (uid: string) => {
@@ -16,6 +17,7 @@ export const initUser = async (uid: string) => {
 
 	await setBlankPeriodUsage(uid);
 	await setGlobalStats();
+	await upsertAcUser(uid);
 };
 
 const setBlankPeriodUsage = async (uid: string) => {
