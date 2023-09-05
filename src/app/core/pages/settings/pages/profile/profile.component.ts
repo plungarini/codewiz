@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import _isEqual from 'lodash-es/isEqual';
-import { map, Subscription, switchMap } from 'rxjs';
+import { Subscription, map, switchMap } from 'rxjs';
 import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { StorageService } from 'src/app/shared/services/storage.service';
@@ -87,7 +87,7 @@ export class ProfileComponent implements OnDestroy {
 				this.form.patchValue({ email: updatedEmail });
 			}
 
-			const updatedPhone = user?.details?.phoneNumber || fireUser?.phoneNumber;
+			const updatedPhone = user?.phone || fireUser?.phoneNumber;
 			if (!!updatedPhone) {
 				this.updatedDetails.phone = updatedPhone;
 				this.form.patchValue({ phone: updatedPhone });
@@ -168,8 +168,8 @@ export class ProfileComponent implements OnDestroy {
 		try {
 			await this.usersService.edit(this.updatedDetails.uid, {
 				name: `${firstName.trim()} ${lastName.trim()}`,
+				phone: phone?.trim(),
 				details: {
-					phoneNumber: phone?.trim(),
 					imgUrl: imgUrl,
 				}
 			});

@@ -4,10 +4,6 @@ import { StripeSubscription } from '../subscription/subscription.model';
 
 export type UserDetails = {
   imgUrl?: string;
-  phoneNumber?: string;
-  lastLogin?: Timestamp;
-  profileUrlRef?: string;
-  firstLogin?: boolean;
 }
 
 export type User = {
@@ -17,9 +13,10 @@ export type User = {
 	usages?: UserUsages[];
 	subscriptions?: StripeSubscription[];
 	revenueDetails?: RevenueDetails;
+	phone?: string;
   email?: string;
-  disabled?: boolean;
 	details?: UserDetails;
+	activeCampaignId?: string;
 	stripeId?: string;
 	stripeLink?: string;
   createdAt?: Timestamp;

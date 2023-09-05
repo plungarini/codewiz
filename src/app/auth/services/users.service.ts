@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Analytics, setUserId, setUserProperties } from '@angular/fire/analytics';
-import { QueryConstraint, Timestamp, where } from '@angular/fire/firestore';
+import { QueryConstraint, where } from '@angular/fire/firestore';
 import { User, getAuth } from '@firebase/auth';
 import { user } from 'rxfire/auth';
 import { Observable, combineLatest, defaultIfEmpty, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
@@ -36,7 +36,7 @@ export class UsersService {
 								distinct_id: user.id,
 								email: user.email,
 								name: user.name,
-								phone: user.details?.phoneNumber,
+								phone: user.phone,
 							})
 							setUserProperties(this.analytics, {
 								...user,
@@ -75,20 +75,13 @@ export class UsersService {
         id: user.uid,
         name: user.displayName || additionalDetails?.fullName || '',
         email: user.email || '',
-        disabled: false,
+				phone: user.phoneNumber || additionalDetails?.phoneNumber || undefined,
         details: (isSignup
           ? {
               imgUrl: img,
-              phoneNumber:
-                user.phoneNumber || additionalDetails?.phoneNumber || undefined,
-            }
+						}
           : {
               imgUrl: user.photoURL || undefined,
-              phoneNumber:
-                user.phoneNumber || additionalDetails?.phoneNumber || undefined,
-              lastLogin: Timestamp.fromDate(new Date()),
-              profileUrlRef: additionalDetails?.profileUrlRef || undefined,
-              firstLogin: false,
             }) as UserDetails,
       };
 

@@ -66,7 +66,7 @@ export const upsertAcUser = async (
 		email,
 		name,
 		id,
-		details,
+		phone,
 		stripeId,
 	} = user;
 	if (!email) throw new Error('User email is not defined.');
@@ -92,7 +92,7 @@ export const upsertAcUser = async (
 		email,
 		firstName,
 		lastName,
-		phone: details?.phoneNumber,
+		phone: phone,
 		attributes: {
 			appId: id,
 			stripeId: stripeId,

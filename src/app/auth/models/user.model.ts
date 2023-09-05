@@ -3,10 +3,6 @@ import { Timestamp } from './timestamp.model';
 
 export type UserDetails = {
   imgUrl?: string;
-  phoneNumber?: string;
-  lastLogin?: Timestamp;
-  profileUrlRef?: string;
-  firstLogin?: boolean;
 }
 
 export type User = {
@@ -17,8 +13,9 @@ export type User = {
 	subscriptions?: StripeSubscription[];
 	revenueDetails?: RevenueDetails; 
   email?: string;
-  disabled?: boolean;
+  phone?: string;
 	details?: UserDetails;
+	activeCampaignId?: string;
 	stripeId?: string;
 	stripeLink?: string;
   createdAt?: Timestamp;
