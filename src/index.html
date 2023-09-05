@@ -1,17 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full overflow-x-hidden bg-zinc-950">
   <head>
-		<script data-termly-config>
-			window.TERMLY_CUSTOM_BLOCKING_MAP = {
-				"https://codewiz.app": "essential",
-			}
-		</script>
-		<script
-			type="text/javascript"
-			src="https://app.termly.io/embed.min.js"
-			data-auto-block="on"
-			data-website-uuid="4f8847f2-7f9d-4560-acb8-8cd9172bfd8c"
-		></script>
 		<!-- Google Tag Manager -->
 		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -19,6 +8,20 @@
 		'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 		})(window,document,'script','dataLayer','GTM-TFJD8XGJ');</script>
 		<!-- End Google Tag Manager -->
+
+		<script>
+		// Define dataLayer and the gtag function.
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}// Default all categories to 'denied' 
+		gtag('consent', 'default', {
+			'ad_storage': 'denied',
+			'analytics_storage': 'denied',
+			'functionality_storage': 'denied',
+			'personalization_storage': 'denied',
+			'security_storage': 'denied',
+			'social_storage': 'denied',
+		});
+		</script>
 
     <meta charset="utf-8" />
     <title>CodeWiz</title>
