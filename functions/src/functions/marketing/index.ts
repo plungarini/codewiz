@@ -67,6 +67,7 @@ export const upsertAcUser = async (
 		name,
 		id,
 		phone,
+		activeCampaignId,
 		stripeId,
 	} = user;
 	if (!email) throw new Error('User email is not defined.');
@@ -117,10 +118,12 @@ export const upsertAcUser = async (
 	if (!addedId) return warn('User added to ActiveCampaign but id is undefined');
 	const lists = await sdk.getContactLists(addedId);
 
-	await firestore.doc(`users/${uid}`).update({
-		activeCampaignId: addedId,
-		updatedAt: new Date(),
-	});
+	if (!activeCampaignId || activeCampaignId !== addedId) {
+		await firestore.doc(`users/${uid}`).update({
+			activeCampaignId: addedId,
+			updatedAt: new Date(),
+		});
+	}
 
 	const hasList = lists?.contactLists.find((l) => l.id === '2');
 	if (hasList) return;
