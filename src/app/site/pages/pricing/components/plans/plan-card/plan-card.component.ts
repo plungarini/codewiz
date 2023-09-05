@@ -44,12 +44,15 @@ export class PlanCardComponent {
 
 	async buyNow() {
 		if (this.loading) return;
+
+		/* TODO - Remove when Master plan added */
+		if (this.product?.role?.includes('master')) return;
+
 		if (this.hasCurrentSubscription) {
 			this.router.navigate(['/app']);
 			return;
 		}
 
-		
 		this.loading = true;
 		this.cdRef.markForCheck();
 		
