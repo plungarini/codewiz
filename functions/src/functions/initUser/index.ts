@@ -1,4 +1,5 @@
 import { firestore } from '../../utils';
+import { getCurrentPeriodId } from '../userSubscriptions/period';
 
 export const initUser = async (uid: string) => {
 	const rolesRef = firestore.doc(`users/${uid}/protected/role`);
@@ -13,7 +14,22 @@ export const initUser = async (uid: string) => {
 	roles.permissions.push('user');
 	await rolesRef.set(roles, { merge: true });
 
+	await setBlankPeriodUsage(uid);
 	await setGlobalStats();
+};
+
+const setBlankPeriodUsage = async (uid: string) => {
+	const pathId = await getCurrentPeriodId(uid);
+	const docRef = firestore.doc(`users/${uid}/protected/usages/bySubscription/${pathId}`);
+	const doc = await docRef.get();
+	const data = doc.data();
+	const count = data?.count || 0;
+	const createdAt = data?.createdAt?.toDate() || new Date();
+	await docRef.set({
+		count: count,
+		createdAt,
+		updatedAt: new Date(),
+	}, { merge: true });
 };
 
 const setGlobalStats = async () => {
