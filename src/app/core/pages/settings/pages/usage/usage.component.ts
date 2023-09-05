@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { switchMap } from 'rxjs';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { switchMap, tap } from 'rxjs';
 import { StripeSubscription } from 'src/app/auth/models/subscription.model';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
@@ -22,7 +22,12 @@ import { UserUsagesService } from 'src/app/shared/services/user-usages.service';
 })
 export class UsageComponent {
 
-	user$ = this.usersService.user$;
+	user$ = this.usersService.user$.pipe(
+		tap((u) => {
+			this.userSub = u?.subscriptions?.filter((s) => s?.status === 'active')?.at(0)?.role || 'apprentice';
+			this.cdRef.markForCheck();
+		})
+	);
 	fireUser$ = this.usersService.fireUser$;
 	usedPrompts$ = this.userStats.getThisPeriodPrompts();
 	product$ = this.user$.pipe(
@@ -32,10 +37,13 @@ export class UsageComponent {
 		})
 	);
 
+	userSub: string = 'apprentice';
+
 	constructor(
 		private usersService: UsersService,
 		private stripeService: StripeService,
 		private userStats: UserUsagesService,
+		private cdRef: ChangeDetectorRef,
 	) { }
 
 	getRemainingDays(subscription?: StripeSubscription) {

@@ -71,6 +71,7 @@
 	<div class="relative flex flex-col items-center p-2 space-y-3 w-14">
 		<a
 			routerLink="/pricing"
+			*ngIf="!((userSub$ | async) || 'apprentice').includes('master')"
 			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 text-white transition-all duration-300 rounded-lg shadow-xl bg-gradient-to-tr from-pink-600/80 to-indigo-400/80 opacity-80 hover:opacity-100"
 		>
 			<svg class="w-6 h-6 shrink-0"  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
