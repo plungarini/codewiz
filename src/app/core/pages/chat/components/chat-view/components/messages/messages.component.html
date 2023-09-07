@@ -117,11 +117,12 @@
 				></app-pagesections-selector>
 	
 			</div>
+
 			<ng-template #error>
 				<div *ngIf="interpretError(msg.error) as err">
 					<div
 						[attr.message-id]="msg.id"
-						class="relative flex flex-row w-full pt-3 pb-3 space-x-4 group/message"
+						class="relative flex flex-row w-full pt-3 pb-3 sm:space-x-4 group/message"
 					>
 						<app-message-avatar
 							[role]="msg.role"
