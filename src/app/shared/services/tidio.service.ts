@@ -13,12 +13,12 @@ type TidioUser = {
 })
 export class TidioService {
 
-  private production = environment.production;
+	private production = environment.production;
 
 	constructor() { }
 
 	hide() {
-		if (!this.production) return;
+		if (!this.production || !this._getConsent()) return;
 		const tidio = (window as any).tidioChatApi;
 		if (!tidio || !tidio?.hasOwnProperty('hide'))
 			return console.warn('[TIDIO] Unable to hide widget');
@@ -26,7 +26,7 @@ export class TidioService {
 	}
 	
 	show() {
-		if (!this.production) return;
+		if (!this.production || !this._getConsent()) return;
 		const tidio = (window as any).tidioChatApi;
 		if (!tidio || !tidio?.hasOwnProperty('show'))
 			return console.warn('[TIDIO] Unable to show widget');
@@ -34,11 +34,16 @@ export class TidioService {
 	}
 
 	identify(user?: Partial<TidioUser>): void {
-		if (!this.production) return;
+		if (!this.production || !this._getConsent()) return;
 		const tidio = (window as any).tidioChatApi;
 		if (!tidio || !tidio?.hasOwnProperty('setVisitorData')) {
 			return console.warn('[TIDIO] Unable to set visitor data');
 		}
 		tidio.setVisitorData(user);
+	}
+
+	private _getConsent(): boolean {
+		const termly = (window as any)?.Termly?.getConsentState();
+		return !!termly?.performance;
 	}
 }
