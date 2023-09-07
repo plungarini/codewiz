@@ -32,7 +32,7 @@ export class PlansComponent {
 				apprentice: products.find(product => product.role?.includes('apprentice')),
 				wizard: products.find(product => product.role?.includes('wizard')),
 				master: products.find(product => product.role?.includes('master')),
-			}
+			};
 		})
 	);
 

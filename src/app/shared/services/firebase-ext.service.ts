@@ -26,13 +26,14 @@ import { environment } from 'src/environments/environment';
 })
 export class FirebaseExtendedService {
 
-	private debug = !environment.production;
+	private debug = false;
+	private prod = environment.production;
 	private cloudId = environment.production ? 'am6pkcy5gq-nw' : 'ik2jh2ngra-ew';
 	privateProjectName = 'codewiz-prod';
 
 	constructor(
 		private firestore: Firestore,
-		private functions: Functions
+		private functions: Functions,
 	) { }
 	
 	callFunction<T, Z>(name: string, region = 'europe-west1', version: number = 2, timeout = 60_000) {
@@ -65,6 +66,7 @@ export class FirebaseExtendedService {
     if (!path) return of(undefined);
 		const docRef = doc(this.firestore, path) as DocumentReference<T>;
 		let debugLogged = !this.debug;
+
 		return docData<T>(docRef, { idField: 'id' }).pipe(
 			traceUntilFirst(`[getDoc] ${path}`),
 			catchError((err, caught) => {
