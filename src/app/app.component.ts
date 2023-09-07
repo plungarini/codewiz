@@ -17,9 +17,16 @@ export class AppComponent implements OnInit, OnDestroy {
 		private router: Router,
 		private tidioService: TidioService,
 	) {
+		const url = this.router.url;
+		if (url.includes('/app') && !url.includes('/app/settings')) {
+			this.tidioService.hide();
+		} else {
+			this.tidioService.show();
+		}
+	
 		this.routerSub = this.router.events.subscribe(() => {
-			const url = this.router.url;
-			if (url.includes('/app') && !url.includes('/app/settings')) {
+			const _url = this.router.url;
+			if (_url.includes('/app') && !_url.includes('/app/settings')) {
 				return this.tidioService.hide();
 			} else {
 				return this.tidioService.show();
@@ -42,7 +49,12 @@ export class AppComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit(): void {
-		this.tidioService.show();
+		const url = this.router.url;
+		if (url.includes('/app') && !url.includes('/app/settings')) {
+			return this.tidioService.hide();
+		} else {
+			return this.tidioService.show();
+		}
 	}
 	
 	ngOnDestroy(): void {
