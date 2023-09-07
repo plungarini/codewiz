@@ -11,6 +11,7 @@ import { TidioService } from './shared/services/tidio.service';
 export class AppComponent implements OnInit, OnDestroy {
 
 	private routerSub: Subscription;
+	private consentInitialized = false;
 
 	constructor(
 		private router: Router,
@@ -23,7 +24,21 @@ export class AppComponent implements OnInit, OnDestroy {
 			} else {
 				return this.tidioService.show();
 			}
-		})
+		});
+
+		const originalPush = (window as any).dataLayer.push;
+		(window as any).dataLayer.push = (data: any) => {
+			originalPush.call((window as any).dataLayer, data);
+
+			if (data.event === 'userPrefUpdate') {
+				if (!this.consentInitialized) {
+					this.consentInitialized = true;
+					return;
+				} else {
+					location.href = location.href;
+				}
+			}
+		};
 	}
 
 	ngOnInit(): void {

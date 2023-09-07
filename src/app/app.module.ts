@@ -2,7 +2,7 @@ import { NgModule, SecurityContext } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { provideHttpClient } from '@angular/common/http';
-import { getAnalytics, provideAnalytics, ScreenTrackingService, UserTrackingService } from '@angular/fire/analytics';
+import { ScreenTrackingService, UserTrackingService, getAnalytics, provideAnalytics } from '@angular/fire/analytics';
 import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { provideFirestore } from '@angular/fire/firestore';
@@ -19,6 +19,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { markedOptionsFactory } from './core/pages/chat/components/chat-view/components/messages/md-blocks';
 
+
 export function playerFactory() {
   return import('lottie-web');
 }
@@ -31,7 +32,7 @@ export function playerFactory() {
 		BrowserModule,
     AppRoutingModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAnalytics(() => getAnalytics()),
+		provideAnalytics(() => getAnalytics()),
     provideAuth(() => getAuth()),
 		provideFirestore(() => {
 			return initializeFirestore(getApp(), {
