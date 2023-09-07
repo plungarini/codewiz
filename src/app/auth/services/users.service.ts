@@ -39,8 +39,11 @@ export class UsersService {
 								phone: user.phone,
 							})
 							setUserProperties(this.analytics, {
-								...user,
-							})
+								email: user.email,
+								name: user.name,
+								id: user.id,
+								createdAt: user.createdAt?.toDate().toISOString(),
+							}, { global: true })
 						}));
 				} else {
 					return of(undefined);
