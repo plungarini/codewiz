@@ -5,6 +5,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { ScreenTrackingService, UserTrackingService, getAnalytics, provideAnalytics } from '@angular/fire/analytics';
 import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
+import { DATA_COLLECTION_ENABLED, INSTRUMENTATION_ENABLED, PerformanceMonitoringService } from '@angular/fire/compat/performance';
 import { provideFirestore } from '@angular/fire/firestore';
 import { getFunctions, provideFunctions } from '@angular/fire/functions';
 import { getPerformance, providePerformance } from '@angular/fire/performance';
@@ -69,6 +70,9 @@ export function playerFactory() {
 		ScreenTrackingService,
 		UserTrackingService,
 		provideHttpClient(),
+		{ provide: DATA_COLLECTION_ENABLED, useValue: true },
+		{ provide: INSTRUMENTATION_ENABLED, useValue: true },
+		PerformanceMonitoringService,
 	],
   bootstrap: [AppComponent]
 })
