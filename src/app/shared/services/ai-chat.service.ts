@@ -166,7 +166,7 @@ export class AiChatService {
 					.map(m => ({ role: m.role, content: m.content }));
 				
 				// If last chat message is from Assistant, removes it
-				if (normMessages[normMessages.length - 1].role === AiChatMessageRole.Assistant) {
+				if (normMessages[normMessages.length - 1]?.role === AiChatMessageRole.Assistant) {
 					normMessages.pop();
 				}
 
@@ -205,8 +205,9 @@ export class AiChatService {
 
 				if (
 					normMessages.length <= 0 ||
-					!normMessages[normMessages.length - 1].content ||
-					normMessages[normMessages.length - 1].role !== AiChatMessageRole.User
+					!normMessages[normMessages.length - 1] ||
+					!normMessages[normMessages.length - 1]?.content ||
+					normMessages[normMessages.length - 1]?.role !== AiChatMessageRole.User
 				) {
 					const err = {
 						message: "Apologies, but it seems we're experiencing some technical difficulties. Please try again in few minutes or reach out to the support.",
