@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
+import { Analytics, logEvent } from '@angular/fire/analytics';
 import { limit, orderBy, startAfter, where } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { Observable, combineLatest, filter, firstValueFrom, interval, lastValueFrom, map, of, startWith, switchMap, take } from 'rxjs';
@@ -23,7 +24,8 @@ export class AiChatService {
 		private http: HttpClient,
 		private db: FirebaseExtendedService,
 		private router: Router,
-		private users: UsersService
+		private users: UsersService,
+		private analytics: Analytics,
 	) { }
 
 	getStatusPromise(): Promise<ClientOpenaiStatus> {
@@ -276,6 +278,7 @@ export class AiChatService {
 								pageSections,
 								finishReason
 							});
+							logEvent(this.analytics, 'chat_query');
 							closeStream();
 							return;
 						}
