@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PersonalMetaTagsService } from './shared/services/personal-meta-tags.service';
+import { RealFeedbackService } from './shared/services/real-feedback.service';
 import { TidioService } from './shared/services/tidio.service';
 
 @Component({
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	constructor(
 		private router: Router,
 		private tidioService: TidioService,
+		private realFeedbackService: RealFeedbackService,
 		private meta: PersonalMetaTagsService,
 	) {
 		this.meta.init({
@@ -26,16 +28,22 @@ export class AppComponent implements OnInit, OnDestroy {
 		const url = this.router.url;
 		if (url.includes('/app') && !url.includes('/app/settings')) {
 			this.tidioService.hide();
+			this.realFeedbackService.hide();
 		} else {
 			this.tidioService.show();
+			this.realFeedbackService.show();
 		}
 	
 		this.routerSub = this.router.events.subscribe(() => {
 			const _url = this.router.url;
 			if (_url.includes('/app') && !_url.includes('/app/settings')) {
-				return this.tidioService.hide();
+				this.tidioService.hide();
+				this.realFeedbackService.hide();
+				return;
 			} else {
-				return this.tidioService.show();
+				this.tidioService.show();
+				this.realFeedbackService.show();
+				return;
 			}
 		});
 
@@ -57,9 +65,13 @@ export class AppComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		const url = this.router.url;
 		if (url.includes('/app') && !url.includes('/app/settings')) {
-			return this.tidioService.hide();
+			this.realFeedbackService.hide();
+			this.tidioService.hide();
+			return;
 		} else {
-			return this.tidioService.show();
+			this.realFeedbackService.show();
+			this.tidioService.show();
+			return;
 		}
 	}
 	
