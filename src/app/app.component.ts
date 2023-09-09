@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { PersonalMetaTagsService } from './shared/services/personal-meta-tags.service';
 import { TidioService } from './shared/services/tidio.service';
 
 @Component({
@@ -16,7 +17,12 @@ export class AppComponent implements OnInit, OnDestroy {
 	constructor(
 		private router: Router,
 		private tidioService: TidioService,
+		private meta: PersonalMetaTagsService,
 	) {
+		this.meta.init({
+			description: 'Meet CodeWiz – your AI coding companion. Dive into real-time chats, unravel coding mysteries faster than you can type "StackOverflow", and code with confidence. Embrace the future of coding assistance today!',
+		})
+
 		const url = this.router.url;
 		if (url.includes('/app') && !url.includes('/app/settings')) {
 			this.tidioService.hide();
