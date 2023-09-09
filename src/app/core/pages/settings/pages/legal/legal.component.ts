@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { LegalService } from 'src/app/shared/services/legal.service';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 
 @Component({
   selector: 'app-legal',
@@ -19,6 +20,11 @@ export class LegalComponent {
 
 	constructor(
 		private legalService: LegalService,
-	) { }
+		private meta: PersonalMetaTagsService,
+	) {
+		this.meta.update({
+			title: 'CodeWiz | Settings - Legal Documents',
+		});
+	}
 
 }

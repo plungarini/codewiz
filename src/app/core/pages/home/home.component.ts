@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { map, of, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 
 @Component({
   templateUrl: './home.component.html',
@@ -26,7 +27,12 @@ export class HomeComponent {
 
 	constructor(
 		private usersService: UsersService,
-	) { }
+		private meta: PersonalMetaTagsService,
+	) {
+		this.meta.update({
+			title: 'CodeWiz | Dashboard'
+		});
+	}
 
 	getName(name?: string | null): string {
 		return name?.split(' ')?.at(0) || 'Little Wizard';

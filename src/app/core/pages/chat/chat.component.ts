@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 
 
 @Component({
@@ -14,6 +15,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 })
 export class ChatComponent {
 
-	constructor() { }
+	constructor(
+		private meta: PersonalMetaTagsService,
+	) {
+		this.meta.update({
+			title: 'CodeWiz | WizChat'
+		});
+	}
 	
 }

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 
 @Component({
   selector: 'app-users',
@@ -23,7 +24,12 @@ export class UsersComponent implements OnDestroy {
 	constructor(
 		private router: Router,
 		private cdRef: ChangeDetectorRef,
+		private meta: PersonalMetaTagsService,
 	) {
+		this.meta.update({
+			title: 'CodeWiz | Admin - Users manager',
+		});
+	
 		this.routerSub = this.router.events.subscribe(event => {
 			const url = this.router.url;
 			this.showBackButton = url.includes('/info/');

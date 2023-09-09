@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 
 @Component({
   templateUrl: './repos.component.html',
@@ -12,5 +13,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReposComponent {
+
+	constructor(
+		private meta: PersonalMetaTagsService,
+	) {
+		this.meta.update({
+			title: 'CodeWiz | Admin - Repos Manager',
+		});
+	}
 
 }

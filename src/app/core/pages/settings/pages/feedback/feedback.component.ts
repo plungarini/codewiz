@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { tap } from 'rxjs';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 import { UserFeedback } from './models/feedback.model';
 import { FeedbackService } from './services/feedback.service';
 
@@ -34,7 +35,12 @@ export class FeedbackComponent {
 	constructor(
 		private feedbacks: FeedbackService,
 		private cdRef: ChangeDetectorRef,
-	) { }
+		private meta: PersonalMetaTagsService,
+	) {
+		this.meta.update({
+			title: 'CodeWiz | Settings - Your feedbacks',
+		});
+	}
 
 	async saveFeedback(): Promise<void> {
 		if (!this.control.value) return;

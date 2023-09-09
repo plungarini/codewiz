@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs';
 import { MaintenanceService } from 'src/app/shared/services/maintenance.service';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 
 @Component({
   selector: 'app-maintenance',
@@ -28,6 +29,11 @@ export class MaintenanceComponent {
 	constructor(
 		private maintenanceService: MaintenanceService,
 		private router: Router,
-	) { }
+		private meta: PersonalMetaTagsService,
+	) {
+		this.meta.update({
+			title: 'CodeWiz | Currently in maintenance'
+		});
+	}
 
 }

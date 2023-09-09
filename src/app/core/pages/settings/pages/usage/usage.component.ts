@@ -3,6 +3,7 @@ import { switchMap, tap } from 'rxjs';
 import { StripeSubscription } from 'src/app/auth/models/subscription.model';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 import { StripeService } from 'src/app/shared/services/stripe.service';
 import { UserUsagesService } from 'src/app/shared/services/user-usages.service';
 
@@ -44,7 +45,12 @@ export class UsageComponent {
 		private stripeService: StripeService,
 		private userStats: UserUsagesService,
 		private cdRef: ChangeDetectorRef,
-	) { }
+		private meta: PersonalMetaTagsService,
+	) {
+		this.meta.update({
+			title: 'CodeWiz | Settings - Subscription Usage',
+		});
+	}
 
 	getRemainingDays(subscription?: StripeSubscription) {
 		if (!subscription) return 0;
