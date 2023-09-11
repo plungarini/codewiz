@@ -23,22 +23,7 @@
 		<app-repo-meta
 			[repo]="repo$ | async"
 		></app-repo-meta>
-		
-		<div class="relative z-10 flex flex-row items-center justify-between w-full pb-2 mb-4 border-b border-zinc-800 bg-zinc-950">
-			<h3 class="mb-0">Repo pages <ng-container *ngIf="embeddings$ | async  as e"><span *ngIf="e.length > 0">({{e.length}})</span></ng-container></h3>
 
-			<button routerLink="/app/admin/repos/edit/{{repoId}}/edit-pages" class="px-2 py-1 text-sm leading-6 rounded-md cursor-pointer bg-zinc-900 hover:bg-zinc-800 text-zinc-300 hover:text-zinc-50">Edit</button>
-		</div>
-
-	</div>
-
-	<div class="flex w-full max-h-full overflow-hidden shrink">
-		<p *ngIf="loading" class="w-full">Loading repo pages...</p>
-		<p *ngIf="loadingError" class="w-full text-red-400">{{loadingError}}</p>
-		<app-repo-pages
-			[embeddings]="embeddings$"
-			class="block w-full overflow-x-hidden overflow-y-auto shrink"
-		></app-repo-pages>
 	</div>
 </div>
 

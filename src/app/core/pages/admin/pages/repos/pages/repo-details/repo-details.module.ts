@@ -3,11 +3,10 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { ImgixAngularModule } from '@imgix/angular';
+import { RepoMetaComponent } from './components/repo-meta/repo-meta.component';
+import { RepoPreviewComponent } from './components/repo-preview/repo-preview.component';
 import { RepoDetailsRoutingModule } from './repo-details-routing.module';
 import { RepoDetailsComponent } from './repo-details.component';
-import { RepoPreviewComponent } from './components/repo-preview/repo-preview.component';
-import { RepoMetaComponent } from './components/repo-meta/repo-meta.component';
-import { RepoPagesComponent } from './components/repo-pages/repo-pages.component';
 
 
 @NgModule({
@@ -15,7 +14,6 @@ import { RepoPagesComponent } from './components/repo-pages/repo-pages.component
     RepoDetailsComponent,
     RepoPreviewComponent,
     RepoMetaComponent,
-    RepoPagesComponent,
   ],
   imports: [
     CommonModule,
