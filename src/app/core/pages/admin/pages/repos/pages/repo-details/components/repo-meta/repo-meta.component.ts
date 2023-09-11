@@ -49,8 +49,12 @@ export class RepoMetaComponent {
 		this.cdRef.markForCheck();
 
 		const formValue = this.form.value;
+		const normQuerySuggestions =
+			this.form.controls.querySuggestions.controls.map((s) => s.value)
+			.slice(0, 4);
+		const normReplaceStrings = this.form.controls.replaceStrings.controls.map((s) => s.value);
 		const newReplaceStrings = _uniqWith(
-			formValue.replaceStrings?.map((r) => ({
+			normReplaceStrings?.map((r) => ({
 				s: r.s || '', r: r.r || '',
 			})) || [],
 			_isEqual
@@ -64,7 +68,7 @@ export class RepoMetaComponent {
 			hostUrl: formValue.hostUrl,
 			replaceUrl: formValue.replaceUrl,
 			replaceStrings: newReplaceStrings,
-			querySuggestions: formValue.querySuggestions,
+			querySuggestions: normQuerySuggestions,
 		};
 
 		try {
@@ -76,26 +80,73 @@ export class RepoMetaComponent {
 		this.cdRef.markForCheck();
 	}
 
+	get disabledQuerySuggestions() {
+		const val = this.form.controls.querySuggestions.controls.map((s) => s.value);
+		return val?.find(s => s === '') !== undefined;
+	}
+
+	deleteQuerySuggestion(index: number) {
+		this.form.controls.querySuggestions.removeAt(index);
+	}
+
+	addEmptyQuerySuggestion() {
+		this.form.controls.querySuggestions.push(new FormControl('', { nonNullable: true }));
+	}
+
+	get disabledReplaceString() {
+		const val = this.form.controls.replaceStrings.controls.map((s) => s.value);
+		return !!val?.find(s => !s.s);
+	}
+
+	deleteReplaceString(index: number) {
+		this.form.controls.replaceStrings.removeAt(index);
+	}
+
+	addEmptyReplaceString() {
+		if (this.disabledReplaceString) return;
+		this.form.controls.replaceStrings?.push(new FormGroup({
+			s: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+			r: new FormControl('', { nonNullable: true })
+		}));
+	}
+
 	private updateForm(value?: Partial<Repo> | null): void {
 		if (!value) return;
 		this.form.reset(undefined, { emitEvent: false });
 		this.form.patchValue(value);
-		this.initReplaceStrings(value.replaceStrings || []);
+		this.changeReplaceStrings(value.replaceStrings || []);
+		this.changeQuerySuggestions(value.querySuggestions || []);
+		this.cdRef.markForCheck();
 	}
 
-	private initReplaceStrings(replaceStrings: { s: string, r: string }[]) {
+	private changeQuerySuggestions(querySuggestions: string[]) {
+		if (!querySuggestions || querySuggestions.length <= 0) return;
+		const normStrings = _uniqWith(querySuggestions || [], _isEqual);
+		
+		this.form.controls.querySuggestions = this.builder.array<FormControl<string>>([]);
+		const querySuggestionsArray = this.form.controls.querySuggestions;
+		for (let i = 0; i < normStrings.length; i++) {
+			const query = normStrings[i];
+			querySuggestionsArray.push(new FormControl(query, { nonNullable: true }));
+		}
+	}
+
+	private changeReplaceStrings(replaceStrings: { s: string, r: string }[]) {
 		if (!replaceStrings || replaceStrings.length <= 0) return;
 		const normStrings = _uniqWith(replaceStrings || [], _isEqual);
 		
-		this.form.controls.replaceStrings = this.builder.array<FormGroup<{ s: FormControl<string>, r: FormControl<string> }>>([]);
-		const replaceStringsArray = this.form.controls.replaceStrings;
+		const arr = this.builder.array<FormGroup<{ s: FormControl<string>, r: FormControl<string> }>>([]);
+		this.form.controls.replaceStrings = arr;
+		
 		for (let i = 0; i < normStrings.length; i++) {
 			const replacer = normStrings[i];
 			const group = this.builder.group({
 				s: this.builder.control(replacer.s, { nonNullable: true, validators: [Validators.required] }),
-				r: this.builder.control(replacer.r, { nonNullable: true, validators: [Validators.required] }),
-			})
-			replaceStringsArray.push(group);
+				r: this.builder.control(replacer.r, { nonNullable: true, validators: [] }),
+			});
+			arr.push(group);
 		}
+
+		this.form.controls.replaceStrings = arr;
 	}
 }

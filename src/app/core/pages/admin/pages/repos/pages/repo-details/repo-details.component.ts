@@ -9,7 +9,7 @@ import { Repo } from '../../../../../../../shared/models/repo.model';
   styles: [
     `
       :host {
-      	@apply block h-full max-h-full overflow-y-hidden; 
+      	@apply block h-full max-h-full overflow-y-hidden sm:overflow-y-auto; 
       }
     `
   ],
