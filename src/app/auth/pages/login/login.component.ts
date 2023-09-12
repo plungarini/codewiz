@@ -33,6 +33,7 @@ export class LoginComponent implements OnInit {
   loginError: string = '';
   hide = true;
 	returnUrl: string | null = null;
+	loading = false;
 
 	constructor(
 		private auth: AuthenticationService,
@@ -42,22 +43,28 @@ export class LoginComponent implements OnInit {
 
 	async googleLogin(): Promise<void> {
 		this.loginError = '';
+		this.loading = true;
+		this.cdRef.markForCheck();
 		try {
 			await this.auth.googleLogin();
 		} catch (error: any) {
 			this.loginError = error;
-  		this.cdRef.detectChanges();
 		}
+		this.loading = false;
+		this.cdRef.markForCheck();
 	}
 
 	async githubLogin(): Promise<void> {
 		this.loginError = '';
+		this.loading = true;
+		this.cdRef.markForCheck();
 		try {
 			await this.auth.githubLogin();
 		} catch (error: any) {
 			this.loginError = error;
-  		this.cdRef.detectChanges();
 		}
+		this.loading = false;
+		this.cdRef.markForCheck();
 	}
 
 	ngOnInit(): void {
@@ -88,6 +95,8 @@ export class LoginComponent implements OnInit {
 
   async emailLogin(form: FormGroup): Promise<void> {
 		this.loginError = '';
+		this.loading = true;
+		this.cdRef.markForCheck();
 		try {
 			await this.auth.emailLogin(
 				form.value.email,
@@ -95,8 +104,9 @@ export class LoginComponent implements OnInit {
 			);
 		} catch (error) {
 			this.loginError = FirebaseErrorHandling.convertMessage((error as any)['code'], 'en');
-  		this.cdRef.detectChanges();
 		}
+		this.loading = false;
+		this.cdRef.markForCheck();
   }
 
 }

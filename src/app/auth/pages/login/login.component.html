@@ -110,6 +110,10 @@
 						type="submit"
 						class="inline-flex items-center justify-center w-full px-3 py-1.5 text-base font-medium text-white active:outline-none transition-all duration-300 bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 disabled:hover:bg-indigo-600 hover:ring-2 disabled:hover:ring-0 hover:ring-offset-2 disabled:hover:ring-offset-0 ring-offset-zinc-900 hover:ring-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
 					>
+						<svg [ngClass]="{ '-ml-6 opacity-0': !loading, '-ml-0 opacity-100': loading }" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-4 h-4 mr-2 transition-all duration-300 pointer-events-none shrink-0 animate-spin" style="shape-rendering: auto;">
+							<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-white">
+							</circle>
+						</svg>
 						<span>Sign in</span>
 					</button>
 					<p class="mt-0 text-center">Don't have an account? <a routerLink="/auth/signup" class="font-medium text-indigo-500 underline transition-colors duration-300 hover:text-indigo-400">Sign up</a> instead!</p>

@@ -35,6 +35,7 @@ export class SignupComponent implements OnInit {
   });
   loginError: string = '';
 	hide = true;
+	loading = false;
 	
 	returnUrl: string | null = null;
 
@@ -50,23 +51,41 @@ export class SignupComponent implements OnInit {
 	}
 
 	async googleLogin(): Promise<void> {
+		if (!this.form.value.termsAndConditions) {
+			this.loginError = 'You must accept Terms and Conditions before continuing.';
+			this.cdRef.markForCheck();
+			return;
+		}
+
 		this.loginError = '';
+		this.loading = true;
+		this.cdRef.markForCheck();
 		try {
 			await this.auth.googleLogin();
 		} catch (error: any) {
 			this.loginError = error;
-  		this.cdRef.detectChanges();
 		}
+		this.loading = false;
+		this.cdRef.markForCheck();
 	}
 
 	async githubLogin(): Promise<void> {
+		if (!this.form.value.termsAndConditions) {
+			this.loginError = 'You must accept Terms and Conditions before continuing.';
+			this.cdRef.markForCheck();
+			return;
+		}
+
 		this.loginError = '';
+		this.loading = true;
+		this.cdRef.markForCheck();
 		try {
 			await this.auth.githubLogin();
 		} catch (error: any) {
 			this.loginError = error;
-  		this.cdRef.detectChanges();
 		}
+		this.loading = false;
+		this.cdRef.markForCheck();
 	}
 
   getEmailErrMsg(): string {
@@ -97,6 +116,8 @@ export class SignupComponent implements OnInit {
   	}
 
 		this.loginError = '';
+		this.loading = true;
+		this.cdRef.markForCheck();
 		
 		try {
 			await this.auth.emailSignup(
@@ -106,8 +127,10 @@ export class SignupComponent implements OnInit {
 			);
 		} catch (error) {
 			this.loginError = FirebaseErrorHandling.convertMessage((error as any).code, 'it');
-  		this.cdRef.detectChanges();
 		}
+
+		this.loading = false;
+		this.cdRef.markForCheck();
   }
 
 }
