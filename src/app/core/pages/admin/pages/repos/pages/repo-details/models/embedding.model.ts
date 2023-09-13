@@ -14,7 +14,8 @@ export type FetchPageData = {
 };
 
 export type GenerateEmbeddingData = {
-	author: string
+	author: string;
+	table: string;
   title: string;
   link: string;
   content: string;
