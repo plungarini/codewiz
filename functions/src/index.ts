@@ -54,7 +54,9 @@ export const createEmbedding = onCall({
 	memory: '256MiB',
 }, async (req) => {
 	/**
+	 * author: string;
 	 * title: string;
+	 * table: string;
 	 * link: string;
 	 * content: string;
 	 * id: string;
