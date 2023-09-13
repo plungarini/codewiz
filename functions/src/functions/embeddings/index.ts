@@ -65,6 +65,7 @@ const openAiTokenSanitizer = (input: string): string[] => {
 };
 
 const checkTableExists = async (supabase: SupabaseClient, tableName: string) => {
+	warn('Checking if table exists...', tableName);
   const { data, error } = await supabase
     .from(tableName)
 		.select('id')
@@ -73,12 +74,13 @@ const checkTableExists = async (supabase: SupabaseClient, tableName: string) => 
 	if (error && error.code === '42P01') {
 		return false;
 	} else {
-		return data?.length || -1 > 0;
+		return !!data;
 	}
 };
 
 export const elaborateEmbeddings = async (req: {
 	author: string;
+	table: string;
   title: string;
 	link: string;
   content: string;
@@ -96,14 +98,14 @@ export const elaborateEmbeddings = async (req: {
     );
 	}
 
-	const author = req.author.split('/').pop()?.replaceAll('.', '');
+	const author = req.author.split('/').pop()?.replaceAll('.', '') || req.table;
 	if (!author) throw new Error(`Author field is required. Currently it's ${author}, original is ${req.author}`);
 
 	const supabase = createClient(supabasePublicUrl, supabaseServiceRoleKey);
 
-	const tableExists = await checkTableExists(supabase, author);
+	const tableExists = await checkTableExists(supabase, req.table || author);
 	if (!tableExists) {
-		const { error: err } = await supabase.rpc('create_embeddings_table', { author });
+		const { error: err } = await supabase.rpc('create_embeddings_table', { author: req.table || author });
 		if (err) {
 			error(err);
 			throw new Error('Error in create_embeddings_table.');
@@ -140,7 +142,7 @@ export const elaborateEmbeddings = async (req: {
       const [responseData] = embeddingResponse.data.data;
 
       const { error: insertPageSectionError } = await supabase
-        .from(author)
+        .from(req.table || author)
         .upsert({
           id: inputId,
 					path: req.link,
