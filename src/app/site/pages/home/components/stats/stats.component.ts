@@ -32,7 +32,7 @@ export class StatsComponent implements OnDestroy {
 		usersCount: 0,
 		updatedAt: new Date(),
 	};
-	publicReleaseDate = new Date(2022, 8, 1);
+	publicReleaseDate = new Date(2022, 8, 13);
 
 	private usersCountSub: Subscription;
 	private chatsSub: Subscription;
