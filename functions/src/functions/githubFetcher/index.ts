@@ -68,7 +68,7 @@ const getTreeFiles = async (treeUrl: string, filter: 'tree' | 'blob'): Promise<T
 };
 
 const elaborateTitle = (input: string, fileName: string): string => {
-	const regex = /^#\s*(.+)/;
+	const regex = /^#\s*([^{\n]+)/;
 	const match = input.match(regex);
 	let title = '';
 
