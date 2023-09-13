@@ -31,7 +31,11 @@ export class AppComponent implements OnInit, OnDestroy {
 			this.realFeedbackService.hide();
 		} else {
 			this.tidioService.show();
-			this.realFeedbackService.show();
+			if (url.includes('/app') && !url.includes('/app/chat')) {
+				this.realFeedbackService.show();
+			} else {
+				this.realFeedbackService.hide();
+			}
 		}
 	
 		this.routerSub = this.router.events.subscribe(() => {
@@ -42,7 +46,11 @@ export class AppComponent implements OnInit, OnDestroy {
 				return;
 			} else {
 				this.tidioService.show();
-				this.realFeedbackService.show();
+				if (_url.includes('/app') && !_url.includes('/app/chat')) {
+					this.realFeedbackService.show();
+				} else {
+					this.realFeedbackService.hide();
+				}
 				return;
 			}
 		});
@@ -65,12 +73,16 @@ export class AppComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		const url = this.router.url;
 		if (url.includes('/app') && !url.includes('/app/settings')) {
-			this.realFeedbackService.hide();
 			this.tidioService.hide();
+			this.realFeedbackService.hide();
 			return;
 		} else {
-			this.realFeedbackService.show();
 			this.tidioService.show();
+			if (url.includes('/app') && !url.includes('/app/chat')) {
+				this.realFeedbackService.show();
+			} else {
+				this.realFeedbackService.hide();
+			}
 			return;
 		}
 	}
