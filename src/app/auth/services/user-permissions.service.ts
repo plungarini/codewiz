@@ -22,7 +22,7 @@ export class UserPermissionsService {
 	 * @return {Promise<boolean>} A Promise that resolves to a boolean indicating whether the user has the required permissions.
 	 */
 	hasPermissions(requiredPermissions: string[]): Promise<boolean> {
-		return firstValueFrom(this.hasPermissions$(requiredPermissions));
+		return firstValueFrom(this.hasAllPermissions$(requiredPermissions));
 	}
 	
 	/**
@@ -32,10 +32,22 @@ export class UserPermissionsService {
 	 * @throws {Error} Throws an error if the requiredPermissions parameter is not valid.
 	 * @return {Observable<boolean>} An Observable of type boolean indicating whether the user has all the required permissions.
 	 */
-	hasPermissions$(requiredPermissions: string[]): Observable<boolean> {
+	hasAllPermissions$(requiredPermissions: string[]): Observable<boolean> {
 		if (!requiredPermissions || requiredPermissions.length <= 0) throw new Error('Permissions are invalid for this route.');
 		return this.getPermissions$().pipe(map(p => requiredPermissions.every(r => p.includes(r))));
 	}
+
+	/**
+	 * Checks if the user has any of the required permissions.
+	 *
+	 * @param {string[]} requiredPermissions - The list of required permissions.
+	 * @return {Observable<boolean>} A boolean observable indicating if the user has any of the required permissions.
+	 */
+	hasAnyPermission$(requiredPermissions: string[]): Observable<boolean> {
+		if (!requiredPermissions || requiredPermissions.length <= 0) throw new Error('Permissions are invalid for this route.');
+		return this.getPermissions$().pipe(map(p => requiredPermissions.some(r => p.includes(r))))
+	}
+	
 
 	/**
 	 * Retrieves permissions and returns them as a Promise of an array of strings.

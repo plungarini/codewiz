@@ -1,17 +1,19 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from './auth/guards/auth.guard';
+import { StagingAuthGuard } from './auth/guards/staging-auth.guard';
 import { CustomPreloadingStrategyService } from './shared/services/custom-preloading-strategy.service';
 
 const routes: Routes = [
 	{
 		path: '',
 		data: { preload: true },
+		canActivate: [StagingAuthGuard],
 		loadChildren: () => import('./site/site.module').then(m => m.SiteModule),
 	},
 	{
 		path: 'app',
-		canActivate: [AuthGuard],
+		canActivate: [StagingAuthGuard, AuthGuard],
 		loadChildren: () => import('./core/core.module').then(m => m.CoreModule)
 	},
 	{
@@ -21,6 +23,7 @@ const routes: Routes = [
 	},
 	{
 		path: 'legal/:id',
+		canActivate: [StagingAuthGuard],
 		loadChildren: () => import('./legal/legal.module').then(m => m.PrivacyModule)
 	},
 

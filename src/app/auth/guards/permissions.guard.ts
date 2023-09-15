@@ -9,7 +9,7 @@ export const PermissionsGuard: CanActivateFn = (route, state) => {
 	const router = inject(Router);
 	const requires = route.data['permissions'];
 
-	return permissionsService.hasPermissions$(requires)
+	return permissionsService.hasAllPermissions$(requires)
 		.pipe(
 			tap((canActivate) => {
 				if (!canActivate) {
