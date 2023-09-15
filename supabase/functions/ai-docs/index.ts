@@ -121,7 +121,11 @@ serve(async (req) => {
 			throw new Error("No message with role 'user'")
 		}
 
-		const supabaseClient = createClient(supabaseUrl, supabaseServiceKey)
+		const supabaseClient = createClient(supabaseUrl, supabaseServiceKey, {
+			auth: {
+				persistSession: false,
+			},
+		})
 
 		const configuration = new Configuration({ apiKey: openAiKey })
 		const openai = new OpenAIApi(configuration)
