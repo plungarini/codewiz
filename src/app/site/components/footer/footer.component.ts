@@ -15,5 +15,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class FooterComponent {
 
 	year = new Date().getFullYear();
+	showPhBanner = new Date() > new Date('2023-09-18T00:01:00-07:00');
 
 }
