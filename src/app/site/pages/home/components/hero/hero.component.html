@@ -5,10 +5,10 @@
 
 	<div class="flex items-center justify-center h-screen max-w-2xl mx-auto">
 		<div>
-			<div class="flex justify-center mb-8">
-				<div class="relative px-3 py-1 text-sm leading-6 transition-all duration-300 rounded-full cursor-default text-zinc-400 ring-1 ring-zinc-100/10 hover:ring-zinc-100/20">
-					CodeWiz <span class="font-bold tracking-wider text-indigo-500">v0.1</span> is here!
-				</div>
+			<div *ngIf="showPhBanner" class="flex justify-center mb-8">
+				<a href="https://www.producthunt.com/posts/codewiz" target="_blank" rel="noopener noreferrer" class="relative px-3 py-1 text-sm leading-6 transition-all duration-300 rounded-full cursor-pointer text-zinc-400 hover:text-zinc-50 ring-2 ring-[#ff6154]/40 hover:ring-[#ff6154]">
+					CodeWiz is on <span class="font-bold tracking-wider text-[#ff6154]">Product Hunt</span> 🚀
+				</a>
 			</div>
 			<div class="text-center">
 				<h1 class="text-4xl font-bold tracking-tight text-zinc-100 sm:text-6xl">Your AI Sidekick for Framework Mastery</h1>
