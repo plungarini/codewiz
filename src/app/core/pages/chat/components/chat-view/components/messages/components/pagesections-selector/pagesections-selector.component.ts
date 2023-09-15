@@ -33,11 +33,9 @@ export class PagesectionsSelectorComponent {
 		this.updatePageSectionsUrl();
 	}
 
-	hostUrl: string = 'https://angular.io/';
-	replaceUrl: string = 'angular/angular/aio/content/';
-	replaceStrings: { s: string, r: string }[] = [
-		{ s: '/index', r: '' }
-	];
+	hostUrl: string = '';
+	replaceUrl: string = '';
+	replaceStrings: { s: string, r: string }[] = [];
 
 	@Output() onClose = new EventEmitter();
 
@@ -54,11 +52,11 @@ export class PagesectionsSelectorComponent {
 		});
 		const urls = new Set();
     this.pageSections = this.pageSections?.filter(section => {
-        if (!urls.has(section.id)) {
-            urls.add(section.id);
-            return true;
-        }
-        return false;
+			if (!urls.has(section.id)) {
+				urls.add(section.id);
+				return true;
+			}
+			return false;
 		});
 		this.cdRef.detectChanges();
 	}
@@ -81,7 +79,10 @@ export class PagesectionsSelectorComponent {
 		}
 
 		this.replaceStrings.forEach((v) => {
-			path = path.replace(v.s, v.r);
+			const isRegex = this.isValidRegex(v.s);
+			const normStr = isRegex ? v.s.replace(/\\\\/g, '\\') : v.s;
+			const exp = isRegex ? new RegExp(normStr) : v.s;
+			path = path.replace(exp, v.r);
 		});
 
 		return path;
@@ -89,6 +90,15 @@ export class PagesectionsSelectorComponent {
 
 	close(): void {
 		this.onClose.emit();
+	}
+
+	private isValidRegex(str: string) {
+    try {
+			new RegExp(str);
+			return true;
+    } catch (e) {
+			return false;
+    }
 	}
 
 }
