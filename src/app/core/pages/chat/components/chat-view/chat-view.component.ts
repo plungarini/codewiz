@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, ViewChild } from '@angular/core';
 import { Timestamp } from '@angular/fire/firestore';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, animationFrameScheduler, catchError, finalize, of, switchMap } from 'rxjs';
+import { animationFrameScheduler, catchError, finalize, of, Subscription, switchMap } from 'rxjs';
 import { AiChatStatusIndicator, ClientOpenaiStatus } from 'src/app/shared/models/ai-chat/ai-chat-status.model';
 import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { AiChatService } from 'src/app/shared/services/ai-chat.service';

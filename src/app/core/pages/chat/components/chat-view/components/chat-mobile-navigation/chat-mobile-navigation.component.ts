@@ -10,7 +10,7 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   styles: [
     `
       :host {
-        @apply left-0 w-full max-w-full fixed bottom-0 z-[80] pointer-events-none hidden md:flex flex-col;
+        @apply left-0 w-full max-w-full fixed bottom-0 z-[80] pointer-events-none flex flex-col;
       }
     `
 	],
@@ -19,9 +19,9 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
 export class ChatMobileNavigationComponent implements OnInit {
 
 	@Output() onHideMobileMenu = new EventEmitter<void>();
+	show = true;
 	private _$selectedRepo = new BehaviorSubject<string>('angular');
 	
-	show = false;
 	$reposChats = this._$selectedRepo.asObservable().pipe(
 		switchMap((repo) => this.chatService.getRepoChats(repo))
 	);
@@ -36,9 +36,8 @@ export class ChatMobileNavigationComponent implements OnInit {
 
 	ngOnInit(): void {
 		setTimeout(() => {
-			this.show = true;
-			this.cdRef.markForCheck();
-		}, 100);
+			console.log(this.show)
+		}, 1000);
 	}
 
 	thisDate = () => Date.now();
