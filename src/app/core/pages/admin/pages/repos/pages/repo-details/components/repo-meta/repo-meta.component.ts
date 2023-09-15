@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import _isEqual from 'lodash-es/isEqual';
 import _uniqWith from 'lodash-es/uniqWith';
 import { Repo } from '../../../../../../../../../shared/models/repo.model';
@@ -37,11 +38,13 @@ export class RepoMetaComponent {
 		replaceUrl: this.builder.control('', { nonNullable: true }),
 		replaceStrings: this.builder.array<FormGroup<{ s: FormControl<string>, r: FormControl<string> }>>([]),
 		querySuggestions: this.builder.array<FormControl<string>>([]),
-	}, { updateOn: 'blur' });
+	});
+	dbRepo: Partial<Repo> | undefined;
 
 	constructor(
 		private cdRef: ChangeDetectorRef,
 		private adminRepo: AdminRepoService,
+		private router: Router,
 	) { }
 
 	async save() {
@@ -73,6 +76,10 @@ export class RepoMetaComponent {
 
 		try {
 			await this.adminRepo.updateRepo(value);
+
+			if (this.router.url.includes('/app/admin/repos/edit/new')) {
+				this.router.navigate(['/app/admin/repos']);
+			}
 		} catch (err) {
 			console.error(err);
 		}
@@ -112,6 +119,7 @@ export class RepoMetaComponent {
 
 	private updateForm(value?: Partial<Repo> | null): void {
 		if (!value) return;
+		this.dbRepo = value;
 		this.form.reset(undefined, { emitEvent: false });
 		this.form.patchValue(value);
 		this.changeReplaceStrings(value.replaceStrings || []);
