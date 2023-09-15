@@ -11,7 +11,7 @@ import { EmbeddingsService } from '../../services/embeddings.service';
   styles: [
     `
       :host {
-        @apply block h-full;
+        @apply block h-full relative;
       }
     `
   ],
@@ -30,9 +30,10 @@ export class EditPagesComponent implements OnDestroy {
 		author: false,
 		folder: false,
 		relativeLinksHost: false,
-	}
+	};
 
 	autoParse = this.fb.control(false);
+	showPreviewContent = '';
 
 	scrapeRepoform = this.fb.group({
 		author: ['', {
@@ -62,7 +63,7 @@ export class EditPagesComponent implements OnDestroy {
 		this.repoId = this.route.snapshot.params['id'];
 		this.repoHistorySub = this.adminRepoService.getEditPagesSearch(this.repoId).subscribe((repoHistory) => {
 			this.repoHistory = repoHistory;
-			this.cdRef.detectChanges();
+			this.cdRef.markForCheck();
 		});
 	}
 
@@ -73,7 +74,7 @@ export class EditPagesComponent implements OnDestroy {
 	showHistoryFn(id: 'author' | 'folder' | 'relativeLinksHost', value: boolean): void {
 		setTimeout(() => {
 			this.showHistory[id] = value;
-			this.cdRef.detectChanges();
+			this.cdRef.markForCheck();
 		}, 100);
 	}
 	
@@ -121,9 +122,15 @@ export class EditPagesComponent implements OnDestroy {
 		await this.adminRepoService.removeEditPagesSearch(this.repoId, { [id]: [value] });
 	}
 
+	onPreviewContent(content: string): void {
+		if (!content) return;
+		this.showPreviewContent = content;
+		this.cdRef.markForCheck();
+	}
+
 	setValueFromHistorySearch(id: 'author' | 'folder' | 'relativeLinksHost', value: string): void {
 		this.scrapeRepoform.patchValue({ [id]: value });
-		this.cdRef.detectChanges();
+		this.cdRef.markForCheck();
 	}
 	
 	async fetchRepo(): Promise<void> {
@@ -131,7 +138,9 @@ export class EditPagesComponent implements OnDestroy {
 			return console.error('All fields required');
 
 		this.buttonLoading = true;
-		this.cdRef.detectChanges();
+		this.showPreviewContent = '';
+		this._pages$.next([]);
+		this.cdRef.markForCheck();
 		try {
 			const files = await this.embeddingsService.fetchGitRepo({
 				author: this.scrapeRepoform.value.author || '',
@@ -139,9 +148,10 @@ export class EditPagesComponent implements OnDestroy {
 				relativeLinksHost: this.scrapeRepoform.value.relativeLinksHost || '',
 			});
 			this._pages$.next(files);
+			console.log({ files })
 			this.buttonLoading = false;
 			this.buttonLoadingEmbeddings = false;
-			this.cdRef.detectChanges();
+			this.cdRef.markForCheck();
 
 			const req: Partial<Repo['editPagesSearch']> = {};
 			if (this.scrapeRepoform.value.author) req.author = [this.scrapeRepoform.value.author];
@@ -155,7 +165,7 @@ export class EditPagesComponent implements OnDestroy {
     } catch (error) {
 			this.buttonLoading = false;
 			this.buttonLoadingEmbeddings = false;
-			this.cdRef.detectChanges();
+			this.cdRef.markForCheck();
       console.error(error);
     }
 	}
@@ -168,7 +178,7 @@ export class EditPagesComponent implements OnDestroy {
 		}
 
 		this.buttonLoadingEmbeddings = true;
-		this.cdRef.detectChanges();
+		this.cdRef.markForCheck();
 
 		let files = await firstValueFrom(this.pages$);
 
@@ -187,12 +197,16 @@ export class EditPagesComponent implements OnDestroy {
 
 		console.log(`✨ Finished - ${success}/${failed.length}`);
 		this.buttonLoadingEmbeddings = false;
-		this.cdRef.detectChanges();
+		this.cdRef.markForCheck();
 	}
 
 	async parseRepoFile(inputFile: RepoPage, inputFiles?: RepoPage[]): Promise<void> {
 		if (inputFile.status && inputFile.status === 'success') {
 			return;
+		}
+
+		if (!this.repoId) {
+			return console.error('Repo not found, id must be provided');
 		}
 
 		const files: RepoPage[] = inputFiles ? inputFiles : await firstValueFrom(this.pages$);
@@ -210,6 +224,7 @@ export class EditPagesComponent implements OnDestroy {
 		try {
 			await this.embeddingsService.generateEmbedding({
 				author: author || '',
+				table: this.repoId,
 				content: file.content,
 				link: file.path,
 				title: file.title,
@@ -249,7 +264,7 @@ export class EditPagesComponent implements OnDestroy {
       console.error(error);
     }
 
-    this.cdRef.detectChanges();
+    this.cdRef.markForCheck();
     this.buttonLoading = false;
 	} */
 
