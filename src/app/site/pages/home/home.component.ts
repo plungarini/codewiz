@@ -15,6 +15,8 @@ import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-t
 })
 export class HomeComponent {
 
+	showFeaturedIn = new Date() > new Date('2023-09-18T00:01:00-07:00');
+
 	constructor(
 		private meta: PersonalMetaTagsService,
 	) { 

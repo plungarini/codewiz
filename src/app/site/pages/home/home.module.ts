@@ -9,6 +9,7 @@ import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
 import { CtaComponent } from './components/cta/cta.component';
 import { StatsComponent } from './components/stats/stats.component';
+import { FeaturedInComponent } from './components/featured-in/featured-in.component';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { StatsComponent } from './components/stats/stats.component';
    	ReviewsComponent,
     CtaComponent,
     StatsComponent,
+    FeaturedInComponent,
   ],
   imports: [
     CommonModule,
