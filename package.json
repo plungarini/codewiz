@@ -41,7 +41,7 @@
     "ngx-markdown": "^16.0.0",
     "rxjs": "~7.8.0",
     "sse.js": "^0.6.1",
-    "supabase": "^1.82.6",
+    "supabase": "^1.98.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },
