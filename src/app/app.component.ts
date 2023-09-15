@@ -31,7 +31,7 @@ export class AppComponent implements OnInit, OnDestroy {
 			this.realFeedbackService.hide();
 		} else {
 			this.tidioService.show();
-			if (url.includes('/app') && !url.includes('/app/chat')) {
+			if (url.includes('/app/settings')) {
 				this.realFeedbackService.show();
 			} else {
 				this.realFeedbackService.hide();
@@ -46,7 +46,7 @@ export class AppComponent implements OnInit, OnDestroy {
 				return;
 			} else {
 				this.tidioService.show();
-				if (_url.includes('/app') && !_url.includes('/app/chat')) {
+				if (_url.includes('/app/settings')) {
 					this.realFeedbackService.show();
 				} else {
 					this.realFeedbackService.hide();
@@ -78,7 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
 			return;
 		} else {
 			this.tidioService.show();
-			if (url.includes('/app') && !url.includes('/app/chat')) {
+			if (url.includes('/app/settings')) {
 				this.realFeedbackService.show();
 			} else {
 				this.realFeedbackService.hide();
