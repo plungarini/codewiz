@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 type TidioUser = {
-	distinct_id: string;
+	uid: string;
 	email: string;
 	name: string;
 	phone: string;
@@ -47,7 +47,7 @@ export class TidioService {
 	constructor() { }
 
 	hide() {
-		if (!this.production || !this._getConsent()) return;
+		if (!this._getConsent()) return;
 		this._initialize();
 		if (!this.isReady && !this.queuePurged) {
 			this._addToQueue('hide');

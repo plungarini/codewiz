@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Analytics, setUserId, setUserProperties } from '@angular/fire/analytics';
 import { QueryConstraint, where } from '@angular/fire/firestore';
-import { User, getAuth } from '@firebase/auth';
+import { getAuth, User } from '@firebase/auth';
 import { user } from 'rxfire/auth';
-import { Observable, combineLatest, defaultIfEmpty, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
+import { combineLatest, defaultIfEmpty, firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { StorageService } from 'src/app/shared/services/storage.service';
 import { TidioService } from 'src/app/shared/services/tidio.service';
@@ -33,7 +33,7 @@ export class UsersService {
 						.pipe(tap((user) => {
 							if (!user) return;
 							this.tidioService.identify({
-								distinct_id: user.id,
+								uid: user.id,
 								email: user.email,
 								name: user.name,
 								phone: user.phone,
