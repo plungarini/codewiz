@@ -28,7 +28,7 @@ export class FirebaseExtendedService {
 
 	private debug = false;
 	private prod = environment.production;
-	private cloudId = environment.production ? 'am6pkcy5gq-nw' : 'ik2jh2ngra-ew';
+	private cloudId = environment.production ? 'ytzgrgrjxq-ew' : 'ik2jh2ngra-ew';
 	privateProjectName = 'codewiz-prod';
 
 	constructor(
