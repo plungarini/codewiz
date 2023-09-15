@@ -1,13 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import {
-	AuthProvider,
-	GithubAuthProvider,
-	GoogleAuthProvider,
-	confirmPasswordReset,
+	AuthProvider, confirmPasswordReset,
 	createUserWithEmailAndPassword,
-	getAuth,
-	signInWithEmailAndPassword,
+	getAuth, GithubAuthProvider,
+	GoogleAuthProvider, signInWithEmailAndPassword,
 	signInWithPopup,
 	signOut
 } from '@angular/fire/auth';
@@ -67,7 +64,7 @@ export class AuthenticationService {
 		try {
 			const credential = await createUserWithEmailAndPassword(this.auth, email, password);
 			if (!credential.user) throw new Error('User has not been created');
-			await this.userService.editOrCreate(credential.user, true, additionalDetails, true);
+			await this.userService.editOrCreate(credential.user, true, 'email', additionalDetails, true);
 			
 			logEvent(this.analytics, 'sign_up', {
 				provider: credential.providerId,
@@ -145,6 +142,7 @@ export class AuthenticationService {
 			if (!credential.user) return;
 
 			const eventName = isSignup ? 'sign_up' : 'login';
+			const providerId = provider.providerId === 'github.com' ? 'github' : 'google';
 
 			logEvent(this.analytics, eventName as string, {
 				provider: credential.providerId,
@@ -156,6 +154,7 @@ export class AuthenticationService {
 			if (!isSignup) return this.redirectAfterSignIn();
 			await this.userService.editOrCreate(
 				credential.user, isSignup,
+				providerId,
 				{ phoneNumber: credential.user.phoneNumber },
 				true,
 			);

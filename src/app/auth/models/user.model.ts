@@ -2,7 +2,8 @@ import { StripeSubscription } from './subscription.model';
 import { Timestamp } from './timestamp.model';
 
 export type UserDetails = {
-  imgUrl?: string;
+	imgUrl?: string;
+	provider?: string;
 }
 
 export type User = {

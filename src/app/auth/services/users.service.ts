@@ -67,7 +67,8 @@ export class UsersService {
   async editOrCreate(
     user: User,
     forceEdits: boolean = true,
-    additionalDetails?: any,
+		provider: 'email' | 'google' | 'github',
+		additionalDetails?: any,
     isSignup?: boolean
   ): Promise<boolean> {
 		try {
@@ -78,14 +79,11 @@ export class UsersService {
         id: user.uid,
         name: user.displayName || additionalDetails?.fullName || '',
         email: user.email || '',
-				phone: user.phoneNumber || additionalDetails?.phoneNumber || undefined,
-        details: (isSignup
-          ? {
-              imgUrl: img,
-						}
-          : {
-              imgUrl: user.photoURL || undefined,
-            }) as UserDetails,
+				phone: user.phoneNumber || additionalDetails?.phoneNumber || '',
+        details: ({
+					imgUrl: user.photoURL || img,
+					provider,
+				}) as UserDetails,
       };
 
 			if (forceEdits || isSignup) {
