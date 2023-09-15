@@ -14,7 +14,7 @@ export const MaintenanceGuard: CanActivateFn = (route, state) => {
 			return !!status?.maintenance.active;
 		}),
 		switchMap((active) => {
-			return active ? permissionsService.hasPermissions$(['admin']) : of(true);
+			return active ? permissionsService.hasAllPermissions$(['admin']) : of(true);
 		}),
 		tap((canActivate) => {
 			if (!canActivate) {
