@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { StagingAuthGuard } from '../auth/guards/staging-auth.guard';
 import { MaintenanceGuard } from '../shared/guards/maintenance.guard';
 import { CoreComponent } from './core.component';
 import { ActiveOnboardingGuard } from './pages/onboarding/guard/onboarding-activate.guard';
@@ -14,11 +15,13 @@ const routes: Routes = [
 			{
 				path: 'unauthorized',
 				data: { preload: true },
+				canActivate: [StagingAuthGuard],
 				loadChildren: () => import('./pages/no-permissions/no-permissions.module').then(m => m.NoPermissionsModule),
 			},
 			{
 				path: 'maintenance',
 				data: { preload: true },
+				canActivate: [StagingAuthGuard],
 				loadChildren: () => import('./pages/maintenance/maintenance.module').then(m => m.MaintenanceModule),
 			},
 			{
@@ -32,7 +35,7 @@ const routes: Routes = [
 					permissions: ['user'],
 					preload: true,
 				},
-				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard],
+				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard, StagingAuthGuard],
 				loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule),
 			},
 			{
@@ -41,7 +44,7 @@ const routes: Routes = [
 					permissions: ['user'],
 					preload: true,
 				},
-				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard],
+				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard, StagingAuthGuard],
 				loadChildren: () => import('./pages/settings/settings.module').then(m => m.SettingsModule),
 			},
 			{
@@ -58,7 +61,7 @@ const routes: Routes = [
 					permissions: ['user'],
 					preload: true,
 				},
-				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard],
+				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard, StagingAuthGuard],
 				loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatModule),
 			},
 			{
