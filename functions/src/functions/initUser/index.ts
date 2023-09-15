@@ -24,19 +24,26 @@ export const initUser = async (uid: string) => {
 };
 
 export const checkUserData = async (uid: string) => {
-	const docRef = firestore.doc(`users/${uid}/onboarding/data`);
+	const docRef = firestore.doc(`users/${uid}`);
 	const doc = await docRef.get();
 	const data = doc.data();
+	log('CheckUserData', data, { created: data?.createdAt?.toDate(), updated: data?.updatedAt?.toDate() });
+
+	const newData = {
+		...data,
+	};
 
 	if (!data) return;
 	if (!data.createdAt) {
-		data.createdAt = new Date();
+		newData.createdAt = new Date();
 	}
 	if (!data.updatedAt) {
-		data.updatedAt = new Date();
+		newData.updatedAt = new Date();
 	}
 
-	await docRef.set(data, { merge: true });
+	if (!data.createdAt || !data.updatedAt) {
+		await docRef.update(newData);
+	}
 };
 
 const setBlankPeriodUsage = async (uid: string) => {

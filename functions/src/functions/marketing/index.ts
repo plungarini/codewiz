@@ -66,7 +66,6 @@ export const upsertAcUser = async (
 	const {
 		email,
 		name,
-		id,
 		phone,
 		activeCampaignId,
 		stripeId,
@@ -96,7 +95,7 @@ export const upsertAcUser = async (
 		lastName,
 		phone: phone,
 		attributes: {
-			appId: id,
+			appId: uid,
 			stripeId: stripeId,
 			membership: product?.role || 'apprentice',
 			onboarding: {

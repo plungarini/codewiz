@@ -20,7 +20,7 @@ setGlobalOptions({
 	maxInstances: 10,
 	memory: '256MiB',
 	region: 'europe-west1',
-	timeoutSeconds: 60,
+	timeoutSeconds: 120,
 });
 
 export const scrapePage = onCall({
@@ -160,6 +160,7 @@ export const canUserQuery = onRequest({
 	cors: true,
 	memory: '256MiB',
 	maxInstances: 100,
+	timeoutSeconds: 540,
 }, async (req, res) => {
 	/**
 	 * uid: string,
@@ -193,6 +194,7 @@ export const onUserUsageUpdate = onDocumentWritten(
 		}
 
 		try {
+			await checkUserData(uid);
 			await upsertAcUser(uid);
 		} catch (err) {
 			error(err);
@@ -211,6 +213,7 @@ export const onUserOnboardingUpdate = onDocumentWritten(
 		}
 
 		try {
+			await checkUserData(uid);
 			await upsertAcUser(uid);
 		} catch (err) {
 			error(err);
@@ -229,6 +232,7 @@ export const onUserSubscriptionsUpdate = onDocumentWritten(
 		}
 
 		try {
+			await checkUserData(uid);
 			await upsertAcUser(uid);
 		} catch (err) {
 			error(err);
