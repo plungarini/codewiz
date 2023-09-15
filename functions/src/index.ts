@@ -9,7 +9,7 @@ import { disableUser as disableUserFn, isUserDisabled as isUserDisabledFn } from
 import { sendEmailActionCode } from './functions/email_action_code';
 import { elaborateEmbeddings, getAllEmbeddings } from './functions/embeddings';
 import { githubFolderFetcher } from './functions/githubFetcher';
-import { initUser as initUserFn } from './functions/initUser';
+import { checkUserData, initUser as initUserFn } from './functions/initUser';
 import { upsertAcUser } from './functions/marketing';
 import { scrapeDocumentedPage } from './functions/scraper';
 import { calculateTokens } from './functions/tiktoken';
@@ -249,6 +249,7 @@ export const onUserUpdate = onDocumentUpdated(
 		}
 
 		try {
+			await checkUserData(uid);
 			await upsertAcUser(uid, user);
 		} catch (err) {
 			error(err);
@@ -262,6 +263,10 @@ export const initUser = onDocumentCreated(
 	async (event) => {
 		try {
 			const { uid } = event.params;
+			if (!uid) {
+				error('User id is undefined');
+				return;
+			}
 			await initUserFn(uid);
 		} catch (err) {
 			error(err);

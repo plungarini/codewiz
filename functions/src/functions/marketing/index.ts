@@ -55,6 +55,7 @@ export const upsertAcUser = async (
 	uid: string,
 	user?: User,
 ) => {
+	if (!uid) throw new Error('Unable to retrieve uid');
 	if (!user) user = (await firestore.doc(`users/${uid}`).get()).data();
 	if (!user) throw new Error('Unable to retrieve user');
 

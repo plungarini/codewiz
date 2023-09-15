@@ -1,8 +1,10 @@
+import { log } from 'firebase-functions/logger';
 import { firestore } from '../../utils';
 import { upsertAcUser } from '../marketing';
 import { getCurrentPeriodId } from '../userSubscriptions/period';
 
 export const initUser = async (uid: string) => {
+	log('initUser', uid);
 	const rolesRef = firestore.doc(`users/${uid}/protected/role`);
 	const doc = await rolesRef.get();
 	const data = doc.data();
@@ -15,9 +17,26 @@ export const initUser = async (uid: string) => {
 	roles.permissions.push('user');
 	await rolesRef.set(roles, { merge: true });
 
-	await setBlankPeriodUsage(uid);
 	await setGlobalStats();
+	await checkUserData(uid);
+	await setBlankPeriodUsage(uid);
 	await upsertAcUser(uid);
+};
+
+export const checkUserData = async (uid: string) => {
+	const docRef = firestore.doc(`users/${uid}/onboarding/data`);
+	const doc = await docRef.get();
+	const data = doc.data();
+
+	if (!data) return;
+	if (!data.createdAt) {
+		data.createdAt = new Date();
+	}
+	if (!data.updatedAt) {
+		data.updatedAt = new Date();
+	}
+
+	await docRef.set(data, { merge: true });
 };
 
 const setBlankPeriodUsage = async (uid: string) => {
