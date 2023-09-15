@@ -1,5 +1,5 @@
 <div
-	*ngIf="repo$ | async as repo"
+	*ngIf="repo$ | async as repo; else noRepo"
 	class="flex flex-row items-center justify-between max-w-full px-3 py-2 space-x-4 transition-all duration-300 border rounded-md border-zinc-800"
 >
 	<div class="flex flex-row items-center space-x-2">
@@ -39,3 +39,7 @@
 
 	</div>
 </div>
+
+<ng-template #noRepo>
+	<p class="text-zinc-500">Create a repo to view a preview...</p>
+</ng-template>
