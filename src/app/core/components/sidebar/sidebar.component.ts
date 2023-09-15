@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { Observable, Subscription, filter, map } from 'rxjs';
+import { filter, map, Observable, Subscription } from 'rxjs';
 import { UserPermissionsService } from 'src/app/auth/services/user-permissions.service';
 import { UsersService } from 'src/app/auth/services/users.service';
 
@@ -29,7 +29,7 @@ export class SidebarComponent implements OnDestroy {
 		private users: UsersService,
 		private permissions: UserPermissionsService,
 	) {
-		this.isUserAdmin$ = this.permissions.hasPermissions$(['admin']);
+		this.isUserAdmin$ = this.permissions.hasAllPermissions$(['admin']);
 
 		this.routerSub = this.router.events
       .pipe(
