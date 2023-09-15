@@ -7,6 +7,42 @@
 	<div class="mt-8">
 		<div>
 			<div>
+				<ng-template #formErrorsIcon>
+					<div class="inline-block p-1 text-red-700 transform bg-red-200 rounded-full w-min">
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M16.2178 21H7.78313C4.83503 21 3 18.9188 3 15.9736V8.02638C3 5.08119 4.83503 3 7.78411 3H16.2178C19.1659 3 21 5.08119 21 8.02638V15.9736C21 18.9188 19.1572 21 16.2178 21Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M12.0059 8.10742V11.9993M12.0059 15.6926V15.7407" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</div>
+				</ng-template>
+
+				<ng-container *ngIf="loginError">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+						<span>{{ loginError }}</span>
+					</span>
+				</ng-container>
+
+				<ng-container *ngIf="form.controls.email.touched && form.controls.email.invalid">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+						<span>{{ getEmailErrMsg() }}</span>
+					</span>
+				</ng-container>
+
+				<ng-container *ngIf="form.controls.password.touched && form.controls.password.invalid">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngIf="form.controls.password.invalid && !form.controls.password.errors?.['pattern']">
+							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+							<span>{{ getPasswErrMsg() }}</span>
+						</ng-container>
+						<ng-container *ngIf="form.controls.password.errors?.['pattern']">
+							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+							<span>This password is not valid. Do you have Caps Lock enabled?</span>
+						</ng-container>
+					</span>
+				</ng-container>
+
 				<p class="text-sm font-medium text-zinc-400">Sign in with</p>
 
 				<div class="grid grid-cols-2 gap-3 mt-1">
@@ -60,42 +96,6 @@
 						<input formControlName="password" id="password" name="password" type="password" autocomplete="current-password" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{0,30}$" required class="block w-full rounded-md py-1.5 shadow-sm ring-inset border border-zinc-800 focus:border-indigo-600 placeholder:text-zinc-400 focus:outline-none outline-indigo-500 text-zinc-200 bg-zinc-900 focus:ring-2 transition-all duration-300 ring-0 ring-indigo-600 focus:ring-indigo-600 sm:text-sm sm:leading-6">
 					</div>
 				</div>
-
-				<ng-template #formErrorsIcon>
-					<div class="inline-block p-1 text-red-700 transform bg-red-200 rounded-full w-min">
-						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M16.2178 21H7.78313C4.83503 21 3 18.9188 3 15.9736V8.02638C3 5.08119 4.83503 3 7.78411 3H16.2178C19.1659 3 21 5.08119 21 8.02638V15.9736C21 18.9188 19.1572 21 16.2178 21Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
-							<path d="M12.0059 8.10742V11.9993M12.0059 15.6926V15.7407" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
-						</svg>
-					</div>
-				</ng-template>
-
-				<ng-container *ngIf="loginError">
-					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
-						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
-						<span>{{ loginError }}</span>
-					</span>
-				</ng-container>
-
-				<ng-container *ngIf="form.controls.email.touched && form.controls.email.invalid">
-					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
-						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
-						<span>{{ getEmailErrMsg() }}</span>
-					</span>
-				</ng-container>
-
-				<ng-container *ngIf="form.controls.password.touched && form.controls.password.invalid">
-					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
-						<ng-container *ngIf="form.controls.password.invalid && !form.controls.password.errors?.['pattern']">
-							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
-							<span>{{ getPasswErrMsg() }}</span>
-						</ng-container>
-						<ng-container *ngIf="form.controls.password.errors?.['pattern']">
-							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
-							<span>This password is not valid. Do you have Caps Lock enabled?</span>
-						</ng-container>
-					</span>
-				</ng-container>
 
 				<div class="flex items-center justify-between">
 					<div></div>

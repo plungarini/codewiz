@@ -9,6 +9,49 @@
 	<div class="mt-8">
 		<div>
 			<div>
+				<ng-template #formErrorsIcon>
+					<div class="inline-block p-1 text-red-700 transform bg-red-200 rounded-full w-min">
+						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M16.2178 21H7.78313C4.83503 21 3 18.9188 3 15.9736V8.02638C3 5.08119 4.83503 3 7.78411 3H16.2178C19.1659 3 21 5.08119 21 8.02638V15.9736C21 18.9188 19.1572 21 16.2178 21Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+							<path d="M12.0059 8.10742V11.9993M12.0059 15.6926V15.7407" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+						</svg>
+					</div>
+				</ng-template>
+
+				<ng-container *ngIf="loginError">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+						<span>{{ loginError }}</span>
+					</span>
+				</ng-container>
+
+				<ng-container *ngIf="form.controls.email.touched && form.controls.email.invalid">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+						<span>{{ getEmailErrMsg() }}</span>
+					</span>
+				</ng-container>
+				
+				<ng-container *ngIf="form.controls.password.touched && form.controls.password.invalid">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngIf="form.controls.password.invalid && !form.controls.password.errors?.['pattern']">
+							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+							<span>{{ getPasswErrMsg() }}</span>
+						</ng-container>
+						<ng-container *ngIf="form.controls.password.errors?.['pattern']">
+							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+							<span>The password must contain at least one uppercase letter, one lowercase letter and a number.</span>
+						</ng-container>
+					</span>
+				</ng-container>
+
+				<ng-container *ngIf="form.controls.passwordConfirm.touched && form.controls.password.value !== form.controls.passwordConfirm.value">
+					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
+						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
+						<span>Passwords do not match</span>
+					</span>
+				</ng-container>
+
 				<p class="text-sm font-medium text-zinc-400">Sign up with</p>
 
 				<div class="grid grid-cols-2 gap-3 mt-1">
@@ -80,49 +123,6 @@
 					<input formControlName="termsAndConditions" id="terms-conditions" name="terms-conditions" type="checkbox" required class="w-4 h-4 text-indigo-600 rounded border-zinc-800 bg-zinc-900 focus:ring-indigo-600 focus:ring-offset-zinc-950">
 					<label for="terms-conditions" class="block ml-2 text-sm text-zinc-100">By signing up, I agree that I have read and accepted CodeWiz's <a href="/legal/terms-of-service" target="_blank" rel="noopener noreferrer" class="font-medium text-indigo-500 underline transition-colors duration-300 hover:text-indigo-400">Terms Of Service</a> and  <a href="/legal/privacy-policy" target="_blank" rel="noopener noreferrer" class="font-medium text-indigo-500 underline transition-colors duration-300 hover:text-indigo-400">Privacy Policy</a>. <span class="text-xs text-red-400">*</span></label>
 				</div>
-
-				<ng-template #formErrorsIcon>
-					<div class="inline-block p-1 text-red-700 transform bg-red-200 rounded-full w-min">
-						<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path d="M16.2178 21H7.78313C4.83503 21 3 18.9188 3 15.9736V8.02638C3 5.08119 4.83503 3 7.78411 3H16.2178C19.1659 3 21 5.08119 21 8.02638V15.9736C21 18.9188 19.1572 21 16.2178 21Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
-							<path d="M12.0059 8.10742V11.9993M12.0059 15.6926V15.7407" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
-						</svg>
-					</div>
-				</ng-template>
-
-				<ng-container *ngIf="loginError">
-					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
-						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
-						<span>{{ loginError }}</span>
-					</span>
-				</ng-container>
-
-				<ng-container *ngIf="form.controls.email.touched && form.controls.email.invalid">
-					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
-						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
-						<span>{{ getEmailErrMsg() }}</span>
-					</span>
-				</ng-container>
-				
-				<ng-container *ngIf="form.controls.password.touched && form.controls.password.invalid">
-					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
-						<ng-container *ngIf="form.controls.password.invalid && !form.controls.password.errors?.['pattern']">
-							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
-							<span>{{ getPasswErrMsg() }}</span>
-						</ng-container>
-						<ng-container *ngIf="form.controls.password.errors?.['pattern']">
-							<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
-							<span>The password must contain at least one uppercase letter, one lowercase letter and a number.</span>
-						</ng-container>
-					</span>
-				</ng-container>
-
-				<ng-container *ngIf="form.controls.passwordConfirm.touched && form.controls.password.value !== form.controls.passwordConfirm.value">
-					<span class="flex flex-row items-center gap-4 my-5 text-sm font-medium text-red-400">
-						<ng-container *ngTemplateOutlet="formErrorsIcon"></ng-container>
-						<span>Passwords do not match</span>
-					</span>
-				</ng-container>
 
 				<div class="flex flex-col space-y-4">
 					<button
