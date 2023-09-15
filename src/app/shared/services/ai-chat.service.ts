@@ -3,7 +3,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { Analytics, logEvent } from '@angular/fire/analytics';
 import { limit, orderBy, startAfter, where } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
-import { Observable, combineLatest, filter, firstValueFrom, interval, lastValueFrom, map, of, startWith, switchMap, take } from 'rxjs';
+import { combineLatest, filter, firstValueFrom, interval, lastValueFrom, map, Observable, of, startWith, switchMap, take } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { environment } from 'src/environments/environment';
 import { SSE } from 'sse.js';
@@ -186,6 +186,7 @@ export class AiChatService {
 							type: "server_error",
 						}
 					}
+					logEvent(this.analytics, 'chat_query_error', err);
 					observer.error(err);
 					closeStream();
 				}, 500);
@@ -198,6 +199,7 @@ export class AiChatService {
 							type: "application_error",
 						}
 					}
+					logEvent(this.analytics, 'chat_query_error', err);
 					observer.error(err);
 					closeStream();
 					return;
@@ -216,6 +218,7 @@ export class AiChatService {
 							type: "application_error",
 						}
 					}
+					logEvent(this.analytics, 'chat_query_error', err);
 					observer.error(err);
 					closeStream();
 					return;
@@ -299,6 +302,7 @@ export class AiChatService {
 								type: "server_error",
 							}
 						}
+						logEvent(this.analytics, 'chat_query_error', err);
 						observer.error(err);
 						closeStream();
 					})
