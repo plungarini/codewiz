@@ -12,9 +12,14 @@ export class RepoPagesComponent {
 	@Input('pages') pages$: Observable<RepoPage[]> = of([]);
 
 	@Output('manualElaborate') manualElaborate = new EventEmitter<RepoPage>();
+	@Output('previewContent') previewContent = new EventEmitter<string>();
 
 	manualElaborateClick(page: RepoPage) {
 		this.manualElaborate.emit(page);
+	}
+
+	previewContentClick(content: string) {
+		this.previewContent.emit(content);
 	}
 
 }
