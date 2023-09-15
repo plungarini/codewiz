@@ -39,6 +39,19 @@ export class MessagesComponent {
 	@Input('chat') set setChat(value: AiChatMessage[]) {
 		if (!value || value?.length < 0) return;
 
+		value.forEach((v) => {
+			const created = v.createdAt?.toDate();
+			if (!created || !!v.content || !!v.error) return;
+			const now = new Date();
+			const diffInMinutes = (now.getTime() - created.getTime()) / (1000 * 60);
+			if (diffInMinutes > 1) {
+				v.error = {
+					message: 'Apologies, but it seems we\'re experiencing some technical difficulties. Please try again in few minutes or reach out to the support.'
+				};
+				v.completed = true;
+			}
+		});
+
 		const hasCompleted = this.chat[this.chat.length - 1]?.completed === false && value[value.length - 1]?.completed;
 		if (hasCompleted) {
 			value[value.length - 1].completed = false;
