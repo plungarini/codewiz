@@ -58,7 +58,7 @@ export class ChatViewComponent implements OnDestroy {
 		this.statusSub = this.ai.getStatus().subscribe((s) => {
 			this.status = s;
 			console.warn('New openai status', this.status);
-			this.cdRef.detectChanges();
+			this.cdRef.markForCheck();
 		});
 		this.chatSub = this.route.paramMap
 			.pipe(
@@ -203,6 +203,9 @@ export class ChatViewComponent implements OnDestroy {
 			await this.router.navigate([`/app/chat/`, this.selectedRepo, newChatId]);
 		}
 
+		this.gettingQuery = true;
+		this.cdRef.markForCheck();
+
 		if (refreshQueryId) {
 			await this.deleteNextMessages(refreshQueryId);
 		} else {
@@ -231,11 +234,10 @@ export class ChatViewComponent implements OnDestroy {
 
 		await this.ai.saveNewMessage(this.selectedRepo, this.chatId, assistantQuery, true);
 
-		this.onMessageScroll(true);
+		this.chat = [...this.chat];
 
-		this.gettingQuery = true;
-		this.chat = [...this.chat]
-		this.cdRef.detectChanges();
+		this.onMessageScroll(true);
+		this.cdRef.markForCheck();
 
 		let backupResult: AiChatMessage = assistantQuery;
 		
@@ -263,7 +265,7 @@ export class ChatViewComponent implements OnDestroy {
 					if (msgRefIndex >= 0) {
 						this.chat[msgRefIndex] = queryRes;
 						this.chat = [...this.chat];
-						this.cdRef.detectChanges();
+						this.cdRef.markForCheck();
 					} else {
 						this.saveToLocalStorage(queryRes);
 					}
@@ -292,10 +294,11 @@ export class ChatViewComponent implements OnDestroy {
 					if (msgRefIndex >= 0) {
 						this.chat[msgRefIndex] = queryRes;
 						this.chat = [...this.chat];
-						this.cdRef.detectChanges();
+						this.cdRef.markForCheck();
 					}
 					
 					await this.ai.saveNewMessage(queryRes.repoId, queryRes.chatId, queryRes);
+					this.cdRef.markForCheck();
 					
 					return of(undefined);
 				})
@@ -334,7 +337,7 @@ export class ChatViewComponent implements OnDestroy {
 				if (msgRefIndex >= 0) {
 					this.chat[msgRefIndex] = queryRes;
 					this.chat = [...this.chat];
-					this.cdRef.detectChanges();
+					this.cdRef.markForCheck();
 					this.onMessageScroll();
 				} else {
 					this.saveToLocalStorage(queryRes);
@@ -364,14 +367,14 @@ export class ChatViewComponent implements OnDestroy {
 	
 	toggleMobileMenu(value: boolean) {
 		this.showMobileMenu = value;
-		this.cdRef.detectChanges();
+		this.cdRef.markForCheck();
 	}
 
 	private async pingStatus(): Promise<void> {
 		const s = await this.ai.getStatusPromise();
 		this.status = s;
 		console.warn('New openai status', this.status);
-		this.cdRef.detectChanges();
+		this.cdRef.markForCheck();
 	}
 
 	private saveToLocalStorage(message: AiChatMessage): void {
