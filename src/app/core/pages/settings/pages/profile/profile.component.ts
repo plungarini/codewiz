@@ -4,7 +4,6 @@ import _isEqual from 'lodash-es/isEqual';
 import { map, Subscription, switchMap } from 'rxjs';
 import { AuthenticationService } from 'src/app/auth/services/authentication.service';
 import { UsersService } from 'src/app/auth/services/users.service';
-import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 import { StorageService } from 'src/app/shared/services/storage.service';
 
 
@@ -58,12 +57,7 @@ export class ProfileComponent implements OnDestroy {
 		private cdRef: ChangeDetectorRef,
 		private storageService: StorageService,
 		private authService: AuthenticationService,
-		private meta: PersonalMetaTagsService,
-	) {
-		this.meta.update({
-			title: 'CodeWiz | Settings - Manage Profile',
-		});
-		
+	) {		
 		this.userSub = this.usersService.user$.pipe(
 			switchMap(user => {
 				return this.usersService.fireUser$.pipe(

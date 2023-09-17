@@ -38,7 +38,7 @@ export class LoginComponent implements OnInit {
 	constructor(
 		private auth: AuthenticationService,
 		private route: ActivatedRoute,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
 	) { }
 
 	async googleLogin(): Promise<void> {

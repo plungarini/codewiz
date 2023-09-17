@@ -46,7 +46,7 @@ type InitMetaTagsArgs = {
 export class PersonalMetaTagsService {
 
 	private siteName = 'CodeWiz';
-	private defaultDesc = '';
+	private defaultDesc = 'Meet CodeWiz – your AI coding companion. Dive into real-time chats, unravel coding mysteries faster than you can type "StackOverflow", and code with confidence. Embrace the future of coding assistance today!';
 	private defaultOgImg = 'https://codewiz.imgix.net/site/assets/wizchat_feature.png?ixlib=ng-1.0.0-rc.1&auto=format%2Ccompress&w=2258';
 	private schema: SchemaOrg = {};
 

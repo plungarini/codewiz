@@ -14,24 +14,34 @@ const routes: Routes = [
 		children: [
 			{
 				path: 'unauthorized',
-				data: { preload: true },
+				data: {
+					title: 'CodeWiz | Unauthorized',
+					preload: true,
+				},
 				canActivate: [StagingAuthGuard],
 				loadChildren: () => import('./pages/no-permissions/no-permissions.module').then(m => m.NoPermissionsModule),
 			},
 			{
 				path: 'maintenance',
-				data: { preload: true },
+				data: {
+					title: 'CodeWiz | Maintenance',
+					preload: true,
+				},
 				canActivate: [StagingAuthGuard],
 				loadChildren: () => import('./pages/maintenance/maintenance.module').then(m => m.MaintenanceModule),
 			},
 			{
 				path: 'setup',
+				data: {
+					title: 'CodeWiz | Onboarding',
+				},
 				canDeactivate: [DeactiveOnboardingGuard],
 				loadChildren: () => import('./pages/onboarding/onboarding.module').then(m => m.OnboardingModule),
 			},
 			{
 				path: '',
 				data: {
+					title: 'CodeWiz | Dashboard',
 					permissions: ['user'],
 					preload: true,
 				},

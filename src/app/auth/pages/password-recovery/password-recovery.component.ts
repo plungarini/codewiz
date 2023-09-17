@@ -48,11 +48,11 @@ export class PasswordRecoveryComponent {
 	emailInputSub: Subscription | undefined | null;
 	
 	constructor(
-    private authService: AuthenticationService,
-    private route: ActivatedRoute,
-    private router: Router,
+		private authService: AuthenticationService,
+		private route: ActivatedRoute,
+		private router: Router,
 		private cdRef: ChangeDetectorRef,
-		private passwordResetAlert: PasswordResetAlertService
+		private passwordResetAlert: PasswordResetAlertService,
 	) { }
 	
 	ngOnInit(): void {

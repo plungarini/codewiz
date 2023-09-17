@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { MaintenanceService } from 'src/app/shared/services/maintenance.service';
-import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 
 @Component({
   selector: 'app-maintenance',
@@ -30,12 +29,7 @@ export class MaintenanceComponent implements OnDestroy {
 	constructor(
 		private maintenance: MaintenanceService,
 		private cdRef: ChangeDetectorRef,
-		private meta: PersonalMetaTagsService,
-	) {
-		this.meta.update({
-			title: 'CodeWiz | Admin - Maintenance',
-		});
-		
+	) {		
 		this.maintenanceSub = this.maintenance.getStatus()
 			.subscribe((status) => {
 				if (!status?.maintenance) return;

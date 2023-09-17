@@ -1,7 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
-import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 
 @Component({
   templateUrl: './billing.component.html',
@@ -38,12 +37,7 @@ export class BillingComponent {
 		@Inject(DOCUMENT) private document: Document,
 		private db: FirebaseExtendedService,
 		private cdRef: ChangeDetectorRef,
-		private meta: PersonalMetaTagsService,
-	) {
-		this.meta.update({
-			title: 'CodeWiz | Settings - Billing'
-		});
-		
+	) {		
 		this.generateUrl();
 	}
 

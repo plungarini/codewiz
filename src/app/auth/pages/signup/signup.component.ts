@@ -42,8 +42,8 @@ export class SignupComponent implements OnInit {
 	constructor(
 		private auth: AuthenticationService,
 		private route: ActivatedRoute,
-		private cdRef: ChangeDetectorRef
-	) { }
+		private cdRef: ChangeDetectorRef,
+	) {	}
 
 	ngOnInit(): void {
 		this.returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') || localStorage.getItem('returnUrl');

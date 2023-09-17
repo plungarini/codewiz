@@ -25,11 +25,7 @@ export class UsersComponent implements OnDestroy {
 		private router: Router,
 		private cdRef: ChangeDetectorRef,
 		private meta: PersonalMetaTagsService,
-	) {
-		this.meta.update({
-			title: 'CodeWiz | Admin - Users manager',
-		});
-	
+	) {	
 		this.routerSub = this.router.events.subscribe(event => {
 			const url = this.router.url;
 			this.showBackButton = url.includes('/info/');

@@ -28,11 +28,7 @@ export class HomeComponent {
 	constructor(
 		private usersService: UsersService,
 		private meta: PersonalMetaTagsService,
-	) {
-		this.meta.update({
-			title: 'CodeWiz | Dashboard'
-		});
-	}
+	) { }
 
 	getName(name?: string | null): string {
 		return name?.split(' ')?.at(0) || 'Little Wizard';

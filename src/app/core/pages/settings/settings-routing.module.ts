@@ -9,14 +9,23 @@ const routes: Routes = [
 		children: [
 			{
 				path: '',
+				data: {
+					title: 'CodeWiz | Settings - Manage Profile',
+				},
 				loadChildren: () => import('./pages/profile/profile.module').then(m => m.ProfileModule),
 			},
 			{
 				path: 'usage',
+				data: {
+					title: 'CodeWiz | Settings - Subscription Usage',
+				},
 				loadChildren: () => import('./pages/usage/usage.module').then(m => m.UsageModule),
 			},
 			{
 				path: 'billing',
+				data: {
+					title: 'CodeWiz | Settings - Billing'
+				},
 				loadChildren: () => import('./pages/billing/billing.module').then(m => m.BillingModule),
 			},
 			/* {
@@ -25,10 +34,16 @@ const routes: Routes = [
 			}, */
 			{
 				path: 'feedback',
+				data: {
+					title: 'CodeWiz | Settings - Your feedbacks',
+				},
 				loadChildren: () => import('./pages/feedback/feedback.module').then(m => m.FeedbackModule),
 			},
 			{
 				path: 'legal',
+				data: {
+					title: 'CodeWiz | Settings - Legal Documents',
+				},
 				loadChildren: () => import('./pages/legal/legal.module').then(m => m.LegalModule),
 			},
 		]
