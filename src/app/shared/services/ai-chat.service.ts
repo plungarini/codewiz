@@ -11,6 +11,7 @@ import { AiChatComponentStatus, AiChatStatus, AiChatStatusIndicator, ClientOpena
 import { AiChatMessage, AiChatMessageFeedback, AiChatMessageRole, AiChatRequestData, AiChatResponseData, AiChatTitleRequestData, AiChatTitleResponseData, AiUserRepoChat } from '../models/ai-chat/ai-chat.model';
 import { Repo } from '../models/repo.model';
 import { FirebaseExtendedService } from './firebase-ext.service';
+import { TidioService } from './tidio.service';
 
 
 @Injectable({
@@ -26,6 +27,7 @@ export class AiChatService {
 		private router: Router,
 		private users: UsersService,
 		private analytics: Analytics,
+		private tidioService: TidioService,
 	) { }
 
 	getStatusPromise(): Promise<ClientOpenaiStatus> {
@@ -187,6 +189,7 @@ export class AiChatService {
 						}
 					}
 					logEvent(this.analytics, 'chat_query_error', err);
+					this.tidioService.sendUserMessage('Oops! 🚀 Hit a little glitch there. Sorry for the hiccup! If this continues, just hit reply. We\'re here to help!');
 					observer.error(err);
 					closeStream();
 				}, 500);
@@ -200,6 +203,7 @@ export class AiChatService {
 						}
 					}
 					logEvent(this.analytics, 'chat_query_error', err);
+					this.tidioService.sendUserMessage('Oops! 🚀 Hit a little glitch there. Sorry for the hiccup! If this continues, just hit reply. We\'re here to help!');
 					observer.error(err);
 					closeStream();
 					return;
@@ -219,6 +223,7 @@ export class AiChatService {
 						}
 					}
 					logEvent(this.analytics, 'chat_query_error', err);
+					this.tidioService.sendUserMessage('Oops! 🚀 Hit a little glitch there. Sorry for the hiccup! If this continues, just hit reply. We\'re here to help!');
 					observer.error(err);
 					closeStream();
 					return;
@@ -303,6 +308,7 @@ export class AiChatService {
 							}
 						}
 						logEvent(this.analytics, 'chat_query_error', err);
+						this.tidioService.sendUserMessage('Oops! 🚀 Hit a little glitch there. Sorry for the hiccup! If this continues, just hit reply. We\'re here to help!');
 						observer.error(err);
 						closeStream();
 					})
