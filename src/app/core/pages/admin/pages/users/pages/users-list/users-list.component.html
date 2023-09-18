@@ -171,17 +171,28 @@
 			class="flex flex-row items-center justify-between max-w-full px-3 py-2 space-x-4 transition-all duration-300 bg-transparent cursor-pointer group hover:bg-zinc-900"
 		>
 			<div class="flex flex-row items-center space-x-2">
-				<img
-					ixImg
-					[alt]="user.name || 'Anonymous'"
-					priority
-					loading="eager"
-					priority
-					[width]="1"
-					[height]="1"
-					[path]="user.details?.imgUrl || 'assets/404_pip_image.png'"
-					class="w-5 h-5 rounded-full shrink-0"
-				>
+			
+				<ng-container *ngIf="user.details?.imgUrl || 'assets/404_pip_image.png' as imgUrl">
+					<img
+						ixImg
+						*ngIf="!imgUrl.includes('http'); else noRelImage"
+						[path]="imgUrl"
+						[alt]="user.name || 'Anonymous'"
+						[width]="1"
+						[height]="1"
+						class="w-5 h-5 rounded-full shrink-0"
+					>
+					<ng-template #noRelImage>
+						<img
+							[src]="imgUrl"
+							[alt]="user.name || 'Anonymous'"
+							[width]="1"
+							[height]="1"
+							class="w-5 h-5 rounded-full shrink-0"
+						>
+					</ng-template>
+				</ng-container>
+			
 				<p class="text-sm font-medium truncate text-zinc-300 sm:text-base">{{user.name || 'Anonymous'}}</p>
 				<p class="hidden text-sm font-medium truncate lg:block text-zinc-600">{{user.email}}</p>
 			</div>

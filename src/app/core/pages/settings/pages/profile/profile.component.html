@@ -27,6 +27,7 @@
 						<ng-container *ngIf="form.value.imgUrl as imgUrl">
 							<img
 								ixImg
+								*ngIf="!imgUrl.includes('http'); else noRelImage"
 								[path]="imgUrl"
 								[alt]="user.name || fireUser.displayName || 'Anonymous'"
 								(click)="profilePicture.click()"
@@ -34,6 +35,16 @@
 								[height]="1"
 								class="object-cover object-center w-12 h-12 cursor-pointer"
 							>
+							<ng-template #noRelImage>
+								<img
+									[src]="imgUrl"
+									[alt]="user.name || fireUser.displayName || 'Anonymous'"
+									(click)="profilePicture.click()"
+									[width]="1"
+									[height]="1"
+									class="object-cover object-center w-12 h-12 cursor-pointer"
+								>
+							</ng-template>
 						</ng-container>
 
 						<div
