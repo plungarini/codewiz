@@ -14,6 +14,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 })
 export class HeroComponent {
 
-	showPhBanner = new Date() > new Date('2023-09-18T00:01:00-07:00');
+	showPhBanner = new Date() < new Date('2023-09-19T00:01:00-07:00');
 
 }

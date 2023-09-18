@@ -9,7 +9,7 @@ import { UsersService } from 'src/app/auth/services/users.service';
   styles: [
     `
       :host {
-        @apply block fixed inset-x-0 top-0 z-[5000];
+        @apply block fixed inset-0 pointer-events-none z-[5000];
       }
     `
   ],
@@ -18,6 +18,7 @@ import { UsersService } from 'src/app/auth/services/users.service';
 export class MenuComponent implements OnDestroy {
 
 	isScrolled = false;
+	showPhBanner = false;
 	currentPage = 'home';
 	menuOpen = false;
 
@@ -70,8 +71,13 @@ export class MenuComponent implements OnDestroy {
 	private manageScroll(): void {
 		const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
 		const condition = scrollPosition > 0;
+		const phCondition = scrollPosition > (window.innerHeight || 500);
 		if (this.isScrolled !== condition) {
 			this.isScrolled = condition;
+			this.cdRef.markForCheck();
+		}
+		if (this.showPhBanner !== phCondition) {
+			this.showPhBanner = phCondition;
 			this.cdRef.markForCheck();
 		}
 	}

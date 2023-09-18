@@ -1,4 +1,4 @@
-<header class="w-full">
+<header class="w-full pointer-events-auto">
 	<nav
 		class="items-center justify-between hidden max-w-full p-6 mx-auto transition-all duration-300 ease-in-out rounded-md lg:px-8 md:flex"
 		aria-label="Global"
@@ -328,3 +328,15 @@
 		</div>
 	</div> -->
 </header>
+
+<div
+	[ngClass]="{
+		'opacity-0 pointer-events-none translate-y-4': !showPhBanner,
+		'opacity-100 pointer-events-auto translate-y-0': showPhBanner,
+	}"
+	class="absolute transition-all duration-300 bottom-4 left-4 w-fit">
+	<a href="https://www.producthunt.com/posts/codewiz?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-codewiz" target="_blank" rel="noopener noreferrer" class="block group">
+		<img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=414541&theme=light" alt="CodeWiz - Your&#0032;Coding&#0032;Challenges&#0063;&#0032;Solved&#0032;with&#0032;AI&#0044;&#0032;One&#0032;Chat&#0032;at&#0032;a&#0032;Time&#0033; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" class="transition-all duration-300 opacity-0 group-hover:opacity-100" />
+		<img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=414541&theme=dark" alt="CodeWiz - Your&#0032;Coding&#0032;Challenges&#0063;&#0032;Solved&#0032;with&#0032;AI&#0044;&#0032;One&#0032;Chat&#0032;at&#0032;a&#0032;Time&#0033; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" class="absolute top-0 left-0 transition-all duration-300 opacity-100 group-hover:opacity-0" />
+	</a>
+</div>
