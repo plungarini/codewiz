@@ -28,6 +28,13 @@ export class UsersService {
 		return user(this.auth).pipe(
 			switchMap(user => {
 				if (user && user?.uid) {
+					try {
+						if ((window as any)?.clarity) {
+							(window as any)?.clarity('identify', user?.uid);
+						}
+					} catch (err) {
+						console.warn('[CLARITY] Unable to identify user', err);
+					}
 					setUserId(this.analytics, user.uid);
 					return this.getWithSubscription(user.uid)
 						.pipe(tap((user) => {
