@@ -13,6 +13,7 @@ export class RealFeedbackService {
 	private fnQueue: { fn: string }[] = [];
 
 	private checkQueueInterval = setInterval(() => {
+		this._initialize();
 		if (!this.isReady) return;
 		if (this.queuePurged || !this.production) {
 			clearInterval(this.checkQueueInterval);
@@ -65,7 +66,7 @@ export class RealFeedbackService {
 
 	private _initialize(): void {
 		if (this.isReady) return;
-		this.isReady = !!this.document.querySelector('#__realfeedback-root');
+		this.isReady = !!this.document.querySelector('#__realfeedback-root button');
 	};
 
 	private _addToQueue(fn: string): void {

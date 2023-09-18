@@ -19,6 +19,7 @@ export class TidioService {
 	private fnQueue: { fn: string, data: Partial<TidioUser> | undefined }[] = [];
 
 	private checkQueueInterval = setInterval(() => {
+		this._initialize();
 		if (!this.isReady) return;
 		if (this.queuePurged || !this.production) {
 			clearInterval(this.checkQueueInterval);
