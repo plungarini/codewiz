@@ -16,7 +16,11 @@ export class TidioService {
 	private production = environment.production;
 	private isReady = false;
 	private queuePurged = false;
-	private fnQueue: { fn: string, data: Partial<TidioUser> | undefined }[] = [];
+	private fnQueue: {
+		fn: string;
+		data: Partial<TidioUser> | undefined;
+		message?: string;
+	}[] = [];
 
 	private checkQueueInterval = setInterval(() => {
 		this._initialize();
@@ -38,6 +42,8 @@ export class TidioService {
 				this.show();
 			} else if (fn.fn === 'identify') {
 				this.identify(fn.data);
+			} else if (fn.fn === 'sendUserMessage') {
+				this.sendUserMessage(fn.message);
 			}
 		}
 
@@ -46,6 +52,21 @@ export class TidioService {
 	}, 500);
 
 	constructor() { }
+
+	sendUserMessage(message?: string) {
+		if (!this.production || !this._getConsent() || !message) return;
+		this._initialize();
+		if (!this.isReady && !this.queuePurged) {
+			this._addToQueue('sendUserMessage');
+			return;
+		}
+		const tidio = (window as any).tidioChatApi;
+		if (!tidio || !tidio?.hasOwnProperty('messageFromOperator')) {
+			return console.warn('[TIDIO] Unable to send message');
+		}
+		this.show();
+		tidio.messageFromOperator(message);
+	}
 
 	hide() {
 		if (!this._getConsent()) return;
@@ -85,6 +106,7 @@ export class TidioService {
 			return console.warn('[TIDIO] Unable to set visitor data');
 		}
 		tidio.setVisitorData(user);
+		tidio.setContactProperties({ uid: user?.uid });
 	}
 
 	private _getConsent(): boolean {
@@ -97,9 +119,9 @@ export class TidioService {
 		this.isReady = !!(window as any)?.tidioChatApi?.readyEventWasFired;
 	};
 
-	private _addToQueue(fn: string, data?: Partial<TidioUser>): void {
+	private _addToQueue(fn: string, data?: Partial<TidioUser>, message?: string): void {
 		const lastItem = this.fnQueue.length > 0 ? this.fnQueue[this.fnQueue.length - 1] : undefined;
 		if (lastItem && lastItem.fn === fn) return;
-		this.fnQueue.push({ fn, data });
+		this.fnQueue.push({ fn, data, message });
 	}
 }
