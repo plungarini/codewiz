@@ -91,11 +91,17 @@ serve(async (req) => {
 				authorization: firebaseKey,
 			}),
 		});
-		console.log(res);
-		const canQueryJson = await res.json();
-		
-		if (!canQueryJson) {
-			throw new UserError('Subscription reached maximum limit', { code: 'SUBSCRIPTION_LIMIT_REACHED' })
+
+		let canQueryJson = false;
+		try {
+			canQueryJson = await res.json();
+			console.log({ canQuery: canQueryJson, uid });
+			
+			if (!canQueryJson) {
+				throw new UserError('Subscription reached maximum limit', { code: 'SUBSCRIPTION_LIMIT_REACHED' });
+			}
+		} catch (err) {
+			throw new ApplicationError('Error checking subscription, user cannot query');
 		}
 
 		// TODO: better sanitization
@@ -106,7 +112,7 @@ serve(async (req) => {
 					ChatCompletionRequestMessageRoleEnum.Assistant,
 				].includes(role)
 			) {
-				throw new Error(`Invalid message role '${role}'`)
+				throw new ApplicationError(`Invalid message role '${role}'`)
 			}
 
 			return {
@@ -118,7 +124,7 @@ serve(async (req) => {
 		const [userMessage] = contextMessages.filter(({ role }) => role === MessageRole.User).slice(-1)
 
 		if (!userMessage) {
-			throw new Error("No message with role 'user'")
+			throw new ApplicationError('No message with role \'user\'')
 		}
 
 		const supabaseClient = createClient(supabaseUrl, supabaseServiceKey, {
@@ -321,10 +327,18 @@ serve(async (req) => {
 					if (!usedTokens || !usedUSD) return console.error('usedTokens or usedUSD are undefined', { usedTokens, usedUSD });
 					console.warn({ usedTokens, usedUSD });				
 				} catch (error) {
-					console.error('calculateOpenaiTokens()', error);
+					if ((error as any)?.usedTokens || (error as any)?.usedUSD) {
+						console.warn('calculateOpenaiTokens()', error);
+					} else {
+						console.error('calculateOpenaiTokens()', error);
+					}
 				}
 			}).catch((err) => {
-				console.error('calculateOpenaiTokens()', err);
+				if ((err as any)?.usedTokens || (err as any)?.usedUSD) {
+					console.warn('calculateOpenaiTokens()', err);
+				} else {
+					console.error('calculateOpenaiTokens()', err);
+				}
 			})
 		}
 
