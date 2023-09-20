@@ -28,6 +28,7 @@ interface RequestData {
 	repoHost: string;
 	messages: Message[];
 	onlyPrompt: boolean;
+	environment: string;
 	stream: boolean;
 }
 

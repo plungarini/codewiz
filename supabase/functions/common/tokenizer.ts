@@ -1,7 +1,7 @@
-import { init, Tiktoken } from 'https://esm.sh/@dqbd/tiktoken@1.0.2/lite/init'
+import { init, Tiktoken } from 'https://esm.sh/@dqbd/tiktoken/lite/init'
 import { ChatCompletionRequestMessage } from 'https://esm.sh/v113/openai@3.2.1'
 
-const encoderResponse = await fetch('https://esm.sh/@dqbd/tiktoken@1.0.2/encoders/cl100k_base.json')
+const encoderResponse = await fetch('https://esm.sh/@dqbd/tiktoken/encoders/cl100k_base.json')
 const cl100kBase = await encoderResponse.json()
 
 await init(async (imports) => {

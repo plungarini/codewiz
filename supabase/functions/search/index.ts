@@ -5,6 +5,7 @@ import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.1.0'
 import { Database } from '../common/database-types.ts'
 import { ApplicationError, UserError } from '../common/errors.ts'
 
+const firebaseKey = Deno.env.get('FIREBASE_FUNCTIONS_KEY')
 const openAiKey = Deno.env.get('OPENAI_KEY')
 const supabaseUrl = Deno.env.get('SB_URL')
 const supabaseServiceKey = Deno.env.get('SB_SERVICE_ROLE_KEY')
@@ -36,21 +37,60 @@ serve(async (req) => {
     const requestData = await req.json()
 
     if (!requestData) {
-      throw new UserError('Missing request data')
-    }
+			throw new UserError('Missing request data', { code: 'INVALID_REQUEST_DATA' })
+		}
 
-    const { query } = requestData
+		const { query, repo, uid, environment } = requestData;
+
+		if (!uid) {
+			throw new UserError('Missing uid in request data', { code: 'MISSING_UID' })
+		}
+
+		const tableName = repo?.replace(/^\/|\/$/g, '')?.split('/')?.pop();
+
+		if (!tableName) {
+			throw new ApplicationError('Failed to sanitize table name', { repo })
+		}
 
     if (!query) {
       throw new UserError('Missing query in request data')
-    }
+		}
+		
+		const canUserQueryUrl = environment === 'production' ? 'https://canuserquery-ytzgrgrjxq-ew.a.run.app' : 'https://canuserquery-ik2jh2ngra-ew.a.run.app';
+		const res = await fetch(canUserQueryUrl, {
+			headers: {
+				'Content-Type': 'application/json',
+				'Accept': 'application/json',
+			},
+			method: 'POST',
+			body: JSON.stringify({
+				uid: uid,
+				authorization: firebaseKey,
+			}),
+		});
 
-    // Intentionally log the query
-    console.log({ query })
+		let canQueryJson = false;
+		try {
+			canQueryJson = await res.json();
+			console.log({ canQuery: canQueryJson, uid });
+			
+			if (!canQueryJson) {
+				throw new UserError('Subscription reached maximum limit', { code: 'SUBSCRIPTION_LIMIT_REACHED' });
+			}
+		} catch (err) {
+			throw new ApplicationError('Error checking subscription, user cannot query');
+		}
+
+    // Intentionally log the request data
+		console.log({ requestData })
 
     const sanitizedQuery = query.trim()
 
-    const supabaseClient = createClient<Database>(supabaseUrl, supabaseServiceKey)
+		const supabaseClient = createClient<Database>(supabaseUrl, supabaseServiceKey, {
+			auth: {
+				persistSession: false,
+			},
+		})
 
     const configuration = new Configuration({ apiKey: openAiKey })
     const openai = new OpenAIApi(configuration)
@@ -77,50 +117,27 @@ serve(async (req) => {
     }
 
     const [{ embedding }] = embeddingResponse.data.data
-    const { error: matchError, data: pageSections } = await supabaseClient
-      .rpc('match_page_sections_v2', {
-        embedding,
-        match_threshold: 0.78,
-        min_content_length: 50,
-      })
-      .select('slug, heading, page_id')
-      .limit(10)
+		const { error: matchError, data: pageSections } = await supabaseClient
+			.rpc('search_embeddings', {
+				table_custom_name: tableName,
+				embed_query: embedding,
+				match_threshold: 0.78,
+				min_content_length: 50,
+			})
+			.select('id, content, title')
+			.limit(10);
+		
+		const normPageSections = pageSections as {
+			id: string;
+			title: string;
+			content: string;
+		}[] | undefined;
 
-    if (matchError || !pageSections) {
+    if (matchError || !normPageSections) {
       throw new ApplicationError('Failed to match page sections', matchError ?? undefined)
     }
 
-    const uniquePageIds = pageSections
-      .map<number>(({ page_id }) => page_id)
-      .filter((value, index, array) => array.indexOf(value) === index)
-
-    const { error: fetchPagesError, data: pages } = await supabaseClient
-      .from('page')
-      .select('id, type, path, meta')
-      .in('id', uniquePageIds)
-
-    if (fetchPagesError || !pages) {
-      throw new ApplicationError(`Failed to fetch pages`, fetchPagesError)
-    }
-
-    const combinedPages = pages
-      .map((page) => {
-        const sections = pageSections
-          .map((pageSection, index) => ({ ...pageSection, rank: index }))
-          .filter(({ page_id }) => page_id === page.id)
-
-        // Rank this page based on its highest-ranked page section
-        const rank = sections.reduce((min, { rank }) => Math.min(min, rank), Infinity)
-
-        return {
-          ...page,
-          sections,
-          rank,
-        }
-      })
-      .sort((a, b) => a.rank - b.rank)
-
-    return new Response(JSON.stringify(combinedPages), {
+    return new Response(JSON.stringify(normPageSections), {
       headers: {
         ...corsHeaders,
         'Content-Type': 'application/json',
