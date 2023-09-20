@@ -16,7 +16,8 @@ export class SidebarComponent implements OnDestroy {
 
 	menuOpen = false;
 
-	isUserAdmin$: Observable<boolean>;
+	isUserAdmin$ = this.permissions.hasAllPermissions$(['admin']);
+	isAlphaUser$ = this.permissions.hasAllPermissions$(['alpha']);
 	userSub$: Observable<string> = this.users.user$.pipe(
 		map((u) => {
 			return u?.subscriptions?.filter((s) => s?.status === 'active')?.at(0)?.role || 'apprentice';
@@ -29,8 +30,6 @@ export class SidebarComponent implements OnDestroy {
 		private users: UsersService,
 		private permissions: UserPermissionsService,
 	) {
-		this.isUserAdmin$ = this.permissions.hasAllPermissions$(['admin']);
-
 		this.routerSub = this.router.events
       .pipe(
         filter(
@@ -48,6 +47,8 @@ export class SidebarComponent implements OnDestroy {
 						this.currentPage = 'settings';
 					} else if (e.url.includes('setup')) {
 						this.currentPage = 'setup';
+					} else if (e.url.includes('lern')) {
+						this.currentPage = 'lern';
 					} else if (e.url.includes('app')) {
 						this.currentPage = 'app';
 					} else {
