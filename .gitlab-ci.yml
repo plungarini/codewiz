@@ -24,9 +24,6 @@ install:
         paths:
             - node_modules
         policy: pull
-    only:
-        changes:
-            - yarn.lock
 
 # Build - Production
 build:prod:
