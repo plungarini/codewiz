@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ImgixAngularModule } from '@imgix/angular';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ChatRoutingModule } from './chat-routing.module';
 import { ChatComponent } from './chat.component';
 import { ChatSidebarComponent } from './components/chat-sidebar/chat-sidebar.component';
 import { ChatsHistoryComponent } from './components/chat-sidebar/components/chats-history/chats-history.component';
-import { SearchRepoAutocompleteComponent } from './components/chat-sidebar/components/search-repo-autocomplete/search-repo-autocomplete.component';
 
 
 
@@ -14,14 +13,13 @@ import { SearchRepoAutocompleteComponent } from './components/chat-sidebar/compo
 	declarations: [
 		ChatComponent,
     ChatSidebarComponent,
-    SearchRepoAutocompleteComponent,
     ChatsHistoryComponent,
   ],
   imports: [
 		CommonModule,
 		ChatRoutingModule,
 		ReactiveFormsModule,
-		ImgixAngularModule,
+		SharedModule,
   ],
 })
 export class ChatModule { }
