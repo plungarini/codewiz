@@ -1,0 +1,150 @@
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ClipboardService } from 'ngx-clipboard';
+import { BehaviorSubject, Observable, of, switchMap } from 'rxjs';
+import { UsersService } from 'src/app/auth/services/users.service';
+import { AiChatMessage, AiChatMessageRole } from 'src/app/shared/models/ai-chat/ai-chat.model';
+import { Repo } from 'src/app/shared/models/repo.model';
+import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
+
+
+@Component({
+  selector: 'app-messages',
+  templateUrl: './messages.component.html',
+	styles: [`
+		:host {
+			@apply block pb-36 pt-16 md:pt-8 relative w-full overflow-y-visible overflow-x-hidden px-6;
+		}
+	`],
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class MessagesComponent {
+
+	@Output() onQueryRefresh = new EventEmitter<{ query: string, queryId: string}>();
+
+	msgRoles = AiChatMessageRole;
+	chat: AiChatMessage[] = [];
+
+	show = false;
+	copiedAnim: boolean[] = [];
+	codeCopied: boolean[] = [];
+
+	user$: Observable<{ name: string }> = this.usersService.user$.pipe(
+		switchMap((u) => u?.name ? of({ name: u.name }) :
+			this.usersService.fireUser$.pipe(switchMap((u) => u?.displayName ? of({ name: u.displayName }) : of({ name: 'Anonymous' })))
+		)
+	);
+	repo$: Observable<Repo | undefined>;
+	private repoId = new BehaviorSubject('angular');
+
+	@Input('chat') set setChat(value: AiChatMessage[]) {
+		if (!value || value?.length < 0) return;
+
+		value.forEach((v) => {
+			const created = v.createdAt?.toDate();
+			if (!created || !!v.content || !!v.error) return;
+			const now = new Date();
+			const diffInMinutes = (now.getTime() - created.getTime()) / (1000 * 60);
+			if (diffInMinutes > 1) {
+				v.error = {
+					message: 'Apologies, but it seems we\'re experiencing some technical difficulties. Please try again in few minutes or reach out to the support.'
+				};
+				v.completed = true;
+			}
+		});
+
+		const hasCompleted = this.chat[this.chat.length - 1]?.completed === false && value[value.length - 1]?.completed;
+		if (hasCompleted) {
+			value[value.length - 1].completed = false;
+			setTimeout(() => {
+				this.chat[this.chat.length - 1].completed = true;
+				this.cdRef.detectChanges();
+			}, 500);
+		}
+
+		this.chat = [...value];
+		this.cdRef.detectChanges();
+	};
+
+	@Input('repoId') set setRepoId(value: string) {
+		if (!value) return;
+		this.repoId.next(value);
+	}
+
+	constructor(
+		private db: FirebaseExtendedService,
+		private usersService: UsersService,
+		private cdRef: ChangeDetectorRef,
+		private clipboardService: ClipboardService
+	) {
+		this.repo$ = this.repoId.pipe(
+			switchMap((id) => this.db.getDoc<Repo>(`supported-docs/${id}`))
+		)
+	}
+
+	onMsgCopyToClipboard(content: string, i: number): void {
+		this.clipboardService.copy(content.trim());
+		this.copiedAnim[i] = true;
+		this.cdRef.detectChanges();
+		setTimeout(() => {
+			this.copiedAnim[i] = false;
+			this.cdRef.detectChanges();
+		}, 2000);
+	}
+
+	onMsgRefresh(promptId?: string): void {
+		if (!promptId) return;
+		const prompt = this.chat.find((m) => m.id === promptId);
+		if (!prompt) return;
+		this.onQueryRefresh.emit({ query: prompt.content, queryId: promptId });
+	}
+
+	onCodeCopyToClipboard(i: number): void {
+		this.codeCopied[i] = true;
+		this.cdRef.detectChanges();
+		setTimeout(() => {
+			this.codeCopied[i] = false;
+			this.cdRef.detectChanges();
+		}, 3000);
+	}
+
+	togglePageSections(i: number, value: boolean): void {
+		this.chat[i].showPageSections = value;
+		this.cdRef.detectChanges();
+	}
+
+	trackBy(i: number, obj: AiChatMessage): string {
+		return obj?.id || i.toString();
+	}
+
+	interpretError(err: AiChatMessage['error']): { code: string, message: string } {
+		const defaultMessage = err?.message || 'Apologies, but it seems we\'re experiencing some technical difficulties. Please try again in few minutes or reach out to the support.';
+		const debug = err?.debug?.message;
+		let code = '';
+		if (typeof debug !== 'string') {
+			code = debug?.data?.['code'] || '';
+		}
+		
+		let msg = defaultMessage;
+		switch (code) {
+			case 'SUBSCRIPTION_LIMIT_REACHED':
+				msg = 'It seems you have reached the limit of questions for your plan. [Upgrade your plan](/app/settings/billing) to continue.';
+				break;
+			case 'INVALID_REQUEST_DATA':
+				msg = defaultMessage;
+				break;
+			case 'MISSING_UID':
+				msg = 'It seems you are not logged in. Please [log in again](/auth/login) to continue.';
+				break;
+			case 'MISSING_MESSAGES':
+				msg = defaultMessage;
+				break;
+		
+			default:
+				msg = defaultMessage;
+				break;
+		}
+
+		return { code, message: msg };
+	}
+
+}

@@ -1,0 +1,311 @@
+<div class="flex flex-col h-full max-h-full">
+	<div class="shrink-0">
+
+		<div class="relative z-10 w-full pt-6 pb-6 bg-zinc-950">
+			<div class="flex items-center w-full mt-6 mb-4 space-x-4">
+				<button routerLink="/app/admin/repos/edit/{{repoId}}">
+					<svg class="w-8 h-8 transition-colors duration-300 cursor-pointer text-zinc-600 group hover:text-zinc-50" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path class="transition-opacity duration-300 opacity-0 group-hover:opacity-40" fill-rule="evenodd" clip-rule="evenodd" d="M16.218 21.5L7.784 21.5C4.623 21.5 2.5 19.279 2.5 15.974L2.5 8.026C2.5 4.72 4.624 2.5 7.785 2.5L16.218 2.5C19.377 2.5 21.5 4.72 21.5 8.026L21.5 15.974C21.5 19.279 19.377 21.5 16.218 21.5Z" fill="currentColor" />
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M13.9316 9.156C14.2246 8.864 14.2266 8.389 13.9336 8.095C13.7866 7.948 13.5946 7.875 13.4026 7.875C13.2106 7.875 13.0196 7.948 12.8726 8.094L9.48159 11.47C9.33959 11.611 9.26059 11.802 9.26059 12.002C9.26059 12.201 9.33959 12.392 9.48159 12.533L12.8726 15.91C13.1656 16.203 13.6406 16.201 13.9336 15.908C14.2266 15.614 14.2246 15.139 13.9316 14.847L11.0736 12.002L13.9316 9.156Z" fill="currentColor" />
+						<path d="M16.2178 3L7.78314 3C4.83503 3 3 5.08119 3 8.02638L3 15.9736C3 18.9188 4.83503 21 7.78411 21L16.2178 21C19.1659 21 21 18.9188 21 15.9736L21 8.02638C21 5.08119 19.1572 3 16.2178 3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</button>
+				<h2 class="mb-0">Edit pages</h2>
+			</div>
+
+			<form
+				[formGroup]="scrapeRepoform"
+				(ngSubmit)="fetchRepo()"
+				class="flex flex-col w-full mt-6 md:items-end md:gap-x-4 gap-y-4 md:flex-row"
+			>
+				<div class="relative flex-1 group/author">
+					<p class="mb-2">Creator and Repo:</p>
+					<input
+						formControlName="author"
+						type="text"
+						name="author"
+						(focus)="showHistoryFn('author', true)"
+						(blur)="showHistoryFn('author', false)"
+						placeholder="Example: angular/angular (Case sensitive)"
+						class="relative z-20 block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+					/>
+					<div *ngIf="repoHistory?.author as author" class="absolute left-0 right-0 z-10 block w-full overflow-x-hidden overflow-y-auto transition-all duration-300 -translate-y-4 rounded-md shadow opacity-0 pointer-events-none max-h-48 top-20 bg-zinc-900 group-focus-within/author:opacity-100 group-focus-within/author:pointer-events-auto group-focus-within/author:-translate-y-0">
+						<ul class="w-full h-full px-2 py-1 divide-y divide-zinc-600" [class.pointer-events-auto]="showHistory.author">
+							<li *ngFor="let item of author" class="flex flex-row items-center w-full py-1 space-x-2">	
+								<svg class="w-4 h-4 text-zinc-400 shrink-0 grow-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M17.5947 17.3662L21.0001 20.7638" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M3 16.6925L5.91016 17.3658L6.57957 14.4712" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M20.6831 6.22994L17.7729 5.55664L17.1035 8.45124" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M17.7649 5.80273C20.8541 8.99895 20.8327 14.0944 17.6871 17.2653C15.7168 19.2512 12.9818 20.0159 10.4219 19.5586" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M5.91647 17.1205C2.82728 13.9243 2.84869 8.82881 5.99431 5.65789C7.96458 3.67303 10.6996 2.9073 13.2595 3.36459" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+		
+								<p (click)="setValueFromHistorySearch('author', item)" [title]="item" class="flex-1 pt-0 mt-0 font-medium truncate transition-all duration-300 cursor-pointer text-zinc-400 hover:text-zinc-50">{{item}}</p>
+
+								<svg (click)="removeRecentSearch('author', item)" class="w-5 h-5 transition-all duration-300 cursor-pointer shrink-0 grow-0 text-zinc-400 hover:text-red-400" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+									<g id="Iconly/Light/Close-Square" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+										<g id="Close-Square" transform="translate(2.000000, 2.000000)" stroke="currentColor" stroke-width="1.5" >
+											<line x1="12.3955" y1="7.5949" x2="7.6035" y2="12.3869" id="Stroke-1"></line>
+											<line x1="12.397" y1="12.3898" x2="7.601" y2="7.5928" id="Stroke-2"></line>
+											<path d="M14.3345,0.7502 L5.6655,0.7502 C2.6445,0.7502 0.7505,2.8892 0.7505,5.9162 L0.7505,14.0842 C0.7505,17.1112 2.6355,19.2502 5.6655,19.2502 L14.3335,19.2502 C17.3645,19.2502 19.2505,17.1112 19.2505,14.0842 L19.2505,5.9162 C19.2505,2.8892 17.3645,0.7502 14.3345,0.7502 Z" id="Stroke-3"></path>
+										</g>
+									</g>
+								</svg>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="relative flex-1 group/folder">
+					<p class="mb-2">Folder:</p>
+					<input
+						formControlName="folder"
+						type="text"
+						name="folder"
+						(focus)="showHistoryFn('folder', true)"
+						(blur)="showHistoryFn('folder', false)"
+						placeholder="Example: aio/content/guide (Case sensitive)"
+						class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+					/>
+					<div *ngIf="repoHistory?.folder as folder" class="absolute left-0 right-0 z-10 block w-full overflow-x-hidden overflow-y-auto transition-all duration-300 -translate-y-4 rounded-md shadow opacity-0 pointer-events-none max-h-48 top-20 bg-zinc-900 group-focus-within/folder:opacity-100 group-focus-within/folder:pointer-events-auto group-focus-within/folder:-translate-y-0">
+						<ul class="w-full h-full px-2 py-1 divide-y divide-zinc-600" [class.pointer-events-auto]="showHistory.folder">
+							<li *ngFor="let item of folder" class="flex flex-row items-center w-full py-1 space-x-2">	
+								<svg class="w-4 h-4 text-zinc-400 shrink-0 grow-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M17.5947 17.3662L21.0001 20.7638" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M3 16.6925L5.91016 17.3658L6.57957 14.4712" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M20.6831 6.22994L17.7729 5.55664L17.1035 8.45124" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M17.7649 5.80273C20.8541 8.99895 20.8327 14.0944 17.6871 17.2653C15.7168 19.2512 12.9818 20.0159 10.4219 19.5586" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M5.91647 17.1205C2.82728 13.9243 2.84869 8.82881 5.99431 5.65789C7.96458 3.67303 10.6996 2.9073 13.2595 3.36459" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+		
+								<p (click)="setValueFromHistorySearch('folder', item)" [title]="item" class="flex-1 pt-0 mt-0 font-medium truncate transition-all duration-300 cursor-pointer text-zinc-400 hover:text-zinc-50">{{item}}</p>
+
+								<svg (click)="removeRecentSearch('folder', item)" class="w-5 h-5 transition-all duration-300 cursor-pointer shrink-0 grow-0 text-zinc-400 hover:text-red-400" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+									<g id="Iconly/Light/Close-Square" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+										<g id="Close-Square" transform="translate(2.000000, 2.000000)" stroke="currentColor" stroke-width="1.5" >
+											<line x1="12.3955" y1="7.5949" x2="7.6035" y2="12.3869" id="Stroke-1"></line>
+											<line x1="12.397" y1="12.3898" x2="7.601" y2="7.5928" id="Stroke-2"></line>
+											<path d="M14.3345,0.7502 L5.6655,0.7502 C2.6445,0.7502 0.7505,2.8892 0.7505,5.9162 L0.7505,14.0842 C0.7505,17.1112 2.6355,19.2502 5.6655,19.2502 L14.3335,19.2502 C17.3645,19.2502 19.2505,17.1112 19.2505,14.0842 L19.2505,5.9162 C19.2505,2.8892 17.3645,0.7502 14.3345,0.7502 Z" id="Stroke-3"></path>
+										</g>
+									</g>
+								</svg>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="relative flex-1 group/relativeHost">
+					<p class="mb-2">Relative links host:</p>
+					<input
+						formControlName="relativeLinksHost"
+						type="text"
+						name="relativeLinksHost"
+						(focus)="showHistoryFn('relativeLinksHost', true)"
+						(blur)="showHistoryFn('relativeLinksHost', false)"
+						placeholder="Example: https://angular.io (Case sensitive)"
+						class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+					/>
+					<div *ngIf="repoHistory?.relativeLinksHost as relativeHost" class="absolute left-0 right-0 z-10 block w-full overflow-x-hidden overflow-y-auto transition-all duration-300 -translate-y-4 rounded-md shadow opacity-0 pointer-events-none max-h-48 top-20 bg-zinc-900 group-focus-within/relativeHost:opacity-100 group-focus-within/relativeHost:pointer-events-auto group-focus-within/relativeHost:-translate-y-0">
+						<ul class="w-full h-full px-2 py-1 divide-y divide-zinc-600" [class.pointer-events-auto]="showHistory.relativeLinksHost">
+							<li *ngFor="let item of relativeHost" class="flex flex-row items-center w-full py-1 space-x-2">	
+								<svg class="w-4 h-4 text-zinc-400 shrink-0 grow-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M17.5947 17.3662L21.0001 20.7638" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M3 16.6925L5.91016 17.3658L6.57957 14.4712" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M20.6831 6.22994L17.7729 5.55664L17.1035 8.45124" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M17.7649 5.80273C20.8541 8.99895 20.8327 14.0944 17.6871 17.2653C15.7168 19.2512 12.9818 20.0159 10.4219 19.5586" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M5.91647 17.1205C2.82728 13.9243 2.84869 8.82881 5.99431 5.65789C7.96458 3.67303 10.6996 2.9073 13.2595 3.36459" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+		
+								<p (click)="setValueFromHistorySearch('relativeLinksHost', item)" [title]="item" class="flex-1 pt-0 mt-0 font-medium truncate transition-all duration-300 cursor-pointer text-zinc-400 hover:text-zinc-50">{{item}}</p>
+
+								<svg (click)="removeRecentSearch('relativeLinksHost', item)" class="w-5 h-5 transition-all duration-300 cursor-pointer shrink-0 grow-0 text-zinc-400 hover:text-red-400" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+									<g id="Iconly/Light/Close-Square" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+										<g id="Close-Square" transform="translate(2.000000, 2.000000)" stroke="currentColor" stroke-width="1.5" >
+											<line x1="12.3955" y1="7.5949" x2="7.6035" y2="12.3869" id="Stroke-1"></line>
+											<line x1="12.397" y1="12.3898" x2="7.601" y2="7.5928" id="Stroke-2"></line>
+											<path d="M14.3345,0.7502 L5.6655,0.7502 C2.6445,0.7502 0.7505,2.8892 0.7505,5.9162 L0.7505,14.0842 C0.7505,17.1112 2.6355,19.2502 5.6655,19.2502 L14.3335,19.2502 C17.3645,19.2502 19.2505,17.1112 19.2505,14.0842 L19.2505,5.9162 C19.2505,2.8892 17.3645,0.7502 14.3345,0.7502 Z" id="Stroke-3"></path>
+										</g>
+									</g>
+								</svg>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div>
+					<button
+						type="submit"
+						[disabled]="buttonLoading || buttonLoadingEmbeddings || scrapeRepoform.invalid"
+						class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 rounded-md shadow-xl disabled:cursor-not-allowed disabled:opacity-50 text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+					>
+						Fetch
+					</button>
+				</div>
+			</form>
+
+		<div class="flex items-center mt-6 ml-auto space-x-2 w-fit">
+			<button [disabled]="buttonLoadingEmbeddings" (click)="parseRepoFiles(true)" class="px-3 py-2 text-sm transition-all duration-300 rounded-md disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-zinc-800 disabled:hover:text-zinc-300 bg-zinc-800 text-zinc-300 hover:bg-zinc-700 hover:text-white">
+				Manual parse
+			</button>
+
+			<div class="flex items-center px-3 py-2 space-x-2 transition-all duration-300 rounded-md bg-zinc-800 hover:bg-zinc-700 hover:text-white">
+				<input type="checkbox" name="autoParse" id="autoParse" [formControl]="autoParse" class="transition-all duration-300 rounded-sm focus:ring-offset-zinc-950 bg-zinc-800">
+				<label for="autoParse" class="text-sm text-zinc-300">Auto parse?</label>
+			</div>
+		</div>
+
+		</div>
+	</div>
+
+	<div class="relative flex w-full h-full max-h-full overflow-hidden shrink">
+		<app-repo-pages
+			[pages]="pages$"
+			(manualElaborate)="parseRepoFile($event)"
+			(previewContent)="onPreviewContent($event)"
+			class="block w-full overflow-x-hidden overflow-y-auto shrink"
+		></app-repo-pages>
+
+		<div *ngIf="showPreviewContent" class="absolute inset-0 z-10 p-4 overflow-y-auto rounded-md bg-black/80 backdrop-blur">
+			<div class="flex items-center justify-between pb-4 mb-4 border-b border-zinc-600">
+				<p class="text-lg font-medium text-zinc-50">Preview</p>
+
+				<div (click)="showPreviewContent = ''" class="flex items-center justify-center w-5 h-5 transition-colors duration-300 rounded-full cursor-pointer text-zinc-400 hover:text-zinc-50 bg-zinc-800 hover:bg-zinc-700">
+					<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</div>
+			</div>
+
+			<p class="whitespace-pre-wrap">{{showPreviewContent}}</p>
+		</div>
+	</div>
+</div>
+
+
+
+
+<!-- <div
+  class="h-full max-w-full max-h-full px-4 pt-24 overflow-x-hidden overflow-y-auto"
+>
+  <div class="w-full max-w-5xl mx-auto">
+    <h2>CodeWiz AI</h2>
+
+    <form
+      [formGroup]="scrapeUrlform"
+      (ngSubmit)="parse()"
+      class="flex flex-row items-end w-full mt-6 space-x-4"
+    >
+      <div class="flex-1">
+        <p class="mb-2">Category Name:</p>
+        <input
+          formControlName="category"
+          type="text"
+          name="catName"
+          placeholder="Type something..."
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div class="flex-1">
+        <p class="mb-2">Docs page URL:</p>
+        <input
+          formControlName="url"
+          type="text"
+          name="catName"
+          placeholder="Type something..."
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          [disabled]="buttonLoading"
+          class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 rounded-md shadow-xl disabled:cursor-not-allowed disabled:opacity-50 text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+        >
+          Fetch
+        </button>
+      </div>
+    </form>
+
+    <form
+      [formGroup]="scrapeRepoform"
+      (ngSubmit)="fetchRepo()"
+      class="flex flex-row items-end w-full mt-6 space-x-4"
+    >
+      <div class="flex-1">
+        <p class="mb-2">Creator and Repo:</p>
+        <input
+          formControlName="author"
+          type="text"
+          name="author"
+          placeholder="Example: angular/angular (Case sensitive)"
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div class="flex-1">
+        <p class="mb-2">Folder:</p>
+        <input
+          formControlName="folder"
+          type="text"
+          name="folder"
+          placeholder="Example: aio/content/guide (Case sensitive)"
+          class="block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+      <div>
+        <button
+          type="submit"
+          [disabled]="buttonLoading"
+          class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 rounded-md shadow-xl disabled:cursor-not-allowed disabled:opacity-50 text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+        >
+          Fetch
+        </button>
+      </div>
+    </form>
+
+    <div class="mt-8" *ngIf="result">
+      <div class="flex flex-row items-center justify-between w-full">
+        <p class="font-semibold text-zinc-50">Result:</p>
+        <button
+          type="button"
+          (click)="loadEmbeddings()"
+          [disabled]="buttonLoadingEmbeddings"
+          class="px-5 py-2 font-medium transition-all duration-300 bg-teal-500 rounded-md shadow-xl disabled:cursor-not-allowed disabled:opacity-50 text-zinc-900 hover:bg-teal-400 hover:shadow-2xl"
+        >
+          Generate Embeddings
+        </button>
+      </div>
+      <p class="mt-2 whitespace-pre-wrap">{{ result }}</p>
+    </div>
+
+    <div class="mt-8" *ngIf="repoFiles">
+      <div class="flex flex-row items-center justify-between w-full mb-4">
+        <p class="font-semibold text-zinc-50">Result:</p>
+      </div>
+      
+			<div *ngFor="let item of repoFiles" class="flex flex-row items-center justify-between px-4 py-2 my-1 rounded-md bg-zinc-800">
+				<div class="flex flex-row items-center space-x-2">
+					<p class="pt-0 mt-0 font-semibold text-zinc-300">{{item.title}}</p>
+					<p class="pt-0 mt-0 text-sm text-zinc-500">{{item.name}}</p>
+				</div>
+
+				<div class="flex flex-row items-center space-x-4">
+					<p class="pt-0 mt-0 text-sm text-zinc-400" *ngIf="getExpectedSections(item.content.length) as sections">
+						{{item.content.length}} characters
+						<span *ngIf="sections > 1" class="text-xs text-zinc-500"> ({{sections}} sections)</span>
+					</p>
+	
+					<p
+						*ngIf="item.status"
+						[ngClass]="{
+							'text-teal-400': item.status === 'success',
+							'text-red-400': item.status === 'failed',
+							'text-amber-400': item.status === 'loading',
+						}"
+						class="pt-0 mt-0 text-sm"
+					>
+						{{item.status}}
+					</p>
+				</div>
+			</div>
+    </div>
+
+  </div>
+</div> -->

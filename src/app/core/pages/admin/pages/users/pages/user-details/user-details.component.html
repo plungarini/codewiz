@@ -1,0 +1,22 @@
+<ng-container *ngIf="user">
+	<div class="px-4 py-4 border rounded-md border-zinc-800">
+		
+		<app-user-header
+			[user]="user"
+		></app-user-header>
+
+		<div class="w-full h-px my-4 bg-zinc-800"></div>
+
+		<app-user-overview
+			[user]="user"
+		></app-user-overview>
+
+		<div class="w-full h-px my-4 bg-zinc-800"></div>
+
+		<app-user-actions
+			[user]="user"
+		></app-user-actions>
+
+	</div>
+</ng-container>
+

@@ -1,0 +1,238 @@
+<div class="max-w-5xl mx-auto sm:pr-4">
+	<ng-container *ngFor="let msg of chat; let i = index; trackBy: trackBy">
+		<ng-container *ngIf="msg && !msg?.hide">
+			<div
+				*ngIf="!msg.error?.message; else error"
+				[ngClass]="{
+					'pt-3': msg.role === msgRoles.Assistant,
+					'pt-1': msg.role === msgRoles.User,
+				}"
+				[attr.message-id]="msg.id"
+				class="relative flex flex-row w-full pb-3 sm:space-x-4 group/message"
+			>
+				<app-message-avatar
+					[name]="(user$ | async)?.name || 'Anonymous'"
+					[role]="msg.role"
+					[stopAnim]="msg.completed"
+					[ngClass]="{ 'pt-2.5': msg.role === msgRoles.Assistant }"
+				></app-message-avatar>
+				
+				<div class="relative max-w-full pr-10">
+					<div
+						[ngClass]="{
+							'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant,
+							'translate-y-3 opacity-0': !msg.content,
+							'translate-y-0 opacity-100': msg.content
+						}"
+						#msgContentDiv
+						class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0"
+					>
+						<ng-container *ngIf="msg.role === msgRoles.Assistant; else isUser">
+							<ng-template #buttonTemplate>
+								<button
+									(click)="onCodeCopyToClipboard(i)"
+									title="Copy to clipboard"
+									type="button"
+									[ngClass]="{
+										'bg-zinc-950 text-zinc-200': !codeCopied[i],
+										'bg-teal-500 text-zinc-800': codeCopied[i],
+									}"
+									class="absolute invisible px-2 py-2 text-sm transition-all duration-200 border rounded-lg shadow-sm opacity-0 btn active:shadow-inner border-zinc-600 hover:border-zinc-400 top-2 right-2 group-hover:visible group-hover:opacity-100 bg-zinc-950 text-zinc-200"
+								>
+									<span class="relative">
+										<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" focusable="false" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+											<path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z" transform="translate(0)"></path>
+											<path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z" transform="translate(0)"></path>
+											<rect fill="none" width="32" height="32"></rect>
+										</svg>
+										<div
+											[ngClass]="{
+												'opacity-0': !codeCopied[i],
+												'opacity-100': codeCopied[i],
+											}"
+											class="absolute px-2 py-1 font-normal leading-tight text-white transition-opacity transform -translate-x-6 -translate-y-1/2 rounded shadow opacity-100 pointer-events-none bg-zinc-800 top-1/2 right-full"
+										>
+											<div class="absolute w-0 h-0 transform -translate-y-1/2 border-4 border-r-0 border-zinc-800 bottom-full left-full top-1/2" style="border-top-color: transparent; border-bottom-color: transparent;">
+											</div>
+											Copied
+										</div>
+									</span>
+								</button>
+							</ng-template>
+							
+							<markdown
+								[data]="msg.content"
+								ngPreserveWhitespaces
+								clipboard
+								[clipboardButtonTemplate]="buttonTemplate"
+								class="block w-full max-w-full markdown"
+								[ngClass]="{
+									'animate-[pulse_0.7s_ease-in-out_1]': copiedAnim[i],
+								}"
+							></markdown>
+						</ng-container>
+						<ng-template #isUser>
+							<p
+								class="text-sm whitespace-pre-wrap md:text-base"
+								[ngClass]="{
+									'animate-[pulse_0.7s_ease-in-out_1]': copiedAnim[i],
+								}"
+							>{{msg.content}}</p>
+						</ng-template>
+					</div>
+		
+					<app-ai-toolbar
+						*ngIf="msg.role === msgRoles.Assistant && msg.content.length > 0"
+						[show]="msg.role === msgRoles.Assistant && msg.content.length > 0 && !msg.showPageSections"
+						[msg]="msg"
+						[containerWidth]="msgContentDiv.clientWidth"
+						(onShowPageSections)="togglePageSections(i, true)"
+					></app-ai-toolbar>
+	
+	
+					<app-message-toolbar
+						*ngIf="msg.completed"
+						[role]="msg.role"
+						[showCopyBtn]="!!msg.content"
+						[showRetryBtn]="msg.role === msgRoles.Assistant"
+						[showShareBtn]="msg.role === msgRoles.Assistant"
+						(onCopy)="onMsgCopyToClipboard(msg.content, i)"
+						(onRefresh)="onMsgRefresh(chat[i - 1].id)"
+						class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
+					></app-message-toolbar>
+				</div>
+	
+				<app-pagesections-selector
+					[pageSections]="msg.pageSections"
+					[ngClass]="{
+						'translate-y-2 opacity-0 pointer-events-none': !msg.showPageSections,
+						'translate-y-0 opacity-100 pointer-events-auto': msg.showPageSections,
+					}"
+					[hostUrl]="(repo$ | async)?.hostUrl || ''"
+					[replaceUrl]="(repo$ | async)?.replaceUrl || ''"
+					[replaceStrings]="(repo$ | async)?.replaceStrings || []"
+					[show]="!!msg.showPageSections"
+					(onClose)="togglePageSections(i, false)"
+					class="transition-all duration-500 no-scrollbar"
+				></app-pagesections-selector>
+	
+			</div>
+
+			<ng-template #error>
+				<div *ngIf="interpretError(msg.error) as err">
+					<div
+						[attr.message-id]="msg.id"
+						class="relative flex flex-row w-full pt-3 pb-3 sm:space-x-4 group/message"
+					>
+						<app-message-avatar
+							[role]="msg.role"
+							[stopAnim]="msg.completed"
+							class="block w-fit pt-2.5"
+						></app-message-avatar>
+						
+						<div class="relative max-w-full pr-10">
+							<div
+								[ngClass]="{
+									'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === msgRoles.Assistant,
+									'translate-y-3 opacity-0': !err.message,
+									'translate-y-0 opacity-100': err.message
+								}"
+								#msgErrorDiv
+								class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0"
+							>
+								<ng-template #buttonTemplate>
+									<button
+										(click)="onCodeCopyToClipboard(i)"
+										title="Copy to clipboard"
+										type="button"
+										[ngClass]="{
+											'bg-zinc-950 text-zinc-200': !codeCopied[i],
+											'bg-teal-500 text-zinc-800': codeCopied[i],
+										}"
+										class="absolute invisible px-2 py-2 text-sm transition-all duration-200 border rounded-lg shadow-sm opacity-0 btn active:shadow-inner border-zinc-600 hover:border-zinc-400 top-2 right-2 group-hover:visible group-hover:opacity-100 bg-zinc-950 text-zinc-200"
+									>
+										<span class="relative">
+											<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" focusable="false" role="img" width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 32 32">
+												<path d="M28,10V28H10V10H28m0-2H10a2,2,0,0,0-2,2V28a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V10a2,2,0,0,0-2-2Z" transform="translate(0)"></path>
+												<path d="M4,18H2V4A2,2,0,0,1,4,2H18V4H4Z" transform="translate(0)"></path>
+												<rect fill="none" width="32" height="32"></rect>
+											</svg>
+											<div
+												[ngClass]="{
+													'opacity-0': !codeCopied[i],
+													'opacity-100': codeCopied[i],
+												}"
+												class="absolute px-2 py-1 font-normal leading-tight text-white transition-opacity transform -translate-x-6 -translate-y-1/2 rounded shadow opacity-100 pointer-events-none bg-zinc-800 top-1/2 right-full"
+											>
+												<div class="absolute w-0 h-0 transform -translate-y-1/2 border-4 border-r-0 border-zinc-800 bottom-full left-full top-1/2" style="border-top-color: transparent; border-bottom-color: transparent;">
+												</div>
+												Copied
+											</div>
+										</span>
+									</button>
+								</ng-template>
+
+								<div [class.mb-2]="msg.content" class="w-full max-w-full ring-2 ring-zinc-800 px-2.5 py-1 rounded-md flex space-x-2">
+									<svg class="w-5 h-5 text-amber-500 translate-y-[0.15rem]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M16.2178 21H7.78313C4.83503 21 3 18.9188 3 15.9736V8.02638C3 5.08119 4.83503 3 7.78411 3H16.2178C19.1659 3 21 5.08119 21 8.02638V15.9736C21 18.9188 19.1572 21 16.2178 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M12.0059 8.10742V11.9993M12.0059 15.6926V15.7407" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									</svg>
+									<markdown
+										[data]="err.message"
+										ngPreserveWhitespaces
+										class="block w-full max-w-full markdown"
+									></markdown>
+								</div>
+
+								<markdown
+									*ngIf="msg.content"
+									[data]="msg.content"
+									ngPreserveWhitespaces
+									clipboard
+									[clipboardButtonTemplate]="buttonTemplate"
+									class="block w-full max-w-full markdown"
+									[ngClass]="{
+										'animate-[pulse_0.7s_ease-in-out_1]': copiedAnim[i],
+									}"
+								></markdown>
+							</div>
+				
+							<app-ai-toolbar
+								*ngIf="msg.role === msgRoles.Assistant && msg.content.length > 0"
+								[show]="msg.role === msgRoles.Assistant && msg.content.length > 0 && !msg.showPageSections"
+								[msg]="msg"
+								[containerWidth]="msgErrorDiv.clientWidth"
+								(onShowPageSections)="togglePageSections(i, true)"
+							></app-ai-toolbar>
+			
+							<app-message-toolbar
+								*ngIf="msg.completed"
+								[role]="msg.role"
+								[showCopyBtn]="!!msg.content"
+								[showRetryBtn]="msg.role === msgRoles.Assistant"
+								[showShareBtn]="msg.role === msgRoles.Assistant"
+								(onCopy)="onMsgCopyToClipboard(msg.content, i)"
+								(onRefresh)="onMsgRefresh(chat[i - 1].id)"
+								class="absolute top-[0.05rem] z-50 right-0 group-hover/message:opacity-100 focus-within:opacity-100 focus-within:pointer-events-auto group-hover/message:pointer-events-auto pointer-events-none group-hover/message:translate-y-0 focus-within:translate-y-0 translate-y-2 opacity-0 transition-all duration-300"
+							></app-message-toolbar>
+						</div>
+			
+						<app-pagesections-selector
+							[pageSections]="msg.pageSections"
+							[ngClass]="{
+								'translate-y-2 opacity-0 pointer-events-none': !msg.showPageSections,
+								'translate-y-0 opacity-100 pointer-events-auto': msg.showPageSections,
+							}"
+							[hostUrl]="(repo$ | async)?.hostUrl || ''"
+							[replaceUrl]="(repo$ | async)?.replaceUrl || ''"
+							[replaceStrings]="(repo$ | async)?.replaceStrings || []"
+							[show]="!!msg.showPageSections"
+							(onClose)="togglePageSections(i, false)"
+							class="transition-all duration-500 no-scrollbar"
+						></app-pagesections-selector>
+					</div>
+				</div>
+			</ng-template>
+		</ng-container>
+	</ng-container>
+</div>

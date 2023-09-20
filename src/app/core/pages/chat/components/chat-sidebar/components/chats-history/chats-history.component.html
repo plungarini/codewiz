@@ -1,0 +1,81 @@
+<ng-container *ngFor="let group of groupedDocuments; let iGroup = index">
+	<p class="mt-4 mb-2 text-xs text-zinc-600 h-fit">{{ group.date }}</p>
+	<div *ngFor="let chat of group.documents; trackBy: trackBy; let iChat = index; let last = last" [attr.data-group]="iGroup" [attr.data-chat]="iChat" class="flex flex-row items-center justify-between w-full mb-2 group/chatItem">
+		<div class="relative block truncate rounded-md w-fit shrink">
+			<input
+				type="text"
+				[value]="chat.name || 'New Chat'"
+				[formControl]="newChatNameInput"
+				#newChatNameInputElement
+				(keyup.enter)="onKeyEnter(chat.id, newChatNameInputElement)"
+				(blur)="blurNewChatNameInput(chat.id, $event)"
+				*ngIf="editModeTitle[iChat] && editModeGroupIndex === iGroup"
+				class="absolute top-0 left-0 z-10 w-full max-w-full px-4 py-2 m-0 text-sm text-white bg-transparent border-0 outline-none pointer-events-auto focus:outline-none focus:ring-0"
+			>
+			<a
+				[routerLink]="['/app/chat/', chat.repo?.id, chat.id]"
+				routerLinkActive
+				#rla="routerLinkActive"
+				[routerLinkActiveOptions]="{
+					exact: true,
+				}"
+				[title]="chat.name"
+				[ngClass]="{
+					'bg-zinc-800/80 text-zinc-200': rla.isActive || (editModeTitle[iChat] && editModeGroupIndex === iGroup),
+					'bg-transparent hover:bg-zinc-900/80 text-zinc-400': !rla.isActive && !(editModeTitle[iChat] && editModeGroupIndex === iGroup),
+					'truncate': !editModeTitle[iChat] || editModeGroupIndex !== iGroup,
+					'overflow-hidden pointer-events-none': editModeTitle[iChat] && editModeGroupIndex === iGroup
+				}"
+				class="relative z-0 block max-w-full px-4 py-2 text-sm transition-all duration-300 rounded-md w-fit shrink"
+			>
+				<span
+					[ngClass]="{
+						'opacity-100 pointer-events-auto': !(editModeTitle[iChat] && editModeGroupIndex === iGroup),
+						'opacity-0 pointer-events-none': editModeTitle[iChat] && editModeGroupIndex === iGroup,
+					}"
+					class="relative z-0 whitespace-nowrap"
+				>{{ (editModeTitle[iChat] && editModeGroupIndex === iGroup) ? newChatNameInput.value : (chat.name || 'New Chat') }}</span>
+			</a>
+		</div>
+
+		<div
+			[ngClass]="{
+				'group-hover/chatItem:-mr-0 -mr-[4.125rem] opacity-0 px-2 group-hover/chatItem:opacity-100 pointer-events-none group-hover/chatItem:pointer-events-auto': !(editModeTitle[iChat] && editModeGroupIndex === iGroup),
+				'opacity-100 mr-0 pointer-events-auto hover:bg-zinc-700 px-0': editModeTitle[iChat] && editModeGroupIndex === iGroup,
+			}"
+			class="flex flex-row items-center px-2 ml-2 -mr-[4.125rem] space-x-1 transition-all duration-300 rounded-md opacity-0 h-9 shrink-0 bg-zinc-800/50 group-hover/chatItem:-mr-0 group-hover/chatItem:opacity-100 pointer-events-none group-hover/chatItem:pointer-events-auto"
+		>
+			<ng-container *ngIf="!(editModeTitle[iChat] && editModeGroupIndex === iGroup); else editTitleButton">
+				<button tabindex="-1" type="button" (click)="editTitleMode(iGroup, iChat, chat.name || 'New Chat', true)" class="transition-colors duration-300 outline-none focus:outline-none ring-0 text-zinc-600 hover:text-amber-500">
+					<svg class="w-[1.1rem] h-[1.1rem]" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<g id="Iconly/Light/Edit-Square" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+							<g id="Edit-Square" transform="translate(2.000000, 2.000000)" stroke="currentColor" stroke-width="1.5" >
+								<path d="M9.4923,0.789 L5.7533,0.789 C2.6783,0.789 0.7503,2.966 0.7503,6.048 L0.7503,14.362 C0.7503,17.444 2.6693,19.621 5.7533,19.621 L14.5773,19.621 C17.6623,19.621 19.5813,17.444 19.5813,14.362 L19.5813,10.334" id="Stroke-1"></path>
+								<path d="M6.8278,8.9209 L14.3008,1.4479 C15.2318,0.5179 16.7408,0.5179 17.6718,1.4479 L18.8888,2.6649 C19.8198,3.5959 19.8198,5.1059 18.8888,6.0359 L11.3798,13.5449 C10.9728,13.9519 10.4208,14.1809 9.8448,14.1809 L6.0988,14.1809 L6.1928,10.4009 C6.2068,9.8449 6.4338,9.3149 6.8278,8.9209 Z" id="Stroke-3"></path>
+								<line x1="13.1652" y1="2.6025" x2="17.7312" y2="7.1685" id="Stroke-5"></line>
+							</g>
+						</g>
+					</svg>
+				</button>
+	
+				<button tabindex="-1" type="button" (click)="deleteChat(chat.repo?.id, chat.id)" class="transition-colors duration-300 outline-none focus:outline-none ring-0 text-zinc-600 hover:text-red-500">
+					<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M19.1666 9.54688L18.5547 17.9235C18.4282 19.6562 16.9854 20.9988 15.2468 20.9988H9.25378C7.51619 20.9988 6.07241 19.6562 5.94594 17.9225L5.33398 9.54688" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M20.5149 6.40234H3.98535" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M16.0214 6.40125L15.5184 3.92523C15.3725 3.37944 14.8773 3.00001 14.313 3.00001H10.1918C9.6246 2.99806 9.12745 3.37749 8.98054 3.92523L8.48242 6.40125" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M10.3516 11.7812V16.2896M13.732 11.7812V16.2896" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</button>
+			</ng-container>
+
+			<ng-template #editTitleButton>	
+				<button tabindex="-1" type="button" class="h-full px-2 transition-colors duration-300 outline-none cursor-pointer pointer-events-auto saveNewChatName focus:outline-none ring-0 text-zinc-600 hover:text-red-500">
+					<svg class="w-[1.1rem] h-[1.1rem] text-teal-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M19 7.1875L9.375 16.8125L5 12.4375" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</button>
+			</ng-template>
+			
+		</div>
+	</div>
+</ng-container>

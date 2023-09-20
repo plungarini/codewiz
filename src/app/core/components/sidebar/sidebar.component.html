@@ -1,0 +1,272 @@
+<nav aria-label="Sidebar" class="flex-col justify-between hidden h-full border-r relative z-[101] w-fit md:flex md:flex-shrink-0 md:overflow-y-auto md:bg-zinc-950 border-zinc-800">
+	<div class="relative flex flex-col items-center p-2 space-y-3 w-14">
+
+		<a
+			routerLink="/app"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300"
+		>
+			<img src="assets/logo/svg/codewiz_logo.svg" alt="CodeWiz" class="w-9 h-9">
+		</a>
+
+		<div class="w-4/5 border-b border-zinc-800"></div>
+
+		<a
+			routerLink="/app"
+			[ngClass]="{
+				'bg-gradient-to-tr from-zinc-900/50 to-zinc-800/70 shadow-xl text-white': currentPage === 'app',
+				'text-zinc-400 hover:text-zinc-200 bg-zinc-950 hover:bg-zinc-900': currentPage !== 'app'
+			}"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300 rounded-lg"
+		>
+			<svg class="w-[1.4rem] h-[1.4rem] shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<g id="Iconly/Light/Home" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+					<g id="Home" transform="translate(2.500000, 2.000000)" stroke="currentColor" stroke-width="1.5" >
+						<path d="M6.65721519,18.7714023 L6.65721519,15.70467 C6.65719744,14.9246392 7.29311743,14.2908272 8.08101266,14.2855921 L10.9670886,14.2855921 C11.7587434,14.2855921 12.4005063,14.9209349 12.4005063,15.70467 L12.4005063,15.70467 L12.4005063,18.7809263 C12.4003226,19.4432001 12.9342557,19.984478 13.603038,20 L15.5270886,20 C17.4451246,20 19,18.4606794 19,16.5618312 L19,16.5618312 L19,7.8378351 C18.9897577,7.09082692 18.6354747,6.38934919 18.0379747,5.93303245 L11.4577215,0.685301154 C10.3049347,-0.228433718 8.66620456,-0.228433718 7.51341772,0.685301154 L0.962025316,5.94255646 C0.362258604,6.39702249 0.00738668938,7.09966612 0,7.84735911 L0,16.5618312 C0,18.4606794 1.55487539,20 3.47291139,20 L5.39696203,20 C6.08235439,20 6.63797468,19.4499381 6.63797468,18.7714023 L6.63797468,18.7714023"></path>
+					</g>
+				</g>
+			</svg>
+		</a>
+	
+		<a
+			routerLink="/app/chat"
+			[ngClass]="{
+				'bg-gradient-to-tr from-zinc-900/50 to-zinc-800/70 shadow-xl text-white': currentPage === 'chat',
+				'text-zinc-400 hover:text-zinc-200 bg-zinc-950 hover:bg-zinc-900': currentPage !== 'chat'
+			}"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300 rounded-lg"
+		>
+			<svg class="w-6 h-6 shrink-0" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M11.2558 20.4939L9.83429 19.0676C9.42954 18.6614 8.88078 18.434 8.30867 18.434H7.24035C5.06478 18.434 3.30078 16.664 3.30078 14.4811V7.54177C3.30078 5.35884 5.06478 3.58984 7.24035 3.58984H17.3622C19.5378 3.58984 21.3008 5.35884 21.3008 7.54177V14.4811C21.3008 16.664 19.5378 18.434 17.3622 18.434H16.2939C15.7218 18.434 15.173 18.6614 14.7682 19.0676L13.3458 20.4939C12.7688 21.0738 11.8338 21.0738 11.2558 20.4939Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M8.98633 11.459C9.54287 12.7301 10.8184 13.6224 12.3003 13.6224C13.7831 13.6224 15.0587 12.7301 15.6152 11.459" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</a>
+	
+		<ng-container
+			*ngIf="isUserAdmin$ | async"
+		>
+			<div class="w-4/5 border-b border-zinc-800"></div>
+			
+			<a
+				routerLink="/app/admin"
+				[ngClass]="{
+					'bg-gradient-to-tr from-zinc-900/50 to-zinc-800/70 shadow-xl text-teal-400': currentPage === 'admin',
+					'text-zinc-400 hover:text-teal-400 bg-zinc-950 hover:bg-zinc-900': currentPage !== 'admin'
+				}"
+				class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300 rounded-lg"
+			>
+				<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path fill-rule="evenodd" clip-rule="evenodd" d="M14.9904 9.18909C14.9904 10.5831 13.8604 11.7131 12.4664 11.7131C11.0714 11.7131 9.94238 10.5831 9.94238 9.18909C9.94238 7.79509 11.0714 6.66406 12.4664 6.66406C13.8604 6.66406 14.9904 7.79509 14.9904 9.18909Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M8.51465 17.0483C8.51465 15.7583 9.53364 14.1523 12.4666 14.1523C15.4006 14.1523 16.4186 15.7473 16.4186 17.0383" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M21.4662 15.5312V17.1082C21.4662 19.2582 19.7242 21.0002 17.5742 21.0002H16.2842" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M3.46582 15.5312V17.1082C3.46582 19.2582 5.20883 21.0002 7.35883 21.0002H8.61581" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M3.46582 8.46899V6.89203C3.46582 4.74303 5.20883 3 7.35883 3H8.64783" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M21.4674 8.46899V6.89203C21.4674 4.74303 19.7244 3 17.5744 3H16.3174" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+			</a>
+		</ng-container>
+		
+	</div>
+
+
+	<div class="relative flex flex-col items-center p-2 space-y-3 w-14">
+		<a
+			routerLink="/pricing"
+			*ngIf="!((userSub$ | async) || 'apprentice').includes('master')"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 text-white transition-all duration-300 rounded-lg shadow-xl bg-gradient-to-tr from-pink-600/80 to-indigo-400/80 opacity-80 hover:opacity-100"
+		>
+			<svg class="w-6 h-6 shrink-0"  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M3.57919 16.3063L3.00123 7.32852C2.96912 6.82548 3.57335 6.54818 3.93336 6.89943L6.55363 9.45451C6.55363 9.45451 9.5485 6.47325 11.1072 4.91452C11.6083 4.41245 12.4188 4.4144 12.917 4.91744C14.4611 6.4752 17.4463 9.45937 17.4463 9.45937C17.4463 9.45937 18.9904 7.94442 20.0685 6.88775C20.4285 6.53455 21.0318 6.81575 20.9987 7.31879L20.4207 16.3054C20.3069 18.0781 18.8348 19.4579 17.059 19.4579H6.94185C5.16517 19.4579 3.694 18.0781 3.57919 16.3063Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M3.48438 14.8438H20.5137" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M12.0001 10.1998V10.2466M12.1893 10.2099C12.1893 10.315 12.104 10.4002 11.9989 10.4002C11.8938 10.4002 11.8086 10.315 11.8086 10.2099C11.8086 10.1048 11.8938 10.0195 11.9989 10.0195C12.104 10.0195 12.1893 10.1048 12.1893 10.2099Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</a>
+
+		<a
+			routerLink="/app/settings"
+			[ngClass]="{
+				'bg-gradient-to-tr from-zinc-900/50 to-zinc-800/70 shadow-xl text-white': currentPage === 'settings',
+				'text-zinc-400 hover:text-zinc-200 bg-zinc-950 hover:bg-zinc-900': currentPage !== 'settings'
+			}"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300 rounded-lg"
+		>
+			<svg class="w-6 h-6 shrink-0"  viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<circle cx="12.0929" cy="8.6925" r="4.6925" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M14.2883 13.668H10.0124C7.58727 13.668 5.62131 15.6339 5.62131 18.0591C5.62131 18.1462 5.62047 18.2336 5.6193 18.3213C5.60627 19.2937 6.39631 19.9999 7.36883 19.9999H16.9318C17.9044 19.9999 18.6944 19.2937 18.6814 18.3213C18.6802 18.2336 18.6794 18.1462 18.6794 18.0591C18.6794 15.6339 16.7134 13.668 14.2883 13.668Z" stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</a>
+
+	</div>
+</nav>
+
+
+<div
+	[ngClass]="{
+		'pointer-events-auto opacity-50': menuOpen,
+		'pointer-events-none opacity-0': !menuOpen,
+	}"
+	class="fixed inset-0 transition-opacity duration-300 bg-black md:hidden z-[999]"
+	(click)="toggleMenu(false)"
+></div>
+
+<div class="fixed top-0 z-[5002] w-screen left-0 md:hidden bg-zinc-950/90 border-b border-zinc-900 shadow-lg shadow-black/10 backdrop-blur">
+	<div class="w-full px-4">
+		<div class="flex items-center justify-between pt-5 pb-3 overflow-hidden w-full py-1 space-x-8 z-[1002] transition-all duration-300 relative text-zinc-200">
+			<a routerLink="/app" class="block h-full pl-4 w-fit max-h-7 grow-0 shrink-0">
+				<img src="assets/logo/svg/codewiz_logo.svg" alt="CodeWiz" class="w-auto h-7">
+			</a>
+
+			<div class="flex-1 h-7"></div>
+
+			<div class="px-4 py-2 cursor-pointer" (click)="toggleMenu()">
+				<div
+					[ngClass]="{
+						'opacity-40': menuOpen,
+						'opacity-100': !menuOpen,
+					}"
+					class="flex flex-col items-center justify-between w-5 h-5 transition-all duration-300 shrink-0 py-[2px]">
+					<div
+						[ngClass]="{
+							'translate-y-[0.435rem] rotate-45 bg-zinc-50': menuOpen,
+							'translate-y-0 rotate-0 bg-zinc-500': !menuOpen,
+						}"
+						class="transition-all duration-300 origin-center w-full bg-zinc-500 rounded-md h-[2px]"
+					></div>
+					<div
+						[ngClass]="{
+							'-rotate-45': menuOpen,
+							'-rotate-0': !menuOpen,
+						}"
+						class="transition-all duration-300 origin-center bg-zinc-50 w-full h-[2px]"
+					></div>
+					<div
+						[ngClass]="{
+							'translate-y-1.5 opacity-0': menuOpen,
+							'translate-y-0 opacity-100': !menuOpen,
+						}"
+						class="transition-all duration-300 bg-zinc-500 rounded-md w-full h-[2px]"
+					></div>
+				</div>
+			</div>
+		</div>
+
+		<div
+			[ngClass]="{
+				'pointer-events-none': !menuOpen,
+				'pointer-events-auto': menuOpen
+			}"
+			class="relative z-[1001] transition-all duration-300"
+		>
+			<div
+				[ngClass]="{
+					'opacity-0 !top-14': !menuOpen,
+					'opacity-100 !top-20': menuOpen
+				}"
+				class="fixed p-4 transition-all duration-300 origin-top scale-100 rounded-md opacity-100 inset-x-4 ring-1 bg-black/80 backdrop-blur-md ring-zinc-900"
+				tabindex="-1"
+			>
+				<h3 class="text-sm font-medium text-zinc-400">Menu</h3>
+				
+				<nav class="mt-6">
+					<ul class="-my-2 space-y-2 text-base text-zinc-300">
+						
+						<li class="w-full">
+							<a
+								routerLink="/app"
+								(click)="toggleMenu(false)"
+								[ngClass]="{
+									'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'app',
+									'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'app'
+								}"
+								class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
+							>
+								<svg class="w-[1.4rem] h-[1.4rem] shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+									<g id="Iconly/Light/Home" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+										<g id="Home" transform="translate(2.500000, 2.000000)" stroke="currentColor" stroke-width="1.5" >
+											<path d="M6.65721519,18.7714023 L6.65721519,15.70467 C6.65719744,14.9246392 7.29311743,14.2908272 8.08101266,14.2855921 L10.9670886,14.2855921 C11.7587434,14.2855921 12.4005063,14.9209349 12.4005063,15.70467 L12.4005063,15.70467 L12.4005063,18.7809263 C12.4003226,19.4432001 12.9342557,19.984478 13.603038,20 L15.5270886,20 C17.4451246,20 19,18.4606794 19,16.5618312 L19,16.5618312 L19,7.8378351 C18.9897577,7.09082692 18.6354747,6.38934919 18.0379747,5.93303245 L11.4577215,0.685301154 C10.3049347,-0.228433718 8.66620456,-0.228433718 7.51341772,0.685301154 L0.962025316,5.94255646 C0.362258604,6.39702249 0.00738668938,7.09966612 0,7.84735911 L0,16.5618312 C0,18.4606794 1.55487539,20 3.47291139,20 L5.39696203,20 C6.08235439,20 6.63797468,19.4499381 6.63797468,18.7714023 L6.63797468,18.7714023"></path>
+										</g>
+									</g>
+								</svg>
+
+								<span class="font-medium translate-y-px">Dashboard</span>
+							</a>
+						</li>
+						
+						<li class="w-full">
+							<a
+								routerLink="/app/chat"
+								(click)="toggleMenu(false)"
+								[ngClass]="{
+									'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'chat',
+									'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'chat'
+								}"
+								class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
+							>
+								<svg class="w-6 h-6 shrink-0" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M11.2558 20.4939L9.83429 19.0676C9.42954 18.6614 8.88078 18.434 8.30867 18.434H7.24035C5.06478 18.434 3.30078 16.664 3.30078 14.4811V7.54177C3.30078 5.35884 5.06478 3.58984 7.24035 3.58984H17.3622C19.5378 3.58984 21.3008 5.35884 21.3008 7.54177V14.4811C21.3008 16.664 19.5378 18.434 17.3622 18.434H16.2939C15.7218 18.434 15.173 18.6614 14.7682 19.0676L13.3458 20.4939C12.7688 21.0738 11.8338 21.0738 11.2558 20.4939Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M8.98633 11.459C9.54287 12.7301 10.8184 13.6224 12.3003 13.6224C13.7831 13.6224 15.0587 12.7301 15.6152 11.459" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+
+								<span class="font-medium translate-y-px">Chats</span>
+							</a>
+						</li>
+						
+						<ng-container
+							*ngIf="isUserAdmin$ | async"
+						>
+							<li class="w-full">
+								<div class="w-4/5 mb-2 border-b border-zinc-100/5"></div>
+
+								<a
+									routerLink="/app/admin"
+									(click)="toggleMenu(false)"
+									[ngClass]="{
+										'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'admin',
+										'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'admin'
+									}"
+									class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
+								>
+									<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path fill-rule="evenodd" clip-rule="evenodd" d="M14.9904 9.18909C14.9904 10.5831 13.8604 11.7131 12.4664 11.7131C11.0714 11.7131 9.94238 10.5831 9.94238 9.18909C9.94238 7.79509 11.0714 6.66406 12.4664 6.66406C13.8604 6.66406 14.9904 7.79509 14.9904 9.18909Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M8.51465 17.0483C8.51465 15.7583 9.53364 14.1523 12.4666 14.1523C15.4006 14.1523 16.4186 15.7473 16.4186 17.0383" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M21.4662 15.5312V17.1082C21.4662 19.2582 19.7242 21.0002 17.5742 21.0002H16.2842" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M3.46582 15.5312V17.1082C3.46582 19.2582 5.20883 21.0002 7.35883 21.0002H8.61581" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M3.46582 8.46899V6.89203C3.46582 4.74303 5.20883 3 7.35883 3H8.64783" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M21.4674 8.46899V6.89203C21.4674 4.74303 19.7244 3 17.5744 3H16.3174" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									</svg>
+
+									<span class="font-medium translate-y-px">Admin Panel</span>
+								</a>
+							</li>
+						</ng-container>
+						
+						<li class="w-full">
+							<div class="w-4/5 mb-2 border-b border-zinc-100/5"></div>
+
+							<a
+								routerLink="/app/settings"
+								(click)="toggleMenu(false)"
+								[ngClass]="{
+									'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'settings',
+									'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'settings'
+								}"
+								class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
+							>
+								<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+									<g id="Iconly/Light/Setting" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+										<g id="Setting" transform="translate(2.500000, 1.500000)" stroke="currentColor" stroke-width="1.5" >
+											<path d="M18.3066362,6.12356982 L17.6842106,5.04347829 C17.1576365,4.12955711 15.9906873,3.8142761 15.0755149,4.33867279 L15.0755149,4.33867279 C14.6398815,4.59529992 14.1200613,4.66810845 13.6306859,4.54104256 C13.1413105,4.41397667 12.7225749,4.09747295 12.4668193,3.66132725 C12.3022855,3.38410472 12.2138742,3.06835005 12.2105264,2.74599544 L12.2105264,2.74599544 C12.2253694,2.22917739 12.030389,1.72835784 11.6700024,1.3576252 C11.3096158,0.986892553 10.814514,0.777818938 10.2974829,0.778031878 L9.04347831,0.778031878 C8.53694532,0.778031878 8.05129106,0.97987004 7.69397811,1.33890085 C7.33666515,1.69793166 7.13715288,2.18454839 7.13958814,2.69107553 L7.13958814,2.69107553 C7.12457503,3.73688099 6.27245786,4.57676682 5.22654465,4.57665906 C4.90419003,4.57331126 4.58843537,4.48489995 4.31121284,4.32036615 L4.31121284,4.32036615 C3.39604054,3.79596946 2.22909131,4.11125048 1.70251717,5.02517165 L1.03432495,6.12356982 C0.508388616,7.03634945 0.819378585,8.20256183 1.72997713,8.73226549 L1.72997713,8.73226549 C2.32188101,9.07399614 2.68650982,9.70554694 2.68650982,10.3890161 C2.68650982,11.0724852 2.32188101,11.704036 1.72997713,12.0457667 L1.72997713,12.0457667 C0.820534984,12.5718952 0.509205679,13.7352837 1.03432495,14.645309 L1.03432495,14.645309 L1.6659039,15.7345539 C1.9126252,16.1797378 2.3265816,16.5082503 2.81617164,16.6473969 C3.30576167,16.7865435 3.83061824,16.7248517 4.27459956,16.4759726 L4.27459956,16.4759726 C4.71105863,16.2212969 5.23116727,16.1515203 5.71931837,16.2821523 C6.20746948,16.4127843 6.62321383,16.7330005 6.87414191,17.1716248 C7.03867571,17.4488473 7.12708702,17.764602 7.13043482,18.0869566 L7.13043482,18.0869566 C7.13043482,19.1435014 7.98693356,20.0000001 9.04347831,20.0000001 L10.2974829,20.0000001 C11.3504633,20.0000001 12.2054882,19.1490783 12.2105264,18.0961099 L12.2105264,18.0961099 C12.2080776,17.5879925 12.4088433,17.0999783 12.7681408,16.7406809 C13.1274382,16.3813834 13.6154524,16.1806176 14.1235699,16.1830664 C14.4451523,16.1916732 14.7596081,16.2797208 15.0389017,16.4393593 L15.0389017,16.4393593 C15.9516813,16.9652957 17.1178937,16.6543057 17.6475973,15.7437072 L17.6475973,15.7437072 L18.3066362,14.645309 C18.5617324,14.2074528 18.6317479,13.6859659 18.5011783,13.1963297 C18.3706086,12.7066935 18.0502282,12.2893121 17.6109841,12.0366133 L17.6109841,12.0366133 C17.17174,11.7839145 16.8513595,11.3665332 16.7207899,10.876897 C16.5902202,10.3872608 16.6602358,9.86577384 16.9153319,9.42791767 C17.0812195,9.13829096 17.3213574,8.89815312 17.6109841,8.73226549 L17.6109841,8.73226549 C18.5161253,8.20284891 18.8263873,7.04344892 18.3066362,6.13272314 L18.3066362,6.13272314 L18.3066362,6.12356982 Z" id="Path_33946"></path>
+											<circle id="Ellipse_737" cx="9.67505726" cy="10.3890161" r="2.63615562"></circle>
+										</g>
+									</g>
+								</svg>
+
+								<span class="font-medium translate-y-px">Settings</span>
+							</a>
+						</li>
+						
+					</ul>
+				</nav>
+			</div>
+		</div>
+	</div>
+</div>

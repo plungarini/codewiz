@@ -1,0 +1,20 @@
+{
+  "projects": {
+    "default": "codewiz-staging",
+    "prod": "codewiz-prod",
+    "dev": "codewiz-staging"
+  },
+	"targets": {
+    "codewiz-staging": {
+      "hosting": {
+        "dev": [
+          "codewiz-staging"
+        ],
+        "prod": [
+          "codewiz-prod"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

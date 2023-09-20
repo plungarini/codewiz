@@ -1,0 +1,29 @@
+<div class="relative z-30 flex h-full sm:h-screen sm:max-h-full">
+	<div class="flex flex-col flex-1 px-4 py-12 shadow-2xl sm:py-24 sm:px-6 lg:flex-none lg:px-20 xl:px-24 sm:h-full sm:overflow-y-auto">
+		<router-outlet></router-outlet>
+	</div>
+  <div class="relative flex-1 hidden w-0 -z-10 lg:block bg-zinc-900/60">
+		<app-auth-banner></app-auth-banner>
+  </div>
+</div>
+
+<div class="fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-5 pointer-events-none sm:px-6 lg:px-8">
+  <div
+		[ngClass]="{
+			'pointer-events-auto opacity-100 translate-y-0': showPRBanner,
+			'pointer-events-none opacity-0 translate-y-2': !showPRBanner
+		}"
+	class="pointer-events-none flex items-center justify-between transition-all duration-300 opacity-0 translate-y-2 shadow-2xl gap-x-6 bg-zinc-800 py-2.5 px-6 rounded-md sm:rounded-xl sm:py-3 sm:pr-3.5 sm:pl-4 ring-inset ring-2 ring-teal-500">
+    <p class="mt-0 text-sm leading-6 text-white">
+      <strong class="block font-semibold sm:inline">Password Reset</strong>
+			<svg viewBox="0 0 2 2" class="mx-2 h-0.5 w-0.5 fill-current sm:inline hidden" aria-hidden="true"><circle cx="1" cy="1" r="1" /></svg>You successfully changed your password. You can login now!
+    </p>
+    <button (click)="dismissPRCompletionBanner()" type="button" class="-m-1.5 flex-none p-1.5 hover:bg-zinc-700 bg-zinc-800 rounded-md transition-colors duration-300">
+      <span class="sr-only">Dismiss</span>
+      <svg class="w-5 h-5 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+        <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+      </svg>
+    </button>
+  </div>
+</div>
+

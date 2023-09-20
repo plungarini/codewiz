@@ -1,0 +1,7 @@
+# CodeWiz Robots.txt
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://codewiz.app/sitemap.xml

@@ -1,0 +1,115 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+@import '~highlight.js/styles/github-dark-dimmed.css';
+
+
+// Scrollbar
+html,
+body,
+ul {
+	.no-scrollbar::-webkit-scrollbar-thumb {
+		border: 0px;
+		border-radius: 0px;
+		background-color: transparent !important;
+
+		&:hover {
+			background-color: transparent !important;
+		}
+	}
+	.no-scrollbar::-webkit-scrollbar-corner {
+		background-color: transparent !important;
+		border-left: 0px;
+		border-top: 0px;
+	}
+	.no-scrollbar::-webkit-scrollbar {
+		width: 0px !important;
+		height: 0px !important;
+		background-color: transparent !important;
+	}
+
+	:not(.no-scrollbar)::-webkit-scrollbar-thumb {
+		min-width: 3rem !important;
+		min-height: 3rem !important;
+		border: 0.4rem solid transparent !important;
+		-moz-background-clip: content !important;
+		-webkit-background-clip: content !important;
+		background-clip: content-box !important;
+		border-radius: 1rem !important;
+		background-color: rgba(255, 255, 255, 0.25) !important;
+
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.4) !important;
+		}
+	}
+	:not(.no-scrollbar)::-webkit-scrollbar-corner {
+		background-color: transparent !important;
+		border-left: 1px solid hsla(0, 0%, 100%, 0.05) !important;
+		border-top: 1px solid hsla(0, 0%, 100%, 0.05) !important;
+	}
+	:not(.no-scrollbar)::-webkit-scrollbar {
+		width: 1.2rem !important;
+		height: 1.2rem !important;
+		background-color: transparent !important;
+	}
+
+	&:not(.no-scrollbar)::-webkit-scrollbar-track {
+		border-color: hsla(0, 0%, 100%, 0.05) !important;
+	}
+}
+
+// Headings
+@layer base {
+	h1 {
+		@apply text-4xl font-bold text-zinc-50 sm:text-5xl mb-4;
+		font-family: 'Poppins', sans-serif;
+	}
+	h2 {
+		@apply text-2xl font-bold text-zinc-50 sm:text-3xl mb-4;
+		font-family: 'Poppins', sans-serif;
+	}
+	h3 {
+		@apply text-lg font-bold text-zinc-50 sm:text-xl mb-2;
+	}
+	
+	p {
+		@apply text-base text-zinc-400
+	}
+}
+
+// Remove arrows/Spinners from inputs
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+// Add media query for mobile
+@media (max-width: 640px) {
+	html {
+		overflow-x: hidden;
+		width: 100%;
+	}
+	body {
+		width: 100%;
+		overflow: hidden;
+	}
+}
+
+// Fix h-screen for ios
+@supports (-webkit-touch-callout: none) {
+  .h-screen {
+    height: -webkit-fill-available !important;
+  }
+	.max-h-screen {
+		max-height: -webkit-fill-available !important;
+	}
+}

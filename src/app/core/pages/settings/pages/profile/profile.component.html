@@ -1,0 +1,177 @@
+<ng-template #noUserSkeleton>
+	<div class="flex items-center justify-start px-4 pb-8 mb-8 space-x-4 border-b border-zinc-900">
+		<div
+			class="w-12 h-12 rounded-md bg-zinc-600 animate-pulse shrink-0"
+		></div>
+		<div class="max-w-full">
+			<span class="block h-6 max-w-full rounded-md w-36 bg-pink-600/80 animate-pulse"></span>
+			<span class="block w-24 h-4 max-w-full mt-1 rounded-md bg-zinc-600 animate-pulse"></span>
+		</div>
+	</div>
+</ng-template>
+
+
+<div class="px-6">
+	<div class="max-w-2xl py-16 mx-auto sm:py-24">
+		<ng-container *ngIf="(user$ | async) as user; else noUserSkeleton">
+			<ng-container *ngIf="(fireUser$ | async) as fireUser; else noUserSkeleton">
+				<div class="flex items-center justify-start pb-8 mb-8 space-x-4 border-b border-zinc-900">
+					<input #profilePicture class="hidden" type="file" (change)="uploadImage(fireUser.uid, $event.target, user.details?.imgUrl)" accept="image/png, image/jpeg">
+
+					<div
+						[ngClass]="{
+							'hover:ring-2 hover:ring-offset-1 hover:ring-offset-zinc-950 ring-offset-zinc-950 ring-pink-600/80': !loadingImgBtn
+						}"
+						class="relative overflow-hidden transition-all duration-300 rounded-md group"
+					>
+						<ng-container *ngIf="form.value.imgUrl as imgUrl">
+							<img
+								ixImg
+								*ngIf="!imgUrl.includes('http'); else noRelImage"
+								[path]="imgUrl"
+								[alt]="user.name || fireUser.displayName || 'Anonymous'"
+								(click)="profilePicture.click()"
+								[width]="1"
+								[height]="1"
+								class="object-cover object-center w-12 h-12 cursor-pointer"
+							>
+							<ng-template #noRelImage>
+								<img
+									[src]="imgUrl"
+									[alt]="user.name || fireUser.displayName || 'Anonymous'"
+									(click)="profilePicture.click()"
+									[width]="1"
+									[height]="1"
+									class="object-cover object-center w-12 h-12 cursor-pointer"
+								>
+							</ng-template>
+						</ng-container>
+
+						<div
+							[ngClass]="{
+								'flex': !loadingImgBtn,
+								'hidden': loadingImgBtn,
+							}"
+							class="absolute inset-0 flex items-center justify-center transition-opacity duration-300 opacity-0 pointer-events-none group-hover:opacity-100 bg-zinc-900/60"
+						>
+							<svg class="w-7 h-7 text-zinc-50" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+								<g id="Iconly/Light/Paper-Upload" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+									<g id="Paper-Upload" transform="translate(3.500000, 2.000000)" stroke="currentColor" stroke-width="1.5" >
+										<path d="M11.2366,0.761771154 L4.5846,0.761771154 C2.5046,0.7538 0.8006,2.4108 0.7506,4.4908 L0.7506,15.2278 C0.7056,17.3298 2.3736,19.0698 4.4746,19.1148 C4.5116,19.1148 4.5486,19.1158 4.5846,19.1148 L12.5726,19.1148 C14.6626,19.0408 16.3146,17.3188 16.302665,15.2278 L16.302665,6.0378 L11.2366,0.761771154 Z" id="Stroke-1"></path>
+										<path d="M10.9749,0.7501 L10.9749,3.6591 C10.9749,5.0791 12.1239,6.2301 13.5439,6.2341 L16.2979,6.2341" id="Stroke-3"></path>
+										<line x1="8.1409" y1="7.9088" x2="8.1409" y2="13.9498" id="Stroke-5"></line>
+										<polyline id="Stroke-7" points="10.4866 10.2643 8.1416 7.9093 5.7966 10.2643"></polyline>
+									</g>
+								</g>
+							</svg>
+						</div>
+						
+						<div
+							[ngClass]="{
+								'opacity-100 pointer-events-auto': loadingImgBtn,
+								'opacity-0 pointer-events-none': !loadingImgBtn,
+							}"
+							class="absolute inset-0 flex items-center justify-center transition-opacity duration-300 bg-zinc-900/60 backdrop-blur-sm"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-7 h-7 shrink-0 animate-spin" style="shape-rendering: auto;">
+								<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-zinc-400">
+								</circle>
+							</svg>
+						</div>
+					</div>
+					<p class="max-w-full text-lg font-semibold leading-5 truncate shrink text-pink-500/80">
+						<span class="truncate">{{user.name || fireUser.displayName || 'Anonymous'}}</span>
+						<span class="block text-sm font-medium truncate text-zinc-500">{{fireUser.email}}</span>
+					</p>
+				</div>
+			</ng-container>
+		</ng-container>
+
+		<form [formGroup]="form" (ngSubmit)="saveDetails()" class="flex flex-col pb-8 mb-8 space-y-4 border-b border-zinc-900">
+			<!-- FORM ROW -->
+			<div class="flex flex-col space-y-4 md:space-x-4 md:space-y-0 md:flex-row">
+				<div class="flex-1">
+					<label class="text-sm font-medium text-zinc-600" for="firstName">First Name</label>
+					<input
+						type="text"
+						id="firstName"
+						name="firstName"
+						formControlName="firstName"
+						placeholder="Your first name"
+						class="w-full m-0 mt-1 bg-transparent border px-2.5 rounded-md border-zinc-600 py-1.5 focus:border-zinc-600 outline-none text-zinc-200 placeholder:text-zinc-400/70 focus:outline-none ring-0 focus:ring-2 focus:ring-offset-1 ring-offset-0 ring-indigo-400 transition-all duration-300 focus:ring-offset-zinc-950 ring-offset-zinc-950"
+					>
+				</div>
+				<div class="flex-1">
+					<label class="text-sm font-medium text-zinc-600" for="lastName">Last Name</label>
+					<input
+						type="text"
+						id="lastName"
+						name="lastName"
+						formControlName="lastName"
+						placeholder="Your last name"
+						class="w-full m-0 mt-1 bg-transparent border px-2.5 rounded-md border-zinc-600 py-1.5 focus:border-zinc-600 outline-none text-zinc-200 placeholder:text-zinc-400/70 focus:outline-none ring-0 focus:ring-2 focus:ring-offset-1 ring-offset-0 ring-indigo-400 transition-all duration-300 focus:ring-offset-zinc-950 ring-offset-zinc-950"
+					>
+				</div>
+			</div>
+			<!-- FORM ROW -->
+			<div class="flex flex-col space-y-4 md:space-x-4 md:space-y-0 md:flex-row">
+				<div class="flex-1">
+					<label class="text-sm font-medium text-zinc-600" for="email">Email</label>
+					<input
+						type="email"
+						id="email"
+						name="email"
+						formControlName="email"
+						readonly
+						placeholder="Your email address"
+						class="w-full m-0 mt-1 bg-transparent border px-2.5 rounded-md border-zinc-600 py-1.5 focus:border-zinc-600 outline-none text-zinc-200 read-only:opacity-40 placeholder:text-zinc-400/70 focus:outline-none ring-0 focus:ring-0 focus:ring-offset-0 ring-offset-0 ring-indigo-400 transition-all duration-300 focus:ring-offset-zinc-950 ring-offset-zinc-950"
+					>
+				</div>
+				<div class="flex-1">
+					<label class="text-sm font-medium text-zinc-600" for="phone">Phone Number (optional)</label>
+					<input
+						type="tel"
+						id="phone"
+						name="phone"
+						formControlName="phone"
+						placeholder="Your phone number"
+						class="w-full m-0 mt-1 bg-transparent border px-2.5 rounded-md border-zinc-600 py-1.5 focus:border-zinc-600 outline-none text-zinc-200 placeholder:text-zinc-400/70 focus:outline-none ring-0 focus:ring-2 focus:ring-offset-1 ring-offset-0 ring-indigo-400 transition-all duration-300 focus:ring-offset-zinc-950 ring-offset-zinc-950"
+					>
+				</div>
+			</div>
+
+			<div class="flex flex-1" *ngIf="error || successMessage">
+				<ng-container *ngIf="error">
+					<div class="text-red-400">{{error}}</div>
+				</ng-container>
+				<ng-container *ngIf="successMessage">
+					<div class="text-teal-400">{{successMessage}}</div>
+				</ng-container>
+			</div>
+
+			<div class="flex justify-end">
+				<button
+					[disabled]="form.invalid || isFormEqual"
+					type="submit"
+					class="inline-flex items-center px-3 py-1 text-base font-semibold text-white transition-all duration-300 bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 disabled:hover:bg-indigo-600 hover:ring-2 disabled:hover:ring-0 hover:ring-offset-2 disabled:hover:ring-offset-0 ring-offset-zinc-900 hover:ring-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+				>
+					Save
+				</button>
+			</div>
+		</form>
+		
+		<div class="block pt-2 sm:hidden">
+			<button
+				(click)="signout()"
+				class="flex flex-row items-center px-4 py-2 space-x-2 text-sm font-medium text-red-500 truncate transition-all duration-300 bg-transparent rounded-md bg-zinc-900 w-fit hover:bg-zinc-900/80 shrink"
+			>
+				<svg class="w-6 h-6 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M9.51758 4.25H16.1013C18.2543 4.25 20.0002 5.99594 20.0002 8.14786V16.3506C20.0002 18.5035 18.2543 20.2494 16.1013 20.2494H9.51758" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M9.51738 8.66406L13.3792 12.2499M13.3792 12.2499L9.51738 15.8358M13.3792 12.2499L4 12.2504" stroke="currentColor" stroke-width="1.5" class="origin-center rotate-180 -translate-x-2" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+		
+				<span>Log out</span>
+			</button>
+		</div>
+	</div>
+</div>

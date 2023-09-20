@@ -1,0 +1,85 @@
+:host {
+	@apply block w-full h-full overflow-hidden;
+
+	.aura-bg {
+		background: linear-gradient(
+			45deg, 
+			#8B5CF6 0%,
+			#ec4899 50%, 
+			#f59e0b 100%
+		);
+	}
+
+	.aura-shadow {
+		@apply blur-3xl transition-opacity duration-1000 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
+		
+		background: linear-gradient(
+			45deg, 
+			#8B5CF6 0%, 
+			#9a66fa 6.25%, 
+			#a176f3 12.5%, 
+			#ad87eb 18.75%, 
+			#b690ef 25%, 
+			#c478e1 31.25%, 
+			#da6ebd 37.5%, 
+			#e55ea5 43.75%, 
+			#ec4899 50%, 
+			#f4578b 56.25%, 
+			#f66c82 62.5%, 
+			#f7816e 68.75%, 
+			#f8905c 75%, 
+			#f9a549 81.25%,
+			#f59e0b 100%
+		);
+
+		animation-name: aura-rotate;
+		animation-iteration-count: infinite;
+		animation-timing-function: linear;
+		animation-duration: 50s;
+		background-size: 200% 200%;
+		
+		width: calc(100vw * 2);
+		height: calc(100vh * 2);
+		
+		&.stop-aura-anim {
+			@apply opacity-0;
+		}
+	
+		&.aura-anim {
+			@apply opacity-80;
+		}
+	}
+
+	@keyframes pulse2 {
+		0% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0;
+		}
+		80%, 100% {
+			opacity: 1;
+		}
+	}
+	.animate-pulse2 {
+		animation: pulse2 1.3s steps(1) infinite;
+	}
+	
+	@keyframes aura-rotate {
+		 0% {
+			transform: rotate(0deg);
+			border-radius: 0%;
+			background-position: 0% 0%;
+		}
+		50% {
+			transform: rotate(180deg);
+			border-radius: 50%;
+			background-position: 100% 0%;
+		}
+		100% {
+			transform: rotate(360deg);
+			border-radius: 0%;
+			background-position: 0% 0%;
+		}
+	}
+}

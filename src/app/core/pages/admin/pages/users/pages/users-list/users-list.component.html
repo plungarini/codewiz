@@ -1,0 +1,224 @@
+<div class="mt-4">
+	<input
+		[formControl]="searchControl"
+		type="text"
+		name="search"
+		[placeholder]="'Search in ' + filteredUsers.length + ' users'"
+		class="relative z-20 block w-full px-3 py-2 rounded-md border-zin-800 bg-zinc-800 placeholder-zinc-400 text-zinc-200 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+	/>
+</div>
+
+<div class="flex items-center justify-between w-full px-4 py-2 mt-4 space-x-2 bg-zinc-900 rounded-t-md">
+
+	<div class="flex items-center space-x-1 cursor-pointer group" (click)="onSort('name')">
+		<p
+			[ngClass]="{
+				'text-zinc-400 font-normal group-hover:text-zinc-200': sortBy !== 'name',
+				'text-white font-medium': sortBy === 'name',
+			}"
+			class="font-medium transition-all duration-300 shrink-0"
+		>Name</p>
+
+		<svg class="w-4 h-4 transition-colors duration-300 shrink-0 text-zinc-400" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path
+				[ngClass]="{
+					'text-white opacity-100': sortBy === 'name' && order === 'asc',
+					'group-hover:text-white text-zinc-400 opacity-40': sortBy !== 'name' || order !== 'asc',
+				}"
+				class="transition-all duration-300"
+				d="M10.7934 9.04949L7.89714 6.15234M7.89714 6.15234L5 9.04949M7.89714 6.15234L7.89675 18.2195"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+			<path
+				[ngClass]="{
+					'text-white opacity-100': sortBy === 'name' && order === 'desc',
+					'group-hover:text-white text-zinc-400 opacity-40': sortBy !== 'name' || order !== 'desc',
+				}"
+				class="transition-all duration-300"
+				d="M13.207 15.3228L16.1033 18.2191M16.1033 18.2191L19.0004 15.3228M16.1033 18.2191L16.1038 6.15234"
+				stroke="currentColor"
+				stroke-width="1.5"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+			/>
+		</svg>
+	</div>
+
+	<div class="flex items-center">
+		<div class="flex items-center mr-1 space-x-1 cursor-pointer sm:mr-4 group" (click)="onSort('in')">
+			<p
+				[ngClass]="{
+					'text-zinc-400 font-normal group-hover:text-zinc-200': sortBy !== 'in',
+					'text-white font-medium': sortBy === 'in',
+				}"
+				class="font-medium transition-all duration-300 shrink-0"
+			>In</p>
+	
+			<svg class="w-4 h-4 transition-colors duration-300 shrink-0 text-zinc-400" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path
+					[ngClass]="{
+						'text-white opacity-100': sortBy === 'in' && order === 'asc',
+						'group-hover:text-white text-zinc-400 opacity-40': sortBy !== 'in' || order !== 'asc',
+					}"
+					class="transition-all duration-300"
+					d="M10.7934 9.04949L7.89714 6.15234M7.89714 6.15234L5 9.04949M7.89714 6.15234L7.89675 18.2195"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+				<path
+					[ngClass]="{
+						'text-white opacity-100': sortBy === 'in' && order === 'desc',
+						'group-hover:text-white text-zinc-400 opacity-40': sortBy !== 'in' || order !== 'desc',
+					}"
+					class="transition-all duration-300"
+					d="M13.207 15.3228L16.1033 18.2191M16.1033 18.2191L19.0004 15.3228M16.1033 18.2191L16.1038 6.15234"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+		</div>
+		
+		<div class="flex items-center space-x-1 cursor-pointer mr-[2.1rem] sm:mr-12 group" (click)="onSort('out')">
+			<p
+				[ngClass]="{
+					'text-zinc-400 font-normal group-hover:text-zinc-200': sortBy !== 'out',
+					'text-white font-medium': sortBy === 'out',
+				}"
+				class="font-medium transition-all duration-300 shrink-0"
+			>Out</p>
+	
+			<svg class="w-4 h-4 transition-colors duration-300 shrink-0 text-zinc-400" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path
+					[ngClass]="{
+						'text-white opacity-100': sortBy === 'out' && order === 'asc',
+						'group-hover:text-white text-zinc-400 opacity-40': sortBy !== 'out' || order !== 'asc',
+					}"
+					class="transition-all duration-300"
+					d="M10.7934 9.04949L7.89714 6.15234M7.89714 6.15234L5 9.04949M7.89714 6.15234L7.89675 18.2195"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+				<path
+					[ngClass]="{
+						'text-white opacity-100': sortBy === 'out' && order === 'desc',
+						'group-hover:text-white text-zinc-400 opacity-40': sortBy !== 'out' || order !== 'desc',
+					}"
+					class="transition-all duration-300"
+					d="M13.207 15.3228L16.1033 18.2191M16.1033 18.2191L19.0004 15.3228M16.1033 18.2191L16.1038 6.15234"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+		</div>
+
+		<div class="flex items-center space-x-1 cursor-pointer group" (click)="onSort('joinDate')">
+			<p
+				[ngClass]="{
+					'text-zinc-400 font-normal group-hover:text-zinc-200': sortBy !== 'joinDate',
+					'text-white font-medium': sortBy === 'joinDate',
+				}"
+				class="font-medium transition-all duration-300 shrink-0"
+			>Join</p>
+	
+			<svg class="w-4 h-4 transition-colors duration-300 shrink-0 text-zinc-400" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path
+					[ngClass]="{
+						'text-white opacity-100': sortBy === 'joinDate' && order === 'asc',
+						'group-hover:text-white text-zinc-400 opacity-40': sortBy !== 'joinDate' || order !== 'asc',
+					}"
+					class="transition-all duration-300"
+					d="M10.7934 9.04949L7.89714 6.15234M7.89714 6.15234L5 9.04949M7.89714 6.15234L7.89675 18.2195"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+				<path
+					[ngClass]="{
+						'text-white opacity-100': sortBy === 'joinDate' && order === 'desc',
+						'group-hover:text-white text-zinc-400 opacity-40': sortBy !== 'joinDate' || order !== 'desc',
+					}"
+					class="transition-all duration-300"
+					d="M13.207 15.3228L16.1033 18.2191M16.1033 18.2191L19.0004 15.3228M16.1033 18.2191L16.1038 6.15234"
+					stroke="currentColor"
+					stroke-width="1.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+				/>
+			</svg>
+		</div>
+	</div>
+
+</div>
+
+<ng-container *ngIf="filteredUsers as users">
+	<div *ngIf="users.length > 0; else noRepos" class="flex flex-col overflow-hidden overflow-y-auto border border-t-0 divide-y rounded-b-md divide-zinc-800 border-zinc-800 max-h-96">
+
+		<a
+			*ngFor="let user of users; let first = first; trackBy: trackBy"
+			routerLink="/app/admin/users/info/{{user.id}}"
+			class="flex flex-row items-center justify-between max-w-full px-3 py-2 space-x-4 transition-all duration-300 bg-transparent cursor-pointer group hover:bg-zinc-900"
+		>
+			<div class="flex flex-row items-center space-x-2">
+			
+				<ng-container *ngIf="user.details?.imgUrl || 'assets/404_pip_image.png' as imgUrl">
+					<img
+						ixImg
+						*ngIf="!imgUrl.includes('http'); else noRelImage"
+						[path]="imgUrl"
+						[alt]="user.name || 'Anonymous'"
+						[width]="1"
+						[height]="1"
+						class="w-5 h-5 rounded-full shrink-0"
+					>
+					<ng-template #noRelImage>
+						<img
+							[src]="imgUrl"
+							[alt]="user.name || 'Anonymous'"
+							[width]="1"
+							[height]="1"
+							class="w-5 h-5 rounded-full shrink-0"
+						>
+					</ng-template>
+				</ng-container>
+			
+				<p class="text-sm font-medium truncate text-zinc-300 sm:text-base">{{user.name || 'Anonymous'}}</p>
+				<p class="hidden text-sm font-medium truncate lg:block text-zinc-600">{{user.email}}</p>
+			</div>
+			<div class="flex flex-row items-center space-x-2 sm:space-x-4">
+
+				<ng-container *ngIf="user.revenueDetails as revenue">
+
+					<ng-container *ngIf="statsTimeframe === 'total'">
+						<span class="text-xs text-teal-400 sm:text-sm" [title]="revenue.totalPaid">{{revenue.totalPaid | currency:'EUR'}}</span>
+						<span class="text-xs text-red-400 sm:text-sm" [title]="revenue.totalCost">{{revenue.totalCost | currency:'USD'}}</span>
+					</ng-container>
+
+					<ng-container *ngIf="statsTimeframe === 'current'">
+						<span class="text-xs text-teal-400 sm:text-sm" [title]="revenue.paidThisMonth">{{revenue.paidThisMonth | currency:'EUR'}}</span>
+						<span class="text-xs text-red-400 sm:text-sm" [title]="revenue.totalCostThisMonth">{{revenue.totalCostThisMonth | currency:'USD'}}</span>
+					</ng-container>
+
+				</ng-container>
+
+				<span class="w-24 text-xs text-right truncate text-zinc-500 sm:text-sm">{{user.createdAt?.toDate() | date:'mediumDate'}}</span>
+			</div>
+		</a>
+		
+	</div>
+
+	<ng-template #noRepos>
+		<p class="px-4 py-2 border border-t-0 rounded-md rounded-t-none border-zinc-800">No users to show...</p>
+	</ng-template>
+</ng-container>

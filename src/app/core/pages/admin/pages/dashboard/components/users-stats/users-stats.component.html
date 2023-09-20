@@ -1,0 +1,89 @@
+<ng-template #noUserSkeleton>
+	<dd class="flex items-baseline justify-between mt-1 md:block lg:flex">
+		<div class="flex items-baseline w-24 h-8 text-2xl font-semibold bg-indigo-500 rounded-md animate-pulse">
+		</div>
+
+		<div
+			class="inline-flex bg-zinc-400 h-6 w-14 animate-pulse items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
+		>
+			<svg
+				class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-zinc-600"
+
+				viewBox="0 0 20 20"
+				fill="currentColor"
+				aria-hidden="true"
+			>
+				<path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+			</svg>
+		</div>
+	</dd>
+</ng-template>
+
+
+<div>
+  <h3 class="text-base font-semibold leading-6 text-zinc-500">This month</h3>
+  <dl class="grid grid-cols-1 mt-5 overflow-hidden divide-y rounded-lg shadow bg-zinc-900 divide-zinc-800 md:grid-cols-2 md:divide-x md:divide-y-0">
+    <div class="px-4 py-5 sm:p-6">
+      <dt class="text-base font-normal text-zinc-100">Total Users</dt>
+      <dd class="flex items-baseline justify-between mt-1 md:block lg:flex" *ngIf="(users$ | async) as users; else noUserSkeleton">
+        <div class="flex items-baseline text-2xl font-semibold text-indigo-500">
+          {{users.length}}
+          <span class="ml-2 text-sm font-medium text-zinc-500">from {{users.length - getLastMonthUsers(users)}}</span>
+        </div>
+
+				<div
+					[ngClass]="{
+						'bg-green-100 text-green-800': getLastMonthUsers(users) > 0,
+						'bg-amber-100 text-amber-800': getLastMonthUsers(users) <= 0,
+					}"
+					class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
+				>
+          <svg
+						class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-green-500"
+						[ngClass]="{
+							'text-green-500': getLastMonthUsers(users) > 0,
+							'text-amber-500': getLastMonthUsers(users) <= 0,
+						}"
+						viewBox="0 0 20 20"
+						fill="currentColor"
+						aria-hidden="true"
+					>
+            <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+          </svg>
+          +{{getLastMonthUsers(users)}}
+        </div>
+      </dd>
+    </div>
+    <div class="px-4 py-5 sm:p-6">
+      <dt class="text-base font-normal text-zinc-100">Total Subscribers</dt>
+      <dd class="flex items-baseline justify-between mt-1 md:block lg:flex" *ngIf="(users$ | async) as users; else noUserSkeleton">
+        <div class="flex items-baseline text-2xl font-semibold text-indigo-500">
+          {{getTotalSubscribers(users)}}
+          <span class="ml-2 text-sm font-medium text-zinc-500">from {{getTotalSubscribers(users) - getLastMonthSubscribers(users)}}</span>
+        </div>
+
+        <div
+					[ngClass]="{
+						'bg-green-100 text-green-800': getLastMonthSubscribers(users) > 0,
+						'bg-amber-100 text-amber-800': getLastMonthSubscribers(users) <= 0,
+					}"
+					class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
+				>
+          <svg
+						class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-green-500"
+						[ngClass]="{
+							'text-green-500': getLastMonthSubscribers(users) > 0,
+							'text-amber-500': getLastMonthSubscribers(users) <= 0,
+						}"
+						viewBox="0 0 20 20"
+						fill="currentColor"
+						aria-hidden="true"
+					>
+            <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
+          </svg>
+          +{{getLastMonthSubscribers(users)}}
+        </div>
+      </dd>
+    </div>
+  </dl>
+</div>

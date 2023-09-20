@@ -1,0 +1,32 @@
+<div class="flex flex-col max-h-full min-h-full">
+	<div class="shrink-0">
+
+		<div class="relative z-10 w-full pb-6 sm:pt-12 bg-zinc-950">
+			<div
+				*ngIf="repo$ | async; else isNewRepo"
+				class="w-full mb-1"
+			>
+				<h2>Edit repo</h2>
+			</div>
+		
+			<ng-template #isNewRepo>
+				<div
+					class="w-full mb-1"
+				>
+					<h2>New repo</h2>
+				</div>
+			</ng-template>
+		
+			<app-repo-preview
+				[repo]="repo$"
+			></app-repo-preview>
+		</div>
+		
+		<app-repo-meta
+			[repo]="repo$ | async"
+		></app-repo-meta>
+
+	</div>
+</div>
+
+

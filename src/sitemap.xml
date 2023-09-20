@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	<url>
+		<loc>https://codewiz.app/</loc>
+		<priority>1</priority>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
+		<loc>https://codewiz.app/features</loc>
+		<priority>2</priority>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
+		<loc>https://codewiz.app/pricing</loc>
+		<priority>3</priority>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
+		<loc>https://codewiz.app/auth/login</loc>
+		<priority>4</priority>
+		<changefreq>weekly</changefreq>
+	</url>
+	<url>
+		<loc>https://codewiz.app/auth/signup</loc>
+		<priority>4</priority>
+		<changefreq>weekly</changefreq>
+	</url>
+</urlset>

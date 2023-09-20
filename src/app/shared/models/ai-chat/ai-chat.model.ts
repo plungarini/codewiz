@@ -1,0 +1,89 @@
+import { Timestamp } from '@angular/fire/firestore';
+import { Repo } from '../repo.model';
+
+export enum AiChatMessageRole {
+  User = 'user',
+  Assistant = 'assistant',
+}
+
+type AiChatMessageError = {
+	message?: string;
+	debug?: {
+		type?: string;
+		message?: string | {
+			data?: Record<string, any>;
+			error?: string;
+		};
+	}
+}
+
+type AiChatPageSection = {
+	title: string;
+	id: string;
+}
+
+export interface AiChatMessageFeedback extends AiChatMessage {
+	prompt?: string;
+}
+
+export interface AiChatMessage extends AiChatMessageReqItem  {
+	hide?: boolean;
+	id?: string;
+	chatId?: string;
+	repoId?: string;
+	completed: boolean;
+	pageSections?: AiChatPageSection[];
+	feedback?: 'like' | 'dislike' | 'none';
+	showPageSections?: boolean;
+	error?: AiChatMessageError;
+	finishReason?: AiChatFinishReason;
+	updatedAt?: Timestamp;
+	createdAt?: Timestamp;
+}
+
+type AiChatMessageReqItem = {
+	role: AiChatMessageRole;
+	content: string;
+}
+
+export type AiChatRequestData = {
+	uid: string;
+	repoHost: string;
+	repo: string;
+	messages: AiChatMessageReqItem[];
+	onlyPrompt: boolean;
+	stream: boolean;
+	environment: 'production' | 'development',
+}
+
+export type AiChatTitleRequestData = {
+	messages: AiChatMessageReqItem[];
+	stream: boolean;
+}
+
+type AiChatFinishReason = 'stop' | 'length' | 'function_call' | 'content_filter' | null;
+
+export type AiChatTitleResponseData = {
+	completion: string;
+	shouldUpdate: boolean;
+	finishReason?: AiChatFinishReason;
+}
+
+export type PageSection = {
+	id: string;
+	title: string;
+};
+
+export type AiChatResponseData = {
+	completion: string;
+	pageSections: PageSection[];
+	finishReason?: AiChatFinishReason;
+}
+
+export type AiUserRepoChat = {
+	id: string;
+	name: string;
+	repo?: Partial<Repo>;
+	createdAt: Timestamp;
+	updatedAt: Timestamp;
+};

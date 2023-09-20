@@ -1,0 +1,19 @@
+<div class="absolute inset-0">
+	<div class="grid min-h-full px-6 py-24 place-items-center sm:py-32 lg:px-8">
+		<div class="text-center">
+			<p class="text-base font-semibold text-indigo-400">Under Maintenance</p>
+			<h1 class="mt-4 text-3xl font-bold tracking-tight text-zinc-100 sm:text-5xl">Arcane Updates 📜✨</h1>
+			<p class="mx-auto mt-6 text-base leading-7 text-zinc-400 max-w-prose">Whispered tales speak of an ancient coding script with unparalleled power. We've sent our AI to the ethereal libraries to pore over these scrolls. As it deciphers and integrates, expect a platform reborn in arcane brilliance!</p>
+			
+			<ng-container *ngIf="(status$ | async)?.maintenance as status">
+				<div class="px-6 mx-auto max-w-prose w-fit">
+					<div *ngIf="status.reason" class="px-3 py-1 mt-6 border rounded-md border-zinc-800 w-fit">
+						<p class="text-sm font-medium text-left text-white">Maintenance reason:</p>
+						<p class="text-sm text-left">{{status.reason}}</p>
+					</div>
+				</div>
+			</ng-container>
+			
+		</div>
+	</div>
+</div>

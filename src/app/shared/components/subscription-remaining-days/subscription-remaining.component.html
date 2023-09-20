@@ -1,0 +1,28 @@
+<div class="relative w-auto h-full max-w-full max-h-full">
+  <svg viewBox="0 0 120 120" class="w-full h-full">
+		<!-- Background circle -->
+		<g
+			[ngClass]="{
+				'text-zinc-950': theme === 'dark',
+				'text-zinc-100/10': theme === 'light'
+			}"
+		>
+			<circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="10"></circle>
+		</g>
+		<!-- Progress circle -->
+		<g class="text-pink-600 origin-center -rotate-90">
+			<circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" stroke-width="15" stroke-linecap="round"
+				[attr.stroke-dasharray]="CIRCUMFERENCE"
+				[attr.stroke-dashoffset]="offset"></circle>
+		</g>
+	</svg>
+
+	<div class="absolute inset-0 flex items-center justify-center">
+		<span class="text-[60%] font-semibold leading-5 shrink text-zinc-300">
+			{{remaining}}
+		</span>
+	</div>
+
+</div>
+
+<p *ngIf="label" class="w-full text-[60%] -mt-[20%] font-medium text-center text-zinc-600">{{label}}</p>

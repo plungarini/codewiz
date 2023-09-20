@@ -1,0 +1,30 @@
+<div class="absolute inset-0 flex items-center justify-center p-6">
+	<div>
+		
+		<svg *ngIf="!error" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-12 h-12 mx-auto mb-4 shrink-0 animate-spin" style="shape-rendering: auto;">
+			<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-zinc-400">
+			</circle>
+		</svg>
+		
+		<svg *ngIf="error" class="w-12 h-12 mx-auto mb-4 text-red-500 shrink-0 animate-wiggle" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<path d="M21.0004 15.5312V17.1093C21.0004 19.2583 19.2574 21.0013 17.1074 21.0013H15.8184" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			<path d="M3 15.5312V17.1082C3 19.2572 4.74301 21.0002 6.89301 21.0002H8.14999" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			<path d="M3 8.47V6.892C3 4.743 4.74301 3 6.89301 3H8.18201" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			<path d="M20.9996 8.47V6.892C20.9996 4.743 19.2566 3 17.1066 3H15.8496" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			<path d="M8.56055 7.62109V8.23309M15.4385 7.62109V8.23309V7.62109Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			<path d="M8.56055 16.3787C10.8755 14.4757 13.1685 14.4387 15.4385 16.3787" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			<path d="M12.4687 8.9375V10.9083C12.4687 11.4311 12.3057 11.765 11.8595 12.0374L11.5547 12.2355" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+		</svg>
+
+		
+		<div *ngIf="!error; else errorTemplate">
+			<p class="font-semibold text-center text-zinc-100">Retrieving updated policies...</p>
+			<p class="max-w-xs text-center">You'll be redirected to our policies in a minute.</p>
+		</div>
+
+		<ng-template #errorTemplate>
+			<p class="font-semibold text-center text-zinc-100">Unknown error</p>
+			<p class="max-w-xs text-center">{{error}}</p>
+		</ng-template>
+	</div>
+</div>

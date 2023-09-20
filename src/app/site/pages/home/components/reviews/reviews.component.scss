@@ -1,0 +1,26 @@
+:host {
+	@apply block;
+
+	.animate-marquee {
+    animation: marquee var(--marquee-duration) linear infinite;
+	}
+
+	.animate-fade-in {
+		animation: fade-in .5s linear forwards;
+	}
+
+	@keyframes marquee {
+		100% {
+			transform: translateY(-70%);
+		}
+	}
+
+	@keyframes fade-in {
+		0% {
+    	opacity: 0;
+		}
+		100% {
+			opacity: 1;
+		}
+	}
+}

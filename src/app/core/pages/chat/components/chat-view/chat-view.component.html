@@ -1,0 +1,44 @@
+<app-loader
+	[ngClass]="{
+		'opacity-0 pointer-events-none': chatLoaded,
+		'opacity-100 pointer-events-auto': !chatLoaded,
+	}"
+	class="absolute inset-0 z-[100] transition-opacity duration-300"
+></app-loader>
+
+<app-status
+	class="pointer-events-none"
+	[status]="status"
+></app-status>
+
+<div
+	class="h-screen max-h-full pt-6 overflow-x-hidden overflow-y-auto"
+	(scroll)="onChatScroll($event)"
+	#mainChatContainer
+>
+	<app-messages
+		*ngIf="!isChatEmpty; else chatPlaceholder"
+		[chat]="chat"
+		[repoId]="this.selectedRepo"
+		(onQueryRefresh)="createQuery($event.query, $event.queryId)"
+	></app-messages>
+
+	<ng-template #chatPlaceholder>
+		<app-empty-chat-placeholder></app-empty-chat-placeholder>
+	</ng-template>
+</div>
+
+<app-chat-mobile-navigation
+	*ngIf="showMobileMenu"
+	(onHideMobileMenu)="toggleMobileMenu(false)"
+></app-chat-mobile-navigation>
+
+<app-query-input
+	[repoId]="selectedRepo"
+	[showSuggestions]="isChatEmpty"
+	[gettingQuery]="gettingQuery"
+	[showScrollToBottom]="showScrollToBottom"
+	(onQuery)="createQuery($event)"
+	(onScrollBottom)="onMessageScroll(true, true)"
+	(onShowMobileMenu)="toggleMobileMenu(true)"
+></app-query-input>

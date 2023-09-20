@@ -1,0 +1,47 @@
+<ng-container [ngSwitch]="role">
+
+	<ng-container *ngSwitchCase="roles.User">
+		<div *ngIf="!!name || !!img" class="relative flex items-center justify-center w-6 h-6 border rounded-full border-zinc-600">
+			<ng-container *ngIf="name && !img">
+				<p class="sr-only">{{name}}</p>
+				<p class="p-0 m-0 text-sm font-medium leading-3 select-none text-zinc-50">{{name[0]}}</p>
+			</ng-container>
+			<ng-container *ngIf="img">
+				<p class="sr-only">{{name}}</p>
+		
+			</ng-container>
+		</div>
+	</ng-container>
+
+	<ng-container *ngSwitchCase="roles.Assistant">
+		<div *ngIf="role === roles.Assistant" class="relative w-6 h-6">
+			<img
+				src="assets/logo/svg/codewiz_logo.svg"
+				alt="CodeWiz"
+				class="relative z-20 w-6 h-6 grayscale brightness-[1000] transition-opacity duration-1000"
+				[ngClass]="{
+					'opacity-100': !animate,
+					'opacity-0': animate,
+				}"
+			>
+			<img
+				src="assets/logo/svg/codewiz_logo.svg"
+				alt="CodeWiz"
+				class="absolute top-0 left-0 z-30 w-6 h-6 transition-opacity duration-1000 grayscale-0 brightness-100"
+				[ngClass]="{
+					'opacity-0': !animate,
+					'opacity-100': animate,
+				}"
+			>
+			<div
+				[ngClass]="{
+					'stop-aura-anim': !animate,
+					'aura-anim': animate
+				}"
+				class="absolute top-0 left-0 z-10 w-6 h-6 overflow-visible aura-shadow aura-gradient"
+			></div>
+		</div>
+	</ng-container>
+
+	
+</ng-container>
