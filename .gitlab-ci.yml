@@ -23,7 +23,7 @@ lint:prod:
         - docker
     script:
         - echo "Linting for Production..."
-        - ng lint
+        - ./node_modules/.bin/ng lint
     only:
         - master
 
@@ -34,7 +34,7 @@ build:prod:
         - docker
     script:
         - echo "Building for Production..."
-        - ng build --configuration=production
+        - ./node_modules/.bin/ng build --configuration=production
     only:
         - master
 
@@ -45,7 +45,7 @@ deploy:prod:
         - docker
     script:
         - echo "Deploying to Production on Firebase..."
-        - firebase deploy --only hosting -P prod
+        - ./node_modules/.bin/firebase deploy --only hosting -P prod
     before_script:
         - echo "$FIREBASE_TOKEN" > .firebaserc
     variables:
@@ -72,7 +72,7 @@ lint:staging:
         - docker
     script:
         - echo "Linting for Staging..."
-        - yarn ng lint
+        - ./node_modules/.bin/ng lint
     only:
         - develop
 
@@ -83,7 +83,7 @@ build:staging:
         - docker
     script:
         - echo "Building for Staging..."
-        - yarn ng build --configuration=staging
+        - ./node_modules/.bin/ng build --configuration=staging
     only:
         - develop
 
@@ -94,7 +94,7 @@ deploy:staging:
         - docker
     script:
         - echo "Deploying to Staging on Firebase..."
-        - yarn firebase deploy --only hosting -P dev
+        - ./node_modules/.bin/firebase deploy --only hosting -P dev
     before_script:
         - echo "$FIREBASE_TOKEN" > .firebaserc
     variables:
