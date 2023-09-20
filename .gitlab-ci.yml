@@ -1,103 +1,120 @@
 stages:
-    - install
-    - lint
-    - build
-    - deploy
+  - install
+  - build
+  - deploy
 
-# For master branch (Production environment)
-install:prod:
+variables:
+  PROJECT_PATH: "$CI_PROJECT_DIR"
+  APP_OUTPUT_PATH: "$CI_PROJECT_DIR/dist/codewiz"
+
+# Install dependencies
+install:
     stage: install
     image: node:20
     tags:
         - docker
     script:
         - echo "Installing dependencies for Production..."
-        - yarn
+        - yarn install
+        # - yarn ngcc --properties es2015 --create-ivy-entry-points
+    cache:
+        key:
+            files:
+                - yarn.lock
+        paths:
+            - node_modules
+        policy: pull
     only:
-        - master
+        refs:
+            - merge_requests
+            - master
+        changes:
+            - yarn.lock
 
-lint:prod:
-    stage: lint
-    image: node:20
-    tags:
-        - docker
-    script:
-        - echo "Linting for Production..."
-        - ./node_modules/.bin/ng lint
-    only:
-        - master
-
+# Build - Production
 build:prod:
     stage: build
     image: node:20
+    only:
+        - master
     tags:
         - docker
     script:
-        - echo "Building for Production..."
-        - ./node_modules/.bin/ng build --configuration=production
-    only:
-        - master
+        - yarn ng build --configuration=production
+    after_script:
+        - cp $PROJECT_PATH/Dockerfile $APP_OUTPUT_PATH
+    artifacts:
+        name: "build-prod-job"
+        paths:
+        - $APP_OUTPUT_PATH
+    cache:
+        key:
+            files:
+                - yarn.lock
+        paths:
+            - node_modules
+        policy: pull
 
+# Build - Develop
+build:dev:
+    stage: build
+    image: node:20
+    only:
+        - develop
+    tags:
+        - docker
+    script:
+        - yarn ng build --configuration=staging
+    after_script:
+        - cp $PROJECT_PATH/Dockerfile $APP_OUTPUT_PATH
+    artifacts:
+        name: "build-dev-job"
+        paths:
+        - $APP_OUTPUT_PATH
+    cache:
+        key:
+            files:
+                - yarn.lock
+        paths:
+            - node_modules
+        policy: pull
+
+# Deploy - Develop
+deploy:dev:
+    stage: deploy
+    image: node:20
+    only:
+        - develop
+    tags:
+        - docker
+    script:
+        - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
+    variables:
+        FIREBASE_TOKEN: $FIREBASE_TOKEN
+    cache:
+        key:
+            files:
+                - yarn.lock
+        paths:
+            - node_modules
+        policy: pull
+
+# Deploy - Production
 deploy:prod:
     stage: deploy
     image: node:20
-    tags:
-        - docker
-    script:
-        - echo "Deploying to Production on Firebase..."
-        - ./node_modules/.bin/firebase deploy --only hosting -P prod
-    before_script:
-        - echo "$FIREBASE_TOKEN" > .firebaserc
-    variables:
-        FIREBASE_TOKEN: $FIREBASE_TOKEN
     only:
         - master
-
-# For develop branch (Staging environment)
-install:staging:
-    stage: install
-    image: node:20
     tags:
         - docker
     script:
-        - echo "Installing dependencies for Staging..."
-        - yarn
-    only:
-        - develop
-
-lint:staging:
-    stage: lint
-    image: node:20
-    tags:
-        - docker
-    script:
-        - echo "Linting for Staging..."
-        - ./node_modules/.bin/ng lint
-    only:
-        - develop
-
-build:staging:
-    stage: build
-    image: node:20
-    tags:
-        - docker
-    script:
-        - echo "Building for Staging..."
-        - ./node_modules/.bin/ng build --configuration=staging
-    only:
-        - develop
-
-deploy:staging:
-    stage: deploy
-    image: node:20
-    tags:
-        - docker
-    script:
-        - echo "Deploying to Staging on Firebase..."
-        - ./node_modules/.bin/firebase deploy --only hosting -P dev
-    before_script:
-        - echo "$FIREBASE_TOKEN" > .firebaserc
+        - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P prod
     variables:
         FIREBASE_TOKEN: $FIREBASE_TOKEN
-    only:
-        - develop
+    cache:
+        key:
+            files:
+                - yarn.lock
+        paths:
+            - node_modules
+        policy: pull
