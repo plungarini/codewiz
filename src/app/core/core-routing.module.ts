@@ -75,6 +75,15 @@ const routes: Routes = [
 				loadChildren: () => import('./pages/chat/chat.module').then(m => m.ChatModule),
 			},
 			{
+				path: 'lern',
+				data: {
+					permissions: ['user', 'admin'],
+					preload: false,
+				},
+				canActivate: [MaintenanceGuard, ActiveOnboardingGuard, StagingAuthGuard],
+				loadChildren: () => import('./pages/lern/lern.module').then(m => m.LernModule),
+			},
+			{
 				path: 'chat/:repo',
 				pathMatch: 'full',
 				redirectTo: 'chat/:repo/new'
