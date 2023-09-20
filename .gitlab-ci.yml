@@ -28,6 +28,7 @@ install:
         refs:
             - merge_requests
             - master
+            - develop
         changes:
             - yarn.lock
 
