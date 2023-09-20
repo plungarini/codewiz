@@ -1,0 +1,103 @@
+stages:
+    - install
+    - lint
+    - build
+    - deploy
+
+# For master branch (Production environment)
+install:prod:
+    stage: install
+    image: node:20
+    tags:
+        - docker
+    script:
+        - echo "Installing dependencies for Production..."
+        - yarn
+    only:
+        - master
+
+lint:prod:
+    stage: lint
+    image: node:20
+    tags:
+        - docker
+    script:
+        - echo "Linting for Production..."
+        - ng lint
+    only:
+        - master
+
+build:prod:
+    stage: build
+    image: node:20
+    tags:
+        - docker
+    script:
+        - echo "Building for Production..."
+        - ng build --configuration=production
+    only:
+        - master
+
+deploy:prod:
+    stage: deploy
+    image: node:20
+    tags:
+        - docker
+    script:
+        - echo "Deploying to Production on Firebase..."
+        - firebase deploy --only hosting -P prod
+    before_script:
+        - echo "$FIREBASE_TOKEN" > .firebaserc
+    variables:
+        FIREBASE_TOKEN: $FIREBASE_TOKEN
+    only:
+        - master
+
+# For develop branch (Staging environment)
+install:staging:
+    stage: install
+    image: node:20
+    tags:
+        - docker
+    script:
+        - echo "Installing dependencies for Staging..."
+        - yarn
+    only:
+        - develop
+
+lint:staging:
+    stage: lint
+    image: node:20
+    tags:
+        - docker
+    script:
+        - echo "Linting for Staging..."
+        - yarn ng lint
+    only:
+        - develop
+
+build:staging:
+    stage: build
+    image: node:20
+    tags:
+        - docker
+    script:
+        - echo "Building for Staging..."
+        - yarn ng build --configuration=staging
+    only:
+        - develop
+
+deploy:staging:
+    stage: deploy
+    image: node:20
+    tags:
+        - docker
+    script:
+        - echo "Deploying to Staging on Firebase..."
+        - yarn firebase deploy --only hosting -P dev
+    before_script:
+        - echo "$FIREBASE_TOKEN" > .firebaserc
+    variables:
+        FIREBASE_TOKEN: $FIREBASE_TOKEN
+    only:
+        - develop
