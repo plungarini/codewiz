@@ -25,10 +25,6 @@ install:
             - node_modules
         policy: pull
     only:
-        refs:
-            - merge_requests
-            - master
-            - develop
         changes:
             - yarn.lock
 
