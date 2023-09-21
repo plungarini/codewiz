@@ -11,7 +11,6 @@ before_script:
 
 stages:
   - install
-  - config
   - build
   - deploy
 
@@ -26,9 +25,10 @@ install:
       - master
       - develop
 
-# Inject ENV - Production
-config:prod:
-  stage: config
+# Build - Production
+build:prod:
+  stage: build
+  needs: ["install"]
   script:
     - echo "Injecting env variables..."
     - sed -i "s|%#PRODUCTION#%|$PRODUCTION|g" src/environments/environment.ts
@@ -43,6 +43,8 @@ config:prod:
     - sed -i "s|%#SB_URL#%|$SB_URL|g" src/environments/environment.ts
     - sed -i "s|%#SB_PROJECTREF#%|$SB_PROJECTREF|g" src/environments/environment.ts
     - sed -i "s|%#SB_ANONKEY#%|$SB_ANONKEY|g" src/environments/environment.ts
+    - echo "Building for Production..."
+    - ng build --configuration=production
   variables:
     PRODUCTION: $PRODUCTION
     FB_PROJECTID: $FB_PROJECTID
@@ -56,13 +58,20 @@ config:prod:
     SB_URL: $SB_URL
     SB_PROJECTREF: $SB_PROJECTREF
     SB_ANONKEY: $SB_ANONKEY
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - dist/
   only:
     refs:
       - master
+    # changes:
+      # - src/**/*
 
-# Inject ENV - Develop
-config:dev:
-  stage: config
+# Build - Develop
+build:dev:
+  stage: build
+  needs: ["install"]
   script:
     - echo "Injecting env variables..."
     - sed -i "s|%#PRODUCTION#%|$DEV_PRODUCTION|g" src/environments/environment.ts
@@ -77,6 +86,8 @@ config:dev:
     - sed -i "s|%#SB_URL#%|$SB_URL|g" src/environments/environment.ts
     - sed -i "s|%#SB_PROJECTREF#%|$SB_PROJECTREF|g" src/environments/environment.ts
     - sed -i "s|%#SB_ANONKEY#%|$SB_ANONKEY|g" src/environments/environment.ts
+    - echo "Building for Staging..."
+    - ng build --configuration=staging
   variables:
     DEV_PRODUCTION: $DEV_PRODUCTION
     DEV_FB_PROJECTID: $DEV_FB_PROJECTID
@@ -90,34 +101,6 @@ config:dev:
     SB_URL: $SB_URL
     SB_PROJECTREF: $SB_PROJECTREF
     SB_ANONKEY: $SB_ANONKEY
-  only:
-    refs:
-      - develop
-
-# Build - Production
-build:prod:
-  stage: build
-  needs: ["install", "config:prod"]
-  script:
-    - echo "Building for Production..."
-    - ng build --configuration=production
-  artifacts:
-    expire_in: 1 day
-    paths:
-      - dist/
-  only:
-    refs:
-      - master
-    # changes:
-      # - src/**/*
-
-# Build - Develop
-build:dev:
-  stage: build
-  needs: ["install", "config:dev"]
-  script:
-    - echo "Building for Staging..."
-    - ng build --configuration=staging
   artifacts:
     expire_in: 1 day
     paths:
@@ -131,10 +114,10 @@ build:dev:
 # Deploy - Production
 deploy:prod:
   stage: deploy
-  needs: ["install", "config:prod", "build:prod"]
+  needs: ["install", "build:prod"]
   script:
     - echo "Deploying in Production..."
-    - firebase deploy --token $FIREBASE_TOKEN --only hosting -P prod
+    - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P prod
   variables:
     FIREBASE_TOKEN: $FIREBASE_TOKEN
   environment:
@@ -149,10 +132,10 @@ deploy:prod:
 # Deploy - Develop
 deploy:dev:
   stage: deploy
-  needs: ["install", "config:dev", "build:dev"]
+  needs: ["install", "build:dev"]
   script:
     - echo "Deploying in Staging..."
-    - firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
+    - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
   variables:
     FIREBASE_TOKEN: $FIREBASE_TOKEN
   environment:
