@@ -31,18 +31,18 @@ config:prod:
   stage: config
   script:
     - echo "Injecting env variables..."
-    - sed -i "s/%#PRODUCTION#%/$PRODUCTION/g" src/environments/environment.ts
-    - sed -i "s/%#FB_PROJECTID#%/$FB_PROJECTID/g" src/environments/environment.ts
-    - sed -i "s/%#FB_APPID#%/$FB_APPID/g" src/environments/environment.ts
-    - sed -i "s/%#FB_STORAGEBUCKET#%/$FB_STORAGEBUCKET/g" src/environments/environment.ts
-    - sed -i "s/%#FB_LOCATIONID#%/$FB_LOCATIONID/g" src/environments/environment.ts
-    - sed -i "s/%#FB_APIKEY#%/$FB_APIKEY/g" src/environments/environment.ts
-    - sed -i "s/%#FB_AUTHDOMAIN#%/$FB_AUTHDOMAIN/g" src/environments/environment.ts
-    - sed -i "s/%#FB_MESSAGINGSENDERID#%/$FB_MESSAGINGSENDERID/g" src/environments/environment.ts
-    - sed -i "s/%#FB_MEASUREMENTID#%/$FB_MEASUREMENTID/g" src/environments/environment.ts
-    - sed -i "s/%#SB_URL#%/$SB_URL/g" src/environments/environment.ts
-    - sed -i "s/%#SB_PROJECTREF#%/$SB_PROJECTREF/g" src/environments/environment.ts
-    - sed -i "s/%#SB_ANONKEY#%/$SB_ANONKEY/g" src/environments/environment.ts
+    - sed -i "s|%#PRODUCTION#%|$PRODUCTION|g" src/environments/environment.ts
+    - sed -i "s|%#FB_PROJECTID#%|$FB_PROJECTID|g" src/environments/environment.ts
+    - sed -i "s|%#FB_APPID#%|$FB_APPID|g" src/environments/environment.ts
+    - sed -i "s|%#FB_STORAGEBUCKET#%|$FB_STORAGEBUCKET|g" src/environments/environment.ts
+    - sed -i "s|%#FB_LOCATIONID#%|$FB_LOCATIONID|g" src/environments/environment.ts
+    - sed -i "s|%#FB_APIKEY#%|$FB_APIKEY|g" src/environments/environment.ts
+    - sed -i "s|%#FB_AUTHDOMAIN#%|$FB_AUTHDOMAIN|g" src/environments/environment.ts
+    - sed -i "s|%#FB_MESSAGINGSENDERID#%|$FB_MESSAGINGSENDERID|g" src/environments/environment.ts
+    - sed -i "s|%#FB_MEASUREMENTID#%|$FB_MEASUREMENTID|g" src/environments/environment.ts
+    - sed -i "s|%#SB_URL#%|$SB_URL|g" src/environments/environment.ts
+    - sed -i "s|%#SB_PROJECTREF#%|$SB_PROJECTREF|g" src/environments/environment.ts
+    - sed -i "s|%#SB_ANONKEY#%|$SB_ANONKEY|g" src/environments/environment.ts
   variables:
     PRODUCTION: $PRODUCTION
     FB_PROJECTID: $FB_PROJECTID
@@ -65,18 +65,18 @@ config:dev:
   stage: config
   script:
     - echo "Injecting env variables..."
-    - sed -i "s/%#PRODUCTION#%/$DEV_PRODUCTION/g" src/environments/environment.ts
-    - sed -i "s/%#FB_PROJECTID#%/$DEV_FB_PROJECTID/g" src/environments/environment.ts
-    - sed -i "s/%#FB_APPID#%/$DEV_FB_APPID/g" src/environments/environment.ts
-    - sed -i "s/%#FB_STORAGEBUCKET#%/$DEV_FB_STORAGEBUCKET/g" src/environments/environment.ts
-    - sed -i "s/%#FB_LOCATIONID#%/$DEV_FB_LOCATIONID/g" src/environments/environment.ts
-    - sed -i "s/%#FB_APIKEY#%/$DEV_FB_APIKEY/g" src/environments/environment.ts
-    - sed -i "s/%#FB_AUTHDOMAIN#%/$DEV_FB_AUTHDOMAIN/g" src/environments/environment.ts
-    - sed -i "s/%#FB_MESSAGINGSENDERID#%/$DEV_FB_MESSAGINGSENDERID/g" src/environments/environment.ts
-    - sed -i "s/%#FB_MEASUREMENTID#%/$DEV_FB_MEASUREMENTID/g" src/environments/environment.ts
-    - sed -i "s/%#SB_URL#%/$SB_URL/g" src/environments/environment.ts
-    - sed -i "s/%#SB_PROJECTREF#%/$SB_PROJECTREF/g" src/environments/environment.ts
-    - sed -i "s/%#SB_ANONKEY#%/$SB_ANONKEY/g" src/environments/environment.ts
+    - sed -i "s|%#PRODUCTION#%|$DEV_PRODUCTION|g" src/environments/environment.ts
+    - sed -i "s|%#FB_PROJECTID#%|$DEV_FB_PROJECTID|g" src/environments/environment.ts
+    - sed -i "s|%#FB_APPID#%|$DEV_FB_APPID|g" src/environments/environment.ts
+    - sed -i "s|%#FB_STORAGEBUCKET#%|$DEV_FB_STORAGEBUCKET|g" src/environments/environment.ts
+    - sed -i "s|%#FB_LOCATIONID#%|$DEV_FB_LOCATIONID|g" src/environments/environment.ts
+    - sed -i "s|%#FB_APIKEY#%|$DEV_FB_APIKEY|g" src/environments/environment.ts
+    - sed -i "s|%#FB_AUTHDOMAIN#%|$DEV_FB_AUTHDOMAIN|g" src/environments/environment.ts
+    - sed -i "s|%#FB_MESSAGINGSENDERID#%|$DEV_FB_MESSAGINGSENDERID|g" src/environments/environment.ts
+    - sed -i "s|%#FB_MEASUREMENTID#%|$DEV_FB_MEASUREMENTID|g" src/environments/environment.ts
+    - sed -i "s|%#SB_URL#%|$SB_URL|g" src/environments/environment.ts
+    - sed -i "s|%#SB_PROJECTREF#%|$SB_PROJECTREF|g" src/environments/environment.ts
+    - sed -i "s|%#SB_ANONKEY#%|$SB_ANONKEY|g" src/environments/environment.ts
   variables:
     DEV_PRODUCTION: $DEV_PRODUCTION
     DEV_FB_PROJECTID: $DEV_FB_PROJECTID
