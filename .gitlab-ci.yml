@@ -117,7 +117,7 @@ deploy:prod:
   needs: ["install", "build:prod"]
   script:
     - echo "Deploying in Production..."
-    - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P prod
+    - firebase deploy --token $FIREBASE_TOKEN --only hosting -P prod
   variables:
     FIREBASE_TOKEN: $FIREBASE_TOKEN
   environment:
@@ -135,7 +135,7 @@ deploy:dev:
   needs: ["install", "build:dev"]
   script:
     - echo "Deploying in Staging..."
-    - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
+    - firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
   variables:
     FIREBASE_TOKEN: $FIREBASE_TOKEN
   environment:
