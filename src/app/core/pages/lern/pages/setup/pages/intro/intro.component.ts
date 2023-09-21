@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Repo } from 'src/app/shared/models/repo.model';
 import { LernService } from '../../../../services/lern.service';
 
@@ -19,12 +19,22 @@ export class IntroComponent {
 
 	selectedRepo: Repo | undefined;
 	loading = false;
+	
+	private repoId: string | undefined;
 
 	constructor(
 		private lern: LernService,
 		private router: Router,
+		private route: ActivatedRoute,
 		private cdRef: ChangeDetectorRef,
-	) { }
+	) {
+		this.repoId = this.route.parent?.snapshot.params['id'];
+		if (this.repoId !== 'new') {
+			this.router.navigate(['/app/lern/setup', this.repoId, 'prompt']);
+		} else {
+			this.cdRef.markForCheck();
+		}
+	}
 
 	selectRepo(repo: Repo) {
 		this.selectedRepo = repo;
