@@ -97,7 +97,7 @@ config:dev:
 # Build - Production
 build:prod:
   stage: build
-  needs: ["install"]
+  needs: ["install", "config:prod"]
   script:
     - echo "Building for Production..."
     - ng build --configuration=production
@@ -114,7 +114,7 @@ build:prod:
 # Build - Develop
 build:dev:
   stage: build
-  needs: ["install"]
+  needs: ["install", "config:dev"]
   script:
     - echo "Building for Staging..."
     - ng build --configuration=staging
@@ -131,7 +131,7 @@ build:dev:
 # Deploy - Production
 deploy:prod:
   stage: deploy
-  needs: ["install", "build:prod"]
+  needs: ["install", "config:prod", "build:prod"]
   script:
     - echo "Deploying in Production..."
     - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P prod
@@ -149,7 +149,7 @@ deploy:prod:
 # Deploy - Develop
 deploy:dev:
   stage: deploy
-  needs: ["install", "build:dev"]
+  needs: ["install", "config:dev", "build:dev"]
   script:
     - echo "Deploying in Staging..."
     - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
