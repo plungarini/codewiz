@@ -1,77 +1,165 @@
-image: trion/ng-cli
+default:
+  interruptible: true
+  image: trion/ng-cli
 
 cache:
-    paths:
-        - node_modules/
-        - functions/node_modules/
+  paths:
+    - node_modules/
 
 before_script:
-    - npm i -g firebase-tools
+  - npm i -g firebase-tools
 
 stages:
-    - install
-    - build
-    - deploy
+  - install
+  - config
+  - build
+  - deploy
 
 # Install dependencies
 install:
-    stage: install
-    script:
-        - echo "Installing dependencies for Production..."
-        - yarn install --immutable --immutable-cache --check-cache
-    only:
-        refs:
-            - master
-            - develop
+  stage: install
+  script:
+    - echo "Installing dependencies for Production..."
+    - yarn install --immutable --immutable-cache --check-cache
+  only:
+    refs:
+      - master
+      - develop
+
+# Inject ENV - Production
+config:prod:
+  stage: config
+  script:
+    - echo "Injecting env variables..."
+    - sed -i "s/%#PRODUCTION#%/$PRODUCTION/g" src/environments/environment.ts
+    - sed -i "s/%#FB_PROJECTID#%/$FB_PROJECTID/g" src/environments/environment.ts
+    - sed -i "s/%#FB_APPID#%/$FB_APPID/g" src/environments/environment.ts
+    - sed -i "s/%#FB_STORAGEBUCKET#%/$FB_STORAGEBUCKET/g" src/environments/environment.ts
+    - sed -i "s/%#FB_LOCATIONID#%/$FB_LOCATIONID/g" src/environments/environment.ts
+    - sed -i "s/%#FB_APIKEY#%/$FB_APIKEY/g" src/environments/environment.ts
+    - sed -i "s/%#FB_AUTHDOMAIN#%/$FB_AUTHDOMAIN/g" src/environments/environment.ts
+    - sed -i "s/%#FB_MESSAGINGSENDERID#%/$FB_MESSAGINGSENDERID/g" src/environments/environment.ts
+    - sed -i "s/%#FB_MEASUREMENTID#%/$FB_MEASUREMENTID/g" src/environments/environment.ts
+    - sed -i "s/%#SB_URL#%/$SB_URL/g" src/environments/environment.ts
+    - sed -i "s/%#SB_PROJECTREF#%/$SB_PROJECTREF/g" src/environments/environment.ts
+    - sed -i "s/%#SB_ANONKEY#%/$SB_ANONKEY/g" src/environments/environment.ts
+  variables:
+    PRODUCTION: $PRODUCTION
+    FB_PROJECTID: $FB_PROJECTID
+    FB_APPID: $FB_APPID
+    FB_STORAGEBUCKET: $FB_STORAGEBUCKET
+    FB_LOCATIONID: $FB_LOCATIONID
+    FB_APIKEY: $FB_APIKEY
+    FB_AUTHDOMAIN: $FB_AUTHDOMAIN
+    FB_MESSAGINGSENDERID: $FB_MESSAGINGSENDERID
+    FB_MEASUREMENTID: $FB_MEASUREMENTID
+    SB_URL: $SB_URL
+    SB_PROJECTREF: $SB_PROJECTREF
+    SB_ANONKEY: $SB_ANONKEY
+  only:
+    refs:
+      - master
+
+# Inject ENV - Develop
+config:dev:
+  stage: config
+  script:
+    - echo "Injecting env variables..."
+    - sed -i "s/%#PRODUCTION#%/$DEV_PRODUCTION/g" src/environments/environment.ts
+    - sed -i "s/%#FB_PROJECTID#%/$DEV_FB_PROJECTID/g" src/environments/environment.ts
+    - sed -i "s/%#FB_APPID#%/$DEV_FB_APPID/g" src/environments/environment.ts
+    - sed -i "s/%#FB_STORAGEBUCKET#%/$DEV_FB_STORAGEBUCKET/g" src/environments/environment.ts
+    - sed -i "s/%#FB_LOCATIONID#%/$DEV_FB_LOCATIONID/g" src/environments/environment.ts
+    - sed -i "s/%#FB_APIKEY#%/$DEV_FB_APIKEY/g" src/environments/environment.ts
+    - sed -i "s/%#FB_AUTHDOMAIN#%/$DEV_FB_AUTHDOMAIN/g" src/environments/environment.ts
+    - sed -i "s/%#FB_MESSAGINGSENDERID#%/$DEV_FB_MESSAGINGSENDERID/g" src/environments/environment.ts
+    - sed -i "s/%#FB_MEASUREMENTID#%/$DEV_FB_MEASUREMENTID/g" src/environments/environment.ts
+    - sed -i "s/%#SB_URL#%/$SB_URL/g" src/environments/environment.ts
+    - sed -i "s/%#SB_PROJECTREF#%/$SB_PROJECTREF/g" src/environments/environment.ts
+    - sed -i "s/%#SB_ANONKEY#%/$SB_ANONKEY/g" src/environments/environment.ts
+  variables:
+    DEV_PRODUCTION: $DEV_PRODUCTION
+    DEV_FB_PROJECTID: $DEV_FB_PROJECTID
+    DEV_FB_APPID: $DEV_FB_APPID
+    DEV_FB_STORAGEBUCKET: $DEV_FB_STORAGEBUCKET
+    DEV_FB_LOCATIONID: $DEV_FB_LOCATIONID
+    DEV_FB_APIKEY: $DEV_FB_APIKEY
+    DEV_FB_AUTHDOMAIN: $DEV_FB_AUTHDOMAIN
+    DEV_FB_MESSAGINGSENDERID: $DEV_FB_MESSAGINGSENDERID
+    DEV_FB_MEASUREMENTID: $DEV_FB_MEASUREMENTID
+    SB_URL: $SB_URL
+    SB_PROJECTREF: $SB_PROJECTREF
+    SB_ANONKEY: $SB_ANONKEY
+  only:
+    refs:
+      - develop
 
 # Build - Production
 build:prod:
-    stage: build
-    script:
-        - echo "Building for Production..."
-        - ng build --configuration=production
-    only:
-        refs:
-            - master
-        # changes:
-            # - src/**/*
+  stage: build
+  needs: ["install"]
+  script:
+    - echo "Building for Production..."
+    - ng build --configuration=production
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - dist/
+  only:
+    refs:
+      - master
+    # changes:
+      # - src/**/*
 
 # Build - Develop
 build:dev:
-    stage: build
-    script:
-        - echo "Building for Staging..."
-        - ng build --configuration=staging
-    only:
-        refs:
-            - develop
-        # changes:
-            # - src/**/*
+  stage: build
+  needs: ["install"]
+  script:
+    - echo "Building for Staging..."
+    - ng build --configuration=staging
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - dist/
+  only:
+    refs:
+      - develop
+    # changes:
+      # - src/**/*
 
 # Deploy - Production
 deploy:prod:
-    stage: deploy
-    script:
-        - echo "Building for Production..."
-        - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P prod
-    variables:
-        FIREBASE_TOKEN: $FIREBASE_TOKEN
-    only:
-        refs:
-            - master
-        # changes:
-            # - src/**/*
+  stage: deploy
+  needs: ["install", "build:prod"]
+  script:
+    - echo "Deploying in Production..."
+    - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P prod
+  variables:
+    FIREBASE_TOKEN: $FIREBASE_TOKEN
+  environment:
+    name: prod
+    url: https://codewiz.app
+  only:
+    refs:
+      - master
+    # changes:
+      # - src/**/*
 
 # Deploy - Develop
 deploy:dev:
-    stage: deploy
-    script:
-        - echo "Building for Staging..."
-        - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
-    variables:
-        FIREBASE_TOKEN: $FIREBASE_TOKEN
-    only:
-        refs:
-            - develop
-        # changes:
-            # - src/**/*
+  stage: deploy
+  needs: ["install", "build:dev"]
+  script:
+    - echo "Deploying in Staging..."
+    - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
+  variables:
+    FIREBASE_TOKEN: $FIREBASE_TOKEN
+  environment:
+    name: dev
+    url: https://staging.codewiz.app
+  only:
+    refs:
+      - develop
+    # changes:
+      # - src/**/*

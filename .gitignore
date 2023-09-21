@@ -40,7 +40,9 @@ testem.log
 .temp/
 
 # Env
-/src/environments
+variables
+src/environments/environment.local-dev.ts
+src/environments/environment.local-prod.ts
 
 # System files
 .DS_Store

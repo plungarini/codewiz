@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
 })
 export class RealFeedbackService {
 
-	private production = environment.production;
+	private production = false;
 	private isReady = false;
 	private queuePurged = false;
 	private fnQueue: { fn: string }[] = [];
@@ -24,8 +24,8 @@ export class RealFeedbackService {
 			return;
 		}
 
-		for (let i = 0; i < this.fnQueue.length; i++) {
-			const fn = this.fnQueue[i];
+		for (const element of this.fnQueue) {
+			const fn = element;
 			if (fn.fn === 'hide') {
 				this.hide();
 			} else if (fn.fn === 'show') {
@@ -39,7 +39,15 @@ export class RealFeedbackService {
 
 	constructor(
 		@Inject(DOCUMENT) private document: Document,
-	) { }
+	) {
+		this.production = false;
+		try {
+			this.production = eval(environment.production)
+		} catch (err) {
+			this.production = false;
+			console.error(err);
+		}
+	}
 	
 	show() {
 		if (!this.production) return;
