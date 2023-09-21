@@ -65,8 +65,8 @@ build:prod:
   only:
     refs:
       - master
-    # changes:
-      # - src/**/*
+    changes:
+      - src/**/*
 
 # Build - Develop
 build:dev:
@@ -108,8 +108,8 @@ build:dev:
   only:
     refs:
       - develop
-    # changes:
-      # - src/**/*
+    changes:
+      - src/**/*
 
 # Deploy - Production
 deploy:prod:
@@ -126,8 +126,8 @@ deploy:prod:
   only:
     refs:
       - master
-    # changes:
-      # - src/**/*
+    changes:
+      - src/**/*
 
 # Deploy - Develop
 deploy:dev:
@@ -144,5 +144,5 @@ deploy:dev:
   only:
     refs:
       - develop
-    # changes:
-      # - src/**/*
+    changes:
+      - src/**/*
