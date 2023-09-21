@@ -5,7 +5,8 @@
   "scripts": {
     "ng": "ng",
     "start": "yarn generate-env:dev && ng serve --host 0.0.0.0",
-    "deploy:dev": "ng build --configuration=staging && firebase deploy --only hosting -P dev",
+    "deploy:dev:ci": "ng build --configuration=staging && firebase deploy --only hosting -P dev",
+    "deploy:dev": "ng build --configuration=local-staging && firebase deploy --only hosting -P dev",
     "deploy:ci": "ng build --configuration=production && firebase deploy --only hosting -P prod",
     "deploy": "ng build --configuration=local-production && firebase deploy --only hosting -P prod",
     "build": "ng build",
