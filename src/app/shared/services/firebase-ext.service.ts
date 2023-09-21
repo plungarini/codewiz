@@ -27,14 +27,22 @@ import { environment } from 'src/environments/environment';
 export class FirebaseExtendedService {
 
 	private debug = false;
-	private prod = environment.production;
-	private cloudId = environment.production ? 'ytzgrgrjxq-ew' : 'ik2jh2ngra-ew';
+	private production = false;
+	private cloudId = this.production ? 'ytzgrgrjxq-ew' : 'ik2jh2ngra-ew';
 	privateProjectName = 'codewiz-prod';
 
 	constructor(
 		private firestore: Firestore,
 		private functions: Functions,
-	) { }
+	) {
+		this.production = false;
+		try {
+			this.production = eval(environment.production)
+		} catch (err) {
+			this.production = false;
+			console.error(err);
+		}
+	}
 	
 	callFunction<T, Z>(name: string, region = 'europe-west1', version: number = 2, timeout = 60_000) {
 		const instance = this.functions.region === region ? this.functions : getFunctions(undefined, region);

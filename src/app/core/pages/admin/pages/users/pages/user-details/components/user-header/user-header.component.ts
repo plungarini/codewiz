@@ -16,9 +16,21 @@ import { environment } from 'src/environments/environment';
 })
 export class UserHeaderComponent {
 
-	@Input() user: User | undefined;
+	private production = false;
 
-	firebaseBaseUrl = `https://console.firebase.google.com/u/0/project/${environment.production ? 'codewiz-prod' : 'codewiz-staging'}/firestore/data/~2Fusers~2F`;
-	stripeBaseUrl = `https://dashboard.stripe.com/${environment.production ? '' : 'test/'}customers/`;
+	@Input() user: User | undefined;
+	
+	firebaseBaseUrl = `https://console.firebase.google.com/u/0/project/${this.production ? 'codewiz-prod' : 'codewiz-staging'}/firestore/data/~2Fusers~2F`;
+	stripeBaseUrl = `https://dashboard.stripe.com/${this.production ? '' : 'test/'}customers/`;
+
+	constructor() {
+		this.production = false;
+		try {
+			this.production = eval(environment.production)
+		} catch (err) {
+			this.production = false;
+			console.error(err);
+		}
+	}
 
 }

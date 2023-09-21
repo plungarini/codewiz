@@ -13,7 +13,7 @@ type TidioUser = {
 })
 export class TidioService {
 
-	private production = environment.production;
+	private production = false;
 	private isReady = false;
 	private queuePurged = false;
 	private fnQueue: {
@@ -34,8 +34,8 @@ export class TidioService {
 			return;
 		}
 
-		for (let i = 0; i < this.fnQueue.length; i++) {
-			const fn = this.fnQueue[i];
+		for (const element of this.fnQueue) {
+			const fn = element;
 			if (fn.fn === 'hide') {
 				this.hide();
 			} else if (fn.fn === 'show') {
@@ -51,7 +51,15 @@ export class TidioService {
 		this.queuePurged = true;
 	}, 500);
 
-	constructor() { }
+	constructor() {
+		this.production = false;
+		try {
+			this.production = eval(environment.production)
+		} catch (err) {
+			this.production = false;
+			console.error(err);
+		}
+	}
 
 	sendUserMessage(message?: string) {
 		if (!this.production || !this._getConsent() || !message) return;
@@ -61,7 +69,7 @@ export class TidioService {
 			return;
 		}
 		const tidio = (window as any).tidioChatApi;
-		if (!tidio || !tidio?.hasOwnProperty('messageFromOperator')) {
+		if (!tidio?.hasOwnProperty('messageFromOperator')) {
 			return console.warn('[TIDIO] Unable to send message');
 		}
 		this.show();
@@ -76,7 +84,7 @@ export class TidioService {
 			return;
 		}
 		const tidio = (window as any).tidioChatApi;
-		if (!tidio || !tidio?.hasOwnProperty('hide'))
+		if (!tidio?.hasOwnProperty('hide'))
 			return console.warn('[TIDIO] Unable to hide widget');
 		tidio.hide();
 	}
@@ -89,7 +97,7 @@ export class TidioService {
 			return;
 		}
 		const tidio = (window as any).tidioChatApi;
-		if (!tidio || !tidio?.hasOwnProperty('show'))
+		if (!tidio?.hasOwnProperty('show'))
 			return console.warn('[TIDIO] Unable to show widget');
 		tidio.show();
 	}
@@ -102,7 +110,7 @@ export class TidioService {
 			return;
 		}
 		const tidio = (window as any).tidioChatApi;
-		if (!tidio || !tidio?.hasOwnProperty('setVisitorData')) {
+		if (!tidio?.hasOwnProperty('setVisitorData')) {
 			return console.warn('[TIDIO] Unable to set visitor data');
 		}
 		tidio.setVisitorData(user);

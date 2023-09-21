@@ -7,6 +7,13 @@ import { environment } from './environments/environment';
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
 
-if (environment.production) {
+let production = false;
+try {
+	production = eval(environment.production)
+} catch (err) {
+	production = false;
+	console.error(err);
+}
+if (production) {
 	enableProdMode();
 }
