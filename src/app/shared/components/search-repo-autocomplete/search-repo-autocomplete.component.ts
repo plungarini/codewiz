@@ -22,6 +22,19 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 
 	@Input() size: 'st' | 'lg' = 'st';
 	@Input() autoSelect = true;
+	@Input() autoSelectIndex = 0;
+	@Input() set setRepo(id: string | undefined) {
+		if (!id) return;
+
+		if (!this.docs.length) {
+			this.setRepoQueue = id;
+			return;
+		};
+
+		const index = this.docs.findIndex(d => d.id === id);
+		if (index < 0) return;
+		this.selectDoc(index);
+	}
 	@Output('onRepo') onRepo: EventEmitter<Repo> = new EventEmitter();
 	
 	@ViewChild('searchDocsInput') searchDocsInputElement: ElementRef<HTMLInputElement> | undefined;
@@ -33,10 +46,12 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 	repo: Repo | undefined;
 	cacheRepo: Repo | undefined;
 	placeholder: string = 'Select a repo';
-
+	
 	docsListLoaded: boolean = false;
 	searchInputSub: Subscription;
 	docsListSub: Subscription;
+
+	private setRepoQueue: string = '';
 
 	constructor(
 		private cdRef: ChangeDetectorRef,
@@ -52,13 +67,18 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 
 			if (!this.searchInput.value && !this.repo && !this.cacheRepo) {
 
-				if (!repoParam && this.autoSelect) {
-					this.selectDoc(0);
+				if (!repoParam && this.autoSelect && !this.setRepoQueue) {
+					this.selectDoc(this.autoSelectIndex);
+				} else if (this.setRepoQueue) {
+					const index = this.docs.findIndex(d => d.id === this.setRepoQueue);
+					if (index < 0) return;
+					this.selectDoc(index);
+					this.setRepoQueue = '';
 				} else {
 					this.filteredDocs = this._filterDocs('');
 					const index = this.filteredDocs.findIndex(d => d.id === repoParam);
 					if (index < 0 && this.autoSelect) {
-						this.selectDoc(0);
+						this.selectDoc(this.autoSelectIndex);
 					} else {
 						this.selectDoc(index);
 					}

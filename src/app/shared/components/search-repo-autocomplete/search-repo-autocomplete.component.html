@@ -13,7 +13,6 @@
 				[alt]="repo.name"
 				priority
 				loading="lazy"
-				priority
 				[width]="1"
 				[height]="1"
 				[path]="repo.logo"
@@ -72,7 +71,7 @@
 					#el
 					[ngClass]="{
 						'bg-zinc-700 cursor-default': doc.id === cacheRepo?.id,
-						'bg-transparent hover:bg-zinc-700/50 cursor-pointer': doc.id !== cacheRepo?.id && i !== selectedIndex,
+						'bg-transparent hover:bg-zinc-700/50 cursor-pointer': doc.id !== cacheRepo?.id && (i !== selectedIndex || !searchInput.value),
 						'bg-zinc-700/50 cursor-pointer': i === selectedIndex && doc.id !== cacheRepo?.id && searchInput.value,
 					}"
 					(click)="selectDoc(i)"
