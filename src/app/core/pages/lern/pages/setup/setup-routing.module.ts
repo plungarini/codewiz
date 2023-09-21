@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IntroComponent } from './pages/intro/intro.component';
+import { PromptComponent } from './pages/prompt/prompt.component';
 import { SetupComponent } from './setup.component';
 
 const routes: Routes = [
@@ -9,12 +10,16 @@ const routes: Routes = [
 		component: SetupComponent,
 		children: [
 			{
-				path: 'intro',
+				path: 'hub',
 				component: IntroComponent,
 			},
 			{
+				path: 'prompt',
+				component: PromptComponent,
+			},
+			{
 				path: '',
-				redirectTo: 'intro',
+				redirectTo: 'hub',
 				pathMatch: 'full',
 			}
 		]
