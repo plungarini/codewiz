@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, map } from 'rxjs';
+import { firstValueFrom, map, of, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { environment } from 'src/environments/environment';
@@ -44,6 +44,15 @@ export class LernService {
 		));
 
 		return res;
+	}
+
+	getCourse(id: string) {
+		return this._getCurrentUserId$().pipe(
+			switchMap((uid) => {
+				if (!uid || !id) return of(undefined);
+				return this.db.getDoc<LernCourse>(`lern/${uid}/courses/${id}`);
+			})
+		)
 	}
 
 	async createNewCourse(repo: string): Promise<CreateCourseResponse> {
