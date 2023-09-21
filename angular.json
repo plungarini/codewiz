@@ -65,7 +65,13 @@
                   "maximumError": "4mb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+							"fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local-prod.ts"
+                }
+              ]
             },
             "development": {
               "buildOptimizer": false,
@@ -77,7 +83,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
+                  "with": "src/environments/environment.local-dev.ts"
                 }
               ]
             },
@@ -104,7 +110,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
+                  "with": "src/environments/environment.local-dev.ts"
                 }
               ]
             }
