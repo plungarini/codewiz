@@ -1,114 +1,73 @@
-stages:
-  - install
-  - build
-  - deploy
+image: trion/ng-cli
 
-variables:
-  PROJECT_PATH: "$CI_PROJECT_DIR"
-  APP_OUTPUT_PATH: "$CI_PROJECT_DIR/dist/codewiz"
+cache:
+    paths:
+        - node_modules/
+        - functions/node_modules/
+
+before_script:
+    - npm i -g firebase-tools
+
+stages:
+    - install
+    - build
+    - deploy
 
 # Install dependencies
 install:
     stage: install
-    image: node:20
-    tags:
-        - docker
     script:
         - echo "Installing dependencies for Production..."
-        - yarn install
-        # - yarn ngcc --properties es2015 --create-ivy-entry-points
-    cache:
-        key:
-            files:
-                - yarn.lock
-        paths:
-            - node_modules
-        policy: pull
+        - yarn install --immutable --immutable-cache --check-cache
 
 # Build - Production
 build:prod:
     stage: build
-    image: node:20
-    only:
-        - master
-    tags:
-        - docker
     script:
-        - yarn ng build --configuration=production
-    after_script:
-        - cp $PROJECT_PATH/Dockerfile $APP_OUTPUT_PATH
-    artifacts:
-        name: "build-prod-job"
-        paths:
-        - $APP_OUTPUT_PATH
-    cache:
-        key:
-            files:
-                - yarn.lock
-        paths:
-            - node_modules
-        policy: pull
+        - echo "Building for Production..."
+        - ng build --configuration=production
+    only:
+        refs:
+            - master
+        changes:
+            - src/**/*
 
 # Build - Develop
 build:dev:
     stage: build
-    image: node:20
-    only:
-        - develop
-    tags:
-        - docker
     script:
-        - yarn ng build --configuration=staging
-    after_script:
-        - cp $PROJECT_PATH/Dockerfile $APP_OUTPUT_PATH
-    artifacts:
-        name: "build-dev-job"
-        paths:
-        - $APP_OUTPUT_PATH
-    cache:
-        key:
-            files:
-                - yarn.lock
-        paths:
-            - node_modules
-        policy: pull
-
-# Deploy - Develop
-deploy:dev:
-    stage: deploy
-    image: node:20
+        - echo "Building for Staging..."
+        - ng build --configuration=staging
     only:
-        - develop
-    tags:
-        - docker
-    script:
-        - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
-    variables:
-        FIREBASE_TOKEN: $FIREBASE_TOKEN
-    cache:
-        key:
-            files:
-                - yarn.lock
-        paths:
-            - node_modules
-        policy: pull
+        refs:
+            - develop
+        changes:
+            - src/**/*
 
 # Deploy - Production
 deploy:prod:
     stage: deploy
-    image: node:20
-    only:
-        - master
-    tags:
-        - docker
     script:
+        - echo "Building for Production..."
         - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P prod
     variables:
         FIREBASE_TOKEN: $FIREBASE_TOKEN
-    cache:
-        key:
-            files:
-                - yarn.lock
-        paths:
-            - node_modules
-        policy: pull
+    only:
+        refs:
+            - master
+        changes:
+            - src/**/*
+
+# Deploy - Develop
+deploy:dev:
+    stage: deploy
+    script:
+        - echo "Building for Staging..."
+        - yarn firebase deploy --token $FIREBASE_TOKEN --only hosting -P dev
+    variables:
+        FIREBASE_TOKEN: $FIREBASE_TOKEN
+    only:
+        refs:
+            - develop
+        changes:
+            - src/**/*
