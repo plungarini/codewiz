@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, map, of, switchMap } from 'rxjs';
+import { firstValueFrom, lastValueFrom, map, of, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { environment } from 'src/environments/environment';
-import { LernCourse } from '../models/course.model';
+import { LernCourse, SearchDocsResponse } from '../models/course.model';
 
 type CreateCourseResponse = {
 	url?: string;
@@ -12,27 +12,39 @@ type CreateCourseResponse = {
 		msg: string;
 		details: any;
 	};
-}
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class LernService {
 
+	production = false;
+
 	constructor(
 		private users: UsersService,
 		private db: FirebaseExtendedService,
 		private http: HttpClient,
-	) { }
+	) {
+		this.production = false;
+		try {
+			this.production = eval(environment.production)
+		} catch (err) {
+			this.production = false;
+			console.error(err);
+		}
+	}
 	
-	async searchDocs(query: string) {
-		const res = await firstValueFrom(this.http.post(
-			`https://${environment.supabase.projectRef}.functions.supabase.co/lern-prompt`,
+	async searchDocs(query: string, repoTable: string, availableRepos: string[]) {
+		const uid = await this._getCurrentUserId();
+		const req$ = this.http.post<SearchDocsResponse>(
+			`https://${environment.supabase.projectRef}.supabase.co/functions/v1/lern-search-docs`,
 			{
 				query,
-				uid: 'BKKPiwMy5bhkXOS5BkL9ZCSwXTj1',
-				repo: 'angular',
-				environment: environment.production ? 'production' : 'development',
+				uid,
+				repo: repoTable,
+				availableRepos,
+				environment: this.production ? 'production' : 'development',
 			},
 			{
 				headers: {
@@ -41,9 +53,9 @@ export class LernService {
 					'Content-Type': 'application/json',
 				},
 			}
-		));
+		);
 
-		return res;
+		return await lastValueFrom(req$);
 	}
 
 	getCourse(id: string) {
@@ -53,6 +65,12 @@ export class LernService {
 				return this.db.getDoc<LernCourse>(`lern/${uid}/courses/${id}`);
 			})
 		)
+	}
+
+	async updateCourse(id: string, course: Partial<LernCourse>): Promise<void> {
+		const uid = await this._getCurrentUserId();
+		if (!uid || !id) return;
+		await this.db.upsert<LernCourse>(`lern/${uid}/courses/${id}`, course);
 	}
 
 	async createNewCourse(repo: string): Promise<CreateCourseResponse> {
