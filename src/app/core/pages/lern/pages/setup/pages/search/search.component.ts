@@ -133,7 +133,14 @@ export class SearchComponent implements OnDestroy {
 	}
 
 	submit() {
-		console.log('Submitted');
+		if (
+			this.loading ||
+			(this.docs?.pages?.length || 0) <= 0 ||
+			this.gettingDocs ||
+			!this.currentRepo?.id
+		) return;
+
+		this.router.navigate(['/app/lern/setup', this.currentRepo.id, 'preferences']);
 	}
 
 	private searchDocumentsSuccess(data: SearchDocsResponse): string {

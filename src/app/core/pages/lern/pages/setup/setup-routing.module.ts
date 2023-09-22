@@ -17,6 +17,10 @@ const routes: Routes = [
 				loadChildren: () => import('./pages/search/search.module').then((m) => m.SearchModule),
 			},
 			{
+				path: 'preferences',
+				loadChildren: () => import('./pages/preferences/preferences.module').then((m) => m.PreferencesModule),
+			},
+			{
 				path: '',
 				redirectTo: 'hub',
 				pathMatch: 'full',
