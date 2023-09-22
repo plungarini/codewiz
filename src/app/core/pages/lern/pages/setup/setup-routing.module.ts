@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IntroComponent } from './pages/intro/intro.component';
-import { PromptComponent } from './pages/prompt/prompt.component';
 import { SetupComponent } from './setup.component';
 
 const routes: Routes = [
@@ -14,8 +13,8 @@ const routes: Routes = [
 				component: IntroComponent,
 			},
 			{
-				path: 'prompt',
-				component: PromptComponent,
+				path: 'search',
+				loadChildren: () => import('./pages/search/search.module').then((m) => m.SearchModule),
 			},
 			{
 				path: '',
