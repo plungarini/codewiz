@@ -1,5 +1,5 @@
 :host {
-	@apply hidden sm:block h-fit;
+	@apply h-fit;
 	
 	.aura-shadow {
 		@apply blur-md rounded-full origin-center transition-opacity duration-1000;

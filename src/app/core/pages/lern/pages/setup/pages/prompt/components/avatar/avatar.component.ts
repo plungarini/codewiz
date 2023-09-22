@@ -12,10 +12,9 @@ export class AvatarComponent {
 	@Input() name: string = '';
 	@Input() role: AiChatMessageRole = AiChatMessageRole.Assistant;
 	@Input() img: string = '';
-	@Input() set stopAnim(value: boolean) {
-		if (!value) return;
-		this.animate = false;
-		this.cdRef.detectChanges();
+	@Input() set toggleAnim(value: boolean) {
+		this.animate = value;
+		this.cdRef.markForCheck();
 	}
 
 	roles = AiChatMessageRole;
