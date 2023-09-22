@@ -36,7 +36,6 @@ export class SearchComponent implements OnDestroy {
 	foundTyping: string = '';
 
 	initialized = false;
-	loading = false;
 	gettingDocs = false;
 
 	role = {
@@ -134,13 +133,12 @@ export class SearchComponent implements OnDestroy {
 
 	submit() {
 		if (
-			this.loading ||
 			(this.docs?.pages?.length || 0) <= 0 ||
 			this.gettingDocs ||
-			!this.currentRepo?.id
+			!this.currentCourse?.id
 		) return;
 
-		this.router.navigate(['/app/lern/setup', this.currentRepo.id, 'preferences']);
+		this.router.navigate(['/app/lern/setup', this.currentCourse.id, 'preferences']);
 	}
 
 	private searchDocumentsSuccess(data: SearchDocsResponse): string {

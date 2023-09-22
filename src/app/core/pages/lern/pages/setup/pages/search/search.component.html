@@ -173,15 +173,10 @@
 				</button>
 				
 				<button
-					[disabled]="loading || (docs?.pages?.length || 0) == 0 || gettingDocs"
+					[disabled]="(docs?.pages?.length || 0) <= 0 || gettingDocs"
 					(click)="submit()"
 					class="rounded-md disabled:opacity-40 disabled:cursor-not-allowed px-3.5 py-2.5 flex items-center justify-center space-x-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600 text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-				>
-					<svg [ngClass]="{ '-ml-8 opacity-0': !loading, '-ml-0 opacity-100': loading }" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-4 h-4 mr-2 transition-all duration-300 pointer-events-none shrink-0 animate-spin" style="shape-rendering: auto;">
-						<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-white">
-						</circle>
-					</svg>
-			
+				>			
 					<span>Next step</span>
 					
 					<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
