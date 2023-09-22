@@ -1,0 +1,201 @@
+<div class="grid grid-cols-1 md:gap-x-12 gap-y-24 md:grid-cols-5">
+
+	<div class="w-full col-span-1 md:col-span-3 md:pl-12">
+	
+		<ng-container *ngIf="user$ | async as user; else skeleton">
+			<ng-container *ngIf="course$ | async as course; else skeleton">
+				<h2 class="text-3xl">
+					1. Craft Your Learning
+				</h2>
+				
+				<p class="mt-4">
+					Embark on a personalized learning quest with WizLern. Dive into tailor-made modules that turn your coding ambitions into epic adventures. What's the topic of your epic course?
+				</p>
+			
+				<div class="w-full mt-8">
+			
+					<label class="block mb-3 ml-2 text-lg font-semibold text-zinc-50">I want to learn...</label>
+	
+					<div class="relative">
+						<div class="absolute hidden top-3 md:block -left-10">
+							<app-avatar
+								[name]="user.name || 'Anonymous'"
+								[img]="user.details?.imgUrl || ''"
+								[role]="role.user"
+							></app-avatar>
+						</div>
+						
+						<div
+							[ngClass]="{
+								'!opacity-60 !ring-1 !focus-within:ring-1 !focus-within:ring-zinc-800 !ring-offset-0 !focus-within:ring-offset-0': gettingDocs,
+							}"
+							class="flex flex-col w-full gap-y-2 px-4 py-3 overflow-hidden shadow-2xl relative z-20 transition-all duration-300 border-0 outline-none ring-1 focus-within:ring-[3px] ring-zinc-800 focus-within:ring-indigo-400 rounded-xl from-black/30 to-zinc-900/40 backdrop-blur-sm bg-transparent bg-gradient-to-tr hover:ring-4 focus-within:outline-none focus-within:ring-offset-[3px] focus-within:ring-offset-zinc-950 ring-offset-zinc-950"
+						>
+							<textarea
+								type="text"
+								[readOnly]="gettingDocs"
+								[formControl]="queryArea"
+								autofocus
+								placeholder='e.g. "What are Angular Components and how can I start using them..."'
+								rows="5"
+								class="w-full p-0 text-white bg-transparent border-0 shadow-none outline-none resize-none focus:outline-none ring-0 focus:ring-0 placeholder:text-zinc-500"
+							></textarea>
+	
+							<div class="flex items-center justify-between gap-x-4">
+								<p class="text-xs font-medium text-zinc-600">The topic of your choice can be general, but try to be precise with your query.</p>
+
+								<button
+									[disabled]="gettingDocs || !queryArea.valid"
+									(click)="search()"
+									type="button"
+									class="flex items-center justify-center px-3 py-2 -mr-1 space-x-2 text-sm font-semibold text-white transition-all duration-300 rounded-md shadow-sm bg-zinc-900 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-800 disabled:hover:bg-zinc-900 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-zinc-800 hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+								>				
+									<span>Ask {{!docs ? 'now' : 'again'}}</span>
+			
+									<svg class="w-[1.125rem] h-[1.125rem] shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M17.3606 17.5838L20.7856 21M11.6324 3C16.2814 3 20.0499 6.76847 20.0499 11.4175C20.0499 16.0666 16.2814 19.836 11.6324 19.836C6.98331 19.836 3.21484 16.0666 3.21484 11.4175C3.21484 6.76847 6.98331 3 11.6324 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M13.332 6.74072C14.7302 7.16593 15.8356 8.25375 16.2841 9.64029" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									</svg>
+								</button>
+							</div>
+						</div>
+					</div>
+		
+				</div>
+	
+				<div class="relative">
+					<div
+						[ngClass]="{
+							'-translate-y-5 opacity-0 pointer-events-none': (!gettingDocs && !error) || docs,
+							'-translate-y-0 opacity-100': (gettingDocs || error) && !docs,
+						}"
+						class="relative z-10 flex items-start mt-6 transition-all duration-500 gap-x-4"
+					>
+						<div class="pt-1.5 md:absolute md:pt-0 md:top-1.5 md:-left-10">
+							<app-avatar
+								[toggleAnim]="gettingDocs"
+							></app-avatar>
+						</div>
+						
+						<div class="px-3 py-2 overflow-hidden transition-all duration-300 w-fit ring-1 ring-zinc-800 rounded-xl bg-zinc-950">
+							<p *ngIf="!error" class="text-sm">{{queryTyping}}</p>
+		
+							<p *ngIf="error" class="text-sm">
+								<svg class="inline-block w-5 h-5 mr-2 -translate-y-px text-amber-500" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+									<g id="Iconly/Light/Danger-Circle" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+										<g id="Danger-Circle" transform="translate(2.000000, 2.000000)" stroke="currentColor" >
+											<path d="M10.0001,0.7501 C15.1081,0.7501 19.2501,4.8911 19.2501,10.0001 C19.2501,15.1081 15.1081,19.2501 10.0001,19.2501 C4.8911,19.2501 0.7501,15.1081 0.7501,10.0001 C0.7501,4.8911 4.8911,0.7501 10.0001,0.7501 Z" id="Stroke-1" stroke-width="1.5" ></path>
+											<line x1="9.9952" y1="6.2042" x2="9.9952" y2="10.6232" id="Stroke-3" stroke-width="1.5" ></line>
+											<line x1="9.995" y1="13.7961" x2="10.005" y2="13.7961" id="Stroke-5" stroke-width="1.5" ></line>
+										</g>
+									</g>
+								</svg>
+		
+								<span>{{errorTyping}}</span>
+							</p>
+						</div>
+					</div>
+		
+					<div
+						[ngClass]="{
+							'translate-y-5 opacity-0 pointer-events-none': !docs,
+							'translate-y-0 opacity-100': docs,
+						}"
+						class="absolute top-0 left-0 z-40 flex items-start transition-all duration-500 delay-100 gap-x-4"
+					>
+						<div class="pt-1.5 md:absolute md:pt-0 md:top-1.5 md:-left-10">
+							<app-avatar
+								[toggleAnim]="gettingDocs"
+							></app-avatar>
+						</div>
+						
+						<div class="px-3 py-2 overflow-hidden transition-all duration-300 w-fit ring-1 ring-zinc-800 rounded-xl bg-zinc-950">
+							<p class="text-sm" [innerHTML]="foundTyping"></p>
+						</div>
+					</div>
+				</div>
+			</ng-container>
+		</ng-container>
+		
+		<ng-template #skeleton>
+	
+		</ng-template>
+		
+	</div>
+
+	<div class="col-span-1 md:col-span-2">
+		<div
+			[ngClass]="{
+				'opacity-0 translate-y-5': (docs?.pages?.length || 0) <= 0,
+				'opacity-100 translate-y-0': (docs?.pages?.length || 0) > 0,
+			}"			
+			class="-mx-4 transition-all duration-300"
+		>
+			<div class="px-4">
+				<p class="mb-2 text-lg font-semibold text-zinc-50">CodeWiz found {{docs?.pages?.length || 0}} article{{(docs?.pages?.length || 0) > 1 ? 's' : ''}}</p>
+				<p>Review the articles that CodeWiz found for you. If they are relevant to your topic, click on "Next step" to proceed.</p>
+			</div>
+
+			<div class="grid px-4 max-h-[30rem] grid-cols-1 py-4 mt-4 overflow-x-visible overflow-y-auto gap-x-4 gap-y-4">
+				<a
+					*ngFor="let page of docs?.pages"
+					href="{{page.id}}"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="flex items-center justify-between col-span-1 px-5 py-5 transition-all duration-300 rounded-lg shadow group gap-x-4 hover:shadow-2xl bg-zinc-900/40 backdrop-blur hover:ring-4 ring-zinc-900 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950 ring-offset-zinc-950"
+				>
+					<p class="font-semibold text-zinc-300">{{page.title}}</p>
+
+					<svg class="w-6 h-6 transition-colors duration-300 shrink-0 text-zinc-600 group-hover:text-indigo-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M2.75 12.0001C2.75 18.9371 5.063 21.2501 12 21.2501C18.937 21.2501 21.25 18.9371 21.25 12.0001C21.25 5.06312 18.937 2.75012 12 2.75012C5.063 2.75012 2.75 5.06312 2.75 12.0001Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path fill-rule="evenodd" clip-rule="evenodd" d="M8.69775 15.3024L10.2718 10.2724L15.3018 8.69836L13.7278 13.7274L8.69775 15.3024Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</a>
+			</div>
+
+			<div class="flex items-center justify-end pr-4 mt-8 gap-x-2">
+				<button
+					*ngIf="docs && (!docs.can || docs.pages.length <= 4 || !!docs.suggested)"
+					(click)="goBack()"
+					type="button"
+					class="flex items-center justify-center px-3.5 py-2.5 border border-zinc-800 space-x-2 text-sm font-semibold text-white transition-all duration-300 rounded-md shadow-sm bg-transparent disabled:opacity-40 disabled:cursor-not-allowed hover:bg-zinc-800 disabled:hover:bg-zinc-900 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-zinc-800 hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+				>				
+					<svg class="w-4 h-4 rotate-180 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+							<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+								<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+								<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+							</g>
+						</g>
+					</svg>
+
+					<span>Change repo</span>
+				</button>
+				
+				<button
+					[disabled]="loading || (docs?.pages?.length || 0) == 0 || gettingDocs"
+					(click)="submit()"
+					class="rounded-md disabled:opacity-40 disabled:cursor-not-allowed px-3.5 py-2.5 flex items-center justify-center space-x-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600 text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+				>
+					<svg [ngClass]="{ '-ml-8 opacity-0': !loading, '-ml-0 opacity-100': loading }" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-4 h-4 mr-2 transition-all duration-300 pointer-events-none shrink-0 animate-spin" style="shape-rendering: auto;">
+						<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-white">
+						</circle>
+					</svg>
+			
+					<span>Next step</span>
+					
+					<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+							<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+								<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+								<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+							</g>
+						</g>
+					</svg>
+				</button>
+			</div>
+
+		</div>
+	</div>
+
+</div>
