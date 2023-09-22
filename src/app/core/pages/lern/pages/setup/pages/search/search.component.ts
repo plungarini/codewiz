@@ -57,7 +57,7 @@ export class SearchComponent implements OnDestroy {
 		private repo: UserRepoService,
 		private cdRef: ChangeDetectorRef,
 	) {
-		this.course$ = this.initCourses$();
+		this.course$ = this.initCourse$();
 		this._repoSub = this.initRepoSub();
 	}
 
@@ -237,7 +237,7 @@ export class SearchComponent implements OnDestroy {
     }
 	}
 	
-	private initCourses$(): Observable<LernCourse | undefined> {
+	private initCourse$(): Observable<LernCourse | undefined> {
 		const parentParams = this.route.parent?.parent?.params;
 		const typedParams: Observable<Params | undefined> = !parentParams ? of(undefined) : parentParams;
 
