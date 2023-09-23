@@ -236,7 +236,8 @@ serve(async (req) => {
 					`}
 					${oneLine`
 						- If unsure and the answer is not explicitly in the documentation,
-						reply with "Sorry, I don't know how to help with that."
+						reply with "Sorry, I can't find an answer in the "${tableName}" documentation.".
+						Capitalize and use the proper name of the framework/language.
 					`}
 					${oneLine`
 						- Prefer multiple paragraphs for your response.
