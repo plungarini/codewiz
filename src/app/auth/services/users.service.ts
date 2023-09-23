@@ -27,13 +27,23 @@ export class UsersService {
 	get user$(): Observable<DbUser | undefined> {
 		return user(this.auth).pipe(
 			switchMap(user => {
-				if (user && user?.uid) {
+				if (user?.uid) {
 					try {
 						if ((window as any)?.clarity) {
-							(window as any)?.clarity('identify', user?.uid);
+							(window as any)?.clarity('identify', user.uid);
 						}
 					} catch (err) {
 						console.warn('[CLARITY] Unable to identify user', err);
+					}
+					try {
+						/* ActiveCampaign Tracking */
+						if ((window as any)?.vgo) {
+							(window as any)?.vgo('setEmail', user.email);
+							(window as any)?.vgo('setTrackByDefault', true);
+							(window as any)?.vgo('process')
+						}
+					} catch (err) {
+						console.warn('[AC] Unable to identify user', err);
 					}
 					setUserId(this.analytics, user.uid);
 					return this.getWithSubscription(user.uid)
@@ -61,7 +71,7 @@ export class UsersService {
 
 	get fireUser$(): Observable<User | undefined> {
 		return user(this.auth).pipe(
-			map((a) => a || undefined)
+			map((a) => a ?? undefined)
 		);
 	};
 
@@ -84,11 +94,11 @@ export class UsersService {
 
       const toFirebaseUser: DbUser = {
         id: user.uid,
-        name: user.displayName || additionalDetails?.fullName || '',
-        email: user.email || '',
-				phone: user.phoneNumber || additionalDetails?.phoneNumber || '',
+        name: (user.displayName ?? additionalDetails?.fullName) ?? '',
+        email: user.email ?? '',
+				phone: user.phoneNumber ?? additionalDetails?.phoneNumber ?? '',
         details: ({
-					imgUrl: user.photoURL || img,
+					imgUrl: user.photoURL ?? img,
 					provider,
 				}) as UserDetails,
       };
@@ -324,7 +334,7 @@ export class UsersService {
   getCurrentFire(): Promise<User | undefined> {
 		return firstValueFrom(
 			user(this.auth).pipe(
-				map((a) => a || undefined)
+				map((a) => a ?? undefined)
 			)
 		);
 	}
@@ -370,8 +380,8 @@ export class UsersService {
 			const response = await fetch(url);
 			const contentDisposition = response.headers.get('Content-Disposition');
 			if (contentDisposition) {
-				const match = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
-				if (match && match[1]) {
+				const match = RegExp(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/).exec(contentDisposition);
+				if (match?.at(1)) {
 					const filenameFromHeader = match[1].replace(/['"]/g, '');
 					if (filenameFromHeader) {
 						return filenameFromHeader;
@@ -380,7 +390,7 @@ export class UsersService {
 			}
     } catch (error) {
 			if (url) {
-				if (filenameFromUrl && filenameFromUrl.includes('.')) {
+				if (filenameFromUrl?.includes('.')) {
 					console.log({ filenameFromUrl, includes: true });
 					return filenameFromUrl;
 				}
