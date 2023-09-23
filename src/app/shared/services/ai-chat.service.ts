@@ -19,6 +19,7 @@ import { TidioService } from './tidio.service';
 })
 export class AiChatService {
 	private statusUrl = 'https://status.openai.com/api/v2/summary.json';
+	private production = false;
 
 	constructor(
 		private zone: NgZone,
@@ -28,7 +29,15 @@ export class AiChatService {
 		private users: UsersService,
 		private analytics: Analytics,
 		private tidioService: TidioService,
-	) { }
+	) {
+		this.production = false;
+		try {
+			this.production = eval(environment.production)
+		} catch (err) {
+			this.production = false;
+			console.error(err);
+		}
+	}
 
 	getStatusPromise(): Promise<ClientOpenaiStatus> {
 		const $status = this.http.get<AiChatStatus>(this.statusUrl).pipe(
@@ -236,12 +245,12 @@ export class AiChatService {
 			
 				const data: AiChatRequestData = {
 					uid: uid,
-					repoHost: repoHost || repo,
+					repoHost: repoHost ?? repo,
 					messages: normMessages,
 					repo,
 					onlyPrompt: false,
 					stream: true,
-					environment: environment.production ? 'production' : 'development',
+					environment: this.production ? 'production' : 'development',
 				}
 	
 				const ev = new SSE(

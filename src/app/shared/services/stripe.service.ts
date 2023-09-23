@@ -9,14 +9,23 @@ import { FirebaseExtendedService } from './firebase-ext.service';
 })
 export class StripeService {
 
-	private freePlanId = environment.production ? 'prod_OV9WZx4H6x0iOZ' : 'prod_OV9eAd1mDUMCIv';
+	private production = false;
+	private freePlanId = this.production ? 'prod_OV9WZx4H6x0iOZ' : 'prod_OV9eAd1mDUMCIv';
 
 	constructor(
 		private db: FirebaseExtendedService,
-	) { }
+	) {
+		this.production = false;
+		try {
+			this.production = eval(environment.production)
+		} catch (err) {
+			this.production = false;
+			console.error(err);
+		}
+	}
 
 	getProduct(id?: string) {
-		id = id || this.freePlanId;
+		id = id ?? this.freePlanId;
 		return this.db.getDoc<StripeProduct>(`products/${id}`);
 	}
 

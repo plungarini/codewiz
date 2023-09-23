@@ -5,7 +5,15 @@ import { environment } from 'src/environments/environment';
 import { UserPermissionsService } from '../services/user-permissions.service';
 
 export const StagingAuthGuard: CanActivateFn = (route, state) => {
-	if (environment.production) return of(true);
+	let production = false;
+	try {
+		production = eval(environment.production)
+	} catch (err) {
+		production = false;
+		console.error(err);
+	}
+	
+	if (production) return of(true);
 
 	const permissionsService = inject(UserPermissionsService);
 	const router = inject(Router);
