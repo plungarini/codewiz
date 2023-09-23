@@ -8,7 +8,7 @@
 					[ngClass]="{
 						'cursor-pointer hover:shadow-2xl hover:ring-4 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950': course.generation?.completed,
 					}"
-					class="flex flex-col w-56 px-5 py-5 space-x-2 transition-all duration-300 rounded-lg shadow bg-zinc-900/40 group/chat h-72 backdrop-blur ring-zinc-900 ring-offset-zinc-950"
+					class="relative z-10 flex flex-col w-56 px-5 py-5 space-x-2 transition-all duration-300 rounded-lg shadow bg-zinc-900/40 group/chat h-72 backdrop-blur ring-zinc-900 ring-offset-zinc-950"
 				>
 					<div class="flex flex-row items-center justify-between">
 						<p class="text-xs text-zinc-600 shrink-0">{{getTimeDifference(course.updatedAt.toDate())}}</p>
@@ -16,13 +16,13 @@
 						<div class="relative">
 							<div
 								[ngClass]="{
-									'opacity-0 pointer-events-none': !course.generation?.completed || !course.generation?.started,
-									'opacity-100': !course.generation?.completed && !!course.generation?.started
+									'opacity-0 -z-10 pointer-events-none': !course.generation?.completed || !course.generation?.started,
+									'opacity-100 z-30 pointer-events-auto': !course.generation?.completed && !!course.generation?.started
 								}"
-								class="relative group/tooltip"
+								class="absolute top-0 right-0 group/tooltip"
 							>
-								<div class="absolute z-30 px-2 py-1 -mt-1 text-sm leading-tight text-white transition-all duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 bg-zinc-800 bottom-7 left-1/2">
-									<span class="whitespace-nowrap">In queue</span>
+								<div class="absolute px-2 py-1 -mt-1 text-sm leading-tight text-white transition-all duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 bg-zinc-800 bottom-7 left-1/2">
+									<span class="whitespace-nowrap">Processing...</span>
 									<div class="absolute w-2 h-2 transform rotate-45 -translate-x-1/2 rounded-sm bg-zinc-800 -bottom-1 left-1/2"></div>
 								</div>
 								<svg
@@ -30,7 +30,7 @@
 									xmlns:xlink="http://www.w3.org/1999/xlink"
 									viewBox="0 0 100 100"
 									preserveAspectRatio="xMidYMid"
-									class="absolute top-0 right-0 w-4 h-4 transition-all duration-300 pointer-events-none shrink-0 animate-spin" style="shape-rendering: auto; animation-duration: 1.5s;"
+									class="w-4 h-4 transition-all duration-300 cursor-pointer shrink-0 animate-spin" style="shape-rendering: auto; animation-duration: 1.5s;"
 								>
 									<circle cx="50" cy="50" fill="none" stroke-width="10" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="animate-aicolors">
 									</circle>
@@ -41,11 +41,11 @@
 							<div>
 								<div
 									[ngClass]="{
-										'opacity-0 pointer-events-none': !course.generation?.completed || !!course.generation?.started,
-										'opacity-100': !course.generation?.completed && !course.generation?.started
+										'opacity-0 -z-10 pointer-events-none': !course.generation?.completed || !!course.generation?.started,
+										'opacity-100 pointer-events-auto z-30': !course.generation?.completed && !course.generation?.started
 									}"
 									class="relative group/tooltip">
-									<div class="absolute z-30 px-2 py-1 -mt-1 text-sm leading-tight text-white transition-all duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 bg-zinc-800 bottom-7 left-1/2">
+									<div class="absolute px-2 py-1 -mt-1 text-sm leading-tight text-white transition-all duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 bg-zinc-800 bottom-7 left-1/2">
 										<span class="whitespace-nowrap">In queue</span>
 										<div class="absolute w-2 h-2 transform rotate-45 -translate-x-1/2 rounded-sm bg-zinc-800 -bottom-1 left-1/2"></div>
 									</div>
