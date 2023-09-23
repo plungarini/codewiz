@@ -30,7 +30,7 @@ export class IntroComponent {
 	) {
 		this.repoId = this.route.parent?.snapshot.params['id'];
 		if (this.repoId !== 'new') {
-			this.router.navigate(['/app/lern/setup', this.repoId, 'prompt']);
+			this.router.navigate(['/app/lern/setup', this.repoId, 'search']);
 		} else {
 			this.cdRef.markForCheck();
 		}
