@@ -16,11 +16,17 @@ type LernStepPreferences = {
 	revision: boolean;
 }
 
+type LernGeneration = {
+	completed: boolean;
+	started: boolean;
+}
+
 export type LernCourse = {
 	id?: string;
 	repo: string;
 	owner: string;
 	name: string;
+	generation?: LernGeneration;
 	topic?: LernStepTopic;
 	preferences?: LernStepPreferences;
 	status: 'private' | 'public';
