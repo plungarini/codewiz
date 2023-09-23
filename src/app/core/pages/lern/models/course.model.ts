@@ -6,14 +6,23 @@ type LernStepTopic = {
 	res: { can: boolean, suggested?: string }
 }
 
+type LernStepPreferences = {
+	contentDepth: 'beginner' | 'intermediate' | 'advanced';
+	duration: 'short' | 'medium' | 'long';
+	goal: 'knowledge' | 'skill' | 'certification';
+	style: 'theory' | 'practical';
+	assessment: 'quizz' | 'assignments' | 'none';
+	language: string;
+	revision: boolean;
+}
+
 export type LernCourse = {
 	id?: string;
 	repo: string;
 	owner: string;
 	name: string;
-	steps?: {
-		topic?: LernStepTopic;
-	};
+	topic?: LernStepTopic;
+	preferences?: LernStepPreferences;
 	status: 'private' | 'public';
 	createdAt: Timestamp;
 	updatedAt: Timestamp;
