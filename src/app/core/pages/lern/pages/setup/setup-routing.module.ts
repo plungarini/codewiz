@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { FinishedComponent } from './pages/finished/finished.component';
 import { IntroComponent } from './pages/intro/intro.component';
 import { SetupComponent } from './setup.component';
 
@@ -19,6 +20,10 @@ const routes: Routes = [
 			{
 				path: 'preferences',
 				loadChildren: () => import('./pages/preferences/preferences.module').then((m) => m.PreferencesModule),
+			},
+			{
+				path: 'finish',
+				component: FinishedComponent,
 			},
 			{
 				path: '',
