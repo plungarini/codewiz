@@ -93,15 +93,11 @@ serve(async (req) => {
 		});
 
 		let canQueryJson = false;
-		try {
-			canQueryJson = await res.json();
-			console.log({ canQuery: canQueryJson, uid });
-			
-			if (!canQueryJson) {
-				throw new UserError('Subscription reached maximum limit', { code: 'SUBSCRIPTION_LIMIT_REACHED' });
-			}
-		} catch (err) {
-			throw new ApplicationError('Error checking subscription, user cannot query');
+		canQueryJson = await res.json();
+		console.log({ canQuery: canQueryJson, uid });
+		
+		if (!canQueryJson) {
+			throw new UserError('Subscription reached maximum limit', { code: 'SUBSCRIPTION_LIMIT_REACHED' });
 		}
 
 		// TODO: better sanitization
@@ -291,22 +287,22 @@ serve(async (req) => {
 			stream: !!stream,
 		}
 
-		const response = await fetch('https://api.openai.com/v1/chat/completions', {
-			headers: {
-				Authorization: `Bearer ${openAiKey}`,
-				'Content-Type': 'application/json',
-			},
-			method: 'POST',
-			body: JSON.stringify(completionOptions),
-		})
-
-		if (!response.ok || !response.body) {
-			const error = await response.json()
-			throw new ApplicationError('Failed to generate completion', error)
-		}
-
-		// Calculate openai tokens
-		if (!!canQueryJson) {
+		if (canQueryJson) {
+			const response = await fetch('https://api.openai.com/v1/chat/completions', {
+				headers: {
+					Authorization: `Bearer ${openAiKey}`,
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+				body: JSON.stringify(completionOptions),
+			})
+	
+			if (!response.ok || !response.body) {
+				const error = await response.json()
+				throw new ApplicationError('Failed to generate completion', error)
+			}
+	
+			// Calculate openai tokens
 			const calculateOpenaiTokensUrl = environment === 'production' ? 'https://calculateopenaitokens-ytzgrgrjxq-ew.a.run.app' : 'https://calculateopenaitokens-ik2jh2ngra-ew.a.run.app';
 			fetch(calculateOpenaiTokensUrl, {
 				headers: {
@@ -340,53 +336,54 @@ serve(async (req) => {
 					console.error('calculateOpenaiTokens()', err);
 				}
 			})
+			
+	
+			const originalStream = response.body;
+	
+			const encoder = new TextEncoder();
+			const decoder = new TextDecoder();
+			let firstChunkProcessed = false;
+	
+			const newStream = new ReadableStream<Uint8Array>({
+				start(controller) {
+				const reader = originalStream.getReader();
+	
+				function read() {
+					reader.read().then(({ done, value }) => {
+						if (done) {
+							controller.close();
+							return;
+						}
+	
+						if (!firstChunkProcessed) {
+							const dataText = decoder.decode(value, { stream: false });
+	
+							const normPageSections = JSON.stringify(pageSections.map((s: any) => ({ id: s.id, title: s.title })));
+							const newData = `${dataText.replace('data: {', `data: {"page_sections":${normPageSections},`)}`;
+	
+							controller.enqueue(encoder.encode(newData));
+							firstChunkProcessed = true;
+						} else {
+							controller.enqueue(value);
+						}
+						read();
+					});
+				}
+	
+				read();
+				},
+			});
+	
+			// Create a new Response using the transformed data from the writable stream
+			const transformedResponse = new Response(newStream, {
+				headers: {
+				...corsHeaders,
+				'Content-Type': 'text/event-stream',
+				},
+			});
+	
+			return transformedResponse;
 		}
-
-		const originalStream = response.body;
-
-		const encoder = new TextEncoder();
-		const decoder = new TextDecoder();
-		let firstChunkProcessed = false;
-
-		const newStream = new ReadableStream<Uint8Array>({
-			start(controller) {
-			const reader = originalStream.getReader();
-
-			function read() {
-				reader.read().then(({ done, value }) => {
-					if (done) {
-						controller.close();
-						return;
-					}
-
-					if (!firstChunkProcessed) {
-						const dataText = decoder.decode(value, { stream: false });
-
-						const normPageSections = JSON.stringify(pageSections.map((s: any) => ({ id: s.id, title: s.title })));
-						const newData = `${dataText.replace('data: {', `data: {"page_sections":${normPageSections},`)}`;
-
-						controller.enqueue(encoder.encode(newData));
-						firstChunkProcessed = true;
-					} else {
-						controller.enqueue(value);
-					}
-					read();
-				});
-			}
-
-			read();
-			},
-		});
-
-		// Create a new Response using the transformed data from the writable stream
-		const transformedResponse = new Response(newStream, {
-			headers: {
-			...corsHeaders,
-			'Content-Type': 'text/event-stream',
-			},
-		});
-
-		return transformedResponse;
 	} catch (err: unknown) {
 		let type = '';
 		let message = '';
@@ -414,11 +411,11 @@ serve(async (req) => {
 
 		return new Response(
 			JSON.stringify({
-		error: 'There was an error processing your request',
-		debug: {
-			type: type || '',
-			message
-		}
+				error: 'There was an error processing your request',
+				debug: {
+					type: type || '',
+					message
+				}
 			}),
 			{
 				status: 500,
