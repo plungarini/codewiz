@@ -39,15 +39,15 @@ export class SidebarComponent implements OnDestroy {
       )
       .subscribe((e) => {
 				if (e instanceof NavigationEnd) {
-					if (e.url.includes('chat')) {
+					if (e.url.includes('app/chat')) {
 						this.currentPage = 'chat';
-					} else if (e.url.includes('admin')) {
+					} else if (e.url.includes('app/admin')) {
 						this.currentPage = 'admin';
-					} else if (e.url.includes('settings')) {
+					} else if (e.url.includes('app/settings')) {
 						this.currentPage = 'settings';
-					} else if (e.url.includes('setup')) {
+					} else if (e.url.includes('app/setup')) {
 						this.currentPage = 'setup';
-					} else if (e.url.includes('lern')) {
+					} else if (e.url.includes('app/lern')) {
 						this.currentPage = 'lern';
 					} else if (e.url.includes('app')) {
 						this.currentPage = 'app';
