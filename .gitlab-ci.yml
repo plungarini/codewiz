@@ -10,9 +10,10 @@ before_script:
   - npm i -g firebase-tools
 
 stages:
-  - install
-  - build
-  - deploy
+    - install
+    - lint
+    - build
+    - deploy
 
 # Install dependencies
 install:
@@ -25,7 +26,6 @@ install:
       - master
       - develop
 
-# Build - Production
 build:prod:
   stage: build
   needs: ["install"]
