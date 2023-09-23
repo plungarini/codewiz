@@ -1,6 +1,7 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
+import { ReactiveFormsModule } from '@angular/forms';
 import { PreferencesRoutingModule } from './preferences-routing.module';
 import { PreferencesComponent } from './preferences.component';
 
@@ -11,7 +12,8 @@ import { PreferencesComponent } from './preferences.component';
   ],
   imports: [
     CommonModule,
-    PreferencesRoutingModule
+		PreferencesRoutingModule,
+		ReactiveFormsModule,
   ]
 })
 export class PreferencesModule { }

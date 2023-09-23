@@ -1,1 +1,434 @@
-<p>preferences works!</p>
+<div class="w-full">
+
+	<ng-container *ngIf="course$ | async as course">
+		<h2 class="text-3xl max-w-prose">
+			2. Shape Your Course
+		</h2>
+		
+		<p class="block max-w-3xl mt-4">
+			Embrace the joy of personalized learning. Handpick every aspect of your course, from depth to style. Be the architect of your educational journey, ensuring each lesson resonates with your goals. Your course, your rules.
+		</p>
+
+		<div class="relative w-full px-4 py-3 mt-10 overflow-hidden transition-all duration-300 rounded-md shadow-2xl ring-1 ring-zinc-800 from-black/30 to-zinc-900/40 backdrop-blur-sm bg-gradient-to-tr">
+			<p class="font-semibold text-zinc-50">Content Depth: How Deep Should We Dive?</p>
+			<p>Choose how intensive you want your learning journey to be.</p>
+
+			<div class="flex flex-col items-stretch w-full mt-4 mb-2 md:flex-row gap-y-4 gap-x-4">
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.contentDepth === 'beginner',
+						'border-zinc-800 hover:bg-zinc-900': form.value.contentDepth !== 'beginner',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ contentDepth: 'beginner' })" name="contentDepth" value="beginner" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Beginner</span>
+						<span class="block text-sm font-normal text-zinc-400">Just starting out? Let's build a solid foundation.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.contentDepth === 'beginner',
+							'border-transparent': form.value.contentDepth !== 'beginner',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.contentDepth === 'intermediate',
+						'border-zinc-800 hover:bg-zinc-900': form.value.contentDepth !== 'intermediate',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ contentDepth: 'intermediate' })" name="contentDepth" value="intermediate" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Intermediate</span>
+						<span class="block text-sm font-normal text-zinc-400">Know the basics? Let's delve deeper.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.contentDepth === 'intermediate',
+							'border-transparent': form.value.contentDepth !== 'intermediate',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.contentDepth === 'advanced',
+						'border-zinc-800 hover:bg-zinc-900': form.value.contentDepth !== 'advanced',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ contentDepth: 'advanced' })" name="contentDepth" value="advanced" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Advanced</span>
+						<span class="block text-sm font-normal text-zinc-400">Ready to master the subject? Challenge accepted!</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.contentDepth === 'advanced',
+							'border-transparent': form.value.contentDepth !== 'advanced',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+			</div>
+		</div>
+
+		<div class="relative w-full px-4 py-3 mt-6 overflow-hidden transition-all duration-300 rounded-md shadow-2xl ring-1 ring-zinc-800 from-black/30 to-zinc-900/40 backdrop-blur-sm bg-gradient-to-tr">
+			<p class="font-semibold text-zinc-50">Duration: How Long’s the Adventure?</p>
+			<p>Select how much time you're willing to invest in this learning experience.</p>
+
+			<div class="flex flex-col items-stretch w-full mt-4 mb-2 md:flex-row gap-y-4 gap-x-4">
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.duration === 'short',
+						'border-zinc-800 hover:bg-zinc-900': form.value.duration !== 'short',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ duration: 'short' })" name="duration" value="short" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Short</span>
+						<span class="block text-sm font-normal text-zinc-400">Quick and efficient insights.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.duration === 'short',
+							'border-transparent': form.value.duration !== 'short',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.duration === 'medium',
+						'border-zinc-800 hover:bg-zinc-900': form.value.duration !== 'medium',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ duration: 'medium' })" name="duration" value="medium" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Medium</span>
+						<span class="block text-sm font-normal text-zinc-400">A balanced dive into the subject.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.duration === 'medium',
+							'border-transparent': form.value.duration !== 'medium',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.duration === 'long',
+						'border-zinc-800 hover:bg-zinc-900': form.value.duration !== 'long',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ duration: 'long' })" name="duration" value="long" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Long</span>
+						<span class="block text-sm font-normal text-zinc-400">Comprehensive mastery over the topic.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.duration === 'long',
+							'border-transparent': form.value.duration !== 'long',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+			</div>
+		</div>
+
+		<div class="relative w-full px-4 py-3 mt-6 overflow-hidden transition-all duration-300 rounded-md shadow-2xl ring-1 ring-zinc-800 from-black/30 to-zinc-900/40 backdrop-blur-sm bg-gradient-to-tr">
+			<p class="font-semibold text-zinc-50">Goal Orientation: What’s Your Mission?</p>
+			<p>Highlight your main objective for this course.</p>
+
+			<div class="flex flex-col items-stretch w-full mt-4 mb-2 md:flex-row gap-y-4 gap-x-4">
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.goal === 'knowledge',
+						'border-zinc-800 hover:bg-zinc-900': form.value.goal !== 'knowledge',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ goal: 'knowledge' })" name="goal" value="knowledge" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Knowledge Acquisition</span>
+						<span class="block text-sm font-normal text-zinc-400">Quench that thirst for knowledge.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.goal === 'knowledge',
+							'border-transparent': form.value.goal !== 'knowledge',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.goal === 'skill',
+						'border-zinc-800 hover:bg-zinc-900': form.value.goal !== 'skill',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ goal: 'skill' })" name="goal" value="skill" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Skill Development</span>
+						<span class="block text-sm font-normal text-zinc-400">Roll up those sleeves and get hands-on.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.goal === 'skill',
+							'border-transparent': form.value.goal !== 'skill',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.goal === 'certification',
+						'border-zinc-800 hover:bg-zinc-900': form.value.goal !== 'certification',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ goal: 'certification' })" name="goal" value="certification" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Certification Prep</span>
+						<span class="block text-sm font-normal text-zinc-400">Ace that exam with confidence!</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.goal === 'certification',
+							'border-transparent': form.value.goal !== 'certification',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+			</div>
+		</div>
+
+		<div class="relative w-full px-4 py-3 mt-6 overflow-hidden transition-all duration-300 rounded-md shadow-2xl ring-1 ring-zinc-800 from-black/30 to-zinc-900/40 backdrop-blur-sm bg-gradient-to-tr">
+			<p class="font-semibold text-zinc-50">Content Style: How Do You Want It Served?</p>
+			<p>Choose the nature of content that resonates with you.</p>
+
+			<div class="flex flex-col items-stretch w-full mt-4 mb-2 md:flex-row gap-y-4 gap-x-4">
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.style === 'theory',
+						'border-zinc-800 hover:bg-zinc-900': form.value.style !== 'theory',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ style: 'theory' })" name="style" value="theory" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Theory</span>
+						<span class="block text-sm font-normal text-zinc-400">Understand the "why" behind concepts.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.style === 'theory',
+							'border-transparent': form.value.style !== 'theory',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.style === 'practical',
+						'border-zinc-800 hover:bg-zinc-900': form.value.style !== 'practical',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ style: 'practical' })" name="style" value="practical" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Practical</span>
+						<span class="block text-sm font-normal text-zinc-400">Dive into real-world examples and snippets.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.style === 'practical',
+							'border-transparent': form.value.style !== 'practical',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+			</div>
+		</div>
+		
+		<div class="relative w-full px-4 py-3 mt-6 overflow-hidden transition-all duration-300 rounded-md shadow-2xl ring-1 ring-zinc-800 from-black/30 to-zinc-900/40 backdrop-blur-sm bg-gradient-to-tr">
+			<p class="font-semibold text-zinc-50">Assessment Type: Test Your Mettle?</p>
+			<p>Decide how you'd like to evaluate your progress.</p>
+
+			<div class="flex flex-col items-stretch w-full mt-4 mb-2 md:flex-row gap-y-4 gap-x-4">
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.assessment === 'quizz',
+						'border-zinc-800 hover:bg-zinc-900': form.value.assessment !== 'quizz',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ assessment: 'quizz' })" name="assessment" value="quizz" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Quizzes</span>
+						<span class="block text-sm font-normal text-zinc-400">Test your grasp with quizzes.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.assessment === 'quizz',
+							'border-transparent': form.value.assessment !== 'quizz',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.assessment === 'assignments',
+						'border-zinc-800 hover:bg-zinc-900': form.value.assessment !== 'assignments',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ assessment: 'assignments' })" name="assessment" value="assignments" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Assignments</span>
+						<span class="block text-sm font-normal text-zinc-400">Take on meatier challenges to solidify your understanding</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.assessment === 'assignments',
+							'border-transparent': form.value.assessment !== 'assignments',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.assessment === 'none',
+						'border-zinc-800 hover:bg-zinc-900': form.value.assessment !== 'none',
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ assessment: 'none' })" name="assessment" value="none" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">No Assessment</span>
+						<span class="block text-sm font-normal text-zinc-400">Enjoy the ride, no stops for checks!</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.assessment === 'none',
+							'border-transparent': form.value.assessment !== 'none',
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+			</div>
+		</div>
+		
+		<div class="relative w-full px-4 py-3 mt-6 overflow-hidden transition-all duration-300 rounded-md shadow-2xl ring-1 ring-zinc-800 from-black/30 to-zinc-900/40 backdrop-blur-sm bg-gradient-to-tr">
+			<p class="font-semibold text-zinc-50">Revision and Recap: Looking Back or Charging Forward?</p>
+			<p>Choose how often you'd like to stop and reflect.</p>
+
+			<div class="flex flex-col items-stretch w-full mt-4 mb-2 md:flex-row gap-y-4 gap-x-4">
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': form.value.revision,
+						'border-zinc-800 hover:bg-zinc-900': !form.value.revision,
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ revision: true })" name="revision" value="true" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">Include Summaries</span>
+						<span class="block text-sm font-normal text-zinc-400">A brief rewind at the end of each section.</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': form.value.revision,
+							'border-transparent': !form.value.revision,
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+				<label
+					[ngClass]="{
+						'border-indigo-600 ring-indigo-600': !form.value.revision,
+						'border-zinc-800 hover:bg-zinc-900': form.value.revision,
+					}"
+					class="relative flex-1 block w-full px-6 py-4 transition-all duration-300 border rounded-lg shadow-sm cursor-pointer bg-zinc-900/60 focus:outline-none sm:flex sm:justify-between"
+				>
+					<input type="checkbox" (click)="form.patchValue({ revision: false })" name="revision" value="false" class="sr-only">
+					<div>
+						<span class="block font-medium text-zinc-200">No Summaries</span>
+						<span class="block text-sm font-normal text-zinc-400">Keep the momentum going, no breaks!</span>
+					</div>
+					<span
+						[ngClass]="{
+							'border-indigo-600': !form.value.revision,
+							'border-transparent': form.value.revision,
+						}"
+						class="absolute transition-all duration-300 border-2 rounded-lg pointer-events-none -inset-px"
+						aria-hidden="true"
+					></span>
+				</label>
+			</div>
+		</div>
+		
+		<div class="relative flex-1 w-full px-4 py-3 mt-6 overflow-hidden transition-all duration-300 rounded-md shadow-2xl md:shrink-0 ring-1 ring-zinc-800 from-black/30 to-zinc-900/40 backdrop-blur-sm bg-gradient-to-tr">
+			<p class="font-semibold text-zinc-50">Language Preference: Which Tongue Do You Prefer?</p>
+			<p>Type in your preferred language for the course. It's all about making you feel right at home!</p>
+
+			<div class="flex flex-col items-stretch w-full max-w-md mt-4 mb-2 md:flex-row gap-y-4 gap-x-4">
+				<input
+					type="text"
+					[formControl]="form.controls.language"
+					placeholder='e.g. "English" or "Italian"'
+					class="w-full p-0 text-white placeholder:text-zinc-500 px-4 py-3 overflow-hidden shadow-2xl relative z-20 transition-all duration-300 border-0 outline-none ring-1 focus:ring-[3px] ring-zinc-800 focus:ring-indigo-400 rounded-md bg-zinc-900/80 hover:ring-4 focus:outline-none focus:ring-offset-[3px] focus:ring-offset-zinc-950 ring-offset-zinc-950"
+				/>
+			</div>
+		</div>
+
+		<button
+			[disabled]="form.invalid || !courseId"
+			(click)="submit()"
+			class="rounded-md disabled:opacity-40 ml-auto mt-8 disabled:cursor-not-allowed px-3.5 py-2.5 flex items-center justify-center space-x-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600 text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+		>
+			<svg [ngClass]="{ '-ml-8 opacity-0': !loading, '-ml-0 opacity-100': loading }" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" class="w-4 h-4 mr-2 transition-all duration-300 pointer-events-none shrink-0 animate-spin" style="shape-rendering: auto;">
+				<circle cx="50" cy="50" fill="none" stroke-width="7" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="stroke-white">
+				</circle>
+			</svg>
+
+			<span>Next step</span>
+			
+			<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+				<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+					<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+						<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+						<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+					</g>
+				</g>
+			</svg>
+		</button>
+
+	</ng-container>
+	
+</div>
