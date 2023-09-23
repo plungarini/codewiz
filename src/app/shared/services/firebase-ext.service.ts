@@ -28,7 +28,7 @@ export class FirebaseExtendedService {
 
 	private debug = false;
 	private production = false;
-	private cloudId = this.production ? 'ytzgrgrjxq-ew' : 'ik2jh2ngra-ew';
+	private cloudId;
 	privateProjectName = 'codewiz-prod';
 
 	constructor(
@@ -37,9 +37,11 @@ export class FirebaseExtendedService {
 	) {
 		this.production = false;
 		try {
-			this.production = eval(environment.production)
+			this.production = eval(environment.production);
+			this.cloudId = this.production ? 'ytzgrgrjxq-ew' : 'ik2jh2ngra-ew';
 		} catch (err) {
 			this.production = false;
+			this.cloudId = this.production ? 'ytzgrgrjxq-ew' : 'ik2jh2ngra-ew';
 			console.error(err);
 		}
 	}
