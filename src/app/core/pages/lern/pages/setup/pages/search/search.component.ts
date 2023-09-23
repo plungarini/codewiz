@@ -101,12 +101,10 @@ export class SearchComponent implements OnDestroy {
 			};
 
 			await this.lern.updateCourse(this.currentCourse?.id ?? '', {
-				steps: {
-					topic: {
-						query: this.queryArea.value,
-						pages: res.pages,
-						res: { can: res.can, suggested: res.suggested }
-					}
+				topic: {
+					query: this.queryArea.value,
+					pages: res.pages,
+					res: { can: res.can, suggested: res.suggested }
 				}
 			});
 
@@ -267,7 +265,7 @@ export class SearchComponent implements OnDestroy {
 
 			this.initialized = true;
 			const uniqueTitles = new Set<string>();
-			const pages = (course.steps?.topic?.pages ?? []).filter((p) => {
+			const pages = (course?.topic?.pages ?? []).filter((p) => {
 				const title = p.title.trim().toLowerCase();
 				const hasTitle = uniqueTitles.has(title);
 				if (hasTitle) return false;
@@ -278,12 +276,12 @@ export class SearchComponent implements OnDestroy {
 				id: this.getParsedUrl(p.id),
 			}))
 			this.docs = {
-				can: !!course.steps?.topic?.res?.can,
+				can: !!course?.topic?.res?.can,
 				pages,
-				suggested: course.steps?.topic?.res?.suggested,
+				suggested: course?.topic?.res?.suggested,
 			};
 			this.foundTyping = this.searchDocumentsSuccess(this.docs)
-			this.queryArea.patchValue(course.steps?.topic?.query ?? '');
+			this.queryArea.patchValue(course?.topic?.query ?? '');
 		}
 	}
 
