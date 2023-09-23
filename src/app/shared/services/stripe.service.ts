@@ -10,7 +10,6 @@ import { FirebaseExtendedService } from './firebase-ext.service';
 export class StripeService {
 
 	private production = false;
-	private freePlanId = this.production ? 'prod_OV9WZx4H6x0iOZ' : 'prod_OV9eAd1mDUMCIv';
 
 	constructor(
 		private db: FirebaseExtendedService,
@@ -25,7 +24,8 @@ export class StripeService {
 	}
 
 	getProduct(id?: string) {
-		id = id ?? this.freePlanId;
+		const freePlanId = this.production ? 'prod_OV9WZx4H6x0iOZ' : 'prod_OV9eAd1mDUMCIv';
+		id = id ?? freePlanId;
 		return this.db.getDoc<StripeProduct>(`products/${id}`);
 	}
 
