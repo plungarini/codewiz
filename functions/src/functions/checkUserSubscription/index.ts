@@ -12,7 +12,7 @@ export const checkUserSubscription = async (uid: string) => {
 	const periodPathId = await getCurrentPeriodId(uid);
 	const docRef2 = firestore.doc(`users/${uid}/protected/usages/bySubscription/${periodPathId}`);
 	const doc2 = await docRef2.get();
-	const count = doc2.data()?.prompt || 0;
+	const count = doc2.data()?.count || 0;
 
 	const docRef = firestore
 		.collection(`users/${uid}/subscriptions`)
@@ -22,11 +22,12 @@ export const checkUserSubscription = async (uid: string) => {
 
 	try {
 		let productRef = subscription?.product as unknown as DocumentReference | undefined;
-		productRef = productRef ? productRef : firestore.doc('products/prod_OV9WZx4H6x0iOZ'); // Fallback to free plan
+		productRef = productRef ?? firestore.doc('products/prod_OV9WZx4H6x0iOZ'); // Fallback to free plan
 		const productDoc = await productRef.get();
 		const productData = productDoc.data();
 		const maxCountPerProd = productData?.metadata.maxPromptCountMonth as string | undefined;
-		const normMaxCount = maxCountPerProd ? isNaN(parseInt(maxCountPerProd)) ? 0 : parseInt(maxCountPerProd) : 0;
+		const max = isNaN(parseInt(maxCountPerProd ?? '0')) ? 0 : parseInt(maxCountPerProd ?? '0');
+		const normMaxCount = maxCountPerProd ? max : 0;
 		canQuery = count <= normMaxCount;
 	} catch (err) {
 		error(err);
