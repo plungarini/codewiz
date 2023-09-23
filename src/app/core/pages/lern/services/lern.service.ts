@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, lastValueFrom, map, of, switchMap } from 'rxjs';
+import { limit, orderBy } from '@angular/fire/firestore';
+import { combineLatest, firstValueFrom, lastValueFrom, map, Observable, of, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { environment } from 'src/environments/environment';
@@ -58,6 +59,37 @@ export class LernService {
 		return await lastValueFrom(req$);
 	}
 
+	getAll(limitRes?: number): Observable<LernCourse[]> {
+		return this._getCurrentUserId$().pipe(
+			switchMap((uid) => {
+				if (!uid) of([]);
+				return this.db.getCol<LernCourse>(
+					`lern/${uid}/courses`,
+					'id',
+					orderBy('updatedAt', 'desc'),
+					limit(limitRes ?? 1000)
+				);
+			}),
+			switchMap((courses) => {
+				const observables: Observable<LernCourse>[] = courses.map(course => {
+					return this.db.getDoc<LernCourse['generation']>(
+						`lern/${course.owner}/courses/${course.id}/generation/status`,
+					).pipe(
+						map(gen => ({ ...course, generation: gen }) as LernCourse),
+					);
+				});
+				return combineLatest(observables);
+			}),
+			map((courses) => {
+				const unified = courses.flat();
+				const sorted = [...unified].sort((a, b) => {
+					return (b.updatedAt || new Date()).toDate().getTime() - (a.updatedAt || new Date()).toDate().getTime();
+				}).slice(0, limitRes);
+				return sorted;
+			})
+		)
+	}
+
 	getCourse(id: string) {
 		return this._getCurrentUserId$().pipe(
 			switchMap((uid) => {
@@ -93,13 +125,13 @@ export class LernService {
 				course
 			);
 			return {
-				url: `/app/lern/setup/${id}/intro`,
+				url: `/app/lern/setup/${id}/search`,
 			};
 		} catch (err) {
 			console.error(err);
 			return {
 				error: {
-					msg: 'You can create a course right now. Check your credits and if this issue persists, reach out to the support.',
+					msg: 'You can\'t create a course right now. Check your credits and if this issue persists, reach out to the support.',
 					details: err,
 				}
 			};
