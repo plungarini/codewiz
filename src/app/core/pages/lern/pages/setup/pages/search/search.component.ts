@@ -274,7 +274,10 @@ export class SearchComponent implements OnDestroy {
 			}).map((p) => ({
 				...p,
 				id: this.getParsedUrl(p.id),
-			}))
+			}));
+
+			if (!course.topic) return;
+			
 			this.docs = {
 				can: !!course?.topic?.res?.can,
 				pages,
