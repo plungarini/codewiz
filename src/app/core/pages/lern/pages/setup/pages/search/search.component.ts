@@ -85,7 +85,7 @@ export class SearchComponent implements OnDestroy {
 			const res = await this.lern.searchDocs(
 				this.queryArea.value,
 				this.currentRepo.tableName,
-				this.repos.map((r) => r.tableName)
+				this.repos.map((r) => r.tableName ?? r.id),
 			);
 			
 			const uniqueTitles = new Set<string>();
