@@ -214,7 +214,8 @@ serve(async (req) => {
 						},
 						suggestedDocumentation: {
 							type: 'string',
-							description: `Suggests a more appropriate documentation topic if the question is not relevant to the current documentation. Value can be any of these: "${availableRepos.join(',')}"`,
+							enum: availableRepos,
+							description: `Suggests a more appropriate documentation topic if the question is not relevant to the current documentation.`,
 						}
 					},
 					required: ['isQuestionRelevant', 'suggestedDocumentation'],
