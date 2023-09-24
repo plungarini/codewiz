@@ -71,6 +71,7 @@ export class LernService {
 				);
 			}),
 			switchMap((courses) => {
+				if (courses.length <= 0) return of([]);
 				const observables: Observable<LernCourse>[] = courses.map(course => {
 					return this.db.getDoc<LernCourse['generation']>(
 						`lern/${course.owner}/courses/${course.id}/generation/status`,
