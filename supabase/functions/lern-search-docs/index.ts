@@ -214,7 +214,7 @@ serve(async (req) => {
 						},
 						suggestedDocumentation: {
 							type: 'string',
-							enum: availableRepos,
+							enum: [...availableRepos.filter((r: string) => !!r)],
 							description: `Suggests a more appropriate documentation topic if the question is not relevant to the current documentation.`,
 						}
 					},
