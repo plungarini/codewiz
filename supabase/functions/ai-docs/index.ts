@@ -405,9 +405,9 @@ serve(async (req) => {
 			)
 		} else if (err instanceof ApplicationError) {
 			// Print out application errors with their additional data
-			console.error(`${err.message}: ${JSON.stringify(err.data)}`);
-			type = err.data['error']['type'];
-			message = err.data['error']['message'];
+			console.error(`${err?.message}: ${JSON.stringify(err?.data)}`);
+			type = err?.data?.error?.type;
+			message = err?.data?.error?.message;
 		} else {
 			// Print out unexpected errors as is to help with debugging
 			console.error(err)
