@@ -10,6 +10,9 @@ import { sendEmailActionCode } from './functions/email_action_code';
 import { elaborateEmbeddings, getAllEmbeddings } from './functions/embeddings';
 import { githubFolderFetcher } from './functions/githubFetcher';
 import { checkUserData, initUser as initUserFn } from './functions/initUser';
+import { setGlobalLernStatus } from './functions/lern/common/utils';
+import { createLernCoursePlan } from './functions/lern/course-plan';
+import { createLernCourseSection } from './functions/lern/course-sections';
 import { upsertAcUser } from './functions/marketing';
 import { scrapeDocumentedPage } from './functions/scraper';
 import { calculateTokens } from './functions/tiktoken';
@@ -21,6 +24,7 @@ setGlobalOptions({
 	memory: '256MiB',
 	region: 'europe-west1',
 	timeoutSeconds: 120,
+	preserveExternalChanges: true,
 });
 
 export const scrapePage = onCall({
@@ -130,7 +134,7 @@ export const calculateOpenaiTokensOnReply = onDocumentUpdated(
 			const { uid, repo, chatId, messageId } = event.params;
 			if (messageId === 'init') return;
 			const message = event.data?.after.data() as AiChatMessage | undefined;
-			if (!message || !message.role || message.role === 'user' || !!message.usage || !message.content || message.content.length <= 1) return;
+			if (!message?.role || message.role === 'user' || !!message.usage || !message.content || message.content.length <= 1) return;
 			warn('New message at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, message);
 			await calculateTokens({
 				messages: [{ role: message.role, content: message.content }],
@@ -155,6 +159,60 @@ export const calculateTotalChats = onDocumentCreated(
 		}
 	}
 );
+
+export const onLernCourse = onDocumentWritten({
+	document: 'lern/{uid}/courses/{id}',
+	timeoutSeconds: 540,
+	maxInstances: 10,
+	memory: '4GiB',
+}, async (event) => {
+	const MAX_RETRIES = 3;
+
+	const { uid, id } = event.params;
+	if (!uid || !id) return;
+	const course = event.data?.after.data() as any;
+	const isDeleted = event.data?.before.exists && !event.data?.after.exists;
+	const planCreated = course.planCreated;
+	const isMaxRetries = (course?.tries ?? 0) >= MAX_RETRIES;
+	if (isDeleted || planCreated || isMaxRetries) {
+		if (isMaxRetries) {
+			await setGlobalLernStatus({ uid, course: id }, { hasError: true });
+		}
+		return;
+	}
+	try {
+		await createLernCoursePlan(uid, id, course);
+		return;
+	} catch (err) {
+		error(err);
+		return;
+	}
+});
+
+export const onLernCourseSection = onDocumentWritten({
+	document: 'lern/{uid}/courses/{courseId}/sections/{sectionId}',
+}, async (event) => {
+	const MAX_RETRIES = 3;
+
+	const { uid, courseId, sectionId } = event.params;
+	if (!uid || !courseId || !sectionId) return;
+	const section = event.data?.after.data() as any;
+	const isDeleted = event.data?.before.exists && !event.data?.after.exists;
+	const isMaxRetries = (section?.tries ?? 0) >= MAX_RETRIES;
+	if (isDeleted || isMaxRetries) {
+		if (isMaxRetries) {
+			await setGlobalLernStatus({ uid, course: courseId }, { hasError: true });
+		}
+		return;
+	}
+	try {
+		await createLernCourseSection(uid, courseId, sectionId, section);
+		return;
+	} catch (err) {
+		error(err);
+		return;
+	}
+});
 
 export const canUserQuery = onRequest({
 	cors: true,
