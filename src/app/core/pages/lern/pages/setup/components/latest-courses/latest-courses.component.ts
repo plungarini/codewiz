@@ -62,6 +62,19 @@ export class LatestCoursesComponent implements OnDestroy {
 		this.coursesSub.unsubscribe();
 	}
 
+	getFakeSectionsBuildingArray(itemsCount: number): number[] {
+		return Array.from(Array(itemsCount).keys());
+	}
+
+	getPercentageCompletion(generation: LernCourse['generation']): string {
+		if (!generation) return '5%';
+		if (generation?.completed) return '100%';
+		const total = generation.totalSections + 1;
+		const completed = generation.completedSections + (generation.planCompleted ? 1 : 0);
+		const perc = (completed / total) < 0.05 ? 0.05 : (completed / total);
+		return Math.round(perc * 100) + '%';
+	}
+
 	getRepoLogo(id: string, repos: Repo[] | null): string {
 		if (!repos) return '';
 		return repos.find(r => r.id === id)?.logo ?? '';
