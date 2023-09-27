@@ -54,6 +54,14 @@ export class LernService {
 					'Content-Type': 'application/json',
 				},
 			}
+		).pipe(
+			map((res) => {
+				if (res.suggested === repoTable) {
+					return { can: res.can, pages: res.pages }
+				} else {
+					return res;
+				}
+			})
 		);
 
 		return await lastValueFrom(req$);
