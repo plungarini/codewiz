@@ -5,39 +5,7 @@ import { CompletionUsage } from 'openai/resources';
 import { ChatCompletionCreateParams, ChatCompletionMessageParam } from 'openai/resources/chat';
 import { firestore } from '../../../utils';
 import { LernUsage } from '../models/lern.model';
-import { getChatRequestTokenCount, getMaxTokenCount } from './tokenizer';
-
-/**
- * Generates a capped list of context messages for chat completion.
- *
- * @param {ChatCompletionMessageParam[]} initMessages - The initial messages to start the chat completion.
- * @param {ChatCompletionMessageParam[]} contextMessages - The context messages for the chat completion.
- * @param {number} maxCompletionTokenCount - The maximum number of completion tokens allowed.
- * @param {string} model - The model to use for the chat completion.
- * @return {ChatCompletionMessageParam[]} The capped list of context messages for chat completion.
- */
-export const capMessages = (
-	initMessages: ChatCompletionMessageParam[],
-	contextMessages: ChatCompletionMessageParam[],
-	maxCompletionTokenCount: number,
-	model: string
-): ChatCompletionMessageParam[] => {
-	const maxTotalTokenCount = getMaxTokenCount(model);
-	const cappedContextMessages = [...contextMessages];
-	let tokenCount =
-		getChatRequestTokenCount([...initMessages, ...cappedContextMessages], model) +
-		maxCompletionTokenCount;
-
-	// Remove earlier context messages until we fit
-	while (tokenCount >= maxTotalTokenCount) {
-		cappedContextMessages.shift();
-		tokenCount =
-			getChatRequestTokenCount([...initMessages, ...cappedContextMessages], model) +
-			maxCompletionTokenCount;
-	}
-
-	return [...initMessages, ...cappedContextMessages];
-};
+import { getMaxTokenCount } from './tokenizer';
 
 type PartialParams = {
 	messages: ChatCompletionMessageParam[];
