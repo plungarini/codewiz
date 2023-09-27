@@ -123,6 +123,7 @@ const setGlobalLernStatus = async (
 	}
 	if (data.completed !== undefined) {
 		normGlobalStatus.completed = data.completed;
+		normGlobalStatus.started = data.completed ? false : normGlobalStatus.started;
 	}
 	if (data.planCompleted !== undefined) {
 		normGlobalStatus.planCompleted = data.planCompleted;
