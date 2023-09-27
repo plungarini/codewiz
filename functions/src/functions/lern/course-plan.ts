@@ -5,7 +5,7 @@ import OpenAI from 'openai';
 import { CompletionUsage } from 'openai/resources';
 import { ChatCompletionCreateParams, ChatCompletionMessageParam } from 'openai/resources/chat';
 import { firestore } from '../../utils';
-import { capMessages, setGlobalLernStatus, setGlobalLernUsage } from './common/utils';
+import { cappedContextMessages, setGlobalLernStatus, setGlobalLernUsage } from './common/utils';
 import { normalizeSections, validateCoursePlanArgs } from './common/validate-plan-args';
 import { LernCourse, LernCoursePlanGeneration, LernCoursePlanGenerationSection, LernGenerationStatus, LernStepPreferences, LernStepTopic, LernUsage } from './models/lern.model';
 
@@ -88,8 +88,6 @@ export const createLernCoursePlan = async (uid: string, id: string, course?: Ler
 	const docRef = firestore.doc(`lern/${uid}/courses/${id}`);
 
 	try {
-		if (!OPENAI_KEY || !OPENAI_ORG) return await setErrorToCourse(docRef, 'server_error');
-
 		if (!course) {
 			const doc = await docRef.get();
 			course = doc.data() as LernCourse | undefined;
@@ -120,9 +118,9 @@ export const createLernCoursePlan = async (uid: string, id: string, course?: Ler
 
 		if (!repo || !topic || !preferences) return await setErrorToCourse(docRef, 'incomplete');
 
-		const contextText = (topic?.pages ?? []).map((section) => {
-			return (`${section.title}\n${section.content}`).trim();
-		}).join('---').trim();
+		const sections = (topic?.pages ?? []).map((section, i) => {
+			return { title: section?.title ?? '', content: section?.content ?? '', rank: i };
+		}).sort((a, b) => a.rank - b.rank);
 
 		const normPreferences = getPreferencesBlock(preferences);
 		const normName = user?.name.split(' ')[0] || 'User';
@@ -132,7 +130,7 @@ export const createLernCoursePlan = async (uid: string, id: string, course?: Ler
 			uid,
 			repo,
 			userName,
-			contextText,
+			sections,
 			topic,
 			preferences,
 			normPreferences,
@@ -381,7 +379,7 @@ const getCompletionParams = (data: {
 	uid: string;
 	repo: string;
 	userName: string;
-	contextText: string;
+	sections: { title: string; content: string; rank: number }[];
 	topic: LernStepTopic;
 	preferences: LernStepPreferences;
 	normPreferences: string;
@@ -390,7 +388,7 @@ const getCompletionParams = (data: {
 		uid,
 		repo,
 		userName,
-		contextText,
+		sections,
 		normPreferences,
 		preferences,
 		topic,
@@ -415,7 +413,7 @@ const getCompletionParams = (data: {
 			content: codeBlock`
 				Based on the provided ${repo} documentation:
 				"""
-				${contextText}
+				{{contextText}}
 				"""
 
 				I want to learn:
@@ -499,11 +497,16 @@ const getCompletionParams = (data: {
 	const model = 'gpt-3.5-turbo';
 	const maxCompletionTokenCount = 1024;
 
-	const params: ChatCompletionCreateParams = {
-    messages: capMessages(messages, [], maxCompletionTokenCount, model),
-		model: 'gpt-3.5-turbo',
-		functions,
+	const preParams = cappedContextMessages({
+		messages,
 		function_call: { name: 'createCoursePlan' },
+		functions,
+		model,
+	}, sections, maxCompletionTokenCount);
+
+	const params: ChatCompletionCreateParams = {
+		...preParams,
+		model: 'gpt-3.5-turbo',
 		max_tokens: maxCompletionTokenCount,
 		temperature: 0.75,
 		stream: false,
