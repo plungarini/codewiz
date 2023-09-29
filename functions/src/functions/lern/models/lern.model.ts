@@ -41,7 +41,7 @@ export type LernCourseGenerationSection = {
 		options: {
 			option: string;
 			isCorrect: boolean;
-			whyNotCorrect?: string;
+			why?: string;
 		}[];
 	};
 	assignment?: string;
@@ -49,6 +49,7 @@ export type LernCourseGenerationSection = {
 
 export type LernCoursePlanGeneration = {
 	courseName: string;
+	shortDescription: string;
 	sections: LernCoursePlanGenerationSection[];
 	prerequisites?: string[];
 	createdAt?: Timestamp;
