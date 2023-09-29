@@ -1,5 +1,5 @@
 import { oneLine } from 'common-tags';
-import { warn } from 'firebase-functions/logger';
+import { log, warn } from 'firebase-functions/logger';
 import { promptTokensEstimate } from 'openai-chat-tokens';
 import { CompletionUsage } from 'openai/resources';
 import { ChatCompletionCreateParams, ChatCompletionMessageParam } from 'openai/resources/chat';
@@ -113,6 +113,7 @@ const setGlobalLernStatus = async (
 		planCompleted: false,
 		totalSections: 0,
 		completedSections: 0,
+		hasError: false,
 		...globalStatus,
 		createdAt: globalStatus?.createdAt ?? new Date(),
 		updatedAt: new Date(),
@@ -136,6 +137,9 @@ const setGlobalLernStatus = async (
 	}
 	if (data.addCompletedSection !== undefined) {
 		normGlobalStatus.completedSections = normGlobalStatus.completedSections + 1;
+	}
+	if (data.hasError !== undefined) {
+		normGlobalStatus.hasError = data.hasError;
 	}
 
 	globalStatusRef.set(normGlobalStatus, { merge: true });
@@ -192,4 +196,31 @@ export const setGlobalLernUsage = async (
 	warn('Setting Course usage =>', normData);
 
 	await docRef.set(normData, { merge: true });
+};
+
+
+export const parseArgs = <T>(args: string): T | undefined => {
+	const regexReplacers: { regex: RegExp, replacer: string }[] = [
+		// Trailing commas
+		{ regex: /,\s*([\]}])/gm, replacer: '$1' },
+		// Remove double commas (,\s,)
+		{ regex: /,\s*(,)/gm, replacer: '$1' },
+		// Unquoted properties
+		{ regex: /(['"{[])?([a-zA-Z0-9]+)(['"])?:(\s)?(true|false|(\d+)|'|")/gm, replacer: '"$2": $5' },
+		// Single quoted values
+    { regex: /:(\s*)'((?:\\.|[^'"])+)'/gm, replacer: ': "$2"' },
+	];
+
+	let tempString = args;
+	for (let i = 0; i <= regexReplacers.length; i++) {
+		try {
+			if (i > 0) log(`[${i}] Sanitized: `, tempString);
+			return JSON.parse(tempString);
+		} catch {
+			if (i < regexReplacers.length) {
+				tempString = tempString.replace(regexReplacers[i].regex, regexReplacers[i].replacer);
+			}
+		}
+	}
+	return undefined;
 };
