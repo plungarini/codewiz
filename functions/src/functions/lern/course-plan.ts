@@ -439,48 +439,54 @@ const getCompletionParams = (data: {
 
 	const functions: ChatCompletionCreateParams.Function[] = [
 		{
-			name: 'createCoursePlan',
-			description: `Generate a course plan written in "${preferences.language}" based on user preferences.`,
-			parameters: {
-				type: 'object',
-				properties: {
-					courseName: {
-						type: 'string',
-						description: 'A name for the course. Maximum 40 chars.',
+			'name': 'createCoursePlan',
+			'description': oneLine`
+				Generate a course plan written in "${preferences.language}" based on user preferences.
+				Only accept valid json as arguments.
+			`,
+			'parameters': {
+				'type': 'object',
+				'properties': {
+					'courseName': {
+						'type': 'string',
+						'description': 'A name for the course. Maximum 40 chars.',
 					},
-					sections: {
-						type: 'array',
-						description: `An array of Course Section. Each Section should focus on one main small topic. ${sectionsDesc[preferences.duration]}`,
-						items: {
-							type: 'object',
-							properties: {
-								title: {
-									type: 'string',
-									description: 'A title for this section.',
+					'shortDescription': {
+						'type': 'string',
+						'description': 'A short description for the course. It should introduce in short what the course is about. Maximum From 150 to 220 chars.',
+					},
+					'sections': {
+						'type': 'array',
+						'description': `An array of Course Section. Each Section should focus on one main small topic. ${sectionsDesc[preferences.duration]}`,
+						'items': {
+							'type': 'object',
+							'properties': {
+								'title': {
+									'type': 'string',
+									'description': 'A title for this section.',
 								},
-								order: {
-									type: 'number',
-									description: 'The order of this section regarding other sections.',
+								'order': {
+									'type': 'number',
+									'description': 'The order of this section regarding other sections.',
 								},
-								goals: {
-									type: 'array',
-									description: oneLine`What the user should learn in this section. Do not include difficult
-									goals that may take a long time to explain. These should be easy goals that can be presented
-									in a short article. DO NOT include external sources like "StackBlitz". Only tasks that can
-									be done by understandind a written concept. Goals should be small tasks. Use multiple small
-									tasks. Minimum of 1 goal, Maximum of ${preferences.duration === 'long' ? 5 : 3} goals.`,
-									items: {
-										type: 'string',
+								'goals': {
+									'type': 'array',
+									'description': oneLine`What the user should learn in this section. These should be easy
+									goals that can be presented in a short article. DO NOT include external sources like
+									"StackBlitz". Goals should be small tasks. Minimum of 1 goal, Maximum of
+									${preferences.duration === 'long' ? 5 : 3} goals.`,
+									'items': {
+										'type': 'string',
 									},
 								},
-								shortDescription: {
-									type: 'string',
-									description: 'A short description for this section. Maximum 150 chars.',
+								'shortDescription': {
+									'type': 'string',
+									'description': 'A short description for this section. Maximum 150 chars.',
 								},
 							},
 						},
 					},
-					prerequisites: {
+					'prerequisites': {
 						type: 'array',
 						description: 'An array of prerequisites for the course. 3-5 options.',
 						items: {
@@ -489,7 +495,7 @@ const getCompletionParams = (data: {
 						},
 					},
 				},
-				required: ['courseName', 'sections', 'prerequisites'],
+				'required': ['courseName', 'shortDescription', 'sections', 'prerequisites'],
 			},
 		},
 	];
