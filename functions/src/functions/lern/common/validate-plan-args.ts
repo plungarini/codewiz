@@ -1,6 +1,6 @@
 import { warn } from 'firebase-functions/logger';
-import * as json5 from 'json5';
 import { LernCoursePlanGeneration, LernCoursePlanGenerationSection } from '../models/lern.model';
+import { parseArgs } from './utils';
 
 /**
  * Validates the arguments for generating a LernCoursePlan.
@@ -15,7 +15,7 @@ export const validateCoursePlanArgs = (
 
   warn('Validating args', args);
 
-  const normArgs = typeof args === 'string' ? parseArgs(args) : args;
+  const normArgs = typeof args === 'string' ? parseArgs<LernCoursePlanGeneration>(args) : args;
 	if (!normArgs) {
 		warn('Unable to parse JSON', 'HALLUCINATING');
 		return undefined;
@@ -23,6 +23,10 @@ export const validateCoursePlanArgs = (
 
 	if (!isValidCourseName(normArgs.courseName)) {
 		warn('Invalid course name', 'HALLUCINATING');
+		return undefined;
+	}
+	if (!isValidDescription(normArgs.shortDescription)) {
+		warn('Invalid course description', 'HALLUCINATING');
 		return undefined;
 	}
 	if (!areSectionsValid(normArgs.sections)) {
@@ -35,31 +39,19 @@ export const validateCoursePlanArgs = (
 	}
 
   return {
-    courseName: normArgs.courseName,
+		courseName: normArgs.courseName,
+		shortDescription: normArgs.shortDescription,
     sections: normalizeSections(normArgs.sections),
     prerequisites: normArgs.prerequisites,
   };
 };
 
-const parseArgs = (args: string): LernCoursePlanGeneration | undefined => {
-	// Regular expression to remove trailing commas
-	const regex = /,\s*([\]}])/gm;
-
-	// Regular expression to remove double commas (,,)
-	const doubleCommaRegex = /,\s*(,)/gm;
-
-	// Remove trailing commas and try to parse
-	const sanitizedData = args.replace(regex, '$1').replace(doubleCommaRegex, '$1');
-
-  try {
-    return json5.parse(sanitizedData);
-  } catch (err) {
-    return undefined;
-  }
-};
-
 const isValidCourseName = (courseName: string | undefined): boolean => {
   return !!courseName && typeof courseName === 'string';
+};
+
+const isValidDescription = (description: string | undefined): boolean => {
+  return !!description && typeof description === 'string';
 };
 
 const areSectionsValid = (sections?: LernCoursePlanGenerationSection[]): boolean => {
