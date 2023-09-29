@@ -346,20 +346,20 @@ const getCompletionParams = (data: {
 
 	const functions: ChatCompletionCreateParams.Function[] = [
   {
-    name: 'createCourseSection',
-    description: oneLine`
+    'name': 'createCourseSection',
+    'description': oneLine`
       Generate a comprehensive Course Section in "${preferences.language}". This should
-      provide an in-depth lesson tailored to the user's preferences. Ensure the content
-      is thorough and avoids any redundancies or indications of future content.
+      provide an in-depth lesson tailored to the user's preferences. Avoids any
+			indications of future content. Only accept a valid json as arguments.
     `,
-    parameters: {
-      type: 'object',
-      properties: {
-        sectionTitle: {
+    'parameters': {
+      'type': 'object',
+      'properties': {
+        'sectionTitle': {
           type: 'string',
           description: 'The title of the section.',
         },
-        content: {
+        'content': {
           type: 'string',
           description: oneLine`
             The actual full content of this section/lesson. The content should answer the user's goals
@@ -370,58 +370,58 @@ const getCompletionParams = (data: {
         },
         ...(preferences.assessment === 'quizz'
           ? {
-              quiz: {
-                type: 'object',
-                properties: {
-                  question: {
-                    type: 'string',
-                    description: 'The question the User should answer to complete the knowledge review of this section.',
+              'quiz': {
+                'type': 'object',
+                'properties': {
+                  'question': {
+                    'type': 'string',
+                    'description': 'The question the User should answer to complete the knowledge review of this section.',
                   },
-                  quizType: {
-                    type: 'string',
-                    description: 'The type of quiz the user should answer. Either multiple answers or single answer.',
-                    enum: ['multi', 'single'],
+                  'quizType': {
+                    'type': 'string',
+                    'description': 'The type of quiz the user should answer. Either multiple answers or single answer.',
+                    'enum': ['multi', 'single'],
                   },
-                  options: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        option: {
-                          type: 'string',
-                          description: 'A possible answer to the question. Based on the content of this section and the documentation provided by the User.',
+                  'options': {
+                    'type': 'array',
+                    'items': {
+                      'type': 'object',
+                      'properties': {
+                        'option': {
+                          'type': 'string',
+                          'description': 'A possible answer to the question. Based on the content of this section and the documentation provided by the User.',
                         },
-                        isCorrect: {
-                          type: 'boolean',
-                          description: 'Whether the answer is correct or not. Based on the content of this section and the documentation provided by the User.',
+                        'isCorrect': {
+                          'type': 'boolean',
+                          'description': 'Whether the answer is correct or not. Based on the content of this section and the documentation provided by the User.',
                         },
-                        whyNotCorrect: {
-                          type: 'string',
-                          description: 'Provided if the answer is not correct. A reason why the answer is not correct, in short. Based on the content of this section and the documentation provided by the User.',
+                        'why': {
+                          'type': 'string',
+                          'description': 'A reason why the answer is correct or not, in short. Based on the content of this section and the documentation provided by the User.',
                         },
                       },
-                      required: ['option', 'isCorrect'],
+                      'required': ['option', 'isCorrect'],
                     },
                   },
                 },
-                required: ['question', 'quizType', 'options'],
+                'required': ['question', 'quizType', 'options'],
               },
             }
           : {}),
         ...(preferences.assessment === 'assignments'
           ? {
-              assignment: {
-                type: 'string',
-                description: 'A description of the assignment you can suggest to the user to improve their learning.',
+              'assignment': {
+                'type': 'string',
+                'description': 'A description of the assignment you can suggest to the user to improve their learning.',
               },
             }
           : {}),
-        tldr: {
+        'tldr': {
           type: 'string',
           description: 'A short TL;DR summary for this section. Summarize what the user should have achieved or understood by the end of this lesson.',
         },
       },
-      required,
+      'required': required,
     },
   },
 	];
