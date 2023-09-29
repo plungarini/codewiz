@@ -1,6 +1,6 @@
 import { warn } from 'firebase-functions/logger';
-import * as json5 from 'json5';
 import { LernCourseGenerationSection } from '../models/lern.model';
+import { parseArgs } from './utils';
 
 export const validateCourseSectionArgs = (
   args?: string,
@@ -12,7 +12,7 @@ export const validateCourseSectionArgs = (
 
   warn('Validating args', args);
 
-  const normArgs = typeof args === 'string' ? parseArgs(args) : args;
+  const normArgs = typeof args === 'string' ? parseArgs<LernCourseGenerationSection>(args) : args;
 	if (!normArgs) {
 		warn('Unable to parse JSON', 'HALLUCINATING');
 		return undefined;
@@ -52,23 +52,6 @@ export const validateCourseSectionArgs = (
   };
 };
 
-const parseArgs = (args: string): LernCourseGenerationSection | undefined => {
-	// Regular expression to remove trailing commas
-	const regex = /,\s*([\]}])/gm;
-
-	// Regular expression to remove double commas (,,)
-	const doubleCommaRegex = /,\s*(,)/gm;
-
-	// Remove trailing commas and try to parse
-	const sanitizedData = args.replace(regex, '$1').replace(doubleCommaRegex, '$1');
-
-  try {
-    return json5.parse(sanitizedData);
-  } catch (err) {
-    return undefined;
-  }
-};
-
 const isValidSectionName = (sectionName: string | undefined): boolean => {
   return !!sectionName && typeof sectionName === 'string';
 };
@@ -89,7 +72,7 @@ const areQuizOptionsValid = (quiz: LernCourseGenerationSection['quiz']): boolean
 		return !!option.option &&
 			typeof option.option === 'string' &&
 			option.isCorrect !== undefined &&
-			(!option.whyNotCorrect || typeof option.whyNotCorrect === 'string');
+			(!option.why || typeof option.why === 'string');
 	});
 
   return !!optionsValid;
@@ -114,7 +97,7 @@ const normQuiz = (quiz: LernCourseGenerationSection['quiz']): LernCourseGenerati
 				return {
 					option: option.option,
 					isCorrect: !!option.isCorrect,
-					whyNotCorrect: option.whyNotCorrect ?? '',
+					why: option.why ?? '',
 				};
 			}),
 	} : undefined;
