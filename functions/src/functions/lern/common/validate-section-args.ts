@@ -38,7 +38,7 @@ export const validateCourseSectionArgs = (
 		return undefined;
 	}
 
-	if (!isValidTldr(normArgs.tldr)) {
+	if (!isValidSummary(normArgs.summary)) {
 		warn('Invalid TL;DR', 'HALLUCINATING');
 		return undefined;
 	}
@@ -48,7 +48,7 @@ export const validateCourseSectionArgs = (
 		content: normArgs.content,
 		quiz: normQuiz(normArgs.quiz),
 		assignment: normArgs.assignment,
-		tldr: normArgs.tldr,
+		summary: normArgs.summary,
   };
 };
 
@@ -83,8 +83,8 @@ const isAssignmentValid = (assignment: LernCourseGenerationSection['assignment']
 	return typeof assignment === 'string';
 };
 
-const isValidTldr = (tldr: string): boolean => {
-	return !!tldr && typeof tldr === 'string';
+const isValidSummary = (summary: string): boolean => {
+	return !!summary && typeof summary === 'string';
 };
 
 const normQuiz = (quiz: LernCourseGenerationSection['quiz']): LernCourseGenerationSection['quiz'] => {
