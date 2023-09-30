@@ -34,7 +34,7 @@ export type LernCoursePlanGenerationSection = {
 export type LernCourseGenerationSection = {
 	sectionTitle: string;
 	content: string;
-	tldr: string;
+	summary: string;
 	quiz?: {
 		question: string;
 		quizType: 'single' | 'multi';
