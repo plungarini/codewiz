@@ -5,7 +5,7 @@ import { combineLatest, firstValueFrom, lastValueFrom, map, Observable, of, swit
 import { UsersService } from 'src/app/auth/services/users.service';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { environment } from 'src/environments/environment';
-import { LernCourse, SearchDocsResponse } from '../models/course.model';
+import { LernCourse, LernCourseRequest, LernCourseSectionData, LernCourseSectionDataProgress, SearchDocsResponse } from '../models/course.model';
 
 type CreateCourseResponse = {
 	url?: string;
@@ -67,11 +67,11 @@ export class LernService {
 		return await lastValueFrom(req$);
 	}
 
-	getAll(limitRes?: number): Observable<LernCourse[]> {
+	getAll(limitRes?: number): Observable<LernCourseRequest[]> {
 		return this._getCurrentUserId$().pipe(
 			switchMap((uid) => {
 				if (!uid) of([]);
-				return this.db.getCol<LernCourse>(
+				return this.db.getCol<LernCourseRequest>(
 					`lern/${uid}/courses`,
 					'id',
 					orderBy('updatedAt', 'desc'),
@@ -80,11 +80,11 @@ export class LernService {
 			}),
 			switchMap((courses) => {
 				if (courses.length <= 0) return of([]);
-				const observables: Observable<LernCourse>[] = courses.map(course => {
-					return this.db.getDoc<LernCourse['generation']>(
+				const observables: Observable<LernCourseRequest>[] = courses.map(course => {
+					return this.db.getDoc<LernCourseRequest['generation']>(
 						`lern/${course.owner}/courses/${course.id}/generation/status`,
 					).pipe(
-						map(gen => ({ ...course, generation: gen }) as LernCourse),
+						map(gen => ({ ...course, generation: gen }) as LernCourseRequest),
 					);
 				});
 				return combineLatest(observables);
@@ -99,19 +99,90 @@ export class LernService {
 		)
 	}
 
-	getCourse(id: string) {
+	getSections(id?: string): Observable<LernCourseSectionData[]> {
 		return this._getCurrentUserId$().pipe(
 			switchMap((uid) => {
 				if (!uid || !id) return of(undefined);
-				return this.db.getDoc<LernCourse>(`lern/${uid}/courses/${id}`);
+				return this.db.getCol<{ goals: string[]; shortDescription: string; order: number; id: string }>(
+					`lern/${uid}/courses/${id}/sections`
+				).pipe(
+					map(sections => ({
+						sections,
+						uid,
+					}))
+				);
+			}),
+			switchMap((res) => {
+				if (!res) return of([]);
+				const observables = res.sections.map((section) => {
+					return this.db.getDoc<LernCourseSectionData>(
+						`lern/${res.uid}/courses/${id}/sections/${section.id}/generation/data`
+					).pipe(
+						switchMap((data) => {
+							return this.db.getDoc<LernCourseSectionDataProgress>(
+								`lern/${res.uid}/courses/${id}/sections/${section.id}/progress/data`
+							).pipe(
+								map((progress) => ({
+									...data,
+									progress
+								}))
+							)
+						}),
+						map((data) => ({
+							...section,
+							...data,
+							id: section.id,
+						}) as LernCourseSectionData)
+					)
+				});
+
+				return combineLatest(observables);
+			}),
+		)
+	}
+
+	getFullCourse(id: string | null) {
+		return this._getCurrentUserId$().pipe(
+			switchMap((uid) => {
+				if (!uid || !id) return of(undefined);
+				return this.db.getDoc<LernCourseRequest>(`lern/${uid}/courses/${id}`);
+			}),
+			switchMap((course) => {
+				if (!course) return of({ course, plan: undefined });
+				return this.db.getDoc<LernCourse['plan']>(`lern/${course?.owner}/courses/${id}/plan/data`).pipe(
+					map(plan => ({
+						course,
+						plan
+					})),
+				);
+			}),
+			switchMap(({ course, plan }) => {
+				if (!course || !plan) return of(undefined);
+				return this.getSections(course.id).pipe(
+					map(sections => ({
+						id: course.id,
+						plan,
+						overview: course,
+						sections,
+					}) as LernCourse)
+				);
 			})
 		)
 	}
 
-	async updateCourse(id: string, course: Partial<LernCourse>): Promise<void> {
+	getCourseRequest(id: string) {
+		return this._getCurrentUserId$().pipe(
+			switchMap((uid) => {
+				if (!uid || !id) return of(undefined);
+				return this.db.getDoc<LernCourseRequest>(`lern/${uid}/courses/${id}`);
+			})
+		)
+	}
+
+	async updateCourse(id: string, course: Partial<LernCourseRequest>): Promise<void> {
 		const uid = await this._getCurrentUserId();
 		if (!uid || !id) return;
-		await this.db.upsert<LernCourse>(`lern/${uid}/courses/${id}`, course);
+		await this.db.upsert<LernCourseRequest>(`lern/${uid}/courses/${id}`, course);
 	}
 
 	async createNewCourse(repo: string): Promise<CreateCourseResponse> {
@@ -122,14 +193,14 @@ export class LernService {
 			};
 
 			const id = this.db.generateId();
-			const course: Partial<LernCourse> = {
+			const course: Partial<LernCourseRequest> = {
 				id,
 				repo,
 				owner: uid,
 				name: 'New Course',
 				status: 'private',
 			};
-			await this.db.upsert<LernCourse>(
+			await this.db.upsert<LernCourseRequest>(
 				`lern/${uid}/courses/${id}`,
 				course
 			);
