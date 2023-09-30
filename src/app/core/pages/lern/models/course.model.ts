@@ -27,7 +27,56 @@ type LernGenerationStatus = {
 	updatedAt: Timestamp;
 }
 
+export type LernCourseSectionDataProgress = {
+	singleQuiz?: string;
+	multiQuiz?: string[];
+	completed?: boolean;
+}
+
+export type LernCourseSectionData = {
+	id: string;
+	content: {
+		sectionTitle: string;
+		content: string;
+		summary: string;
+		assignment?: string;
+		quiz?: {
+			question?: string;
+			quizType?: 'single' | 'multi';
+			options: {
+				option?: string;
+				isCorrect: boolean;
+				why?: string;
+			}[];
+		};
+	};
+	goals: string[];
+	shortDescription: string;
+	order: number;
+	progress?: LernCourseSectionDataProgress;
+	createdAt: Timestamp;
+	updatedAt: Timestamp;
+}
+
 export type LernCourse = {
+	id: string;
+	plan: {
+		courseName: string;
+		shortDescription: string;
+		prerequisites: string[];
+		sections: {
+			goals: string[];
+			shortDescription: string;
+			order: number;
+			title: string;
+			id: string;
+		};
+	};
+	overview: LernCourseRequest;
+	sections: LernCourseSectionData[];
+}
+
+export type LernCourseRequest = {
 	id?: string;
 	repo: string;
 	owner: string;
