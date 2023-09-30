@@ -397,7 +397,6 @@ const getCompletionParams = (data: {
 	const messages: ChatCompletionMessageParam[] = [
 		{
 			role: 'system',
-			name: 'CodeWiz',
 			content: codeBlock`
 				${oneLine`
 					You are an Tutor on the "${repo}" documentation. The user
@@ -453,7 +452,7 @@ const getCompletionParams = (data: {
 					},
 					'shortDescription': {
 						'type': 'string',
-						'description': 'A short description for the course. It should introduce in short what the course is about. Maximum From 150 to 220 chars.',
+						'description': 'A short description for the course. It should introduce in short what the course is about. Around 250 chars of length.',
 					},
 					'sections': {
 						'type': 'array',
@@ -500,7 +499,7 @@ const getCompletionParams = (data: {
 		},
 	];
 
-	const model = 'gpt-3.5-turbo';
+	const model = 'gpt-3.5-turbo-0613';
 	const maxCompletionTokenCount = 1024;
 
 	const preParams = cappedContextMessages({
@@ -512,7 +511,7 @@ const getCompletionParams = (data: {
 
 	const params: ChatCompletionCreateParams = {
 		...preParams,
-		model: 'gpt-3.5-turbo',
+		model,
 		max_tokens: maxCompletionTokenCount,
 		temperature: 0.75,
 		stream: false,
