@@ -1,5 +1,7 @@
+import { parse } from 'best-effort-json-parser';
 import { oneLine } from 'common-tags';
 import { log, warn } from 'firebase-functions/logger';
+import * as json5 from 'json5';
 import { promptTokensEstimate } from 'openai-chat-tokens';
 import { CompletionUsage } from 'openai/resources';
 import { ChatCompletionCreateParams, ChatCompletionMessageParam } from 'openai/resources/chat';
@@ -215,7 +217,19 @@ export const parseArgs = <T>(args: string): T | undefined => {
 	for (let i = 0; i <= regexReplacers.length; i++) {
 		try {
 			if (i > 0) log(`[${i}] Sanitized: `, tempString);
-			return JSON.parse(tempString);
+			return parse(tempString) as T;
+		} catch {
+			if (i < regexReplacers.length) {
+				tempString = tempString.replace(regexReplacers[i].regex, regexReplacers[i].replacer);
+			}
+		}
+	}
+
+	tempString = args;
+	for (let i = 0; i <= regexReplacers.length; i++) {
+		try {
+			if (i > 0) log(`[${i}] Sanitized: `, tempString);
+			return json5.parse(tempString);
 		} catch {
 			if (i < regexReplacers.length) {
 				tempString = tempString.replace(regexReplacers[i].regex, regexReplacers[i].replacer);
