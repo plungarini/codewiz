@@ -136,7 +136,7 @@ export const createLernCourseSection = async (
 			sections,
 			preferences: course.preferences,
 			normPreferences: preferences,
-			previousSummary: previousSection?.content?.tldr,
+			previousSummary: previousSection?.content?.summary,
 		});
 
 		const chatCompletion = await openai.chat.completions.create(params as ChatCompletionCreateParamsNonStreaming);
@@ -193,6 +193,11 @@ const uploadGeneration = async (
 	await setStatusToCourseSection(ref, 'completed', true);
 	await setGlobalLernStatus(ids, { addCompletedSection: true });
 
+	await ref.update({
+		sectionCompleted: true,
+		updatedAt: new Date(),
+	});
+
 	const sectionsRef = ref.parent;
 	if (!sectionsRef) return;
 
@@ -225,8 +230,8 @@ const setUsage = async (
 ): Promise<void> => {
 	if (!usage) return warn('Unable to set usage for Lern Course.');
 
-	const PROMPT_USD = 0.0015;
-	const COMPLETION_USD = 0.002;
+	const PROMPT_USD = 0.03;
+	const COMPLETION_USD = 0.06;
 
 	const docRef = ref.collection('generation').doc('usage');
 	const doc = await docRef.get();
@@ -297,14 +302,15 @@ const getCompletionParams = (data: {
 	const messages: ChatCompletionMessageParam[] = [
 		{
 			role: 'system',
-			name: 'CodeWiz',
 			content: codeBlock`
 				${oneLine`
 					You are a Tutor on the "${repo}" documentation. The user
 					wants to learn some topics from this documentation. Use
 					the 'createCourseSection' function to provide a comprehensive
 					and in-depth lesson in "${preferences.language}", ensuring
-					no redundancy or indications of upcoming content.
+					no redundancy or indications of upcoming content. The JSON
+					for the function call must be minified and escape characters.
+					Use a valid JSON in a single-line without whitespaces.
 				`}
 			`,
 		},
@@ -336,7 +342,7 @@ const getCompletionParams = (data: {
 		`,
 	});
 
-	const required = ['sectionTitle', 'content', 'tldr'];
+	const required = ['sectionTitle', 'content', 'summary'];
 
 	if (preferences.assessment === 'quizz') {
 		required.push('quiz');
@@ -350,7 +356,8 @@ const getCompletionParams = (data: {
     'description': oneLine`
       Generate a comprehensive Course Section in "${preferences.language}". This should
       provide an in-depth lesson tailored to the user's preferences. Avoids any
-			indications of future content. Only accept a valid json as arguments.
+			indications of future content. Only accept a valid JSON in a single-line without
+			whitespaces as arguments.
     `,
     'parameters': {
       'type': 'object',
@@ -365,7 +372,8 @@ const getCompletionParams = (data: {
             The actual full content of this section/lesson. The content should answer the user's goals
             in a detailed and structured manner. Can include code snippets, examples, or plain formatted
             markdown text. Do not include section title, as it's already present in the page the user
-            will see. This should be a standalone lesson, so avoid hinting at what will come next.
+            will see. This should be a standalone lesson, so avoid hinting at what will come next. Escape
+						characters that will harm the validity of this JSON string.
           `,
         },
         ...(preferences.assessment === 'quizz'
@@ -416,9 +424,9 @@ const getCompletionParams = (data: {
               },
             }
           : {}),
-        'tldr': {
+        'summary': {
           type: 'string',
-          description: 'A short TL;DR summary for this section. Summarize what the user should have achieved or understood by the end of this lesson.',
+          description: 'A short summary for this section. Summarize what the user should have achieved or understood by the end of this lesson.',
         },
       },
       'required': required,
@@ -428,7 +436,7 @@ const getCompletionParams = (data: {
 
 	warn({ functions });
 
-	const model = 'gpt-3.5-turbo';
+	const model = 'gpt-3.5-turbo-0613';
 	const maxCompletionTokenCount = 1500;
 
 	const preParams = cappedContextMessages({
@@ -441,9 +449,7 @@ const getCompletionParams = (data: {
 	const params: ChatCompletionCreateParams = {
 		...preParams,
 		max_tokens: maxCompletionTokenCount,
-		temperature: 0.75,
-		frequency_penalty: 1,
-		presence_penalty: 1,
+		temperature: 0.1,
 		stream: false,
 		user: uid,
 	};
