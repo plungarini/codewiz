@@ -138,7 +138,7 @@ export const calculateOpenaiTokensOnReply = onDocumentUpdated(
 			warn('New message at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, message);
 			await calculateTokens({
 				messages: [{ role: message.role, content: message.content }],
-				model: 'gpt-3.5-turbo',
+				model: 'gpt-3.5-turbo-0613',
 				repo, uid, chatId, messageId,
 				type: 'completion',
 			});
@@ -199,7 +199,8 @@ export const onLernCourseSection = onDocumentWritten({
 	const section = event.data?.after.data() as any;
 	const isDeleted = event.data?.before.exists && !event.data?.after.exists;
 	const isMaxRetries = (section?.tries ?? 0) >= MAX_RETRIES;
-	if (isDeleted || isMaxRetries) {
+	const sectionCreated = section?.sectionCompleted;
+	if (isDeleted || isMaxRetries || sectionCreated) {
 		if (isMaxRetries) {
 			await setGlobalLernStatus({ uid, course: courseId }, { hasError: true });
 		}
