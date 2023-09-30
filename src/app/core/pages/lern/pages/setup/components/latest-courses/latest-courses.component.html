@@ -8,6 +8,7 @@
 					[ngClass]="{
 						'cursor-pointer hover:shadow-2xl hover:ring-4 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950': course.generation?.completed,
 					}"
+					[attr.data-lern-id]="course.id"
 					class="relative z-10 flex flex-col w-56 px-5 py-5 transition-all duration-300 rounded-lg shadow gap-y-2 bg-zinc-900/40 group/chat h-72 backdrop-blur ring-zinc-900 ring-offset-zinc-950"
 				>
 					<div class="flex flex-row items-center justify-between">

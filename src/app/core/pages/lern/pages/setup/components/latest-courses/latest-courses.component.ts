@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from
 import { Subscription } from 'rxjs';
 import { UserRepoService } from 'src/app/core/pages/chat/services/user-repo.service';
 import { Repo } from 'src/app/shared/models/repo.model';
-import { LernCourse } from '../../../../models/course.model';
+import { LernCourseRequest } from '../../../../models/course.model';
 import { LernService } from '../../../../services/lern.service';
 
 @Component({
@@ -39,7 +39,7 @@ export class LatestCoursesComponent implements OnDestroy {
 
 	loaded = false;
 
-	courses: LernCourse[] = [];
+	courses: LernCourseRequest[] = [];
 	repos$ = this.repos.getAllSupportedDocs();
 
 	private coursesSub: Subscription;
@@ -66,7 +66,7 @@ export class LatestCoursesComponent implements OnDestroy {
 		return Array.from(Array(itemsCount).keys());
 	}
 
-	getPercentageCompletion(generation: LernCourse['generation']): string {
+	getPercentageCompletion(generation: LernCourseRequest['generation']): string {
 		if (!generation) return '5%';
 		if (generation?.completed) return '100%';
 		const total = generation.totalSections + 1;
@@ -98,7 +98,7 @@ export class LatestCoursesComponent implements OnDestroy {
 		}
 	}
 
-	trackBy(i: number, item: LernCourse): string {
+	trackBy(i: number, item: LernCourseRequest): string {
 		return item.id || i.toString();
 	}
 
