@@ -26,7 +26,7 @@ export class FinishedComponent implements OnDestroy {
 		private lern: LernService,
 	) {
 		const id = this.route.snapshot.parent?.params['id'];
-		this._lernSub = this.lern.getCourse(id).subscribe((c) => {
+		this._lernSub = this.lern.getCourseRequest(id).subscribe((c) => {
 			if (!c?.repo) {
 				this.router.navigate(['/app/lern/setup/new/hub']);
 				return;

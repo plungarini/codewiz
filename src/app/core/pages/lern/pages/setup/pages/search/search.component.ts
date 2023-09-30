@@ -6,7 +6,7 @@ import { delay, map, Observable, of, Subscription, switchMap, tap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { UserRepoService } from 'src/app/core/pages/chat/services/user-repo.service';
 import { Repo } from 'src/app/shared/models/repo.model';
-import { LernCourse, SearchDocsResponse } from '../../../../models/course.model';
+import { LernCourseRequest, SearchDocsResponse } from '../../../../models/course.model';
 import { LernService } from '../../../../services/lern.service';
 
 @Component({
@@ -23,7 +23,7 @@ import { LernService } from '../../../../services/lern.service';
 })
 export class SearchComponent implements OnDestroy {
 
-	course$: Observable<LernCourse | undefined>;
+	course$: Observable<LernCourseRequest | undefined>;
 	user$ = this.users.user$;
 
 	queryArea = new FormControl('', { validators: [Validators.required], nonNullable: true });
@@ -45,7 +45,7 @@ export class SearchComponent implements OnDestroy {
 
 	private repos: Repo[] | undefined;
 	private currentRepo: Repo | undefined;
-	private currentCourse: LernCourse | undefined;
+	private currentCourse: LernCourseRequest | undefined;
 
 	private _repoSub: Subscription;
 
@@ -235,7 +235,7 @@ export class SearchComponent implements OnDestroy {
     }
 	}
 	
-	private initCourse$(): Observable<LernCourse | undefined> {
+	private initCourse$(): Observable<LernCourseRequest | undefined> {
 		const parentParams = this.route.parent?.parent?.params;
 		const typedParams: Observable<Params | undefined> = !parentParams ? of(undefined) : parentParams;
 
@@ -248,13 +248,13 @@ export class SearchComponent implements OnDestroy {
 			}),
 			switchMap((id) => {
 				if (!id) return of(undefined);
-				return this.lern.getCourse(id);
+				return this.lern.getCourseRequest(id);
 			}),
 			tap((course) => this.updateCourse(course)),
 		);
 	}
 
-	private updateCourse(course?: LernCourse): void {
+	private updateCourse(course?: LernCourseRequest): void {
 		if (!course) {
 			this.router.navigate(['/app/lern/setup/new/hub']);
 		} else {

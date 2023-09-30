@@ -3,7 +3,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { map, Observable, of, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
-import { LernCourse } from '../../../../models/course.model';
+import { LernCourseRequest } from '../../../../models/course.model';
 import { LernService } from '../../../../services/lern.service';
 
 @Component({
@@ -26,7 +26,7 @@ export class PreferencesComponent {
 		this._users = value;
 	}
 
-	course$: Observable<LernCourse | undefined>;
+	course$: Observable<LernCourseRequest | undefined>;
 	user$ = this.users.user$;
 
 	form = new FormGroup({
@@ -59,7 +59,7 @@ export class PreferencesComponent {
 		this.loading = true;
 		this.cdRef.markForCheck();
 
-		const data: LernCourse['preferences'] = {
+		const data: LernCourseRequest['preferences'] = {
 			contentDepth: this.form.value.contentDepth ?? 'beginner',
 			duration: this.form.value.duration ?? 'short',
 			goal: this.form.value.goal ?? 'knowledge',
@@ -82,7 +82,7 @@ export class PreferencesComponent {
 		this.cdRef.markForCheck();
 	}
 
-	private initCourse$(): Observable<LernCourse | undefined> {
+	private initCourse$(): Observable<LernCourseRequest | undefined> {
 		const parentParams = this.route.parent?.parent?.params;
 		const typedParams: Observable<Params | undefined> = !parentParams ? of(undefined) : parentParams;
 
@@ -95,7 +95,7 @@ export class PreferencesComponent {
 			}),
 			switchMap((id) => {
 				if (!id) return of(undefined);
-				return this.lern.getCourse(id);
+				return this.lern.getCourseRequest(id);
 			}),
 		);
 	}
