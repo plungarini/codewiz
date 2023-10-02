@@ -151,7 +151,13 @@ export const createLernCourseSection = async (
 			previousSummary: previousSection?.content?.summary,
 		}) as ChatCompletionCreateParamsNonStreaming;
 
-		const chatCompletion = await openai.chat.completions.create(params, { stream: false, properties: { uid } });
+		const chatCompletion = await openai.chat.completions.create(params, {
+			stream: false,
+			properties: {
+				uid,
+				prompt: 'createCourseSection',
+			},
+		});
 		warn({ message: chatCompletion.choices[0].message, usage: chatCompletion.usage });
 
 		await setUsage(sectionRef, { uid, course: courseId }, chatCompletion.usage);
@@ -366,7 +372,7 @@ const getCompletionParams = (data: {
   {
     'name': 'createCourseSection',
     'description': oneLine`
-      Generate a comprehensive Course Section in "${preferences.language}". This should
+      Generate a comprehensive Course Lesson in "${preferences.language}". This should
       provide an in-depth lesson tailored to the user's preferences. Avoids any
 			indications of future content. Only accept a valid JSON in a single-line without
 			whitespaces as arguments.
@@ -376,16 +382,19 @@ const getCompletionParams = (data: {
       'properties': {
         'sectionTitle': {
           type: 'string',
-          description: 'The title of the section.',
-        },
+          description: 'The title of the lesson.',
+				},
+				'sectionOverview': {
+					type: 'string',
+					description: 'A short overview of this lesson. What the user will learn. In 200 chars or less.',
+				},
         'content': {
           type: 'string',
           description: oneLine`
-            The actual full content of this section/lesson. The content should answer the user's goals
-            in a detailed and structured manner. Can include code snippets, examples, or plain formatted
-            markdown text. Do not include section title, as it's already present in the page the user
-            will see. This should be a standalone lesson, so avoid hinting at what will come next. Escape
-						characters that will harm the validity of this JSON string.
+            The actual full content of this lesson. The content should answer the user's goals in a
+						detailed and structured manner. Can include code snippets, examples, or plain formatted
+            markdown text. Do not include lesson title, as it's already present in the page the user
+            will see. This should be a standalone lesson, so avoid hinting at what will come next.
           `,
         },
         ...(preferences.assessment === 'quizz'
@@ -409,15 +418,15 @@ const getCompletionParams = (data: {
                       'properties': {
                         'option': {
                           'type': 'string',
-                          'description': 'A possible answer to the question. Based on the content of this section and the documentation provided by the User.',
+                          'description': 'A possible answer to the question. Based on the content of this lesson and the documentation provided by the User.',
                         },
                         'isCorrect': {
                           'type': 'boolean',
-                          'description': 'Whether the answer is correct or not. Based on the content of this section and the documentation provided by the User.',
+                          'description': 'Whether the answer is correct or not. Based on the content of this lesson and the documentation provided by the User.',
                         },
                         'why': {
                           'type': 'string',
-                          'description': 'A reason why the answer is correct or not, in short. Based on the content of this section and the documentation provided by the User.',
+                          'description': 'A reason why the answer is correct or not, in short. Based on the content of this lesson and the documentation provided by the User.',
                         },
                       },
                       'required': ['option', 'isCorrect'],
@@ -438,7 +447,7 @@ const getCompletionParams = (data: {
           : {}),
         'summary': {
           type: 'string',
-          description: 'A short summary for this section. Summarize what the user should have achieved or understood by the end of this lesson.',
+          description: 'A short summary for this lesson. Summarize what the user should have achieved or understood by the end of this lesson.',
         },
       },
       'required': required,
@@ -453,7 +462,7 @@ const getCompletionParams = (data: {
 
 	const preParams = cappedContextMessages({
 		messages,
-		function_call: { name: 'createCourseSection' },
+		function_call: 'auto',
 		functions,
 		model,
 	}, sections, maxCompletionTokenCount);
@@ -487,7 +496,6 @@ const getPreferencesBlock = (
 		goal,
 		duration,
 		style,
-		assessment,
 		language,
 	} = preferences;
 
@@ -504,7 +512,7 @@ const getPreferencesBlock = (
 	};
 
 	const durationDesc = {
-		'short': 'From 1 to 3 Content Blocks. Quick and efficient insights to read this section in a short amount of time.',
+		'short': 'From 1 to 3 Content Blocks. Quick and efficient insights to read this lesson in a short amount of time.',
 		'medium': 'From 3 to 5 Content Blocks. A balanced dive into the subject.',
 		'long': 'From 5 to 8 Content Blocks. A deep dive into the subject. Comprehensive mastery over the topic.',
 	};
@@ -514,29 +522,16 @@ const getPreferencesBlock = (
 		'practical': 'Dive into real-world examples and code snippets. I want a course that is more focused on practical examples.',
 	};
 
-	const assignmentDesc = {
-		'beginner': 'an easy assignment.',
-		'intermediate': 'a short assignment.',
-		'advanced': 'a short but strong assignment.',
-	};
-
-	const assessmentDesc = {
-		'quizz': 'I want to practice my knowledge with quizzes.',
-		'assignments': `I want to practice my knowledge with ${assignmentDesc[contentDepth]}.`,
-	};
-
 	return codeBlock`
 		${oneLine`
 			- Content Depth: "${contentDepthDesc[contentDepth] ?? ''}"
 			- Why I want to follow this course: "${goalDesc[goal] ?? ''}"
 			- Course Style: "${styleDesc[style] ?? ''}"
-			- Assessments: ${assessment !== 'none' ? `${assessmentDesc[assessment] ?? ''}` : 'I do not want to practice with quizzes or assignments.'}
 			- Duration: "${durationDesc[duration] ?? ''}"
-			- Summaries: I want a quick TL;DR summary.
 			- Course Language: I want to learn in "${language}".
-			- The title of this section would be: ${section.title}.
-			- The short description of this section would be: ${section.shortDescription}.
-			- This section should focus on the following Goals:
+			- The title of this lesson would be: ${section.title}.
+			- The short description of this lesson would be: ${section.shortDescription}.
+			- This lesson should focus on the following Goals:
 			${section.goals.map((g) => `\t> ${g}`).join('\n')}
 		`}
 	`;
