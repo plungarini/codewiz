@@ -187,7 +187,7 @@ serve(async (req) => {
 			},
 		];
 
-		const model = 'gpt-3.5-turbo';
+		const model = 'gpt-3.5-turbo-0613';
 		const maxCompletionTokenCount = 1024;
 
 		const completionMessages: ChatCompletionRequestMessage[] = capMessages(
