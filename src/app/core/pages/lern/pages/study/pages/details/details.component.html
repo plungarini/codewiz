@@ -1,0 +1,25 @@
+
+<div #scrollContainer class="w-full h-full px-6 pt-24 pb-24 sm:max-h-full sm:overflow-hidden sm:overflow-y-auto md:pt-6 md:pb-6">
+	
+	<div class="max-w-6xl mx-auto sm:mt-16">
+		
+		<div *ngIf="course$ | async as course" class="relative grid grid-cols-1 space-y-12 lg:space-y-0 lg:space-x-12 lg:grid-cols-8">
+			<div class="h-full col-span-1 lg:col-span-3">
+				<div class="sticky top-8">
+					<app-course-breadcrumb></app-course-breadcrumb>
+					<app-course-overview
+						[course]="course"
+					></app-course-overview>
+				</div>
+			</div>
+			
+			<div class="col-span-1 pb-16 lg:col-span-5">
+				<app-section-details
+					[course]="course"
+				></app-section-details>
+			</div>
+		</div>
+
+	</div>
+
+</div>
