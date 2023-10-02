@@ -156,7 +156,14 @@ export const createLernCoursePlan = async (uid: string, id: string, course?: Ler
 			normPreferences,
 		});
 
-		const chatCompletion = await openai.chat.completions.create(params, { stream: false, properties: { uid } });
+		const chatCompletion = await openai.chat.completions.create(params, {
+			stream: false,
+			properties: {
+				uid,
+				prompt: 'createCoursePlan',
+			},
+		});
+
 		warn({ message: chatCompletion.choices[0].message, usage: chatCompletion.usage });
 
 		const functionCall = chatCompletion.choices[0].message.function_call;
@@ -524,14 +531,13 @@ const getCompletionParams = (data: {
 
 	const preParams = cappedContextMessages({
 		messages,
-		function_call: { name: 'createCoursePlan' },
+		function_call: 'auto',
 		functions,
 		model,
 	}, sections, maxCompletionTokenCount);
 
 	const params: ChatCompletionCreateParams = {
 		...preParams,
-		model,
 		max_tokens: maxCompletionTokenCount,
 		temperature: 0.75,
 		stream: false,

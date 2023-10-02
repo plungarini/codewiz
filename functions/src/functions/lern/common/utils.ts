@@ -11,7 +11,7 @@ import { getMaxTokenCount } from './tokenizer';
 
 type PartialParams = {
 	messages: ChatCompletionMessageParam[];
-	function_call: ChatCompletionCreateParams.FunctionCallOption;
+	function_call: 'none' | 'auto' | ChatCompletionCreateParams.FunctionCallOption | undefined;
 	functions: ChatCompletionCreateParams.Function[];
 	model: string;
 }
