@@ -248,8 +248,8 @@ const setUsage = async (
 ): Promise<void> => {
 	if (!usage) return warn('Unable to set usage for Lern Course.');
 
-	const PROMPT_USD = 0.03;
-	const COMPLETION_USD = 0.06;
+	const PROMPT_USD = 0.0015;
+	const COMPLETION_USD = 0.002;
 
 	const docRef = ref.collection('generation').doc('usage');
 	const doc = await docRef.get();
@@ -512,9 +512,9 @@ const getPreferencesBlock = (
 	};
 
 	const durationDesc = {
-		'short': 'From 1 to 3 Content Blocks. Quick and efficient insights to read this lesson in a short amount of time.',
-		'medium': 'From 3 to 5 Content Blocks. A balanced dive into the subject.',
-		'long': 'From 5 to 8 Content Blocks. A deep dive into the subject. Comprehensive mastery over the topic.',
+		'short': 'Quick and efficient insights to read this lesson in a short amount of time.',
+		'medium': 'A balanced dive into the subject.',
+		'long': 'A deep dive into the subject. Comprehensive mastery over the topic.',
 	};
 
 	const styleDesc = {
