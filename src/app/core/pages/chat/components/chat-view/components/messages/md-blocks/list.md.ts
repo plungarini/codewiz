@@ -1,5 +1,5 @@
 export const list = (body: string, ordered: boolean) => `
-	<${ordered ? 'ol' : 'ul'} class="${ordered ? 'list-decimal' : 'list-disc'} list-inside first:mt-0 marker:text-zinc-400/50 my-4 space-y-2">
+	<${ordered ? 'ol' : 'ul'} class="${ordered ? 'list-decimal' : 'list-disc'} first:mt-0 marker:text-zinc-400/50 my-4 space-y-2 ml-5">
 		${body}
 	</${ordered ? 'ol' : 'ul'}>
 `.trim();
