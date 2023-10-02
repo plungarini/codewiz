@@ -28,6 +28,16 @@ const routes: Routes = [
 				loadChildren: () => import('./pages/setup/setup.module').then(m => m.SetupModule),
 			},
 			{
+				path: 'study',
+				data: {
+					permissions: ['user', 'alpha'],
+					preload: true,
+					permissionsRedirect: '/app/lern/unauthorized',
+				},
+				canActivate: [PermissionsGuard, MaintenanceGuard, ActiveOnboardingGuard, StagingAuthGuard],
+				loadChildren: () => import('./pages/study/study.module').then(m => m.StudyModule),
+			},
+			{
 				path: '',
 				redirectTo: 'setup',
 				pathMatch: 'full',
