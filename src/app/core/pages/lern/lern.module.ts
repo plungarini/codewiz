@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 
 import { LernRoutingModule } from './lern-routing.module';
 import { LernComponent } from './lern.component';
@@ -7,11 +7,11 @@ import { LernComponent } from './lern.component';
 
 @NgModule({
   declarations: [
-    LernComponent
+		LernComponent,
   ],
   imports: [
     CommonModule,
-    LernRoutingModule
+		LernRoutingModule,
   ]
 })
 export class LernModule { }
