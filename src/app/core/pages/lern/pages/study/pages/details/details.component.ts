@@ -57,6 +57,13 @@ export class DetailsComponent implements OnDestroy {
 				} as LernCourse | undefined;
 			}),
 			tap((course) => {
+				if (!course) {
+					this.router.navigate(
+						['/app/lern/study/not-found'],
+						{ replaceUrl: true }
+					);
+				}
+
 				if (!course?.id || this.route.snapshot.queryParams['lesson']) return;
 				const sorted = [...course.sections].sort((a, b) => a.order - b.order);
 				const incompleted = sorted.filter((s) => !s.progress?.completed);
@@ -64,7 +71,7 @@ export class DetailsComponent implements OnDestroy {
 				if (!firstLessonId) return;
 				this.router.navigate(
 					['/app/lern/study/', course.id],
-					{ queryParams: {lesson: firstLessonId} }
+					{ queryParams: {lesson: firstLessonId}, replaceUrl: true }
 				);
 			}),
 		);
