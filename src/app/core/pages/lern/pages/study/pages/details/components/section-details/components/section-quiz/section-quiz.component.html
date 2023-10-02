@@ -1,0 +1,83 @@
+<ng-container *ngIf="quiz">
+	<p class="text-base font-medium text-zinc-200">Test your Knowledge 🎉</p>
+	<p class="mt-2">{{quiz.question}}</p>
+
+	<ng-container *ngIf="quiz.quizType === 'single'">
+		<fieldset class="mt-4">
+			<legend class="sr-only">{{quiz.question}}</legend>
+			<div class="space-y-4">
+				<ng-container *ngFor="let option of quiz.options; let i = index;">
+					<div *ngIf="option?.option" class="flex items-start">
+						<input id="option-single-{{i}}" name="section-single-quiz" [formControl]="single" [value]="i + 1" type="radio" class="w-4 h-4 text-indigo-600 transition-all duration-300 border-zinc-500 bg-zinc-700 focus:ring-indigo-600 focus:ring-offset-zinc-950">
+						<label for="option-single-{{i}}" class="block ml-3 transition-colors duration-300 -translate-y-[0.3rem] cursor-pointer text-zinc-400 hover:text-zinc-50">{{option.option}}</label>
+					</div>
+				</ng-container>
+			</div>
+		</fieldset>
+
+		<div class="mt-4">
+			<ng-container *ngIf="single.valueChanges | async as value">
+				<ng-container *ngIf="quiz.options[value - 1] as option">
+					<p
+						[ngClass]="{
+							'bg-teal-400/10': option.isCorrect,
+							'bg-red-400/10': !option.isCorrect,
+						}"
+						class="px-6 py-2 -mx-6 sm:px-4 sm:rounded-md sm:-mx-4"
+					>
+						<span
+							[ngClass]="{
+								'text-teal-400': option.isCorrect,
+								'text-red-400': !option.isCorrect,
+							}"
+							class="block font-medium"
+						>{{option.isCorrect ? 'Correct Answer' : 'Wrong Answer'}}</span>
+						<span *ngIf="option.why as why">{{why}}</span>
+					</p>
+				</ng-container>
+			</ng-container>
+		</div>
+	</ng-container>
+
+	<ng-container *ngIf="quiz.quizType === 'multi'">
+		<fieldset class="mt-4">
+			<legend class="sr-only">{{quiz.question}}</legend>
+			<div class="space-y-4">
+				<ng-container *ngFor="let option of quiz.options; let i = index;">
+					<div *ngIf="option?.option" class="relative flex items-start">
+						<input id="option-multi-{{i}}" name="section-multi-quiz" (change)="setMultiOption(i + 1, $event)" type="checkbox" [checked]="multi.has(i + 1)" class="w-4 h-4 text-indigo-600 transition-all duration-300 rounded-md border-zinc-500 bg-zinc-700 focus:ring-indigo-600 focus:ring-offset-zinc-950">
+						<label for="option-multi-{{i}}" class="block ml-3 transition-colors duration-300 -translate-y-[0.3rem] cursor-pointer text-zinc-400 hover:text-zinc-50">{{option.option}}</label>
+					</div>
+				</ng-container>
+			</div>
+		</fieldset>
+
+
+		<div class="mt-4 space-y-2">
+			<ng-container *ngFor="let answer of multi">
+				<ng-container *ngIf="quiz.options[answer - 1] as option">
+					<p
+						[ngClass]="{
+							'bg-teal-400/10': option.isCorrect,
+							'bg-red-400/10': !option.isCorrect,
+						}"
+						class="px-6 py-2 -mx-6 sm:px-4 sm:rounded-md sm:-mx-4"
+					>
+						<span class="block font-medium">
+							<span
+								[ngClass]="{
+									'text-teal-400': option.isCorrect,
+									'text-red-400': !option.isCorrect,
+								}"
+							>{{option.isCorrect ? 'Correct Answer' : 'Wrong Answer'}}</span>
+							<span> - </span>
+							<span class="text-zinc-100">{{option.option}}</span>
+						</span>
+						<span *ngIf="option.why as why">{{why}}</span>
+					</p>
+				</ng-container>
+			</ng-container>
+		</div>
+	</ng-container>
+	
+</ng-container>
