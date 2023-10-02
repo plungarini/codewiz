@@ -4,9 +4,9 @@
 		<div *ngIf="courses.length; else noChats" class="flex flex-row w-full pl-2 space-x-4 overflow-visible">
 			<ng-container *ngFor="let course of courses; trackBy: trackBy">
 				<a
-					[routerLink]="course.generation?.completed ? ['/app/lern/study', course.id] : null"
+					[routerLink]="getCourseUrl(course)"
 					[ngClass]="{
-						'cursor-pointer hover:shadow-2xl hover:ring-4 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950': course.generation?.completed,
+						'cursor-pointer hover:shadow-2xl hover:ring-4 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950': getCourseUrl(course),
 					}"
 					[attr.data-lern-id]="course.id"
 					class="relative z-10 flex flex-col w-56 px-5 py-5 transition-all duration-300 rounded-lg shadow gap-y-2 bg-zinc-900/40 group/chat h-72 backdrop-blur ring-zinc-900 ring-offset-zinc-950"
@@ -46,7 +46,7 @@
 								}"
 								class="absolute top-0 right-0 transition-all duration-300 group/tooltip">
 								<div class="absolute px-2 py-1 -mt-1 text-sm leading-tight text-white transition-all duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 bg-zinc-800 bottom-7 left-1/2">
-									<span class="whitespace-nowrap">In queue</span>
+									<span class="whitespace-nowrap">{{course.generation?.started ? 'In queue' : 'Incomplete'}}</span>
 									<div class="absolute w-2 h-2 transform rotate-45 -translate-x-1/2 rounded-sm bg-zinc-800 -bottom-1 left-1/2"></div>
 								</div>
 								<div class="w-3.5 h-3.5 transition-all duration-300 rounded-full cursor-pointer bg-black/60 hover:bg-black hover:ring-2 ring-zinc-800"></div>

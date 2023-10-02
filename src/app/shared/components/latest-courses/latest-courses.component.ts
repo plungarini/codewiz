@@ -62,6 +62,15 @@ export class LatestCoursesComponent implements OnDestroy {
 		this.coursesSub.unsubscribe();
 	}
 
+	getCourseUrl(course: LernCourseRequest): string | null {
+		if (!course.id) return null;
+		const editUrl = `/app/lern/setup/${course.id}`;
+		const shouldSearch = ((course.topic?.pages.length ?? 0) <= 0 || !course.topic?.query) ? `${editUrl}/search` : null;
+		const shouldPreferences = !course.preferences ? `${editUrl}/preferences` : null;
+		const completed = course.generation?.completed ? `/app/lern/study/${course.id}` : null;
+		return shouldSearch ?? shouldPreferences ?? completed ?? null;;
+	}
+
 	getFakeSectionsBuildingArray(itemsCount: number): number[] {
 		return Array.from(Array(itemsCount).keys());
 	}
