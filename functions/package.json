@@ -19,6 +19,7 @@
   "main": "lib/index.js",
   "dependencies": {
     "@dqbd/tiktoken": "^1.0.7",
+    "@pezzo/client": "^0.4.14",
     "@supabase/supabase-js": "^2.22.0",
     "axios": "^1.5.0",
     "best-effort-json-parser": "^1.0.1",
