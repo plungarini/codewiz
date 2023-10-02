@@ -1,17 +1,19 @@
+import { Pezzo, PezzoOpenAI } from '@pezzo/client';
 import { createClient } from '@supabase/supabase-js';
 import { codeBlock, oneLine } from 'common-tags';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { warn } from 'firebase-functions/logger';
-import OpenAI from 'openai';
 import { CompletionUsage } from 'openai/resources';
 import { ChatCompletionCreateParams, ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources/chat';
-import { firestore } from '../../utils';
+import { firestore, production } from '../../utils';
 import { cappedContextMessages, setGlobalLernStatus, setGlobalLernUsage } from './common/utils';
 import { validateCourseSectionArgs } from './common/validate-section-args';
 import { LernCourse, LernCourseGenerationSection, LernCoursePlanGenerationSection, LernGenerationStatus, LernStepPreferences, LernUsage } from './models/lern.model';
 
 const OPENAI_KEY = process.env.OPENAI_KEY;
 const OPENAI_ORG = process.env.OPENAI_ORG;
+const PEZZO_API_KEY = process.env.PEZZO_API_KEY;
+const PEZZO_PROJECT_ID = process.env.PEZZO_PROJECT_ID;
 const supabasePublicUrl = process.env.SUPABASE_PUBLIC_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -77,6 +79,21 @@ const canGenerateSection = async (ref: DocumentReference, section: LernCoursePla
 	};
 };
 
+const getOpenAi = () => {
+	const pezzo = new Pezzo({
+		apiKey: PEZZO_API_KEY,
+		environment: production() ? 'Production' : 'Development',
+		projectId: PEZZO_PROJECT_ID,
+	});
+
+	return new PezzoOpenAI(pezzo, {
+		apiKey: OPENAI_KEY,
+		organization: OPENAI_ORG,
+		maxRetries: 2,
+		timeout: (540 / 2) * 1000,
+	});
+};
+
 export const createLernCourseSection = async (
 	uid: string,
 	courseId: string,
@@ -114,12 +131,7 @@ export const createLernCourseSection = async (
 		const userDoc = await userDocRef.get();
 		const user = userDoc.data();
 
-		const openai = new OpenAI({
-			apiKey: OPENAI_KEY,
-			organization: OPENAI_ORG,
-			maxRetries: 2,
-			timeout: (540 / 2) * 1000,
-		});
+		const openai = getOpenAi();
 
 		await setErrorToCourseSection(sectionRef, 'none');
 
@@ -137,9 +149,9 @@ export const createLernCourseSection = async (
 			preferences: course.preferences,
 			normPreferences: preferences,
 			previousSummary: previousSection?.content?.summary,
-		});
+		}) as ChatCompletionCreateParamsNonStreaming;
 
-		const chatCompletion = await openai.chat.completions.create(params as ChatCompletionCreateParamsNonStreaming);
+		const chatCompletion = await openai.chat.completions.create(params, { stream: false, properties: { uid } });
 		warn({ message: chatCompletion.choices[0].message, usage: chatCompletion.usage });
 
 		await setUsage(sectionRef, { uid, course: courseId }, chatCompletion.usage);

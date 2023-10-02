@@ -1,16 +1,26 @@
+import { Pezzo, PezzoOpenAI } from '@pezzo/client';
 import { codeBlock, oneLine } from 'common-tags';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { error, warn } from 'firebase-functions/logger';
-import OpenAI from 'openai';
 import { CompletionUsage } from 'openai/resources';
 import { ChatCompletionCreateParams, ChatCompletionMessageParam } from 'openai/resources/chat';
-import { firestore } from '../../utils';
+import { firestore, production } from '../../utils';
 import { cappedContextMessages, setGlobalLernStatus, setGlobalLernUsage } from './common/utils';
 import { normalizeSections, validateCoursePlanArgs } from './common/validate-plan-args';
-import { LernCourse, LernCoursePlanGeneration, LernCoursePlanGenerationSection, LernGenerationStatus, LernStepPreferences, LernStepTopic, LernUsage } from './models/lern.model';
+import {
+	LernCourse,
+	LernCoursePlanGeneration,
+	LernCoursePlanGenerationSection,
+	LernGenerationStatus,
+	LernStepPreferences,
+	LernStepTopic,
+	LernUsage,
+} from './models/lern.model';
 
 const OPENAI_KEY = process.env.OPENAI_KEY;
 const OPENAI_ORG = process.env.OPENAI_ORG;
+const PEZZO_API_KEY = process.env.PEZZO_API_KEY;
+const PEZZO_PROJECT_ID = process.env.PEZZO_PROJECT_ID;
 
 const validateCourse = (course?: LernCourse) => {
 	const hasPages = (course?.topic?.pages?.length ?? 0) > 0;
@@ -82,6 +92,21 @@ const resetCoursePlan = async (docRef: DocumentReference) => {
 	}
 };
 
+const getOpenAi = () => {
+	const pezzo = new Pezzo({
+		apiKey: PEZZO_API_KEY,
+		environment: production() ? 'Production' : 'Development',
+		projectId: PEZZO_PROJECT_ID,
+	});
+
+	return new PezzoOpenAI(pezzo, {
+		apiKey: OPENAI_KEY,
+		organization: OPENAI_ORG,
+		maxRetries: 2,
+		timeout: (540 / 2) * 1000,
+	});
+};
+
 export const createLernCoursePlan = async (uid: string, id: string, course?: LernCourse) => {
 	warn(`Initializing new Lern Course Plan for user ${uid} | Course ID: ${id}`);
 
@@ -107,12 +132,7 @@ export const createLernCoursePlan = async (uid: string, id: string, course?: Ler
 
 		/* TODO: Check if user can generate based on subscription credits */
 
-		const openai = new OpenAI({
-			apiKey: OPENAI_KEY,
-			organization: OPENAI_ORG,
-			maxRetries: 2,
-			timeout: (540 / 2) * 1000,
-		});
+		const openai = getOpenAi();
 
 		const { repo, topic, preferences } = course as LernCourse;
 
@@ -136,7 +156,7 @@ export const createLernCoursePlan = async (uid: string, id: string, course?: Ler
 			normPreferences,
 		});
 
-		const chatCompletion = await openai.chat.completions.create(params);
+		const chatCompletion = await openai.chat.completions.create(params, { stream: false, properties: { uid } });
 		warn({ message: chatCompletion.choices[0].message, usage: chatCompletion.usage });
 
 		const functionCall = chatCompletion.choices[0].message.function_call;
