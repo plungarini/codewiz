@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-course-breadcrumb',
@@ -6,12 +6,14 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styles: [
     `
       :host {
-        display: block;
+        @apply max-w-full block overflow-hidden;
       }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CourseBreadcrumbComponent {
+	
+	@Input() title: string = '';
 
 }
