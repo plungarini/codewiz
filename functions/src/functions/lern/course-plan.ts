@@ -479,7 +479,7 @@ const getCompletionParams = (data: {
 					},
 					'shortDescription': {
 						'type': 'string',
-						'description': 'A short description for the course. It should introduce in short what the course is about. Around 250 chars of length.',
+						'description': 'A short description for the course topic. It should introduce in short what the course topic is about. Around 250 chars of length.',
 					},
 					'sections': {
 						'type': 'array',
