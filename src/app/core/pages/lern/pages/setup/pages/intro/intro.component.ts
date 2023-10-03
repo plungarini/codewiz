@@ -9,7 +9,7 @@ import { LernService } from '../../../../services/lern.service';
   styles: [
     `
       :host {
-        @apply mt-12 mb-8 h-full max-w-3xl mx-auto;
+        @apply mt-12 h-full max-w-3xl mx-auto;
       }
     `
   ],
