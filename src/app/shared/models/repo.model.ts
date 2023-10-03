@@ -16,6 +16,7 @@ export type Repo = {
 	hide: boolean;
 	hostUrl: string;
 	replaceUrl: string;
+	tableName: string;
 	querySuggestions?: string[];
 	replaceStrings: {
 		s: string;

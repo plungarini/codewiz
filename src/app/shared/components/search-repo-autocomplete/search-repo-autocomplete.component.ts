@@ -1,10 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnDestroy, Output, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Repo } from 'src/app/shared/models/repo.model';
-import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
-import { UserRepoService } from '../../../../services/user-repo.service';
+import { UserRepoService } from '../../../core/pages/chat/services/user-repo.service';
 
 
 @Component({
@@ -21,8 +20,24 @@ import { UserRepoService } from '../../../../services/user-repo.service';
 })
 export class SearchRepoAutocompleteComponent implements OnDestroy {
 
+	@Input() size: 'st' | 'lg' = 'st';
+	@Input() autoSelect = true;
+	@Input() autoSelectIndex = 0;
+	@Input() set setRepo(id: string | undefined) {
+		if (!id) return;
+
+		if (!this.docs.length) {
+			this.setRepoQueue = id;
+			return;
+		};
+
+		const index = this.docs.findIndex(d => d.id === id);
+		if (index < 0) return;
+		this.selectDoc(index);
+	}
+	@Output('onRepo') onRepo: EventEmitter<Repo> = new EventEmitter();
+	
 	@ViewChild('searchDocsInput') searchDocsInputElement: ElementRef<HTMLInputElement> | undefined;
-	@Output('onRepo') onRepo: EventEmitter<Repo> = new EventEmitter()
 
 	searchInput = new FormControl();
 	selectedIndex = 0;
@@ -30,15 +45,16 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 	filteredDocs: Repo[] = [];
 	repo: Repo | undefined;
 	cacheRepo: Repo | undefined;
-	placeholder: string = 'Search a repo';
-
+	placeholder: string = 'Select a repo';
+	
 	docsListLoaded: boolean = false;
 	searchInputSub: Subscription;
 	docsListSub: Subscription;
 
+	private setRepoQueue: string = '';
+
 	constructor(
 		private cdRef: ChangeDetectorRef,
-		private db: FirebaseExtendedService,
 		private repoService: UserRepoService,
 		private route: ActivatedRoute,
 	) {
@@ -51,13 +67,18 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 
 			if (!this.searchInput.value && !this.repo && !this.cacheRepo) {
 
-				if (!repoParam) {
-					this.selectDoc(0);
+				if (!repoParam && this.autoSelect && !this.setRepoQueue) {
+					this.selectDoc(this.autoSelectIndex);
+				} else if (this.setRepoQueue) {
+					const index = this.docs.findIndex(d => d.id === this.setRepoQueue);
+					if (index < 0) return;
+					this.selectDoc(index);
+					this.setRepoQueue = '';
 				} else {
 					this.filteredDocs = this._filterDocs('');
 					const index = this.filteredDocs.findIndex(d => d.id === repoParam);
-					if (index < 0) {
-						this.selectDoc(0);
+					if (index < 0 && this.autoSelect) {
+						this.selectDoc(this.autoSelectIndex);
 					} else {
 						this.selectDoc(index);
 					}
@@ -67,6 +88,8 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		});
 
 		this.searchInputSub = this.searchInput.valueChanges.subscribe(value => {
+			this.selectedIndex = 0;
+
 			if (!value) {
 				setTimeout(() => {
 					this.filteredDocs = this._filterDocs(value);

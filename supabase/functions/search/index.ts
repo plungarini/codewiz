@@ -6,6 +6,7 @@ import { Database } from '../common/database-types.ts'
 import { ApplicationError, UserError } from '../common/errors.ts'
 
 const openAiKey = Deno.env.get('OPENAI_KEY')
+const openAiOrg = Deno.env.get('OPENAI_ORG')
 const supabaseUrl = Deno.env.get('SB_URL')
 const supabaseServiceKey = Deno.env.get('SB_SERVICE_ROLE_KEY')
 
@@ -39,20 +40,34 @@ serve(async (req) => {
       throw new UserError('Missing request data')
     }
 
-    const { query } = requestData
+    const { query, repo } = requestData
 
     if (!query) {
       throw new UserError('Missing query in request data')
-    }
+		}
+		
+		if (!repo) {
+			throw new UserError('Missing repo in request data')
+		}
 
-    // Intentionally log the query
-    console.log({ query })
+		const tableName = repo?.replace(/^\/|\/$/g, '')?.split('/')?.pop();
 
+		if (!tableName) {
+			throw new ApplicationError('Failed to sanitize table name', { repo })
+		}
+
+    // Intentionally log the request data
+		console.log({ requestData })
+		
     const sanitizedQuery = query.trim()
 
-    const supabaseClient = createClient<Database>(supabaseUrl, supabaseServiceKey)
+		const supabaseClient = createClient<Database>(supabaseUrl, supabaseServiceKey, {
+			auth: {
+				persistSession: false,
+			},
+		})
 
-    const configuration = new Configuration({ apiKey: openAiKey })
+    const configuration = new Configuration({ apiKey: openAiKey, organization: openAiOrg, })
     const openai = new OpenAIApi(configuration)
 
     // Moderate the content to comply with OpenAI T&C
@@ -78,46 +93,27 @@ serve(async (req) => {
 
     const [{ embedding }] = embeddingResponse.data.data
     const { error: matchError, data: pageSections } = await supabaseClient
-      .rpc('match_page_sections_v2', {
-        embedding,
-        match_threshold: 0.78,
-        min_content_length: 50,
-      })
-      .select('slug, heading, page_id')
-      .limit(10)
+			.rpc('search_embeddings', {
+				table_custom_name: tableName,
+				embed_query: embedding,
+				match_threshold: 0.78,
+				min_content_length: 50,
+			})
+			.select('id, content, title')
+			.limit(10);
+		
+		const normPageSections = pageSections as {
+			id: string;
+			title: string;
+			content: string;
+		}[] | undefined;
 
-    if (matchError || !pageSections) {
+    if (matchError || !normPageSections) {
       throw new ApplicationError('Failed to match page sections', matchError ?? undefined)
-    }
+		}
 
-    const uniquePageIds = pageSections
-      .map<number>(({ page_id }) => page_id)
-      .filter((value, index, array) => array.indexOf(value) === index)
-
-    const { error: fetchPagesError, data: pages } = await supabaseClient
-      .from('page')
-      .select('id, type, path, meta')
-      .in('id', uniquePageIds)
-
-    if (fetchPagesError || !pages) {
-      throw new ApplicationError(`Failed to fetch pages`, fetchPagesError)
-    }
-
-    const combinedPages = pages
-      .map((page) => {
-        const sections = pageSections
-          .map((pageSection, index) => ({ ...pageSection, rank: index }))
-          .filter(({ page_id }) => page_id === page.id)
-
-        // Rank this page based on its highest-ranked page section
-        const rank = sections.reduce((min, { rank }) => Math.min(min, rank), Infinity)
-
-        return {
-          ...page,
-          sections,
-          rank,
-        }
-      })
+		const combinedPages = normPageSections
+			.map((pageSection, index) => ({ ...pageSection, rank: index }))
       .sort((a, b) => a.rank - b.rank)
 
     return new Response(JSON.stringify(combinedPages), {

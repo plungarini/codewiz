@@ -13,14 +13,16 @@
     "watch": "ng build --watch --configuration=development",
     "test": "ng test",
 
-		"generate-env:dev": "node ./replace-env-var.script.js dev",
-		"generate-env:prod": "node ./replace-env-var.script.js prod",
+    "generate-env:dev": "node ./replace-env-var.script.js dev",
+    "generate-env:prod": "node ./replace-env-var.script.js prod",
 
-    "deploySupabase": "yarn updateSecrets && yarn sb-aiSearch && yarn sb-search && yarn sb-chatTitle",
+    "deploySupabase": "yarn updateSbSecrets && supabase functions deploy",
     "sb-chatTitle": "npx supabase functions deploy chat-title --project-ref rbikifjpcodmtsgggpbk",
     "sb-aiSearch": "npx supabase functions deploy ai-docs --project-ref rbikifjpcodmtsgggpbk",
     "sb-search": "npx supabase functions deploy search --project-ref rbikifjpcodmtsgggpbk",
-    "updateSecrets": "npx supabase secrets set --env-file ./supabase/.env"
+    "sb-lernSearchDocs": "npx supabase functions deploy lern-search-docs --project-ref rbikifjpcodmtsgggpbk",
+
+    "updateSbSecrets": "npx supabase secrets set --env-file ./supabase/.env"
   },
   "private": true,
   "dependencies": {
@@ -47,7 +49,6 @@
     "ngx-markdown": "^16.0.0",
     "rxjs": "~7.8.0",
     "sse.js": "^0.6.1",
-    "supabase": "^1.98.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.0"
   },
@@ -65,6 +66,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
     "postcss": "^8.4.23",
+    "supabase": "^1.99.5",
     "tailwindcss": "^3.3.2",
     "typescript": "~5.0.2"
   }

@@ -1,6 +1,6 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { error, warn } from 'firebase-functions/logger';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAI from 'openai';
 
 const MAX_CHARS = 25_000;
 const MIN_SECTION_LENGTH = 100;
@@ -17,8 +17,8 @@ const openAiTokenSanitizer = (input: string): string[] => {
     }
   };
 
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
+  for (const element of lines) {
+    const line = element.trim();
 
     if (
       (line.startsWith('#') || line.startsWith('======') || line.startsWith('-------')) &&
@@ -89,6 +89,7 @@ export const elaborateEmbeddings = async (req: {
   const supabasePublicUrl = process.env.SUPABASE_PUBLIC_URL;
   const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const openaiKey = process.env.OPENAI_KEY;
+  const openaiOrg = process.env.OPENAI_ORG;
 	const email = process.env.SUPABASE_ADMIN_EMAIL;
 	const password = process.env.SUPABASE_ADMIN_PASSW;
 
@@ -98,7 +99,7 @@ export const elaborateEmbeddings = async (req: {
     );
 	}
 
-	const author = req.author.split('/').pop()?.replaceAll('.', '') || req.table;
+	const author = req.author.split('/').pop()?.replaceAll('.', '') ?? req.table;
 	if (!author) throw new Error(`Author field is required. Currently it's ${author}, original is ${req.author}`);
 
 	const supabase = createClient(supabasePublicUrl, supabaseServiceRoleKey);
@@ -113,8 +114,12 @@ export const elaborateEmbeddings = async (req: {
 	}
 
 	try {
-    const configuration = new Configuration({ apiKey: openaiKey });
-    const openai = new OpenAIApi(configuration);
+    const openai = new OpenAI({
+			apiKey: openaiKey,
+			organization: openaiOrg,
+			maxRetries: 2,
+			timeout: (540 / 2) * 1000,
+		});
 		warn('Configuring OpenAI - COMPLETED');
 
     const sanitizedInput = openAiTokenSanitizer(req.content);
@@ -129,17 +134,12 @@ export const elaborateEmbeddings = async (req: {
 				? `${req.id}[1]`
 				: `${req.id}[${i + 1}]`;
 
-      const embeddingResponse = await openai.createEmbedding({
+      const embeddingResponse = await openai.embeddings.create({
         model: 'text-embedding-ada-002',
         input: sanInput,
 			});
 
-			if (embeddingResponse.status !== 200) {
-        error(embeddingResponse.data);
-        throw new Error(JSON.stringify(embeddingResponse.data));
-			}
-
-      const [responseData] = embeddingResponse.data.data;
+      const [responseData] = embeddingResponse.data;
 
       const { error: insertPageSectionError } = await supabase
         .from(req.table || author)
@@ -148,7 +148,7 @@ export const elaborateEmbeddings = async (req: {
 					path: req.link,
 					title: req.title,
           content: normInput,
-          token_count: embeddingResponse.data.usage.total_tokens,
+          token_count: embeddingResponse.usage.total_tokens,
 					embedding: responseData.embedding,
 					section: i + 1,
           updatedAt: new Date(),

@@ -5,11 +5,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ImgixAngularModule } from '@imgix/angular';
 import { ClipboardModule } from 'ngx-clipboard';
 import { MarkdownModule } from 'ngx-markdown';
+import { SharedModule } from 'src/app/shared/shared.module';
 import { ChatViewRoutingModule } from './chat-view-routing.module';
 import { ChatViewComponent } from './chat-view.component';
 import { ChatMobileNavigationComponent } from './components/chat-mobile-navigation/chat-mobile-navigation.component';
 import { MobileChatHistoryComponent } from './components/chat-mobile-navigation/components/mobile-chat-history/mobile-chat-history.component';
-import { MobileSearchRepoAutocompleteComponent } from './components/chat-mobile-navigation/components/mobile-search-repo-autocomplete/mobile-search-repo-autocomplete.component';
 import { EmptyChatPlaceholderComponent } from './components/empty-chat-placeholder/empty-chat-placeholder.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { AiToolbarComponent } from './components/messages/components/ai-toolbar/ai-toolbar.component';
@@ -35,7 +35,6 @@ import { StatusComponent } from './components/status/status.component';
 		EmptyChatPlaceholderComponent,
 		ChatMobileNavigationComponent,
 		MobileChatHistoryComponent,
-		MobileSearchRepoAutocompleteComponent,
   ],
   imports: [
 		CommonModule,
@@ -43,6 +42,7 @@ import { StatusComponent } from './components/status/status.component';
 		MarkdownModule.forChild(),
 		ReactiveFormsModule,
 		ClipboardModule,
+		SharedModule,
 		ImgixAngularModule,
   ]
 })

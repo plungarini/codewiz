@@ -1,0 +1,102 @@
+<div class="flex h-full px-6 py-4 -mx-6 lg:justify-center md:px-0 md:mx-0 md:bg-transparent bg-zinc-900/40">
+	<div class="max-w-prose">
+		<h2>Mission Accomplished, Coding Maverick 🎉</h2>
+		<p>Woohoo! You've soared through your WizLern course like the coding superstar you are! 🌟 But hey, every superhero needs a sidekick, right? Help us refine our courses further by sharing a quick emoji on how you felt. Got a minute more? Drop us a line on what you loved or where we can level up. Your wisdom guides CodeWiz's evolution. 🎩</p>
+	
+		<div class="mt-10">
+			<p class="font-bold text-zinc-50">Leave your Feedback:</p>
+			<div class="flex items-center mt-4 gap-x-4">
+				<img
+					src="https://em-content.zobj.net/source/apple/354/confused-face_1f615.png"
+					alt="Confused Face"
+					tabindex="1"
+					width="1"
+					height="1"
+					#bad
+					(click)="setReaction('bad'); bad.blur()"
+					[ngClass]="{
+						'grayscale-0 opacity-100 scale-100': feedback.value.reaction === 'bad',
+						'grayscale hover:opacity-100 hover:grayscale-0 opacity-50 hover:scale-110 hover:-rotate-6': feedback.value.reaction !== 'bad',
+					}"
+					class="w-10 h-10 transition-all duration-300 ease-in-out cursor-pointer shrink-0"
+				>
+				<img
+					src="https://em-content.zobj.net/source/apple/354/beaming-face-with-smiling-eyes_1f601.png"
+					tabindex="1"
+					alt="Beaming Face with Smiling Eyes"
+					width="1"
+					height="1"
+					#good
+					(click)="setReaction('good'); good.blur()"
+					[ngClass]="{
+						'grayscale-0 opacity-100 scale-100': feedback.value.reaction === 'good',
+						'grayscale hover:opacity-100 hover:grayscale-0 opacity-50 hover:scale-110': feedback.value.reaction !== 'good',
+					}"
+					class="w-10 h-10 transition-all duration-300 ease-in-out cursor-pointer shrink-0"
+				>
+				<img
+					src="https://em-content.zobj.net/source/apple/354/star-struck_1f929.png"
+					alt="Star Struck"
+					tabindex="1"
+					width="1"
+					height="1"
+					#great
+					(click)="setReaction('great'); great.blur()"
+					[ngClass]="{
+						'grayscale-0 opacity-100 scale-100': feedback.value.reaction === 'great',
+						'grayscale hover:opacity-100 hover:grayscale-0 opacity-50 hover:scale-110 hover:rotate-6': feedback.value.reaction !== 'great',
+					}"
+					class="w-10 h-10 transition-all duration-300 ease-in-out cursor-pointer shrink-0"
+				>
+			</div>
+		</div>
+
+		<div class="mt-6">
+			<label for="comment" class="block mb-2">
+				<p class="text-sm">Additional Comment (optional)</p>
+			</label>
+			<textarea
+				type="text"
+				name="comment"
+				id="comment"
+				rows="4"
+				[formControl]="feedback.controls.comment"
+				placeholder='Provide an additional comment on how we can improve your experience.'
+				class="w-full p-0 text-white placeholder:text-zinc-500 px-2 py-1.5 overflow-hidden shadow-2xl relative z-20 transition-all duration-300 border-0 outline-none ring-1 focus:ring-[3px] ring-zinc-800 focus:ring-indigo-400 rounded-md bg-zinc-900/80 hover:ring-4 focus:outline-none focus:ring-offset-[3px] focus:ring-offset-zinc-950 ring-offset-zinc-950"
+			></textarea>
+		</div>
+	</div>
+</div>
+
+<div
+	[ngClass]="{
+		'opacity-100': saved,
+		'opacity-0 pointer-events-none': !saved,
+	}"
+	class="px-4 py-2 -mx-6 transition-opacity duration-300 ease-in-out md:mx-0 lg:mx-auto md:max-w-prose bg-teal-400/10 md:rounded-lg"
+>
+	<p class="text-teal-400">Feedback Saved. Thank you!</p>
+</div>
+
+<div class="w-full mx-0 lg:mx-auto max-w-prose">
+
+	<button
+		[ngClass]="{
+			'mt-4 sm:mt-4': saved,
+			'-mt-4 sm:-mt-6 md:-mt-8': !saved,
+		}"
+		routerLink="/app/lern"
+		class="rounded-md disabled:opacity-40 overflow-hidden disabled:cursor-not-allowed px-3.5 py-2.5 flex items-center justify-center space-x-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600 text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+	>
+		<span>Back to all Lern(s)</span>
+		
+		<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+			<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+				<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+					<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+					<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+				</g>
+			</g>
+		</svg>
+	</button>
+</div>

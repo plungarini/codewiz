@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { Repo } from 'src/app/shared/models/repo.model';
@@ -10,13 +10,13 @@ import { AiChatService } from 'src/app/shared/services/ai-chat.service';
   styles: [
     `
       :host {
-        @apply left-0 w-full max-w-full fixed bottom-0 z-[80] pointer-events-none flex flex-col;
+        @apply left-0 w-full max-w-full fixed bottom-0 z-[80] pointer-events-none flex flex-col md:hidden;
       }
     `
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChatMobileNavigationComponent implements OnInit {
+export class ChatMobileNavigationComponent {
 
 	@Output() onHideMobileMenu = new EventEmitter<void>();
 	show = true;
@@ -33,12 +33,6 @@ export class ChatMobileNavigationComponent implements OnInit {
 		private router: Router,
 		private cdRef: ChangeDetectorRef,
 	) { }
-
-	ngOnInit(): void {
-		setTimeout(() => {
-			console.log(this.show)
-		}, 1000);
-	}
 
 	thisDate = () => Date.now();
 

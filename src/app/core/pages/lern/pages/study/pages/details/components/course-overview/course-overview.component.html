@@ -1,0 +1,109 @@
+<ng-container *ngIf="course as c">
+	<div class="py-4 mt-2">
+		<h2 class="text-2xl font-bold leading-7 text-white sm:text-3xl sm:tracking-tight">{{c.plan.courseName}}</h2>
+
+		<div class="pt-4 mt-2 border-t border-zinc-900">
+			<p>{{c.plan.shortDescription}}</p>
+		</div>
+
+		<div class="pt-4 mt-4 border-t border-zinc-900">
+			<p class="font-medium text-zinc-50">Prerequisites</p>
+			<ul class="mt-1 space-y-1">
+				<li
+					*ngFor="let item of c.plan.prerequisites"
+					class="flex items-start gap-x-2"
+				>
+					<svg class="w-4 h-4 mt-px translate-y-1 shrink-0 text-zinc-400" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M4.99021 7.18998C4.99021 5.97527 5.97443 4.99106 7.18913 4.99009H8.18988C8.77049 4.99009 9.32679 4.75959 9.73914 4.35112L10.4384 3.65089C11.2952 2.78922 12.6879 2.78533 13.5496 3.64117L13.5505 3.64214L13.5593 3.64992L14.2595 4.35015C14.6709 4.75959 15.2282 4.98911 15.8088 4.98911H16.8115C18.0262 4.98911 19.0114 5.9743 19.0114 7.18901V8.18878C19.0114 8.77036 19.2409 9.32666 19.6503 9.73902L20.3506 10.4392C21.2122 11.2961 21.2171 12.6887 20.3613 13.5504L19.6513 14.2604C19.2419 14.6718 19.0124 15.229 19.0124 15.8087V16.8123C19.0104 18.027 18.0252 19.0093 16.8115 19.0083H15.8068C15.2262 19.0083 14.669 19.2388 14.2576 19.6483L13.5574 20.3475C12.7025 21.2102 11.3098 21.216 10.4481 20.3611L10.4452 20.3592L9.7372 19.6512C9.32581 19.2417 8.76855 19.0122 8.18794 19.0113H7.18913C5.97443 19.0113 4.99021 18.027 4.99021 16.8123V15.8067C4.99021 15.2261 4.75972 14.6698 4.35028 14.2584L3.65102 13.5582C2.78837 12.7033 2.78254 11.3126 3.63643 10.4499C3.63643 10.4499 3.63935 10.448 3.64032 10.4461L4.34833 9.73707C4.75777 9.32569 4.98827 8.76842 4.98827 8.18684V7.18998" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M9.00391 12.1222L10.9811 14.1023L15.0541 10.0273" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+					<p>{{item}}</p>
+				</li>
+			</ul>
+		</div>
+
+		<div class="pt-4 mt-4 border-t border-zinc-900">
+			<p class="font-medium text-zinc-50">Lessons</p>
+
+			<div class="mt-3">
+				<div class="flex items-end justify-between">
+					<p class="text-sm font-bold tracking-wide text-zinc-700">{{completedSections}}/{{c.sections.length}} COMPLETED</p>
+
+					<svg class="w-6 h-6 text-teal-500 -translate-y-0.5 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M11.9973 14.6373V17.3345M8.01593 20.1071L8.90333 17.334H15.2396L16.127 20.1071M17.7441 20.107H6.39867M18.0497 3.89062H5.94922C5.94922 3.89062 5.95603 14.6366 12.0024 14.6366C18.0497 14.6366 18.0497 3.89062 18.0497 3.89062Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M8.98828 7.85547C9.19845 8.81195 9.52539 9.8268 10.0323 10.6724" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M6.0541 5.65234H3.02315C3.02315 5.65234 2.59696 9.45101 5.40217 11.2978" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M17.9453 5.65234H20.9763C20.9763 5.65234 21.4024 9.45101 18.5972 11.2978" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</div>
+
+				<div class="flex items-center mt-2 gap-x-1">
+					<div
+						*ngFor="let item of getDummyArray(c.sections.length); let i = index"
+						[ngClass]="{
+							'bg-teal-400/10': completedSections <= i,
+							'bg-teal-400': completedSections > i,
+						}"
+						class="flex-1 h-1.5 rounded-sm bg-teal-400/10 transition-colors duration-300"
+					></div>
+				</div>
+			</div>
+
+			<ul class="mt-5 space-y-3.5">
+				<li
+					*ngFor="let item of c.sections; let i = index"
+					class="w-full"
+				>
+					<a
+						[routerLink]="['/app/lern/study', c.id]"
+						[queryParams]="{ lesson: item.id }"
+						routerLinkActive
+						#rla="routerLinkActive"
+						class="block rounded-md"
+					>
+						<div class="flex items-center gap-x-2 group/courseLink">
+							<p
+								[ngClass]="{
+									'border-teal-500': !!item.progress?.completed,
+									'border-indigo-500': rla.isActive && !item.progress?.completed,
+									'border-zinc-800': !rla.isActive && !item.progress?.completed,
+								}"
+								class="flex items-center justify-center w-6 h-6 text-xs transition-colors duration-300 border-2 rounded-full shrink-0"
+							>{{i + 1}}</p>
+							<p
+								[ngClass]="{
+									'text-teal-500': !!item.progress?.completed && !rla.isActive,
+									'text-zinc-50': rla.isActive,
+									'text-zinc-500 group-hover/courseLink:text-zinc-400': !rla.isActive && !item.progress?.completed,
+								}"
+								class="transition-colors duration-300"
+							>{{item.content.sectionTitle}}</p>
+
+							<div class="flex-1"></div>
+
+							<svg
+								[ngClass]="{
+									'text-zinc-50 opacity-100': rla.isActive,
+									'group-hover/courseLink:opacity-100 opacity-0 hover:opacity-100 text-zinc-500': !rla.isActive,
+								}"
+								class="w-5 h-5 transition-all duration-300 shrink-0"
+								viewBox="0 0 24 24"
+								version="1.1"
+								xmlns="http://www.w3.org/2000/svg"
+								xmlns:xlink="http://www.w3.org/1999/xlink"
+							>
+								<g id="Iconly/Light/Arrow---Right-2" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+									<g id="Arrow---Right-2" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.000000, 8.500000)" stroke="currentColor" stroke-width="1.5" >
+										<polyline id="Stroke-1" points="14 0 7 7 0 0"></polyline>
+									</g>
+								</g>
+							</svg>
+						</div>
+					</a>
+				</li>
+			</ul>
+		</div>
+		
+	</div>
+</ng-container>
+

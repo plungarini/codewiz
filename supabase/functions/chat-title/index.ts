@@ -28,6 +28,7 @@ interface RequestData {
 
 const firebaseKey = Deno.env.get('FIREBASE_FUNCTIONS_KEY')
 const openAiKey = Deno.env.get('OPENAI_KEY')
+const openAiOrg = Deno.env.get('OPENAI_ORG')
 
 export const corsHeaders = {
 	'Access-Control-Allow-Origin': '*',
@@ -83,7 +84,7 @@ serve(async (req) => {
 			throw new Error("No message with role 'user'")
 		}
 
-		const configuration = new Configuration({ apiKey: openAiKey })
+		const configuration = new Configuration({ apiKey: openAiKey, organization: openAiOrg, })
 		const openai = new OpenAIApi(configuration)
 
 		// Moderate the content to comply with OpenAI T&C
@@ -147,6 +148,7 @@ serve(async (req) => {
 		const response = await fetch('https://api.openai.com/v1/chat/completions', {
 			headers: {
 				Authorization: `Bearer ${openAiKey}`,
+				'OpenAI-Organization': openAiOrg,
 				'Content-Type': 'application/json',
 			},
 			method: 'POST',

@@ -1,0 +1,30 @@
+:host {
+	@apply h-fit;
+	
+	.aura-shadow {
+		@apply blur-md rounded-full origin-center transition-opacity duration-1000;
+		background: linear-gradient(45deg, #8B5CF6 0%, #ec4899 50%, #f59e0b 100%);
+		transform: scale(1);
+		animation: aura-rotate 3s ease-in-out infinite;
+		
+		&.stop-aura-anim {
+			@apply opacity-0;
+		}
+
+		&.aura-anim {
+			@apply opacity-80;
+		}
+	}
+
+	@keyframes aura-rotate {
+		0% {
+			transform: rotate(0deg) scale(0.6);
+		}
+		50% {
+			transform: rotate(180deg) scale(1);
+		}
+		100% {
+			transform: rotate(360deg) scale(0.6);
+		}
+	}
+}
