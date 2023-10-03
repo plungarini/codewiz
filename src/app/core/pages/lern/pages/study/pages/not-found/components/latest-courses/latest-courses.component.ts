@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from
 import { Subscription } from 'rxjs';
 import { UserRepoService } from 'src/app/core/pages/chat/services/user-repo.service';
 import { Repo } from 'src/app/shared/models/repo.model';
-import { LernCourseRequest } from '../../../core/pages/lern/models/course.model';
-import { LernService } from '../../../core/pages/lern/services/lern.service';
+import { LernCourseRequest } from '../../../../../../models/course.model';
+import { LernService } from '../../../../../../services/lern.service';
 
 @Component({
   selector: 'app-latest-courses',
@@ -108,7 +108,7 @@ export class LatestCoursesComponent implements OnDestroy {
 	}
 
 	trackBy(i: number, item: LernCourseRequest): string {
-		return item.id || i.toString();
+		return item.id ?? i.toString();
 	}
 
 }
