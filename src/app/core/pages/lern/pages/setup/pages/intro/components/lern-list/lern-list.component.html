@@ -1,0 +1,265 @@
+<p class="font-semibold text-zinc-50">Your Lern(s) <span *ngIf="loaded && courses.length > 0" class="text-sm font-normal tracking-wider opacity-50">({{courses.length}})</span></p>
+<div class="relative flex-1 pt-5">
+	<ng-container *ngIf="loaded; else skeleton">
+		<div *ngIf="courses.length; else noChats" class="grid w-full grid-cols-1 overflow-visible xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-4">
+			<ng-container *ngFor="let course of courses; trackBy: trackBy">
+				<a
+					[routerLink]="getCourseUrl(course)"
+					[ngClass]="{
+						'cursor-pointer hover:shadow-2xl hover:ring-4 hover:ring-zinc-900 hover:ring-offset-2 hover:ring-offset-zinc-950': getCourseUrl(course),
+					}"
+					[attr.data-lern-id]="course.id"
+					class="relative z-10 flex flex-col w-full col-span-1 px-5 py-5 transition-all duration-300 rounded-lg shadow gap-y-2 bg-zinc-900/40 group/chat h-72 backdrop-blur ring-zinc-900 ring-offset-zinc-950"
+				>
+					<div class="flex flex-row items-center justify-between">
+						<p class="text-xs text-zinc-600 shrink-0">{{getTimeDifference(course.updatedAt.toDate())}}</p>
+
+						<div class="relative w-3.5 h-3.5 overflow-visible">
+
+							<div
+								[ngClass]="{
+									'opacity-0 -z-10 pointer-events-none': course.generation?.completed || !course.generation?.started || !!course.generation?.hasError,
+									'opacity-100 z-30 pointer-events-auto': !course.generation?.completed && !!course.generation?.started && !course.generation?.hasError
+								}"
+								class="absolute top-0 right-0 transition-all duration-300 group/tooltip"
+							>
+								<div class="absolute px-2 py-1 -mt-1 text-sm leading-tight text-white transition-all duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 bg-zinc-800 bottom-7 left-1/2">
+									<span class="whitespace-nowrap">Processing...</span>
+									<div class="absolute w-2 h-2 transform rotate-45 -translate-x-1/2 rounded-sm bg-zinc-800 -bottom-1 left-1/2"></div>
+								</div>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									xmlns:xlink="http://www.w3.org/1999/xlink"
+									viewBox="0 0 100 100"
+									preserveAspectRatio="xMidYMid"
+									class="w-3.5 h-3.5 transition-all duration-300 cursor-pointer shrink-0 animate-spin" style="shape-rendering: auto; animation-duration: 1.5s;"
+								>
+									<circle cx="50" cy="50" fill="none" stroke-width="10" r="42" stroke-dasharray="197.92033717615698 67.97344572538566" class="animate-aicolors">
+									</circle>
+								</svg>
+							</div>
+
+							<div
+								[ngClass]="{
+									'opacity-0 -z-10 pointer-events-none': course.generation?.completed || !!course.generation?.started || !!course.generation?.hasError,
+									'opacity-100 pointer-events-auto z-30': !course.generation?.completed && !course.generation?.started && !course.generation?.hasError,
+								}"
+								class="absolute top-0 right-0 transition-all duration-300 group/tooltip">
+								<div class="absolute px-2 py-1 -mt-1 text-sm leading-tight text-white transition-all duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 bg-zinc-800 bottom-7 left-1/2">
+									<span class="whitespace-nowrap">{{course.generation?.started ? 'In queue' : 'Incomplete'}}</span>
+									<div class="absolute w-2 h-2 transform rotate-45 -translate-x-1/2 rounded-sm bg-zinc-800 -bottom-1 left-1/2"></div>
+								</div>
+								<div class="w-3.5 h-3.5 transition-all duration-300 rounded-full cursor-pointer bg-black/60 hover:bg-black hover:ring-2 ring-zinc-800"></div>
+							</div>
+
+							<div>
+								<div
+									[ngClass]="{
+										'opacity-0 -z-10 pointer-events-none': !course.generation?.hasError,
+										'opacity-100 pointer-events-auto z-30': !!course.generation?.hasError
+									}"
+									class="absolute top-0 right-0 transition-all duration-300 group/tooltip">
+									<div class="absolute px-2 py-1 -mt-1 text-sm leading-tight text-white transition-all duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 bg-zinc-800 bottom-7 left-1/2">
+										<span class="whitespace-nowrap">Error</span>
+										<div class="absolute w-2 h-2 transform rotate-45 -translate-x-1/2 rounded-sm bg-zinc-800 -bottom-1 left-1/2"></div>
+									</div>
+									<div class="w-3.5 h-3.5 transition-all duration-300 rounded-full cursor-pointer bg-red-400/60 hover:bg-red-400 hover:ring-2 ring-red-800"></div>
+								</div>
+							</div>
+
+							<div>
+								<div
+									[ngClass]="{
+										'opacity-0 -z-10 pointer-events-none': !course.generation?.completed || course.generation?.hasError,
+										'opacity-100 pointer-events-auto z-30': !!course.generation?.completed && !course.generation?.hasError
+									}"
+									class="relative transition-all duration-300 group/tooltip">
+									<div class="absolute px-2 py-1 -mt-1 text-sm leading-tight text-white transition-all duration-300 transform -translate-x-1/2 rounded-lg shadow-lg opacity-0 pointer-events-none group-hover/tooltip:opacity-100 bg-zinc-800 bottom-7 left-1/2">
+										<span class="whitespace-nowrap">Completed</span>
+										<div class="absolute w-2 h-2 transform rotate-45 -translate-x-1/2 rounded-sm bg-zinc-800 -bottom-1 left-1/2"></div>
+									</div>
+									<div class="w-3.5 h-3.5 transition-all duration-300 rounded-full cursor-pointer bg-teal-400/60 hover:bg-teal-400 hover:ring-2 ring-teal-800"></div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+
+					<div class="relative flex-1 py-2 -mx-1 overflow-hidden grow shrink-0">
+						<div
+							[ngClass]="{
+								'opacity-0 -z-10': !course.generation?.started || course.generation?.completed || course.generation?.hasError,
+								'opacity-100 z-10': course.generation?.started && !course.generation?.completed && !course.generation?.hasError,
+							}"
+							class="w-full h-full transition-all duration-300 delay-500"
+						>
+							<ul>
+								<li class="relative z-10 flex items-center justify-between px-2 py-1 transition-all duration-300 border rounded-md gap-x-2 border-zinc-800 bg-zinc-950/60">
+									<p
+										[ngClass]="{
+											'text-zinc-500 animate-pulse': !course.generation?.planCompleted,
+											'text-zinc-400': course.generation?.planCompleted
+										}"
+										class="text-xs truncate transition-all duration-300">Crafting Course Plan{{course.generation?.planCompleted ? '' : ' ...'}}</p>
+									<svg
+										[ngClass]="{
+											'opacity-0': !course.generation?.planCompleted,
+										}"
+										class="w-4 h-4 text-teal-500 transition-opacity duration-300 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+									>
+										<path d="M8.29199 12.0966L11.863 15.6677C12.0464 15.851 12.343 15.851 12.5255 15.6677L19.9997 8.19434" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M15.3175 8.19434L12.1953 11.3165" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M4 12.4873L7.18099 15.6683C7.36434 15.8516 7.66013 15.8516 7.84348 15.6683L9.85344 13.6583" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									</svg>
+								</li>
+
+								<li
+									*ngFor="let item of getFakeSectionsBuildingArray(course.generation?.totalSections ?? 0)"
+									[ngClass]="{
+										'opacity-100 mt-2': (course.generation?.completedSections ?? 0) == item && course.generation?.planCompleted,
+										'-mt-6 delay-1000': (course.generation?.completedSections ?? 0) > item,
+										'mt-6': (course.generation?.completedSections ?? 0) < item,
+										'opacity-0': (course.generation?.completedSections ?? 0) !== item || !course.generation?.planCompleted
+									}"
+									class="relative z-0 transition-all duration-500 rounded-md bg-zinc-950/40 backdrop-blur-lg"
+								>
+									<div
+										[ngClass]="{
+											'shadow-2xl': course.generation?.completedSections === item + 1,
+											'opacity-50': (course.generation?.completedSections ?? 0) >= item + 1,
+											'opacity-0': (course.generation?.completedSections ?? 0) < item
+										}"
+										class="flex items-center justify-between w-full px-2 py-1 transition-all duration-300 rounded-md gap-x-2 bg-zinc-800"
+									>
+										<p
+											[ngClass]="{
+												'animate-pulse': course.generation?.completedSections === item,
+											}"
+											class="text-xs truncate transition-all duration-300">Brewing Lesson {{item + 1}} ...</p>
+										<svg
+											[ngClass]="{
+												'opacity-0': course.generation?.completedSections === item,
+											}"
+											class="w-4 h-4 text-teal-500 transition-opacity duration-300 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+										>
+											<path d="M8.29199 12.0966L11.863 15.6677C12.0464 15.851 12.343 15.851 12.5255 15.6677L19.9997 8.19434" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+											<path d="M15.3175 8.19434L12.1953 11.3165" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+											<path d="M4 12.4873L7.18099 15.6683C7.36434 15.8516 7.66013 15.8516 7.84348 15.6683L9.85344 13.6583" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+									</div>
+								</li>
+							</ul>
+						</div>
+
+						<div
+							[ngClass]="{
+								'opacity-0 -z-10': !course.generation?.hasError,
+								'opacity-100 z-10': course.generation?.hasError,
+							}"
+							class="absolute left-0 w-full h-full transition-all duration-300 delay-500 top-2"
+						>
+							<ul>
+								<li class="relative z-10 flex items-center justify-between px-2 py-1 transition-all duration-300 border rounded-md gap-x-2 border-zinc-800 bg-zinc-950/60">
+									<p class="text-xs truncate transition-all duration-300">Generation Failed</p>
+									<svg class="w-4 h-4 text-red-400 shrink-0" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+										<path d="M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+										<path d="M18 6L6 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									</svg>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+					<div *ngIf="getRepoLogo(course.repo, (repos$ | async)) as logo; else noLogo" class="pb-2 shrink-0">
+						<img
+							ixImg
+							[alt]="course.repo"
+							priority
+							loading="eager"
+							priority
+							[width]="1"
+							[height]="1"
+							[path]="logo"
+							class="w-10 h-10 opacity-50 grayscale"
+						>
+					</div>
+					<ng-template #noLogo>
+						<div class="pb-4 shrink-0">
+							<svg class="-ml-1 w-11 h-11 shrink-0 text-zinc-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path opacity="0.4" fill-rule="evenodd" clip-rule="evenodd" d="M16.218 2.5H7.783C4.623 2.5 2.5 4.72 2.5 8.026V15.973C2.5 19.279 4.623 21.5 7.783 21.5H16.217C19.377 21.5 21.5 19.279 21.5 15.973V8.026C21.5 4.72 19.377 2.5 16.218 2.5Z" fill="currentColor" />
+								<path fill-rule="evenodd" clip-rule="evenodd" d="M16.647 10.9493L13.9981 13.5983C13.8511 13.7453 13.6601 13.8183 13.4671 13.8183C13.2751 13.8183 13.0841 13.7453 12.9371 13.5983C12.6441 13.3053 12.6441 12.8313 12.9371 12.5383L15.0561 10.4193L12.9371 8.30028C12.6441 8.00728 12.6441 7.53228 12.9371 7.23928C13.2301 6.94628 13.7051 6.94628 13.9981 7.23928L16.647 9.88828C16.9401 10.1813 16.9401 10.6563 16.647 10.9493ZM11.0631 15.7003C11.3561 15.9933 11.3561 16.4683 11.0631 16.7613C10.9171 16.9073 10.7251 16.9803 10.5331 16.9803C10.3411 16.9803 10.1491 16.9073 10.0021 16.7613L7.35305 14.1113C7.06005 13.8183 7.06005 13.3443 7.35305 13.0513L10.0021 10.4013C10.2951 10.1083 10.7701 10.1083 11.0631 10.4013C11.3561 10.6943 11.3561 11.1693 11.0631 11.4623L8.94405 13.5813L11.0631 15.7003Z" fill="currentColor" />
+							</svg>
+						</div>
+					</ng-template>
+					<p
+						[ngClass]="{
+							'group-hover/chat:text-zinc-100': course.generation?.completed,
+						}"
+						class="h-12 text-base font-semibold whitespace-pre-wrap transition-colors duration-300 line-clamp-2"
+						[title]="course.name"
+					>{{course.name}}</p>
+					
+					<div
+						[ngClass]="{
+							'opacity-0 -z-10 pointer-events-none': course.generation?.completed || !course.generation?.started || course.generation?.hasError,
+							'opacity-100 z-10 pointer-events-none': course.generation?.started && !course.generation?.completed && !course.generation?.hasError,
+						}"
+						class="absolute bottom-0 left-0 w-full max-w-full overflow-hidden transition-all duration-300 delay-300 rounded-bl-lg rounded-br-lg"
+					>
+						<div class="absolute bottom-0 left-0 z-10 h-1 -mx-1 transition-all duration-700 ease-in-out bg-teal-400 rounded-md rounded-r-lg" [ngStyle]="{ width: getPercentageCompletion(course.generation) }"></div>
+						<div class="z-0 w-full h-1 bg-zinc-800"></div>
+					</div>
+				</a>
+			</ng-container>
+
+			<div class="pl-px bg-transparent opacity-0 pointer-events-none grow-0 shrink-0 h-72 w-fit"></div>
+		</div>
+	</ng-container>
+
+	<ng-template #skeleton>
+		<div class="grid w-full grid-cols-1 overflow-visible xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-4">
+			<ng-container *ngFor="let course of [1, 2, 3, 4]">
+				<div class="relative z-10 flex flex-col w-full col-span-1 px-5 py-5 transition-all duration-300 rounded-lg shadow h-72 bg-zinc-900/40 backdrop-blur ring-zinc-900 ring-offset-zinc-950 gap-y-2">
+					<div class="w-16 h-3 mt-1 rounded-[0.25rem] bg-zinc-600 animate-pulse shrink-0"></div>
+					<div class="flex-1"></div>
+					<div class="pb-4 shrink-0">
+						<svg class="-ml-1 w-11 h-11 shrink-0 text-zinc-300 animate-pulse" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path opacity="0.4" fill-rule="evenodd" clip-rule="evenodd" d="M16.218 2.5H7.783C4.623 2.5 2.5 4.72 2.5 8.026V15.973C2.5 19.279 4.623 21.5 7.783 21.5H16.217C19.377 21.5 21.5 19.279 21.5 15.973V8.026C21.5 4.72 19.377 2.5 16.218 2.5Z" fill="currentColor" />
+							<path fill-rule="evenodd" clip-rule="evenodd" d="M16.647 10.9493L13.9981 13.5983C13.8511 13.7453 13.6601 13.8183 13.4671 13.8183C13.2751 13.8183 13.0841 13.7453 12.9371 13.5983C12.6441 13.3053 12.6441 12.8313 12.9371 12.5383L15.0561 10.4193L12.9371 8.30028C12.6441 8.00728 12.6441 7.53228 12.9371 7.23928C13.2301 6.94628 13.7051 6.94628 13.9981 7.23928L16.647 9.88828C16.9401 10.1813 16.9401 10.6563 16.647 10.9493ZM11.0631 15.7003C11.3561 15.9933 11.3561 16.4683 11.0631 16.7613C10.9171 16.9073 10.7251 16.9803 10.5331 16.9803C10.3411 16.9803 10.1491 16.9073 10.0021 16.7613L7.35305 14.1113C7.06005 13.8183 7.06005 13.3443 7.35305 13.0513L10.0021 10.4013C10.2951 10.1083 10.7701 10.1083 11.0631 10.4013C11.3561 10.6943 11.3561 11.1693 11.0631 11.4623L8.94405 13.5813L11.0631 15.7003Z" fill="currentColor" />
+						</svg>
+					</div>
+					<div class="h-12">
+						<div class="w-32 h-6 rounded-md bg-zinc-400 animate-pulse"></div>
+					</div>
+				</div>
+			</ng-container>
+		</div>
+	</ng-template>
+	
+	<ng-template #noChats>
+		<div class="flex items-center justify-center ml-2 rounded-lg h-72 bg-zinc-900/20">
+			<div class="text-center">
+				<svg class="w-12 h-12 mx-auto text-zinc-400" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+					<path d="M13.3352 3.05282L17.7866 3.7193C20.1665 4.07541 21.3953 5.9766 21.0392 8.35357L20.0799 14.7674C19.7238 17.1444 17.9929 18.6029 15.612 18.2468L11.1616 17.5803C8.78173 17.2242 7.55286 15.3239 7.908 12.946L8.86832 6.53217C9.22346 4.1552 10.9622 2.69866 13.3352 3.05282Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+					<path d="M9.01798 5.875L6.15744 6.81976C3.86901 7.57284 2.96998 9.65305 3.73279 11.9415L5.75755 18.0985C6.5116 20.3781 8.46436 21.5223 10.7431 20.7693L15.03 19.3614C15.7471 19.1347 16.3464 18.7533 16.7823 18.2716" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				</svg>
+				<h3 class="mt-2 text-sm font-semibold text-zinc-100">No recent Lern found</h3>
+				<p class="mt-1 text-sm text-zinc-500">Get started by creating a new Lern or see all of your Lern(s).</p>
+				<div class="mt-6">
+					<button [routerLink]="['/app/lern/all']" type="button" class="inline-flex items-center px-3 py-2 space-x-2 text-sm font-semibold text-white transition-all duration-300 bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 hover:ring-2 hover:ring-offset-2 ring-offset-zinc-900 hover:ring-indigo-600">
+						<span>All Lern(s)</span>
+
+						<svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+							<g id="Iconly/Light/Arrow---Right" stroke="currentColor" stroke-width="1.5" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+								<g id="Arrow---Right" transform="translate(12.000000, 12.000000) rotate(-90.000000) translate(-12.000000, -12.000000) translate(5.500000, 4.000000)" stroke="currentColor" stroke-width="1.5" >
+									<line x1="6.7743" y1="15.75" x2="6.7743" y2="0.75" id="Stroke-1"></line>
+									<polyline id="Stroke-3" points="12.7987 9.7002 6.7747 15.7502 0.7497 9.7002"></polyline>
+								</g>
+							</g>
+						</svg>
+					</button>
+				</div>
+			</div>
+		</div>
+	</ng-template>
+</div>
