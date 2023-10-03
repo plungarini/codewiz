@@ -34,10 +34,11 @@ export class SectionDetailsComponent implements OnDestroy {
 	currentSection: LernCourseSectionData | undefined;
 	sectionId: string = '';
 	quizCompletion: LernQuizChange | undefined;
+	lessonId: string | null = null;
+	nextSectionId: string | undefined = undefined;
 
 	loading = false;
 
-	private lessonId: string | null = null;
 	private subscription: Subscription | undefined;
 
 	constructor(
@@ -75,12 +76,8 @@ export class SectionDetailsComponent implements OnDestroy {
 			{ ...this.quizCompletion, completed: true }
 		);
 
-		const currentIndex = this.course?.sections.findIndex(
-			(section) => section.id === this.sectionId
-		);
-		const nextSectionId = this.course?.sections[(currentIndex ?? 0) + 1]?.id;
 		this.router.navigate(['/app/lern/study', this.course?.id], {
-			queryParams: { lesson: nextSectionId ?? 'completed' }
+			queryParams: { lesson: this.nextSectionId ?? 'completed' }
 		});
 
 		this.loading = false;
@@ -91,6 +88,10 @@ export class SectionDetailsComponent implements OnDestroy {
 		this.sectionId = section ?? '';
 		this.currentSection = this.course?.sections
 			.find((section) => section.id === this.sectionId);		
+		const currentIndex = this.course?.sections.findIndex(
+			(section) => section.id === this.sectionId
+		);
+		this.nextSectionId = this.course?.sections[(currentIndex ?? 0) + 1]?.id;
 		this.cdRef.markForCheck();
 	}
 
