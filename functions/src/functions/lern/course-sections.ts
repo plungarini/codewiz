@@ -369,90 +369,92 @@ const getCompletionParams = (data: {
 	}
 
 	const functions: ChatCompletionCreateParams.Function[] = [
-  {
-    'name': 'createCourseSection',
-    'description': oneLine`
-      Generate a comprehensive Course Lesson in "${preferences.language}". This should
-      provide an in-depth lesson tailored to the user's preferences. Avoids any
-			indications of future content. Only accept a valid JSON in a single-line without
-			whitespaces as arguments.
-    `,
-    'parameters': {
-      'type': 'object',
-      'properties': {
-        'sectionTitle': {
-          type: 'string',
-          description: 'The title of the lesson.',
+		{
+			'name': 'createCourseSection',
+			'description': oneLine`
+				Generate a comprehensive Course Lesson in "${preferences.language}". This should
+				provide an in-depth lesson tailored to the user's preferences. Avoids any
+				indications of future content. Only accept a valid JSON in a single-line without
+				whitespaces as arguments.
+			`,
+			'parameters': {
+				'type': 'object',
+				'properties': {
+					'sectionTitle': {
+						type: 'string',
+						description: 'The title of the lesson.',
+					},
+					'sectionOverview': {
+						type: 'string',
+						description: 'A short overview of this lesson. What the user will learn. In 200 chars or less.',
+					},
+					'content': {
+						type: 'string',
+						description: oneLine`
+							Provide the full, in-depth content of this lesson immediately without introducing or
+							summarizing the lesson. The content should delve straight into specific details,
+							including code snippets, examples, or markdown text, as relevant to the topic. Do not
+							use phrases like "In this lesson, we will..." or provide overviews. Avoid mentioning
+							or hinting at future content. This lesson's content should be standalone, comprehensive,
+							and directly address the user's goals.
+						`,
+					},
+					...(preferences.assessment === 'quizz'
+						? {
+								'quiz': {
+									'type': 'object',
+									'properties': {
+										'question': {
+											'type': 'string',
+											'description': 'The question the User should answer to complete the knowledge review of this section.',
+										},
+										'quizType': {
+											'type': 'string',
+											'description': 'The type of quiz the user should answer. Either multiple answers or single answer.',
+											'enum': ['multi', 'single'],
+										},
+										'options': {
+											'type': 'array',
+											'items': {
+												'type': 'object',
+												'properties': {
+													'option': {
+														'type': 'string',
+														'description': 'A possible answer to the question. Based on the content of this lesson and the documentation provided by the User.',
+													},
+													'isCorrect': {
+														'type': 'boolean',
+														'description': 'Whether the answer is correct or not. Based on the content of this lesson and the documentation provided by the User.',
+													},
+													'why': {
+														'type': 'string',
+														'description': 'A reason why the answer is correct or not, in short. Based on the content of this lesson and the documentation provided by the User.',
+													},
+												},
+												'required': ['option', 'isCorrect'],
+											},
+										},
+									},
+									'required': ['question', 'quizType', 'options'],
+								},
+							}
+						: {}),
+					...(preferences.assessment === 'assignments'
+						? {
+								'assignment': {
+									'type': 'string',
+									'description': 'A description of the assignment you can suggest to the user to improve their learning.',
+								},
+							}
+						: {}),
+					'summary': {
+						type: 'string',
+						description: 'A short summary for this lesson. Summarize what the user should have achieved or understood by the end of this lesson.',
+					},
 				},
-				'sectionOverview': {
-					type: 'string',
-					description: 'A short overview of this lesson. What the user will learn. In 200 chars or less.',
-				},
-        'content': {
-          type: 'string',
-          description: oneLine`
-            The actual full content of this lesson. The content should answer the user's goals in a
-						detailed and structured manner. Can include code snippets, examples, or plain formatted
-            markdown text. Do not include lesson title, as it's already present in the page the user
-            will see. This should be a standalone lesson, so avoid hinting at what will come next.
-          `,
-        },
-        ...(preferences.assessment === 'quizz'
-          ? {
-              'quiz': {
-                'type': 'object',
-                'properties': {
-                  'question': {
-                    'type': 'string',
-                    'description': 'The question the User should answer to complete the knowledge review of this section.',
-                  },
-                  'quizType': {
-                    'type': 'string',
-                    'description': 'The type of quiz the user should answer. Either multiple answers or single answer.',
-                    'enum': ['multi', 'single'],
-                  },
-                  'options': {
-                    'type': 'array',
-                    'items': {
-                      'type': 'object',
-                      'properties': {
-                        'option': {
-                          'type': 'string',
-                          'description': 'A possible answer to the question. Based on the content of this lesson and the documentation provided by the User.',
-                        },
-                        'isCorrect': {
-                          'type': 'boolean',
-                          'description': 'Whether the answer is correct or not. Based on the content of this lesson and the documentation provided by the User.',
-                        },
-                        'why': {
-                          'type': 'string',
-                          'description': 'A reason why the answer is correct or not, in short. Based on the content of this lesson and the documentation provided by the User.',
-                        },
-                      },
-                      'required': ['option', 'isCorrect'],
-                    },
-                  },
-                },
-                'required': ['question', 'quizType', 'options'],
-              },
-            }
-          : {}),
-        ...(preferences.assessment === 'assignments'
-          ? {
-              'assignment': {
-                'type': 'string',
-                'description': 'A description of the assignment you can suggest to the user to improve their learning.',
-              },
-            }
-          : {}),
-        'summary': {
-          type: 'string',
-          description: 'A short summary for this lesson. Summarize what the user should have achieved or understood by the end of this lesson.',
-        },
-      },
-      'required': required,
-    },
-  },
+				'required': required,
+			},
+		},
 	];
 
 	warn({ functions });
