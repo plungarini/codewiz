@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { switchMap, tap } from 'rxjs';
 import { StripeSubscription } from 'src/app/auth/models/subscription.model';
+import { UserPermissionsService } from 'src/app/auth/services/user-permissions.service';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { StripeProduct } from 'src/app/shared/models/stripe.model';
 import { StripeService } from 'src/app/shared/services/stripe.service';
@@ -24,11 +25,14 @@ export class UsageComponent {
 
 	user$ = this.usersService.user$.pipe(
 		tap((u) => {
-			this.userSub = u?.subscriptions?.filter((s) => s?.status === 'active')?.at(0)?.role || 'apprentice';
+			this.userSub = u?.subscriptions?.filter((s) => s?.status === 'active')?.at(0)?.role ?? 'apprentice';
 			this.cdRef.markForCheck();
 		})
 	);
+	isAlphaUser$ = this.permissions.hasAnyPermission$(['alpha']);
 	fireUser$ = this.usersService.fireUser$;
+	usedLerns$ = this.userStats.getThisPeriodLern();
+	lernCredits$ = this.userStats.getAdditionalLernCredits();
 	usedPrompts$ = this.userStats.getThisPeriodPrompts();
 	product$ = this.user$.pipe(
 		switchMap((u) => {
@@ -40,10 +44,11 @@ export class UsageComponent {
 	userSub: string = 'apprentice';
 
 	constructor(
+		private cdRef: ChangeDetectorRef,
+		private permissions: UserPermissionsService,
 		private usersService: UsersService,
 		private stripeService: StripeService,
 		private userStats: UserUsagesService,
-		private cdRef: ChangeDetectorRef,
 	) {	}
 
 	getRemainingDays(subscription?: StripeSubscription) {
@@ -76,12 +81,28 @@ export class UsageComponent {
 
 	getRemainingQueries(used?: number | null, product?: null | StripeProduct) {
 		if (used === undefined || used === null || !product) return 0;
-		return (parseInt(product.metadata.maxPromptCountMonth || '0')) - used;
+		return (parseInt(product.metadata.maxPromptCountMonth ?? '0')) - used;
 	}
 
 	getRemainingQueriesPerc(used?: number | null, product?: null | StripeProduct) {
 		if (used === undefined || used === null || !product) return 0;
-		return (used / parseInt(product.metadata.maxPromptCountMonth || '0')) * 100;
+		return (used / parseInt(product.metadata.maxPromptCountMonth ?? '0')) * 100;
+	}
+
+	getRemainingLerns(used?: number | null, product?: StripeProduct | null, credits?: number | null) {
+		if (used === undefined || used === null || !product) return 0;
+		const remaining = (parseInt(product.metadata.maxLernCountMonth ?? '0') + (credits ?? 0)) - used;
+		return remaining <= 0 ? 0 : remaining;
+	}
+
+	getRemainingLernsPerc(used?: number | null, product?: StripeProduct | null, credits?: number | null) {
+		if (used === undefined || used === null || !product) return 0;
+		const perc = (used / (parseInt(product.metadata.maxLernCountMonth ?? '0') + (credits ?? 0))) * 100;
+		return perc >= Infinity ? 100 : perc;
+	}
+
+	getTotalLerns(product: StripeProduct): number {
+		return parseInt(product.metadata.maxLernCountMonth ?? '0');
 	}
 
 	getPlanName(product: StripeProduct): string {
@@ -89,7 +110,7 @@ export class UsageComponent {
 	}
 
 	getTotalQueries(product: StripeProduct): number {
-		return parseInt(product.metadata.maxPromptCountMonth || '0');
+		return parseInt(product.metadata.maxPromptCountMonth ?? '0');
 	}
 
 }
