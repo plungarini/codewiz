@@ -21,7 +21,7 @@ export class UserPermissionsService {
 	 * @param {string[]} requiredPermissions - An array of strings representing the required permissions.
 	 * @return {Promise<boolean>} A Promise that resolves to a boolean indicating whether the user has the required permissions.
 	 */
-	hasPermissions(requiredPermissions: string[]): Promise<boolean> {
+	hasAllPermissions(requiredPermissions: string[]): Promise<boolean> {
 		return firstValueFrom(this.hasAllPermissions$(requiredPermissions));
 	}
 	
@@ -67,9 +67,9 @@ export class UserPermissionsService {
 	getPermissions$(): Observable<string[]> {
 		return this.user.pipe(
 			switchMap(u => {
-				if (!u || !u?.id) return of([]);
+				if (!u?.id) return of([]);
 				return this.db.getDoc<{ permissions: string[] }>(`users/${u.id}/protected/role`)
-					.pipe(map(r => r?.permissions || []));
+					.pipe(map(r => r?.permissions ?? []));
 			})
 		)
 	}
