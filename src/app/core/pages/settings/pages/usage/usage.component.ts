@@ -34,6 +34,7 @@ export class UsageComponent {
 	usedLerns$ = this.userStats.getThisPeriodLern();
 	lernCredits$ = this.userStats.getAdditionalLernCredits();
 	usedPrompts$ = this.userStats.getThisPeriodPrompts();
+	promptCredits$ = this.userStats.getAdditionalPromptCredits();
 	product$ = this.user$.pipe(
 		switchMap((u) => {
 			const productId = u?.subscriptions?.at(0)?.items?.at(0)?.plan?.product;
@@ -79,14 +80,14 @@ export class UsageComponent {
 		return perc;
 	}
 
-	getRemainingQueries(used?: number | null, product?: null | StripeProduct) {
+	getRemainingQueries(used?: number | null, product?: null | StripeProduct, credits?: number | null) {
 		if (used === undefined || used === null || !product) return 0;
-		return (parseInt(product.metadata.maxPromptCountMonth ?? '0')) - used;
+		return (parseInt(product.metadata.maxPromptCountMonth ?? '0') + (credits ?? 0)) - used;
 	}
 
-	getRemainingQueriesPerc(used?: number | null, product?: null | StripeProduct) {
+	getRemainingQueriesPerc(used?: number | null, product?: null | StripeProduct, credits?: number | null) {
 		if (used === undefined || used === null || !product) return 0;
-		return (used / parseInt(product.metadata.maxPromptCountMonth ?? '0')) * 100;
+		return (used / (parseInt(product.metadata.maxPromptCountMonth ?? '0') + (credits ?? 0))) * 100;
 	}
 
 	getRemainingLerns(used?: number | null, product?: StripeProduct | null, credits?: number | null) {
