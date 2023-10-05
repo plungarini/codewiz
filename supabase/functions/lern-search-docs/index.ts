@@ -67,7 +67,7 @@ serve(async (req) => {
 			query = `I want to learn ${query}`;
 		}
 		
-		const canUserQueryUrl = environment === 'production' ? 'https://canuserquery-ytzgrgrjxq-ew.a.run.app' : 'https://canuserquery-ik2jh2ngra-ew.a.run.app';
+		const canUserQueryUrl = environment === 'production' ? 'https://canuserlern-ytzgrgrjxq-ew.a.run.app' : 'https://canuserlern-ik2jh2ngra-ew.a.run.app';
 		const res = await fetch(canUserQueryUrl, {
 			headers: {
 				'Content-Type': 'application/json',
