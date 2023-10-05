@@ -15,6 +15,11 @@ export const checkUserSubscription = async (uid: string) => {
 	const doc2 = await docRef2.get();
 	const count = doc2.data()?.count || 0;
 
+	const creditsDocRef = firestore.doc(`users/${uid}/protected/usages`);
+	const creditsDoc = await creditsDocRef.get();
+	const creditsData = creditsDoc.data();
+	const chatCredits = (creditsData?.chatCredits ?? 0);
+
 	const docRef = firestore
 		.collection(`users/${uid}/subscriptions`)
 		.where('status', 'in', ['active', 'trialing']);
@@ -29,8 +34,8 @@ export const checkUserSubscription = async (uid: string) => {
 		const productData = productDoc.data();
 		const maxCountPerProd = productData?.metadata.maxPromptCountMonth as string | undefined;
 		const max = isNaN(parseInt(maxCountPerProd ?? '0')) ? 0 : parseInt(maxCountPerProd ?? '0');
-		const normMaxCount = maxCountPerProd ? max : 0;
-		canQuery = normMaxCount <= 0 ? false : count <= normMaxCount;
+		const normMaxCount = (maxCountPerProd ? max : 0) + chatCredits;
+		canQuery = normMaxCount <= 0 ? false : count < normMaxCount;
 	} catch (err) {
 		error(err);
 		canQuery = false;
