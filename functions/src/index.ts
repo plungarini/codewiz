@@ -13,6 +13,7 @@ import { checkUserData, initUser as initUserFn } from './functions/initUser';
 import { setGlobalLernStatus } from './functions/lern/common/utils';
 import { createLernCoursePlan } from './functions/lern/course-plan';
 import { createLernCourseSection } from './functions/lern/course-sections';
+import { canGenerateLernCourse } from './functions/lern/lern-usage';
 import { upsertAcUser } from './functions/marketing';
 import { scrapeDocumentedPage } from './functions/scraper';
 import { calculateTokens } from './functions/tiktoken';
@@ -236,6 +237,30 @@ export const canUserQuery = onRequest({
 
 	try {
 		const result = await checkUserSubscription(req.body.uid);
+		res.status(200).json(result);
+	} catch (err) {
+		error(err);
+		res.status(400);
+	}
+});
+
+export const canUserLern = onRequest({
+	cors: true,
+	memory: '256MiB',
+	maxInstances: 100,
+	timeoutSeconds: 540,
+}, async (req, res) => {
+	warn('request', req.body);
+
+	const key = process.env.EXTERNAL_FUNCTIONS_KEY;
+	if (!key) {
+		res.status(501);
+	} else if (key !== req.body.authorization) {
+		res.status(401);
+	}
+
+	try {
+		const result = await canGenerateLernCourse(req.body.uid);
 		res.status(200).json(result);
 	} catch (err) {
 		error(err);
