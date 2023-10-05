@@ -81,15 +81,11 @@ serve(async (req) => {
 		});
 
 		let canQueryJson = false;
-		try {
-			canQueryJson = await res.json();
-			console.log({ canQuery: canQueryJson, uid });
-			
-			if (!canQueryJson) {
-				throw new UserError('Subscription reached maximum limit', { code: 'SUBSCRIPTION_LIMIT_REACHED' });
-			}
-		} catch (err) {
-			throw new ApplicationError('Error checking subscription, user cannot query');
+		canQueryJson = await res.json();
+		console.log({ canQuery: canQueryJson, uid });
+		
+		if (!canQueryJson) {
+			throw new UserError('Subscription reached maximum limit', { code: 'SUBSCRIPTION_LIMIT_REACHED' });
 		}
 
     // Intentionally log the request data
