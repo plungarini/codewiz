@@ -13,7 +13,8 @@ export const checkUserSubscription = async (uid: string) => {
 	warn({ periodPathId });
 	const docRef2 = firestore.doc(`users/${uid}/protected/usages/bySubscription/${periodPathId}`);
 	const doc2 = await docRef2.get();
-	const count = doc2.data()?.count || 0;
+	const chatCreditsUsed = doc2.data()?.chatCreditsUsed || 0;
+	const count = (doc2.data()?.count || 0) - chatCreditsUsed;
 
 	const creditsDocRef = firestore.doc(`users/${uid}/protected/usages`);
 	const creditsDoc = await creditsDocRef.get();
