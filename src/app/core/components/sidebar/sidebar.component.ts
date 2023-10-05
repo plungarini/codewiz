@@ -17,10 +17,9 @@ export class SidebarComponent implements OnDestroy {
 	menuOpen = false;
 
 	isUserAdmin$ = this.permissions.hasAllPermissions$(['admin']);
-	isAlphaUser$ = this.permissions.hasAllPermissions$(['alpha']);
 	userSub$: Observable<string> = this.users.user$.pipe(
 		map((u) => {
-			return u?.subscriptions?.filter((s) => s?.status === 'active')?.at(0)?.role || 'apprentice';
+			return u?.subscriptions?.filter((s) => s?.status === 'active')?.at(0)?.role ?? 'apprentice';
 		})
 	);
 
@@ -64,7 +63,7 @@ export class SidebarComponent implements OnDestroy {
 	}
 
 	toggleMenu(state?: boolean): void {
-    this.menuOpen = state !== undefined ? state : !this.menuOpen;
+    this.menuOpen = state ?? !this.menuOpen;
     this.cdRef.detectChanges();
   }
 

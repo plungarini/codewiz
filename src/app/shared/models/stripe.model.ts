@@ -7,6 +7,7 @@ export type StripeProduct = {
 	metadata: {
 		firebaseRole?: string;
 		maxPromptCountMonth?: string;
+		maxLernCountMonth?: string;
 	};
 	role?: string;
 	tax_code: string;
