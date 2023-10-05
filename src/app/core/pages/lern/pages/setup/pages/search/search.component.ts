@@ -116,7 +116,13 @@ export class SearchComponent implements OnDestroy {
 			const message = this.searchDocumentsSuccess(this.docs);
 			this.typingEffect(message, 'found');
 		} catch (err) {
-			this.error = 'Ops. We are unable to search for documents. Please try again.';
+			const isSubscriptionError = ((err as any).error?.data?.code ?? '') === 'SUBSCRIPTION_LIMIT_REACHED';
+			
+			if (isSubscriptionError) {
+				this.error = 'Ops. You hit your Subscription limit. <a class="text-indigo-500 font-medium underline hover:text-indigo-400 transition-colors duration-300" href="/pricing" target="_blank" rel="noreferrer noopener">Upgrade now</a> to generate more Lern(s).'
+			} else {
+				this.error = 'Ops. We are unable to search for documents. Please try again.';
+			}
 			this.errorTyping = '';
 			this.typingEffect(this.error, 'error');
 			console.error(err);
