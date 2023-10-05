@@ -7,6 +7,7 @@ import { ChatCompletionCreateParams, ChatCompletionMessageParam } from 'openai/r
 import { firestore, production } from '../../utils';
 import { cappedContextMessages, setGlobalLernStatus, setGlobalLernUsage } from './common/utils';
 import { normalizeSections, validateCoursePlanArgs } from './common/validate-plan-args';
+import { addUsedLernGenerationCredit, canGenerateLernCourse } from './lern-usage';
 import {
 	LernCourse,
 	LernCoursePlanGeneration,
@@ -112,6 +113,12 @@ export const createLernCoursePlan = async (uid: string, id: string, course?: Ler
 
 	const docRef = firestore.doc(`lern/${uid}/courses/${id}`);
 
+	const can = await canGenerateLernCourse(uid);
+	if (!can) {
+		error('Subscription reached its limit.');
+		return await setErrorToCourse(docRef, 'subscription_limit');
+	}
+
 	try {
 		if (!course) {
 			const doc = await docRef.get();
@@ -139,7 +146,7 @@ export const createLernCoursePlan = async (uid: string, id: string, course?: Ler
 		if (!repo || !topic || !preferences) return await setErrorToCourse(docRef, 'incomplete');
 
 		const sections = (topic?.pages ?? []).map((section, i) => {
-			return { title: section?.title ?? '', content: section?.content ?? '', rank: i };
+			return { title: section?.title, content: section?.content, rank: i };
 		}).sort((a, b) => a.rank - b.rank);
 
 		const normPreferences = getPreferencesBlock(preferences);
@@ -233,6 +240,8 @@ const uploadGeneration = async (
 		hasError: false,
 	});
 
+	await addUsedLernGenerationCredit(ids.uid);
+
 	for (const section of sections) {
 		const sectionRef = ref.collection('sections').doc();
 		const id = sectionRef.id;
@@ -267,7 +276,7 @@ const uploadGeneration = async (
  */
 const setErrorToCourse = async (
 	ref: DocumentReference,
-	warning: 'incomplete' | 'server_error' | 'stop_content_moderation' | 'stop_length' | 'hallucinate' | 'none'
+	warning: 'incomplete' | 'server_error' | 'subscription_limit' | 'stop_content_moderation' | 'stop_length' | 'hallucinate' | 'none'
 ): Promise<void> => {
 	const docRef = ref.collection('plan').doc('status');
 	const doc = await docRef.get();
@@ -283,7 +292,7 @@ const setErrorToCourse = async (
 
 	await docRef.set(normData, { merge: true });
 
-	if (!['incomplete', 'none'].includes(warning)) {
+	if (!['incomplete', 'none', 'subscription_limit'].includes(warning)) {
 		await retryGeneration(ref);
 	}
 };
