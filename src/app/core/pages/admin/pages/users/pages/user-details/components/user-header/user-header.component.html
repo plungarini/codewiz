@@ -1,13 +1,25 @@
 <div *ngIf="user" class="flex items-start justify-between space-x-4">
 	<div class="flex items-center space-x-4">
-		<img
-			ixImg
-			[path]="user.details?.imgUrl || 'assets/404_pip_image.png'"
-			[alt]="user.name || 'Anonymous'"
-			[width]="1"
-			[height]="1"
-			class="block object-cover object-center w-12 h-12 rounded-md shrink-0"
-		>
+		<ng-container *ngIf="user.details?.imgUrl || 'assets/404_pip_image.png' as imgUrl">
+			<img
+				ixImg
+				*ngIf="!imgUrl.includes('http'); else noRelImage"
+				[path]="imgUrl"
+				[alt]="user.name || 'Anonymous'"
+				[width]="1"
+				[height]="1"
+				class="block object-cover object-center w-12 h-12 rounded-md shrink-0"
+			>
+			<ng-template #noRelImage>
+				<img
+					[src]="imgUrl"
+					[alt]="user.name || 'Anonymous'"
+					[width]="1"
+					[height]="1"
+					class="block object-cover object-center w-12 h-12 rounded-md shrink-0"
+				>
+			</ng-template>
+		</ng-container>
 
 		<div class="flex-1 -mt-1 overflow-hidden">
 			<p class="text-lg font-medium text-white truncate">{{user.name || 'Anonymous'}}</p>
