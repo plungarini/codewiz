@@ -44,49 +44,49 @@ export class UserDetailsComponent implements OnDestroy {
 		this.userSub.unsubscribe();
 	}
 
-	private calculateUserRevenue(user?: User): User | undefined {
-		if (!user) return user;
-		
-		let totalCost = 0;
-		let currentTotalCost = 0;
-		let totalPaid = 0;
-		let currentTotalPaid = 0;
+private calculateUserRevenue(user?: User): User | undefined {
+	if (!user) return user;
 
-		const now = new Date();
-		const month = now.getMonth();
-		const dateId = `${month < 10 ? '0' : ''}${month}_${now.getFullYear()}`;
+	const now = new Date();
+	const month = now.getMonth();
+	const dateId = `${month < 10 ? '0' : ''}${month}_${now.getFullYear()}`;
 
-		user.usages?.forEach(usage => {
-			usage.stats?.forEach(stat => {
-				const totalQuestion = (stat.completion?.usedUSD || 0) + (stat.prompt?.usedUSD || 0);
-				
-				if (dateId === stat.id) currentTotalCost += totalQuestion;
-				totalCost += totalQuestion;
-			})
-		});
+	let totalCost = 0;
+	let currentTotalCost = 0;
+	let totalPaid = 0;
+	let currentTotalPaid = 0;
 
-		user.subscriptions?.forEach(subscription => {
-			subscription.invoices?.forEach(invoice => {
-				const paidAt = invoice?.status_transitions?.paid_at;
-				if (!invoice || !invoice?.paid || !paidAt) return;
+	user?.usages?.forEach(usage => {
+		usage?.stats?.forEach(stat => {
+			const totalQuestion = (stat?.completion?.usedUSD ?? 0) + (stat?.prompt?.usedUSD ?? 0);
 
-				const invoiceNow = new Date(paidAt * 1000);
-				const invoiceMonth = invoiceNow.getMonth();
-				const invoiceDateId = `${invoiceMonth < 10 ? '0' : ''}${invoiceMonth}_${invoiceNow.getFullYear()}`;
+			if (dateId === stat?.id) currentTotalCost += totalQuestion;
+			totalCost += totalQuestion;
+		})
+	});
 
-				if (dateId === invoiceDateId) currentTotalPaid += invoice.amount_paid
-				totalPaid += invoice.amount_paid;
-			})
-		});
-		
-		const revenue: User['revenueDetails'] = {
-			totalCost,
-			totalCostThisMonth: currentTotalCost,
-			totalPaid,
-			paidThisMonth: currentTotalPaid,
-		};
+	user?.subscriptions?.forEach(subscription => {
+		subscription?.invoices?.forEach(invoice => {
+			const paidAt = invoice?.status_transitions?.paid_at;
+			if (!invoice?.paid || !paidAt) return;
 
-		return { ...user, revenueDetails: revenue };
-	}
+			const invoiceNow = new Date(paidAt * 1000);
+			const invoiceMonth = invoiceNow.getMonth();
+			const invoiceDateId = `${invoiceMonth < 10 ? '0' : ''}${invoiceMonth}_${invoiceNow.getFullYear()}`;
+
+			if (dateId === invoiceDateId) currentTotalPaid += invoice.amount_paid
+			totalPaid += invoice.amount_paid;
+		})
+	});
+
+	const revenue: User['revenueDetails'] = {
+		totalCost,
+		totalCostThisMonth: currentTotalCost,
+		totalPaid,
+		paidThisMonth: currentTotalPaid,
+	};
+
+	return { ...user, revenueDetails: revenue };
+}
 
 }
