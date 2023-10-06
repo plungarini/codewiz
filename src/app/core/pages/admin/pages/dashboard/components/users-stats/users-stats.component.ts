@@ -28,20 +28,20 @@ export class UsersStatsComponent {
 	getLastMonthUsers(users: User[]) {
 		return users
 			.filter(user => !!user.createdAt)
-			.filter(user => (user.createdAt?.toDate() || new Date()) > new Date(new Date().setDate(new Date().getDate() - 30)))
+			.filter(user => (user.createdAt?.toDate() ?? new Date()) > new Date(new Date().setDate(new Date().getDate() - 30)))
 			.length;
 	}
 
 	getTotalSubscribers(users: User[]) {
 		return users
-			.filter(user => (user.subscriptions?.length || 0) > 0)
+			.filter(user => (user.subscriptions?.length ?? 0) > 0)
 			.length;
 	}
 
 	getLastMonthSubscribers(users: User[]) {
 		return users
 			.filter(user => !!user.subscriptions?.at(0)?.created)
-			.filter(user => (user.subscriptions?.at(0)?.created?.toDate() || new Date()) > new Date(new Date().setDate(new Date().getDate() - 30)))
+			.filter(user => (user.subscriptions?.at(0)?.created?.toDate() ?? new Date()) > new Date(new Date().setDate(new Date().getDate() - 30)))
 			.length;
 	}
 
