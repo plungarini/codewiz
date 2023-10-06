@@ -12,6 +12,7 @@ export type User = {
 	usageDetails?: UsageStats;
 	usages?: UserUsages[];
 	subscriptions?: StripeSubscription[];
+	hideChatOnboarding?: boolean;
 	revenueDetails?: RevenueDetails; 
   email?: string;
   phone?: string;
