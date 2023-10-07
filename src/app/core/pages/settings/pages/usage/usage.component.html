@@ -121,22 +121,22 @@
 						<span>Lern credits:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
 					</p>
 					<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500">
-						<span>Used Queries:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
+						<span>Lern generated:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
 					</p>
 				</div>
 			</ng-template>
 			
 
 			<ng-container *ngIf="(product$ | async) as product; else noLernsSkeleton">
-				<ng-container *ngIf="(usedLerns$ | async) as stats; else noLernsSkeleton">
-					<ng-container *ngIf="(lernCredits$ | async) as credits; else noLernsSkeleton">
+				<ng-container *ngIf="(usedLerns$ | async) !== undefined; else noLernsSkeleton">
+					<ng-container *ngIf="(lernCredits$ | async) !== undefined; else noLernsSkeleton">
 
 						<div class="flex flex-col mb-4 shrink">
 							<p class="text-sm font-medium truncate text-zinc-500">
 								Lern in your plan: <span class="text-base font-semibold shrink text-pink-500/80">{{getTotalLerns(product)}}</span>
 							</p>
 							<p class="text-sm font-medium truncate text-zinc-500">
-								Lern credits: <span class="text-base font-semibold shrink text-pink-500/80">{{credits.credits}}</span>
+								Lern credits: <span class="text-base font-semibold shrink text-pink-500/80">{{(lernCredits$ | async)?.credits}}</span>
 							</p>
 							<p class="text-sm font-medium truncate text-zinc-500">
 								Lern generated: <span class="text-base font-semibold shrink text-pink-500/80">{{(usedLerns$ | async)}}</span>
