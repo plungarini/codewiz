@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from '@angular/fire/auth';
+import { orderBy } from '@angular/fire/firestore';
 import { combineLatest, map, Observable, switchMap } from 'rxjs';
 import { AiChatMessageFeedback } from 'src/app/shared/models/ai-chat/ai-chat.model';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
@@ -15,7 +16,7 @@ export class ChatFeedbacksService {
 	) { }
 
 	getAll(): Observable<ChatFeedback[]> {
-		return this.db.getCol<AiChatMessageFeedback>('app/feedbacks/chat/').pipe(
+		return this.db.getCol<AiChatMessageFeedback>('app/feedbacks/chat/', 'id', orderBy('createdAt', 'desc')).pipe(
 			switchMap((res) => {
 				const observables = res.map((f) => {
 					const uid = f.uid;
