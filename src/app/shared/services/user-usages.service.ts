@@ -85,7 +85,7 @@ export class UserUsagesService {
 				return this.db.getDoc<{ lernCredits: number; lernDemoUsed: boolean }>(`users/${uid}/protected/usages`)
 					.pipe(
 						map(doc => {
-							if (!doc) return { credits: 0 };
+							if (!doc) return { credits: 1 };
 							const credits = doc.lernCredits ?? 0;
 							const demo = doc.lernDemoUsed ? 0 : 1;
 							return { credits: credits + demo + used };
