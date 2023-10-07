@@ -34,6 +34,7 @@ export class SectionDetailsComponent implements OnDestroy {
 	currentSection: LernCourseSectionData | undefined;
 	sectionId: string = '';
 	quizCompletion: LernQuizChange | undefined;
+	canCompleteCourse = false;
 	lessonId: string | null = null;
 	nextSectionId: string | undefined = undefined;
 
@@ -85,13 +86,25 @@ export class SectionDetailsComponent implements OnDestroy {
 	}
 
 	private _initSection(section: string | null) {
-		this.sectionId = section ?? '';
-		this.currentSection = this.course?.sections
+		if (!this.course || !section) return;
+		this.sectionId = section;
+		this.currentSection = this.course.sections
 			.find((section) => section.id === this.sectionId);		
-		const currentIndex = this.course?.sections.findIndex(
+		const currentIndex = this.course.sections.findIndex(
 			(section) => section.id === this.sectionId
 		);
-		this.nextSectionId = this.course?.sections[(currentIndex ?? 0) + 1]?.id;
+		if (!this.currentSection?.content.quiz) {
+			this.quizCompletion = { valid: true };
+		}
+
+		const totalSections = (this.course.sections.length ?? 0) - 1;
+		const completedSections = this.course.sections
+			.reduce((acc, section) => {
+				return acc + (section.progress?.completed ? 1 : 0);
+			}, 0);
+		this.canCompleteCourse = completedSections >= totalSections;
+
+		this.nextSectionId = this.course.sections[(currentIndex ?? 0) + 1]?.id;
 		this.cdRef.markForCheck();
 	}
 

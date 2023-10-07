@@ -55,7 +55,7 @@
 	</ng-container>
 
 	<button
-		[disabled]="!quizCompletion?.valid || loading"
+		[disabled]="!quizCompletion?.valid || loading || (!nextSectionId && !canCompleteCourse)"
 		(click)="submit()"
 		class="rounded-md disabled:opacity-40 overflow-hidden mr-auto disabled:cursor-not-allowed px-3.5 py-2.5 mt-8 flex items-center justify-center space-x-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:hover:bg-indigo-600 ring-indigo-400 hover:ring-indigo-400 focus-visible:outline-indigo-600 text-white shadow-sm hover:ring-2 disabled:ring-0 disabled:ring-offset-0 hover:ring-offset-1 ring-offset-zinc-950 transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
 	>
