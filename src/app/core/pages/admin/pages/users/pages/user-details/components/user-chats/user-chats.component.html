@@ -1,0 +1,128 @@
+<div class="overflow-y-auto max-h-60">
+	<ul class="space-y-2">
+		<ng-container *ngIf="(chats$ | async) as chats; else noChats">
+			<ng-container *ngIf="chats.length > 0; else noChats">
+				<li *ngFor="let chat of chats" (click)="selectChat(chat.repo.id, chat.id, chat.name)" [attr.chat-id]="chat.id" class="flex items-center cursor-pointer gap-x-2">
+					<img
+						ixImg
+						[alt]="chat.repo.name"
+						priority
+						loading="eager"
+						priority
+						[width]="1"
+						[height]="1"
+						[path]="chat.repo.logo"
+						class="w-4 h-4 shrink-0"
+					>
+					<p class="text-sm truncate transition-colors duration-300 hover:text-zinc-50">
+						{{chat.name}}
+					</p>
+					<div class="flex-1"></div>
+					<p class="hidden text-sm truncate text-zinc-600 sm:block">{{chat.createdAt.toDate() | date:'MMM d, y, h:mm:ss a'}}</p>
+					<p class="block text-sm truncate text-zinc-600 sm:hidden">{{chat.createdAt.toDate() | date:'MMM d, y'}}</p>
+				</li>
+			</ng-container>
+		</ng-container>
+		
+		<ng-template #noChats>
+			<li>
+				<p class="text-sm font-medium text-zinc-500">No chats found for this user.</p>
+			</li>
+		</ng-template>
+	</ul>
+</div>
+
+<div *ngIf="showChat" class="absolute inset-0 rounded-md bg-black/90 backdrop-blur z-[70] overflow-hidden">
+	<div class="flex items-center justify-between px-3 py-2 border-b border-zinc-900">
+		<p class="text-lg font-medium text-zinc-50">{{showChat}}</p>
+		<svg (click)="showChat = ''" viewBox="0 0 14 14" class="w-5 h-5 transition-colors duration-300 cursor-pointer stroke-zinc-400 hover:stroke-red-400">
+			<path d="M4 4l6 6m0-6l-6 6" />
+		</svg>
+	</div>
+	<div class="overflow-y-auto max-h-[calc(100%-45px)]">
+		<ng-container *ngFor="let msg of (selectedChat$ | async); let i = index; trackBy: trackBy">
+			<ng-container *ngIf="msg && !msg?.hide">
+				<div
+					*ngIf="!msg.error?.message; else error"
+					[attr.message-id]="msg.id"
+					class="relative flex flex-col w-full pb-3 group/message"
+				>				
+					<div class="relative max-w-full">
+						<div
+							[ngClass]="{
+								'bg-gradient-to-br from-zinc-900 to-zinc-900/40': msg.role === 'assistant',
+								'translate-y-3 opacity-0': !msg.content,
+								'translate-y-0 opacity-100': msg.content
+							}"
+							#msgContentDiv
+							class="px-4 py-3 overflow-hidden transition-all duration-700 translate-y-3 opacity-0"
+						>
+							<div class="flex items-center justify-between mb-2">
+								<div>
+									<span *ngIf="msg.role === 'user'" class="flex items-center px-2 py-1 text-xs font-medium text-gray-400 rounded-md w-fit bg-gray-400/10 ring-1 ring-inset ring-gray-400/20">User</span>
+									<span *ngIf="msg.role === 'assistant'" class="flex items-center px-2 py-1 text-xs font-medium text-indigo-400 rounded-md w-fit bg-indigo-400/10 ring-1 ring-inset ring-indigo-400/30">Assistant</span>
+								</div>
+								<p class="text-sm font-medium text-zinc-600">{{msg.createdAt?.toDate() | date:'MMM d, y, h:mm:ss a'}}</p>
+							</div>
+							<ng-container *ngIf="msg.role === 'assistant'; else isUser">							
+								<markdown
+									[data]="msg.content"
+									ngPreserveWhitespaces
+									clipboard
+									class="block w-full max-w-full markdown"
+								></markdown>
+							</ng-container>
+							<ng-template #isUser>
+								<p class="text-sm whitespace-pre-wrap md:text-base">{{msg.content}}</p>
+							</ng-template>
+						</div>
+					</div>	
+				</div>
+	
+				<ng-template #error>
+					<div *ngIf="interpretError(msg.error) as err">
+						<div
+							[attr.message-id]="msg.id"
+							class="relative flex flex-col w-full pt-3 pb-3 sm:space-x-4 group/message"
+						>
+							<p>{{msg.role === 'user' ? 'User' : 'Assistant'}}</p>
+							
+							<div class="relative max-w-full pr-10">
+								<div
+									[ngClass]="{
+										'bg-gradient-to-br from-zinc-900 to-zinc-900/40 px-4 py-3 rounded-lg': msg.role === 'assistant',
+										'translate-y-3 opacity-0': !err.message,
+										'translate-y-0 opacity-100': err.message
+									}"
+									#msgErrorDiv
+									class="overflow-hidden transition-all duration-700 translate-y-3 opacity-0"
+								>
+									<div [class.mb-2]="msg.content" class="w-full max-w-full ring-2 ring-zinc-800 px-2.5 py-1 rounded-md flex space-x-2">
+										<svg class="w-5 h-5 text-amber-500 translate-y-[0.15rem]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+											<path d="M16.2178 21H7.78313C4.83503 21 3 18.9188 3 15.9736V8.02638C3 5.08119 4.83503 3 7.78411 3H16.2178C19.1659 3 21 5.08119 21 8.02638V15.9736C21 18.9188 19.1572 21 16.2178 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+											<path d="M12.0059 8.10742V11.9993M12.0059 15.6926V15.7407" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+										</svg>
+										<markdown
+											[data]="err.message"
+											ngPreserveWhitespaces
+											class="block w-full max-w-full markdown"
+										></markdown>
+									</div>
+	
+									<markdown
+										*ngIf="msg.content"
+										[data]="msg.content"
+										ngPreserveWhitespaces
+										clipboard
+										class="block w-full max-w-full markdown"
+									></markdown>
+								</div>
+	
+							</div>
+						</div>
+					</div>
+				</ng-template>
+			</ng-container>
+		</ng-container>
+	</div>
+</div>
