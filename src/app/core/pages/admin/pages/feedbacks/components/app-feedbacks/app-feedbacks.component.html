@@ -6,38 +6,48 @@
 </p>
 <div class="overflow-y-auto max-h-60">
 	<ul class="space-y-2">
-		<li
-			*ngFor="let feedback of (feedbacks$ | async)"
-			(click)="showFeedback(feedback)"
-			class="flex items-center p-2 transition-colors duration-300 border rounded-md cursor-pointer gap-x-2 bg-zinc-900 hover:bg-zinc-800/20 border-zinc-900 hover:border-zinc-800"
-		>
-			<ng-container *ngIf="feedback.user?.details?.imgUrl || 'assets/404_pip_image.png' as imgUrl">
-				<img
-					ixImg
-					*ngIf="!imgUrl.includes('http'); else noRelImage"
-					[path]="imgUrl"
-					[alt]="feedback.user?.name || 'Anonymous'"
-					[width]="1"
-					[height]="1"
-					class="w-5 h-5 rounded-full shrink-0"
+		<ng-container *ngIf="(feedbacks$ | async) as feedbacks; else empty">
+			<ng-container *ngIf="feedbacks.length > 0; else empty">
+				<li
+					*ngFor="let feedback of (feedbacks$ | async)"
+					(click)="showFeedback(feedback)"
+					class="flex items-center p-2 transition-colors duration-300 border rounded-md cursor-pointer gap-x-2 bg-zinc-900 hover:bg-zinc-800/20 border-zinc-900 hover:border-zinc-800"
 				>
-				<ng-template #noRelImage>
-					<img
-						[src]="imgUrl"
-						[alt]="feedback.user?.name || 'Anonymous'"
-						[width]="1"
-						[height]="1"
-						class="w-5 h-5 rounded-full shrink-0"
-					>
-				</ng-template>
+					<ng-container *ngIf="feedback.user?.details?.imgUrl || 'assets/404_pip_image.png' as imgUrl">
+						<img
+							ixImg
+							*ngIf="!imgUrl.includes('http'); else noRelImage"
+							[path]="imgUrl"
+							[alt]="feedback.user?.name || 'Anonymous'"
+							[width]="1"
+							[height]="1"
+							class="w-5 h-5 rounded-full shrink-0"
+						>
+						<ng-template #noRelImage>
+							<img
+								[src]="imgUrl"
+								[alt]="feedback.user?.name || 'Anonymous'"
+								[width]="1"
+								[height]="1"
+								class="w-5 h-5 rounded-full shrink-0"
+							>
+						</ng-template>
+					</ng-container>
+				
+					<p class="hidden text-sm font-medium truncate lg:block text-zinc-300 shrink-0">{{feedback.user?.email || 'Anonymous'}}</p>
+			
+					<p class="flex-1 text-sm truncate">{{feedback.content}}</p>
+			
+					<p class="text-xs text-right truncate shrink-0 text-zinc-500 sm:text-sm">{{feedback.createdAt.toDate() | date:'mediumDate'}}</p>
+				</li>
 			</ng-container>
-		
-			<p class="hidden text-sm font-medium truncate lg:block text-zinc-300 shrink-0">{{feedback.user?.email || 'Anonymous'}}</p>
-	
-			<p class="flex-1 text-sm truncate">{{feedback.content}}</p>
-	
-			<p class="text-xs text-right truncate shrink-0 text-zinc-500 sm:text-sm">{{feedback.createdAt.toDate() | date:'mediumDate'}}</p>
-		</li>
+		</ng-container>
+
+		<ng-template #empty>
+			<li>
+				<p class="text-zinc-300">No feedbacks yet</p>
+			</li>
+		</ng-template>
 	</ul>
 </div>
 
