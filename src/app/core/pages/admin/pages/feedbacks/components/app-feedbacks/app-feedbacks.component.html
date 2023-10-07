@@ -34,7 +34,7 @@
 		
 			<p class="hidden text-sm font-medium truncate lg:block text-zinc-300 shrink-0">{{feedback.user?.email || 'Anonymous'}}</p>
 	
-			<p class="text-sm truncate">{{feedback.content}}</p>
+			<p class="flex-1 text-sm truncate">{{feedback.content}}</p>
 	
 			<p class="text-xs text-right truncate shrink-0 text-zinc-500 sm:text-sm">{{feedback.createdAt.toDate() | date:'mediumDate'}}</p>
 		</li>
