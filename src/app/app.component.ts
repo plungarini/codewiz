@@ -27,21 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
 			description: 'Meet CodeWiz – your AI coding companion. Dive into real-time chats, unravel coding mysteries faster than you can type "StackOverflow", and code with confidence. Embrace the future of coding assistance today!',
 		});
 
-		this.routerMetaSub = this.router.events
-      .pipe(
-        map(() => this.activatedRoute),
-				map((route) => {
-          while (route.firstChild) {
-            route = route.firstChild;
-					}
-          return route;
-        }),
-        filter((route) => route.outlet === 'primary'),
-        mergeMap((route) => route.data),
-        tap(({ title, description }: Data) => {
-					this.meta.update({ title, description });
-				})
-      ).subscribe();
+		this.routerMetaSub = this._getRouterMetaSubscription();
 
 		const url = this.router.url;
 		if (url.includes('/app') && !url.includes('/app/settings')) {
@@ -56,22 +42,7 @@ export class AppComponent implements OnInit, OnDestroy {
 			}
 		}
 	
-		this.routerSub = this.router.events.subscribe(() => {
-			const _url = this.router.url;
-			if (_url.includes('/app') && !_url.includes('/app/settings')) {
-				this.tidioService.hide();
-				this.realFeedbackService.hide();
-				return;
-			} else {
-				this.tidioService.show();
-				if (_url.includes('/app/settings')) {
-					this.realFeedbackService.show();
-				} else {
-					this.realFeedbackService.hide();
-				}
-				return;
-			}
-		});
+		this.routerSub = this._getRouterSubscription();
 
 		const originalPush = (window as any).dataLayer.push;
 		(window as any).dataLayer.push = (data: any) => {
@@ -93,7 +64,6 @@ export class AppComponent implements OnInit, OnDestroy {
 		if (url.includes('/app') && !url.includes('/app/settings')) {
 			this.tidioService.hide();
 			this.realFeedbackService.hide();
-			return;
 		} else {
 			this.tidioService.show();
 			if (url.includes('/app/settings')) {
@@ -101,13 +71,48 @@ export class AppComponent implements OnInit, OnDestroy {
 			} else {
 				this.realFeedbackService.hide();
 			}
-			return;
 		}
 	}
 	
 	ngOnDestroy(): void {
 		this.routerSub.unsubscribe();
 		this.routerMetaSub.unsubscribe();
+	}
+
+	private _getRouterMetaSubscription() {
+		return this.router.events
+      .pipe(
+        map(() => this.activatedRoute),
+				map((route) => {
+          while (route.firstChild) {
+            route = route.firstChild;
+					}
+          return route;
+        }),
+        filter((route) => route.outlet === 'primary'),
+        mergeMap((route) => route.data),
+				tap(({ title, description }: Data) => {
+					if (!title) return;
+					this.meta.update({ title, description });
+				})
+      ).subscribe();
+	}
+
+	private _getRouterSubscription() {
+		return this.router.events.subscribe(() => {
+			const _url = this.router.url;
+			if (_url.includes('/app') && !_url.includes('/app/settings')) {
+				this.tidioService.hide();
+				this.realFeedbackService.hide();
+			} else {
+				this.tidioService.show();
+				if (_url.includes('/app/settings')) {
+					this.realFeedbackService.show();
+				} else {
+					this.realFeedbackService.hide();
+				}
+			}
+		});
 	}
 	
 }
