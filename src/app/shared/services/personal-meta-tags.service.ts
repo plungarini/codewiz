@@ -71,7 +71,7 @@ export class PersonalMetaTagsService {
 			"email": "info@codewiz.app",
 			"description": opt.description,
 			"url": "https://codewiz.app",
-			"logo": "https://codewiz.app/assets/logo/png/codewiz_logo.png",
+			"logo": "https://codewiz.app/assets/logo/png/codewiz_pip_dark.png",
 			"founder": [
 				{
 					"@type": "Person",
@@ -97,6 +97,7 @@ export class PersonalMetaTagsService {
 				"https://www.instagram.com/codewiz.ai/",
 				"https://x.com/codewizai",
 				"https://twitter.com/codewizai",
+				"https://www.producthunt.com/products/codewiz"
 			],
 			"contactPoint": [
 				{
@@ -127,7 +128,7 @@ export class PersonalMetaTagsService {
 			{ name: 'twitter:description', content: opt.description },
 		]);
 
-		this.update({ ...opt, title: 'Instant AI-Powered Coding Solutions – Faster than StackOverflow' });
+		this.update({ ...opt, title: this.siteName + ' | Instant AI-Powered Coding Solutions – Faster than StackOverflow' });
 	}
 
 	/**

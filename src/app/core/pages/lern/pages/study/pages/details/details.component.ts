@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, map, Observable, Subscription, switchMap, tap } from 'rxjs';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 import { LernCourse } from '../../../../models/course.model';
 import { LernService } from '../../../../services/lern.service';
 
@@ -28,6 +29,7 @@ export class DetailsComponent implements OnDestroy {
 		private route: ActivatedRoute,
 		private router: Router,
 		private lern: LernService,
+		private meta: PersonalMetaTagsService,
 	) {
 		this.course$ = this._initCourse$();
 
@@ -62,6 +64,10 @@ export class DetailsComponent implements OnDestroy {
 						['/app/lern/study/not-found'],
 						{ replaceUrl: true }
 					);
+				}
+
+				if (course?.plan.courseName) {
+					this.meta.update({ title: 'CodeWiz | ' + course.plan.courseName });
 				}
 
 				if (!course?.id || this.route.snapshot.queryParams['lesson']) return;

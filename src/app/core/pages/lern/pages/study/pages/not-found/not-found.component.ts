@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-tags.service';
 
 @Component({
   selector: 'app-not-found',
@@ -13,5 +14,11 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotFoundComponent {
+
+	constructor(
+		private meta: PersonalMetaTagsService,
+	) {
+		this.meta.update({ title: 'CodeWiz | WizLern - Lern Not Found' })
+	}
 
 }
