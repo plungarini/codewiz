@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-feedbacks',
-  templateUrl: './feedbacks.component.html',
+  selector: 'app-chat-feedbacks',
+  templateUrl: './chat-feedbacks.component.html',
   styles: [
     `
       :host {
-      	@apply block w-full h-full;
+        display: block;
       }
     `
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class FeedbacksComponent {
+export class ChatFeedbacksComponent {
 
 }
