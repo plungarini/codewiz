@@ -19,7 +19,7 @@ export class LernFeedbackService {
 		return this._getCurrentUid$().pipe(
 			switchMap((uid) => {
 				if (!uid || !courseId) return of(undefined);
-				return this.db.getDoc<LernFeedback>(`/app/feedbacks/lern/${uid}/courses/${courseId}`);
+				return this.db.getDoc<LernFeedback>(`/app/feedbacks/lern/${courseId}`);
 			})
 		)
 	}
@@ -27,7 +27,11 @@ export class LernFeedbackService {
 	async setFeedback(courseId: string, feedback: Partial<LernFeedback>) {
 		const uid = await firstValueFrom(this._getCurrentUid$());
 		if (!uid) return;
-		return this.db.upsert<LernFeedback>(`/app/feedbacks/lern/${uid}/courses/${courseId}`, feedback);
+		return this.db.upsert<LernFeedback>(`/app/feedbacks/lern/${courseId}`, {
+			...feedback,
+			courseId,
+			uid,
+		});
 	}
 
 	private _getCurrentUid$() {
