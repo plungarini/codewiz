@@ -1,1 +1,56 @@
-<p>app-feedbacks works!</p>
+<p class="mb-2 text-sm font-medium text-zinc-500">
+	<span>App Feedbacks</span>
+	<ng-container *ngIf="(feedbacks$ | async)?.length as length">
+		<span> ({{length}})</span>
+	</ng-container>
+</p>
+<div class="overflow-y-auto max-h-60">
+	<ul class="space-y-2">
+		<li
+			*ngFor="let feedback of (feedbacks$ | async)"
+			(click)="showFeedback(feedback)"
+			class="flex items-center p-2 transition-colors duration-300 border rounded-md cursor-pointer gap-x-2 bg-zinc-900 hover:bg-zinc-800/20 border-zinc-900 hover:border-zinc-800"
+		>
+			<ng-container *ngIf="feedback.user?.details?.imgUrl || 'assets/404_pip_image.png' as imgUrl">
+				<img
+					ixImg
+					*ngIf="!imgUrl.includes('http'); else noRelImage"
+					[path]="imgUrl"
+					[alt]="feedback.user?.name || 'Anonymous'"
+					[width]="1"
+					[height]="1"
+					class="w-5 h-5 rounded-full shrink-0"
+				>
+				<ng-template #noRelImage>
+					<img
+						[src]="imgUrl"
+						[alt]="feedback.user?.name || 'Anonymous'"
+						[width]="1"
+						[height]="1"
+						class="w-5 h-5 rounded-full shrink-0"
+					>
+				</ng-template>
+			</ng-container>
+		
+			<p class="hidden text-sm font-medium truncate lg:block text-zinc-300 shrink-0">{{feedback.user?.email || 'Anonymous'}}</p>
+	
+			<p class="text-sm truncate">{{feedback.content}}</p>
+	
+			<p class="text-xs text-right truncate shrink-0 text-zinc-500 sm:text-sm">{{feedback.createdAt.toDate() | date:'mediumDate'}}</p>
+		</li>
+	</ul>
+</div>
+
+<div *ngIf="(showFeedback$ | async) as feedback" class="absolute inset-0 rounded-md flex flex-col bg-black/90 backdrop-blur z-[70] overflow-hidden">
+	<div class="flex items-center justify-between px-3 py-2 border-b border-zinc-900">
+		<p class="text-lg font-medium text-zinc-50">{{feedback.user?.name ?? feedback.user?.email ?? 'Anonymous'}}</p>
+		<svg (click)="showFeedback(undefined)" viewBox="0 0 14 14" class="w-5 h-5 transition-colors duration-300 cursor-pointer stroke-zinc-400 hover:stroke-red-400">
+			<path d="M4 4l6 6m0-6l-6 6" />
+		</svg>
+	</div>
+	<div class="flex flex-col flex-1 overflow-y-auto">
+		<p class="px-3 py-2">{{feedback.content}}</p>
+		<div class="flex-1"></div>
+		<p class="px-3 py-2 text-xs text-right truncate shrink-0 text-zinc-500 sm:text-sm">{{feedback.createdAt.toDate() | date:'MMM d, y, h:mm:ss a'}}</p>
+	</div>
+</div>
