@@ -36,7 +36,7 @@
 				
 					<p class="hidden text-sm font-medium truncate lg:block text-zinc-300 shrink-0">{{feedback.user?.email || 'Anonymous'}}</p>
 			
-					<p class="flex-1 text-sm truncate">{{feedback.course?.name}} - <i>{{feedback.comment}}</i></p>
+					<p class="flex-1 text-sm truncate">{{feedback.course?.name}} - "<i>{{feedback.comment ?? 'No Feedback provided'}}</i>"</p>
 
 					<div>
 						<img
@@ -112,7 +112,7 @@
 		</svg>
 	</div>
 	<div class="flex flex-col flex-1 overflow-y-auto">
-		<p class="px-3 py-2">{{feedback.comment}}</p>
+		<p class="px-3 py-2">{{feedback.comment ?? 'No Feedback provided'}}</p>
 		<div class="flex-1"></div>
 		<p class="px-3 py-2 text-xs text-right truncate shrink-0 text-zinc-500 sm:text-sm">{{feedback.createdAt.toDate() | date:'MMM d, y, h:mm:ss a'}}</p>
 	</div>
