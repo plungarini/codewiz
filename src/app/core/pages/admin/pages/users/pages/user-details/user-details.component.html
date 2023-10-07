@@ -1,5 +1,5 @@
 <ng-container *ngIf="user">
-	<div class="px-4 py-4 border rounded-md border-zinc-800">
+	<div class="relative px-4 py-4 border rounded-md border-zinc-800">
 		
 		<app-user-header
 			[user]="user"
@@ -10,6 +10,18 @@
 		<app-user-overview
 			[user]="user"
 		></app-user-overview>
+
+		<div class="w-full h-px my-4 bg-zinc-800"></div>
+
+		<app-user-roles
+			[uid]="user.id"
+		></app-user-roles>
+
+		<div class="w-full h-px my-4 bg-zinc-800"></div>
+
+		<app-user-chats
+			[uid]="user.id"
+		></app-user-chats>
 
 		<div class="w-full h-px my-4 bg-zinc-800"></div>
 

@@ -485,9 +485,9 @@ export class AiChatService {
 			const feedbackPromptIndex = messages.findIndex(m => m.id === messageId) - 1;
 			const prompt = messages[feedbackPromptIndex].role === AiChatMessageRole.User ? messages[feedbackPromptIndex].content : '';
 	
-			await this.db.upsert<AiChatMessageFeedback>(`feedbacks/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, { ...message, prompt });
+			await this.db.upsert<AiChatMessageFeedback>(`app/feedbacks/chat/${messageId}`, { ...message, prompt, uid });
 		} else {
-			await this.db.delete(`feedbacks/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`);
+			await this.db.delete(`app/feedbacks/chat/${messageId}`);
 		}
 	}
 
