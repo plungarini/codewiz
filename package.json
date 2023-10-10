@@ -12,16 +12,13 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration=development",
     "test": "ng test",
-
     "generate-env:dev": "node ./replace-env-var.script.js dev",
     "generate-env:prod": "node ./replace-env-var.script.js prod",
-
     "deploySupabase": "yarn updateSbSecrets && supabase functions deploy",
     "sb-chatTitle": "npx supabase functions deploy chat-title --project-ref rbikifjpcodmtsgggpbk",
     "sb-aiSearch": "npx supabase functions deploy ai-docs --project-ref rbikifjpcodmtsgggpbk",
     "sb-search": "npx supabase functions deploy search --project-ref rbikifjpcodmtsgggpbk",
     "sb-lernSearchDocs": "npx supabase functions deploy lern-search-docs --project-ref rbikifjpcodmtsgggpbk",
-
     "updateSbSecrets": "npx supabase secrets set --env-file ./supabase/.env"
   },
   "private": true,
@@ -53,8 +50,8 @@
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^16.0.0",
-    "@angular/cli": "~16.0.0",
+    "@angular-devkit/build-angular": "^16.2.5",
+    "@angular/cli": "~16.2.5",
     "@angular/compiler-cli": "^16.0.0",
     "@types/jasmine": "~4.3.0",
     "@types/lodash-es": "^4.17.8",
