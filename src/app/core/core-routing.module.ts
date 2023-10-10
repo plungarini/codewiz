@@ -77,7 +77,7 @@ const routes: Routes = [
 			{
 				path: 'lern',
 				data: {
-					permissions: ['user', 'admin'],
+					permissions: ['user', 'alpha'],
 					preload: false,
 				},
 				canActivate: [MaintenanceGuard, ActiveOnboardingGuard, StagingAuthGuard],
