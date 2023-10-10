@@ -23,6 +23,7 @@ type AiChatPageSection = {
 }
 
 export interface AiChatMessageFeedback extends AiChatMessage {
+	uid?: string;
 	prompt?: string;
 }
 

@@ -28,11 +28,13 @@ interface RequestData {
 	repoHost: string;
 	messages: Message[];
 	onlyPrompt: boolean;
+	environment: 'production' | 'development';
 	stream: boolean;
 }
 
 const firebaseKey = Deno.env.get('FIREBASE_FUNCTIONS_KEY')
 const openAiKey = Deno.env.get('OPENAI_KEY')
+const openAiOrg = Deno.env.get('OPENAI_ORG')
 const supabaseUrl = Deno.env.get('SB_URL')
 const supabaseServiceKey = Deno.env.get('SB_SERVICE_ROLE_KEY')
 
@@ -129,7 +131,7 @@ serve(async (req) => {
 			},
 		})
 
-		const configuration = new Configuration({ apiKey: openAiKey })
+		const configuration = new Configuration({ apiKey: openAiKey, organization: openAiOrg, })
 		const openai = new OpenAIApi(configuration)
 
 		// Moderate the content to comply with OpenAI T&C
@@ -232,7 +234,8 @@ serve(async (req) => {
 					`}
 					${oneLine`
 						- If unsure and the answer is not explicitly in the documentation,
-						reply with "Sorry, I don't know how to help with that."
+						reply with "Sorry, I can't find an answer in the "${tableName}" documentation.".
+						Capitalize and use the proper name of the framework/language.
 					`}
 					${oneLine`
 						- Prefer multiple paragraphs for your response.
@@ -291,6 +294,7 @@ serve(async (req) => {
 			const response = await fetch('https://api.openai.com/v1/chat/completions', {
 				headers: {
 					Authorization: `Bearer ${openAiKey}`,
+				'OpenAI-Organization': openAiOrg,
 					'Content-Type': 'application/json',
 				},
 				method: 'POST',
@@ -401,9 +405,9 @@ serve(async (req) => {
 			)
 		} else if (err instanceof ApplicationError) {
 			// Print out application errors with their additional data
-			console.error(`${err.message}: ${JSON.stringify(err.data)}`);
-			type = err.data['error']['type'];
-			message = err.data['error']['message'];
+			console.error(`${err?.message}: ${JSON.stringify(err?.data)}`);
+			type = err?.data?.error?.type;
+			message = err?.data?.error?.message;
 		} else {
 			// Print out unexpected errors as is to help with debugging
 			console.error(err)

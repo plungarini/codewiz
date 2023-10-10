@@ -80,7 +80,7 @@ export class ChatViewComponent implements OnDestroy {
 					
 					if (!id || !repo) {
 						this.oldChat = [];
-						this.router.navigateByUrl(`/app/chat/${repo || 'angular'}/new`);
+						this.router.navigateByUrl(`/app/chat/${repo ?? 'angular'}/new`);
 						this.chatLoaded = false;
 						return of([])
 					};
@@ -89,7 +89,7 @@ export class ChatViewComponent implements OnDestroy {
 				}),
 		).subscribe((messages) => {
 			this.chat = [...messages, ...this.oldChat].sort((a, b) => {
-				return (a.createdAt?.toDate().getTime() || 0) - (b.createdAt?.toDate().getTime() || 0);
+				return (a.createdAt?.toDate().getTime() ?? 0) - (b.createdAt?.toDate().getTime() ?? 0);
 			});
 			this.cdRef.markForCheck();
 			
@@ -131,10 +131,7 @@ export class ChatViewComponent implements OnDestroy {
 		if (!isScrolledToBottom && !this.showScrollToBottom) {
 			this.showScrollToBottom = true;
 			this.cdRef.markForCheck();
-		} else if (isScrolledToBottom || this.chat.length <= 2) {
-			this.showScrollToBottom = false;
-			this.cdRef.markForCheck();
-		} else if (isScrolledToBottom && this.showScrollToBottom) {
+		} else if ((isScrolledToBottom || this.chat.length <= 2) || (isScrolledToBottom && this.showScrollToBottom)) {
 			this.showScrollToBottom = false;
 			this.cdRef.markForCheck();
 		}
@@ -144,8 +141,8 @@ export class ChatViewComponent implements OnDestroy {
 			const now = new Date();
 			this.chatLoaded = false;
 			this.cdRef.markForCheck();
-			const lastId = this.oldChat.at(0)?.id || this.chat.at(0)?.id;
-			const lastDate = this.oldChat.at(0)?.createdAt?.toDate() || this.chat.at(0)?.createdAt?.toDate();
+			const lastId = this.oldChat.at(0)?.id ?? this.chat.at(0)?.id;
+			const lastDate = this.oldChat.at(0)?.createdAt?.toDate() ?? this.chat.at(0)?.createdAt?.toDate();
 			if (!lastDate) return;
 			const oldMessages = await this.ai.getChatMessagesPaginated(this.selectedRepo, this.chatId, lastDate, this.messageLimit);
 
@@ -160,7 +157,7 @@ export class ChatViewComponent implements OnDestroy {
 
 			this.oldChat.push(...oldMessages);
 			this.oldChat.sort((a, b) => {
-				return (a.createdAt?.toDate().getTime() || 0) - (b.createdAt?.toDate().getTime() || 0);
+				return (a.createdAt?.toDate().getTime() ?? 0) - (b.createdAt?.toDate().getTime() ?? 0);
 			});
 
 			const oldIdSet = new Set();
@@ -171,7 +168,7 @@ export class ChatViewComponent implements OnDestroy {
 			});
 
 			this.chat = [...this.chat, ...this.oldChat].sort((a, b) => {
-				return (a.createdAt?.toDate().getTime() || 0) - (b.createdAt?.toDate().getTime() || 0);
+				return (a.createdAt?.toDate().getTime() ?? 0) - (b.createdAt?.toDate().getTime() ?? 0);
 			});
 
 			const newIdSet = new Set();
@@ -244,19 +241,19 @@ export class ChatViewComponent implements OnDestroy {
 		this.ai.createQuery(this.selectedRepo, [...this.chat])
 			.pipe(
 				catchError((err) => {
-					const parsedErr = err ? err : { message: '', debug: undefined };
+					const parsedErr = err || { message: '', debug: undefined };
 					const savedMessage = this.getFromLocalStorage(assistantId);
-					const msgRef = savedMessage || backupResult;
+					const msgRef = savedMessage ?? backupResult;
 					const msgRefIndex = this.chat.findIndex(m => m.id === assistantId);
 
 					const queryRes: AiChatMessage = {
 						role: AiChatMessageRole.Assistant,
 						content: backupResult.content,
 						completed: true,
-						id: msgRef?.id || '',
-						chatId: msgRef?.chatId || '',
-						repoId: msgRef?.repoId || '',
-						pageSections: msgRef?.pageSections || [],
+						id: msgRef?.id ?? '',
+						chatId: msgRef?.chatId ?? '',
+						repoId: msgRef?.repoId ?? '',
+						pageSections: msgRef?.pageSections ?? [],
 						error: parsedErr,
 					}
 
@@ -274,21 +271,21 @@ export class ChatViewComponent implements OnDestroy {
 					this.pingStatus();
 					return of(undefined);
 				}),
-				finalize(async () => {
+				finalize(() => {
 					this.gettingQuery = false;
 					const savedMessage = this.getFromLocalStorage(assistantId);
-					const msgRef = savedMessage || backupResult;
+					const msgRef = savedMessage ?? backupResult;
 					const msgRefIndex = this.chat.findIndex(m => m.id === assistantId);
 
 					const queryRes: AiChatMessage = {
 						role: AiChatMessageRole.Assistant,
 						content: backupResult.content,
 						completed: true,
-						error: msgRef?.error || { },
-						id: msgRef?.id || '',
-						chatId: msgRef?.chatId || '',
-						repoId: msgRef?.repoId || '',
-						pageSections: msgRef?.pageSections || [],
+						error: msgRef?.error ?? { },
+						id: msgRef?.id ?? '',
+						chatId: msgRef?.chatId ?? '',
+						repoId: msgRef?.repoId ?? '',
+						pageSections: msgRef?.pageSections ?? [],
 					}
 
 					if (msgRefIndex >= 0) {
@@ -297,27 +294,24 @@ export class ChatViewComponent implements OnDestroy {
 						this.cdRef.markForCheck();
 					}
 					
-					await this.ai.saveNewMessage(queryRes.repoId, queryRes.chatId, queryRes);
-					this.cdRef.markForCheck();
-					
-					return of(undefined);
+					this.ai.saveNewMessage(queryRes.repoId, queryRes.chatId, queryRes);
 				})
 			)
 			.subscribe((val) => {
 				if (!val) return;
 				const savedMessage = this.getFromLocalStorage(assistantId);
-				const msgRef = savedMessage || backupResult;
+				const msgRef = savedMessage ?? backupResult;
 				const msgRefIndex = this.chat.findIndex(m => m.id === assistantId);
 
 				const queryRes: AiChatMessage = {
 					role: AiChatMessageRole.Assistant,
-					content: val.completion || '',
+					content: val.completion ?? '',
 					completed: false,
-					error: msgRef?.error || { },
-					id: msgRef?.id || '',
-					chatId: msgRef?.chatId || '',
-					repoId: msgRef?.repoId || '',
-					pageSections: msgRef?.pageSections || [],
+					error: msgRef?.error ?? { },
+					id: msgRef?.id ?? '',
+					chatId: msgRef?.chatId ?? '',
+					repoId: msgRef?.repoId ?? '',
+					pageSections: msgRef?.pageSections ?? [],
 				}
 
 				backupResult = queryRes;
@@ -378,13 +372,13 @@ export class ChatViewComponent implements OnDestroy {
 	}
 
 	private saveToLocalStorage(message: AiChatMessage): void {
-		const existing = JSON.parse(localStorage.getItem('ai_chat') || '[]') as AiChatMessage[];
+		const existing = JSON.parse(localStorage.getItem('ai_chat') ?? '[]') as AiChatMessage[];
 		existing.push({ ...message, createdAt: Timestamp.fromDate(new Date()) });
 		localStorage.setItem('ai_chat', JSON.stringify(existing));
 	}
 
 	private getFromLocalStorage(messageId: string): AiChatMessage | undefined {
-		const existing = JSON.parse(localStorage.getItem('ai_chat') || '[]') as AiChatMessage[];
+		const existing = JSON.parse(localStorage.getItem('ai_chat') ?? '[]') as AiChatMessage[];
 		const index = existing.findIndex((m) => m.id === messageId);
 		const res = index >= 0 ? existing[index] : undefined;
 		if (res) this.deleteFromLocalStorage(messageId);
@@ -392,7 +386,7 @@ export class ChatViewComponent implements OnDestroy {
 	}
 
 	private deleteFromLocalStorage(messageId: string): void {
-		const existing = JSON.parse(localStorage.getItem('ai_chat') || '[]') as AiChatMessage[];
+		const existing = JSON.parse(localStorage.getItem('ai_chat') ?? '[]') as AiChatMessage[];
 		const index = existing.findIndex((m) => m.id === messageId);
 		if (index >= 0) {
 			existing.splice(index, 1);

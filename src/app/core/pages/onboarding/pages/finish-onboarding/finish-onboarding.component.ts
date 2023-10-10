@@ -37,7 +37,7 @@ export class FinishOnboardingComponent implements OnInit {
 			await this.onboarding.updateDetails({
 				onboarded: true
 			});
-			const isUser = await this.permissions.hasPermissions(['user']);
+			const isUser = await this.permissions.hasAllPermissions(['user']);
 	
 			this.canProceed = isUser;
 			this.loading = false;

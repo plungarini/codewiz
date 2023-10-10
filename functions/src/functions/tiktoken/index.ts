@@ -63,7 +63,6 @@ const setUsageToUser = async (
 	const usagesDocRef = firestore.doc(`users/${uid}/protected/usages/${repo}/${dateId}`);
 	const usagesDoc = await usagesDocRef.get();
 	const usagesDocData = usagesDoc.data();
-	const usagesExists = usagesDoc.exists;
 
 	const createdAt = usagesDocData?.createdAt || new Date();
 	const prompt = usagesDocData?.prompt || { usedTokens: 0, usedUSD: 0, count: 0 };
@@ -74,35 +73,23 @@ const setUsageToUser = async (
 		prompt.usedUSD = parseFloat((prompt.usedUSD + usage.usedUSD).toFixed(10));
 		prompt.count = (isNaN(prompt.count) ? 0 : prompt.count) + 1;
 
-		if (!usagesExists) {
-			await usagesDocRef.set({
-				prompt,
-				createdAt,
-				updatedAt: new Date(),
-			}, { merge: true });
-		} else {
-			await usagesDocRef.update({
-				prompt,
-				updatedAt: new Date(),
-			});
-		}
+		await usagesDocRef.set({
+			...usagesDocData,
+			prompt,
+			createdAt,
+			updatedAt: new Date(),
+		}, { merge: true });
 	} else {
 		completion.usedTokens = completion.usedTokens + usage.usedTokens;
 		completion.usedUSD = parseFloat((completion.usedUSD + usage.usedUSD).toFixed(10));
 		completion.count = (isNaN(completion.count) ? 0 : completion.count) + 1;
 
-		if (!usagesExists) {
-			await usagesDocRef.set({
-				completion,
-				createdAt,
-				updatedAt: new Date(),
-			}, { merge: true });
-		} else {
-			await usagesDocRef.update({
-				completion,
-				updatedAt: new Date(),
-			});
-		}
+		await usagesDocRef.set({
+			...usagesDocData,
+			completion,
+			createdAt,
+			updatedAt: new Date(),
+		}, { merge: true });
 	}
 
 	try {
@@ -119,7 +106,6 @@ const saveUsageToStats = async (repo: string, usage: { usedTokens: number, usedU
 	const docRef = firestore.doc(docPath);
 	const doc = await docRef.get();
 	const docData = doc.data();
-	const exists = doc.exists;
 
 	const createdAt = docData?.createdAt || new Date();
 	let totalTokensPrompt = docData?.prompt?.totalTokens || 0;
@@ -146,19 +132,12 @@ const saveUsageToStats = async (repo: string, usage: { usedTokens: number, usedU
 			count: totalPrompts,
 		};
 
-		if (!exists) {
-			await docRef.set({
-				prompt,
-				createdAt,
-				updatedAt: new Date(),
-			}, { merge: true });
-		} else {
-			await docRef.update({
-				prompt,
-				createdAt,
-				updatedAt: new Date(),
-			});
-		}
+		await docRef.set({
+			...docData,
+			prompt,
+			createdAt,
+			updatedAt: new Date(),
+		}, { merge: true });
 	} else {
 		totalTokensCompletion = totalTokensCompletion + usage.usedTokens;
 		totalUSDCompletion = parseFloat((totalUSDCompletion + usage.usedUSD).toFixed(10));
@@ -174,19 +153,12 @@ const saveUsageToStats = async (repo: string, usage: { usedTokens: number, usedU
 			count: totalCompletions,
 		};
 
-		if (!exists) {
-			await docRef.set({
-				completion,
-				createdAt,
-				updatedAt: new Date(),
-			}, { merge: true });
-		} else {
-			await docRef.update({
-				completion,
-				createdAt,
-				updatedAt: new Date(),
-			});
-		}
+		await docRef.set({
+			...docData,
+			completion,
+			createdAt,
+			updatedAt: new Date(),
+		}, { merge: true });
 	}
 
 	try {
@@ -206,7 +178,6 @@ const setUsageToMonthlyStats = async (repo: string, usage: { usedTokens: number,
 	const docRef = firestore.doc(docPath);
 	const doc = await docRef.get();
 	const docData = doc.data();
-	const exists = doc.exists;
 
 	const createdAt = docData?.createdAt || new Date();
 	let totalTokensPrompt = docData?.prompt?.totalTokens || 0;
@@ -233,19 +204,12 @@ const setUsageToMonthlyStats = async (repo: string, usage: { usedTokens: number,
 			count: totalPrompts,
 		};
 
-		if (!exists) {
-			await docRef.set({
-				prompt,
-				createdAt,
-				updatedAt: new Date(),
-			}, { merge: true });
-		} else {
-			await docRef.update({
-				prompt,
-				createdAt,
-				updatedAt: new Date(),
-			});
-		}
+		await docRef.set({
+			...docData,
+			prompt,
+			createdAt,
+			updatedAt: new Date(),
+		}, { merge: true });
 	} else {
 		totalTokensCompletion = totalTokensCompletion + usage.usedTokens;
 		totalUSDCompletion = parseFloat((totalUSDCompletion + usage.usedUSD).toFixed(10));
@@ -261,18 +225,11 @@ const setUsageToMonthlyStats = async (repo: string, usage: { usedTokens: number,
 			count: totalCompletions,
 		};
 
-		if (!exists) {
-			await docRef.set({
-				completion,
-				createdAt,
-				updatedAt: new Date(),
-			}, { merge: true });
-		} else {
-			await docRef.update({
-				completion,
-				createdAt,
-				updatedAt: new Date(),
-			});
-		}
+		await docRef.set({
+			...docData,
+			completion,
+			createdAt,
+			updatedAt: new Date(),
+		}, { merge: true });
 	}
 };

@@ -32,6 +32,14 @@ const routes: Routes = [
 				loadChildren: () => import('./pages/users/users.module').then(m => m.UsersModule),
 			},
 			{
+				path: 'feedbacks',
+				data: {
+					title: 'CodeWiz | Admin - Feedbacks manager',
+					preload: true,
+				},
+				loadChildren: () => import('./pages/feedbacks/feedbacks.module').then(m => m.FeedbacksModule),
+			},
+			{
 				path: 'maintenance',
 				data: {
 					title: 'CodeWiz | Admin - Maintenance',

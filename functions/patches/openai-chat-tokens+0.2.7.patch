@@ -1,0 +1,40 @@
+diff --git a/node_modules/openai-chat-tokens/dist/functions.d.ts b/node_modules/openai-chat-tokens/dist/functions.d.ts
+index ffe11a1..6bdc60f 100644
+--- a/node_modules/openai-chat-tokens/dist/functions.d.ts
++++ b/node_modules/openai-chat-tokens/dist/functions.d.ts
+@@ -1,5 +1,5 @@
+ import OpenAI from "openai";
+-type OpenAIFunction = OpenAI.Chat.CompletionCreateParams.Function;
++type OpenAIFunction = OpenAI.Chat.ChatCompletionCreateParams.Function;
+ export interface FunctionDef extends Omit<OpenAIFunction, "parameters"> {
+     name: string;
+     description?: string;
+@@ -31,4 +31,5 @@ type Prop = {
+     items?: Prop;
+ });
+ export declare function formatFunctionDefinitions(functions: FunctionDef[]): string;
+-export {};
++export { };
++
+diff --git a/node_modules/openai-chat-tokens/dist/index.d.ts b/node_modules/openai-chat-tokens/dist/index.d.ts
+index 6a4ae41..59a9bd5 100644
+--- a/node_modules/openai-chat-tokens/dist/index.d.ts
++++ b/node_modules/openai-chat-tokens/dist/index.d.ts
+@@ -1,8 +1,8 @@
+ import OpenAI from "openai";
+ import { FunctionDef } from "./functions";
+ type Message = OpenAI.Chat.CreateChatCompletionRequestMessage;
+-type Function = OpenAI.Chat.CompletionCreateParams.Function;
+-type FunctionCall = OpenAI.Chat.CompletionCreateParams.FunctionCallOption;
++type Function = OpenAI.Chat.ChatCompletionCreateParams.Function;
++type FunctionCall = OpenAI.Chat.ChatCompletionCreateParams.FunctionCallOption;
+ /**
+  * Estimate the number of tokens a prompt will use.
+  * @param {Object} prompt OpenAI prompt data
+@@ -35,4 +35,5 @@ export declare function messageTokensEstimate(message: Message): number;
+  * @returns An estimate for the number of tokens the function definitions will use
+  */
+ export declare function functionsTokensEstimate(funcs: FunctionDef[]): number;
+-export {};
++export { };
++

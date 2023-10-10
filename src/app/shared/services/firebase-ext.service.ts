@@ -139,6 +139,9 @@ export class FirebaseExtendedService {
     if (!path) return;
 
 		const docRef = doc(this.firestore, path);
+
+		if (this.debug) console.log('[Firebase "upsert"]', { path, obj });
+		
 		const get = await getDocFb(docRef);
 		const exist = get.exists();
 		const createdAt = get.data()?.['createdAt'] || new Date();

@@ -16,10 +16,10 @@ export class SidebarComponent implements OnDestroy {
 
 	menuOpen = false;
 
-	isUserAdmin$: Observable<boolean>;
+	isUserAdmin$ = this.permissions.hasAllPermissions$(['admin']);
 	userSub$: Observable<string> = this.users.user$.pipe(
 		map((u) => {
-			return u?.subscriptions?.filter((s) => s?.status === 'active')?.at(0)?.role || 'apprentice';
+			return u?.subscriptions?.filter((s) => s?.status === 'active')?.at(0)?.role ?? 'apprentice';
 		})
 	);
 
@@ -29,8 +29,6 @@ export class SidebarComponent implements OnDestroy {
 		private users: UsersService,
 		private permissions: UserPermissionsService,
 	) {
-		this.isUserAdmin$ = this.permissions.hasAllPermissions$(['admin']);
-
 		this.routerSub = this.router.events
       .pipe(
         filter(
@@ -40,14 +38,16 @@ export class SidebarComponent implements OnDestroy {
       )
       .subscribe((e) => {
 				if (e instanceof NavigationEnd) {
-					if (e.url.includes('chat')) {
+					if (e.url.includes('app/chat')) {
 						this.currentPage = 'chat';
-					} else if (e.url.includes('admin')) {
+					} else if (e.url.includes('app/admin')) {
 						this.currentPage = 'admin';
-					} else if (e.url.includes('settings')) {
+					} else if (e.url.includes('app/settings')) {
 						this.currentPage = 'settings';
-					} else if (e.url.includes('setup')) {
+					} else if (e.url.includes('app/setup')) {
 						this.currentPage = 'setup';
+					} else if (e.url.includes('app/lern')) {
+						this.currentPage = 'lern';
 					} else if (e.url.includes('app')) {
 						this.currentPage = 'app';
 					} else {
@@ -63,7 +63,7 @@ export class SidebarComponent implements OnDestroy {
 	}
 
 	toggleMenu(state?: boolean): void {
-    this.menuOpen = state !== undefined ? state : !this.menuOpen;
+    this.menuOpen = state ?? !this.menuOpen;
     this.cdRef.detectChanges();
   }
 

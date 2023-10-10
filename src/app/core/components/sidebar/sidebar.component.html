@@ -41,6 +41,22 @@
 			</svg>
 		</a>
 	
+		<a
+			routerLink="/app/lern"
+			[ngClass]="{
+				'bg-gradient-to-tr from-zinc-900/50 to-zinc-800/70 shadow-xl text-amber-400': currentPage === 'lern',
+				'text-zinc-400 hover:text-amber-400 bg-zinc-950 hover:bg-zinc-900': currentPage !== 'lern'
+			}"
+			class="inline-flex items-center justify-center flex-shrink-0 w-10 h-10 transition-all duration-300 rounded-lg"
+		>
+			<svg class="w-6 h-6 shrink-0" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+				<path d="M18.5139 20.9792C19.1794 20.9792 19.7184 20.4489 19.7184 19.7844L19.7097 16.0082L19.7093 4.19582C19.7093 3.53028 19.1702 3 18.5144 3H7.42903C5.99969 3 4.84863 4.15982 4.84863 5.58915V18.4989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M19.7087 16.0078L8.64235 16.0086H7.32978C5.95396 16.0086 4.84766 17.1227 4.84766 18.4986C4.84766 19.1816 5.12691 19.8024 5.57643 20.2519C6.02596 20.7014 6.637 20.9797 7.32978 20.9797H8.39035" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M8.64315 16.0096L8.64258 3.0918" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+				<path d="M15.6126 16.0078V20.7278C15.6126 20.7726 15.6039 20.8173 15.5766 20.8621C15.5046 20.9886 15.3431 21.0421 15.2078 20.9613L13.401 19.9455L11.5669 20.9701C11.5309 20.9886 11.4861 20.9974 11.4414 20.9974C11.2886 20.9974 11.1621 20.8806 11.1621 20.7278V16.0078" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+			</svg>
+		</a>
+	
 		<ng-container
 			*ngIf="isUserAdmin$ | async"
 		>
@@ -166,7 +182,7 @@
 			>
 				<h3 class="text-sm font-medium text-zinc-400">Menu</h3>
 				
-				<nav class="mt-6">
+				<nav class="mt-6" aria-label="Sidebar">
 					<ul class="-my-2 space-y-2 text-base text-zinc-300">
 						
 						<li class="w-full">
@@ -206,7 +222,28 @@
 									<path d="M8.98633 11.459C9.54287 12.7301 10.8184 13.6224 12.3003 13.6224C13.7831 13.6224 15.0587 12.7301 15.6152 11.459" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 								</svg>
 
-								<span class="font-medium translate-y-px">Chats</span>
+								<span class="font-medium translate-y-px">WizChat</span>
+							</a>
+						</li>
+						
+						<li class="w-full">
+							<a
+								routerLink="/app/lern"
+								(click)="toggleMenu(false)"
+								[ngClass]="{
+									'bg-gradient-to-tr from-zinc-800/40 to-zinc-900/30 shadow-xl text-white': currentPage === 'lern',
+									'text-zinc-400 hover:text-zinc-200 bg-transparent': currentPage !== 'lern'
+								}"
+								class="inline-flex items-center space-x-2 text-sm flex-shrink-0 transition-all duration-300 rounded-lg px-2.5 py-2 w-full"
+							>
+								<svg class="w-6 h-6 shrink-0" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M18.5139 20.9792C19.1794 20.9792 19.7184 20.4489 19.7184 19.7844L19.7097 16.0082L19.7093 4.19582C19.7093 3.53028 19.1702 3 18.5144 3H7.42903C5.99969 3 4.84863 4.15982 4.84863 5.58915V18.4989" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M19.7087 16.0078L8.64235 16.0086H7.32978C5.95396 16.0086 4.84766 17.1227 4.84766 18.4986C4.84766 19.1816 5.12691 19.8024 5.57643 20.2519C6.02596 20.7014 6.637 20.9797 7.32978 20.9797H8.39035" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M8.64315 16.0096L8.64258 3.0918" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M15.6126 16.0078V20.7278C15.6126 20.7726 15.6039 20.8173 15.5766 20.8621C15.5046 20.9886 15.3431 21.0421 15.2078 20.9613L13.401 19.9455L11.5669 20.9701C11.5309 20.9886 11.4861 20.9974 11.4414 20.9974C11.2886 20.9974 11.1621 20.8806 11.1621 20.7278V16.0078" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+
+								<span class="font-medium translate-y-px">WizLern</span>
 							</a>
 						</li>
 						
@@ -214,7 +251,7 @@
 							*ngIf="isUserAdmin$ | async"
 						>
 							<li class="w-full">
-								<div class="w-4/5 mb-2 border-b border-zinc-100/5"></div>
+								<div class="w-full mb-2 border-b border-zinc-100/5"></div>
 
 								<a
 									routerLink="/app/admin"
@@ -240,7 +277,7 @@
 						</ng-container>
 						
 						<li class="w-full">
-							<div class="w-4/5 mb-2 border-b border-zinc-100/5"></div>
+							<div class="w-full mb-2 border-b border-zinc-100/5"></div>
 
 							<a
 								routerLink="/app/settings"

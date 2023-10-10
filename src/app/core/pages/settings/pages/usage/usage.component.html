@@ -65,6 +65,9 @@
 						<span>Queries in your plan:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
 					</p>
 					<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500">
+						<span>Queries credits:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
+					</p>
+					<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500">
 						<span>Used Queries:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
 					</p>
 				</div>
@@ -73,22 +76,80 @@
 
 			<ng-container *ngIf="(product$ | async) as product; else noQueriesSkeleton">
 				<ng-container *ngIf="(usedPrompts$ | async) as stats; else noQueriesSkeleton">
+					<ng-container *ngIf="(promptCredits$ | async) as credits; else noQueriesSkeleton">
 
-					<div class="flex flex-col mb-4 shrink">
-						<p class="text-sm font-medium truncate text-zinc-500">
-							Queries in your plan: <span class="text-base font-semibold shrink text-pink-500/80">{{getTotalQueries(product)}}</span>
-						</p>
-						<p class="text-sm font-medium truncate text-zinc-500">
-							Used Queries: <span class="text-base font-semibold shrink text-pink-500/80">{{(usedPrompts$ | async)}}</span>
-						</p>
-					</div>
+						<div class="flex flex-col mb-4 shrink">
+							<p class="text-sm font-medium truncate text-zinc-500">
+								Queries in your plan: <span class="text-base font-semibold shrink text-pink-500/80">{{getTotalQueries(product)}}</span>
+							</p>
+							<p class="text-sm font-medium truncate text-zinc-500">
+								Queries credits: <span class="text-base font-semibold shrink text-pink-500/80">{{credits.credits}}</span>
+							</p>
+							<p class="text-sm font-medium truncate text-zinc-500">
+								Used Queries: <span class="text-base font-semibold shrink text-pink-500/80">{{(usedPrompts$ | async)}}</span>
+							</p>
+						</div>
 
+					</ng-container>
 				</ng-container>
 			</ng-container>
 
 			<app-subscription-remaining-queries
-				[percentage]="(usedPrompts$ | async) && (product$ | async) ? getRemainingQueriesPerc((usedPrompts$ | async), (product$ | async)) : 0"
-				[label]="((usedPrompts$ | async) && (product$ | async) ? getRemainingQueries((usedPrompts$ | async), (product$ | async)) : 0) + ' queries remaining'"
+				[percentage]="(usedPrompts$ | async) && (product$ | async) ? getRemainingQueriesPerc((usedPrompts$ | async), (product$ | async), (promptCredits$ | async)?.credits) : 0"
+				[label]="((usedPrompts$ | async) && (product$ | async) ? getRemainingQueries((usedPrompts$ | async), (product$ | async), (promptCredits$ | async)?.credits) : 0) + ' queries remaining'"
+				theme="light"
+				class="max-w-sm"
+			></app-subscription-remaining-queries>
+
+			<button
+				routerLink="/app/settings/billing"
+				type="button"
+				class="inline-flex items-center px-3 py-1 mt-6 text-sm font-semibold text-white transition-all duration-300 bg-indigo-600 rounded-md shadow-sm hover:bg-indigo-500 disabled:hover:bg-indigo-600 hover:ring-2 disabled:hover:ring-0 hover:ring-offset-2 disabled:hover:ring-offset-0 ring-offset-zinc-900 hover:ring-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
+			>
+				{{(userSub || 'apprentice').includes('master') ? 'Manage Plan' : 'Upgrade Plan'}}
+			</button>
+		</div>
+
+		<div *ngIf="isAlphaUser$ | async" class="px-4 pb-8 mb-8 border-b border-zinc-900">
+			<h3 class="mb-4">Lern usage</h3>
+			<ng-template #noLernsSkeleton>
+				<div class="flex flex-col mb-4 shrink">
+					<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500">
+						<span>Lern in your plan:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
+					</p>
+					<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500">
+						<span>Lern credits:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
+					</p>
+					<p class="flex items-center space-x-1.5 text-sm font-medium truncate text-zinc-500">
+						<span>Lern generated:</span> <span class="inline-block w-8 h-4 rounded-md bg-pink-500/80 animate-pulse"></span>
+					</p>
+				</div>
+			</ng-template>
+			
+
+			<ng-container *ngIf="(product$ | async) as product; else noLernsSkeleton">
+				<ng-container *ngIf="(usedLerns$ | async) !== undefined; else noLernsSkeleton">
+					<ng-container *ngIf="(lernCredits$ | async) !== undefined; else noLernsSkeleton">
+
+						<div class="flex flex-col mb-4 shrink">
+							<p class="text-sm font-medium truncate text-zinc-500">
+								Lern in your plan: <span class="text-base font-semibold shrink text-pink-500/80">{{getTotalLerns(product)}}</span>
+							</p>
+							<p class="text-sm font-medium truncate text-zinc-500">
+								Lern credits: <span class="text-base font-semibold shrink text-pink-500/80">{{(lernCredits$ | async)?.credits}}</span>
+							</p>
+							<p class="text-sm font-medium truncate text-zinc-500">
+								Lern generated: <span class="text-base font-semibold shrink text-pink-500/80">{{(usedLerns$ | async)}}</span>
+							</p>
+						</div>
+
+					</ng-container>
+				</ng-container>
+			</ng-container>
+
+			<app-subscription-remaining-queries
+				[percentage]="(usedLerns$ | async) && (product$ | async) ? getRemainingLernsPerc((usedLerns$ | async), (product$ | async), (lernCredits$ | async)?.credits) : 0"
+				[label]="((usedLerns$ | async) && (product$ | async) ? getRemainingLerns((usedLerns$ | async), (product$ | async), (lernCredits$ | async)?.credits) : 0) + ' Lern(s) remaining'"
 				theme="light"
 				class="max-w-sm"
 			></app-subscription-remaining-queries>

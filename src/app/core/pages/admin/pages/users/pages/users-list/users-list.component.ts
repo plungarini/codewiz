@@ -56,6 +56,18 @@ export class UsersListComponent implements OnDestroy {
 		this.usersSub = this.onFilterOrSort$.asObservable().pipe(
 			switchMap(sortBy => {
 				this.loading = true;
+				const easySort = ['name', 'joinDate'].includes(sortBy.sort.field);
+
+				if (easySort) {
+					return this.usersService.getAll().pipe(
+						map(users => {
+							this.loading = false;
+							this.users = users;
+							return this.filterOrSort(users, sortBy)
+						}),
+					);
+				}
+
 				return this.usersService.getAllWithInvoices().pipe(
 					map(users => {
 						return users
@@ -76,7 +88,7 @@ export class UsersListComponent implements OnDestroy {
 		});
 
 		this.searchSub = this.searchControl.valueChanges.subscribe(search => {
-			this.filteredUsers = this.filterOrSort(this.users, { ...this.defaultFilterOrSort, search: search || '' });
+			this.filteredUsers = this.filterOrSort(this.users, { ...this.defaultFilterOrSort, search: search ?? '' });
 			this.cdRef.detectChanges();
 		});
 	}
@@ -87,11 +99,12 @@ export class UsersListComponent implements OnDestroy {
 	}
 
 	trackBy(index: number, user: User) {
-		return user.id || index;
+		return user.id ?? index;
 	}
 
 	onSort(sortBy: FilterOrSortConfig['sort']['field']) {
-		this.order = this.sortBy === sortBy ? (this.order === 'desc' ? 'asc' : 'desc') : 'desc';
+		const orderToggle = this.order === 'desc' ? 'asc' : 'desc';
+		this.order = this.sortBy === sortBy ? orderToggle : 'desc';
 		this.sortBy = sortBy;
 		this.onFilterOrSort$.next({
 			...this.defaultFilterOrSort,
@@ -114,7 +127,7 @@ export class UsersListComponent implements OnDestroy {
 
 		user.usages?.forEach(usage => {
 			usage.stats?.forEach(stat => {
-				const totalQuestion = (stat.completion?.usedUSD || 0) + (stat.prompt?.usedUSD || 0);
+				const totalQuestion = (stat.completion?.usedUSD ?? 0) + (stat.prompt?.usedUSD ?? 0);
 				
 				if (dateId === stat.id) currentTotalCost += totalQuestion;
 				totalCost += totalQuestion;
@@ -124,7 +137,7 @@ export class UsersListComponent implements OnDestroy {
 		user.subscriptions?.forEach(subscription => {
 			subscription.invoices?.forEach(invoice => {
 				const paidAt = invoice?.status_transitions?.paid_at;
-				if (!invoice || !invoice?.paid || !paidAt) return;
+				if (!invoice?.paid || !paidAt) return;
 
 				const invoiceNow = new Date(paidAt * 1000);
 				const invoiceMonth = invoiceNow.getMonth();
@@ -148,61 +161,43 @@ export class UsersListComponent implements OnDestroy {
 	private filterOrSort(users: User[], options: FilterOrSortConfig): User[] {
 		const { search, sort } = options;
 		const { field, order } = sort;
-
-		const sortedUsers = users.sort((a, b) => {
-			if (order === 'asc') {
-				if (field === 'name') {
-					return (a.name || '') > (b.name || '') ? 1 : -1;
-				} else if (field === 'in') {
-					if (this.statsTimeframe === 'total') {
-						return (a.revenueDetails?.totalPaid || 0) > (b.revenueDetails?.totalPaid || 0) ? 1 : -1;
-					} else {
-						return (a.revenueDetails?.paidThisMonth || 0) > (b.revenueDetails?.paidThisMonth || 0) ? 1 : -1;
-					}
-				} else if (field === 'out') {
-					if (this.statsTimeframe === 'total') {
-						return (a.revenueDetails?.totalCost || 0) > (b.revenueDetails?.totalCost || 0) ? 1 : -1;
-					} else {
-						return (a.revenueDetails?.totalCostThisMonth || 0) > (b.revenueDetails?.totalCostThisMonth || 0) ? 1 : -1;
-					}
-				} else if (field === 'joinDate') {
-					return (a.createdAt?.toDate().getTime() || 0) > (b.createdAt?.toDate().getTime() || 0) ? 1 : -1;
+	
+		const sortedUsers = [...users].sort((a, b) => {	
+			const compareValues = (aValue: any, bValue: any) => {
+				if (order === 'asc') {
+					return aValue > bValue ? 1 : -1;
 				} else {
-					return 0;
+					return aValue > bValue ? -1 : 1;
 				}
-			} else {
-				if (field === 'name') {
-					return (a.name || '') > (b.name || '') ? -1 : 1;
-				} else if (field === 'in') {
-					if (this.statsTimeframe === 'total') {
-						return (a.revenueDetails?.totalPaid || 0) > (b.revenueDetails?.totalPaid || 0) ? -1 : 1;
-					} else {
-						return (a.revenueDetails?.paidThisMonth || 0) > (b.revenueDetails?.paidThisMonth || 0) ? -1 : 1;
-					}
-				} else if (field === 'out') {
-					if (this.statsTimeframe === 'total') {
-						return (a.revenueDetails?.totalCost || 0) > (b.revenueDetails?.totalCost || 0) ? -1 : 1;
-					} else {
-						return (a.revenueDetails?.totalCostThisMonth || 0) > (b.revenueDetails?.totalCostThisMonth || 0) ? -1 : 1;
-					}
-				} else if (field === 'joinDate') {
-					return (a.createdAt?.toDate().getTime() || 0) > (b.createdAt?.toDate().getTime() || 0) ? -1 : 1;
-				} else {
-					return 0;
-				}
-			}
+			};
+	
+			return compareValues(this.getSortValue(a, field), this.getSortValue(b, field));
 		});
-
+	
 		const filteredUsers = sortedUsers.filter(user => {
 			if (!search) return true;
 			const normVal = search.toLowerCase().split(' ');
 			return normVal.every(val => {
-				return (user.name || '').toLowerCase().includes(val) ||
-					(user.email || '').toLowerCase().includes(val);
+				return (user.name ?? '').toLowerCase().includes(val) ??
+					(user.email ?? '').toLowerCase().includes(val);
 			})
 		});
-
+	
 		return filteredUsers;
 	}
+
+	private getSortValue(user: User, field: 'name' | 'in' | 'out' | 'joinDate') {
+		if (field === 'name') {
+			return user.name ?? '';
+		} else if (field === 'in') {
+			return this.statsTimeframe === 'total' ? user.revenueDetails?.totalPaid ?? 0 : user.revenueDetails?.paidThisMonth ?? 0;
+		} else if (field === 'out') {
+			return this.statsTimeframe === 'total' ? user.revenueDetails?.totalCost ?? 0 : user.revenueDetails?.totalCostThisMonth ?? 0;
+		} else if (field === 'joinDate') {
+			return user.createdAt?.toDate().getTime() ?? 0;
+		} else {
+			return 0;
+		}
+	};
 
 }

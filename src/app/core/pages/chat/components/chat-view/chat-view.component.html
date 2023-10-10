@@ -24,7 +24,9 @@
 	></app-messages>
 
 	<ng-template #chatPlaceholder>
-		<app-empty-chat-placeholder></app-empty-chat-placeholder>
+		<app-empty-chat-placeholder
+			[repoId]="this.selectedRepo"
+		></app-empty-chat-placeholder>
 	</ng-template>
 </div>
 

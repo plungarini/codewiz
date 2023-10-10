@@ -1,0 +1,24 @@
+<p class="text-sm font-medium text-zinc-500">Roles</p>
+<div class="flex flex-wrap items-center mt-1 gap-x-2 gap-y-2">
+	<span *ngFor="let role of (roles$ | async)" class="inline-flex items-center px-2 py-1 text-xs font-medium text-pink-400 rounded-md shrink-0 gap-x-1 bg-pink-400/10 ring-1 ring-inset ring-pink-400/20">
+		{{role}}
+		<button (click)="remove(role)" type="button" class="group relative -mr-1 h-3.5 w-3.5 rounded-sm hover:bg-pink-600/20 transition-colors duration-300">
+			<span class="sr-only">Remove</span>
+			<svg viewBox="0 0 14 14" class="h-3.5 w-3.5 stroke-pink-400 group-hover:stroke-pink-400/75 transition-colors duration-300">
+				<path d="M4 4l6 6m0-6l-6 6" />
+			</svg>
+			<span class="absolute -inset-1"></span>
+		</button>
+	</span>
+
+	<form class="inline-block w-max" [formGroup]="form" (submit)="submit()">
+		<input
+			type="text"
+			name="input"
+			id="input"
+			formControlName="input"
+			class="inline-block w-full px-0 py-0 bg-transparent border-none outline-none ring-0 focus:ring-0 caret-zinc-50 text-zinc-100 placeholder:text-sm placeholder:text-zinc-600"
+			placeholder="Add role..."
+		>
+	</form>
+</div>

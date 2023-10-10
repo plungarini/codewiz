@@ -1,0 +1,23 @@
+<form [formGroup]="form" class="flex items-center justify-between gap-x-4">
+
+	<div class="flex-1">
+		<p class="text-sm font-medium text-zinc-500 mb-1.5">Chat Credits</p>
+		<input
+			type="number"
+			formControlName="chatCredits"
+			placeholder='Credits'
+			class="w-full p-0 text-white placeholder:text-zinc-500 px-2 py-1.5 overflow-hidden shadow-2xl relative z-20 transition-all duration-300 border-0 outline-none ring-1 focus:ring-[3px] ring-zinc-800 focus:ring-indigo-400 rounded-md bg-zinc-900/80 hover:ring-4 focus:outline-none focus:ring-offset-[3px] focus:ring-offset-zinc-950 ring-offset-zinc-950"
+		/>
+	</div>
+
+	<div class="flex-1">
+		<p class="text-sm font-medium text-zinc-500 mb-1.5">Lern Credits</p>
+		<input
+			type="number"
+			formControlName="lernCredits"
+			placeholder='Credits'
+			class="w-full p-0 text-white placeholder:text-zinc-500 px-2 py-1.5 overflow-hidden shadow-2xl relative z-20 transition-all duration-300 border-0 outline-none ring-1 focus:ring-[3px] ring-zinc-800 focus:ring-indigo-400 rounded-md bg-zinc-900/80 hover:ring-4 focus:outline-none focus:ring-offset-[3px] focus:ring-offset-zinc-950 ring-offset-zinc-950"
+		/>
+	</div>
+
+</form>
