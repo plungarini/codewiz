@@ -1,0 +1,43 @@
+<p class="text-sm font-medium text-zinc-500">Chat Usage</p>
+<div class="flex items-center gap-x-2 mt-1.5 mb-3">
+	<div class="flex-1">
+		<p>
+			<span>{{getRemainingQueries((usedPrompts$ | async), (product$ | async), (promptCredits$ | async)?.credits)}}</span>
+			<span class="text-xs font-semibold text-zinc-600"> remaining</span>
+		</p>
+	</div>
+	<div class="flex-1">
+		<p>
+			<span>{{usedPrompts$ | async}}</span>
+			<span class="text-xs font-semibold text-zinc-600"> used /m</span>
+		</p>
+	</div>
+	<div class="flex-1">
+		<p>
+			<span>{{totalPrompts$ | async}}</span>
+			<span class="text-xs font-semibold text-zinc-600"> used</span>
+		</p>
+	</div>
+</div>
+
+<p class="text-sm font-medium text-zinc-500">Lern Usage</p>
+<div class="flex items-center gap-x-2 mt-1.5 mb-3">
+	<div class="flex-1">
+		<p>
+			<span>{{getRemainingLerns((usedLerns$ | async), (product$ | async), (lernCredits$ | async)?.credits)}}</span>
+			<span class="text-xs font-semibold text-zinc-600"> remaining</span>
+		</p>
+	</div>
+	<div class="flex-1">
+		<p>
+			<span>{{usedLerns$ | async}}</span>
+			<span class="text-xs font-semibold text-zinc-600"> used /m</span>
+		</p>
+	</div>
+	<div class="flex-1">
+		<p>
+			<span>{{totalLerns$ | async}}</span>
+			<span class="text-xs font-semibold text-zinc-600"> used</span>
+		</p>
+	</div>
+</div>
