@@ -29,12 +29,15 @@ export class UsageComponent {
 			this.cdRef.markForCheck();
 		})
 	);
+
 	isAlphaUser$ = this.permissions.hasAnyPermission$(['alpha']);
-	fireUser$ = this.usersService.fireUser$;
+
 	usedLerns$ = this.userStats.getThisPeriodLern();
 	lernCredits$ = this.userStats.getAdditionalLernCredits();
+
 	usedPrompts$ = this.userStats.getThisPeriodPrompts();
 	promptCredits$ = this.userStats.getAdditionalPromptCredits();
+
 	product$ = this.user$.pipe(
 		switchMap((u) => {
 			const productId = u?.subscriptions?.at(0)?.items?.at(0)?.plan?.product;
