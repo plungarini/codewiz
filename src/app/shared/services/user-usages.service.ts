@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { limit, orderBy } from '@angular/fire/firestore';
-import { map, Observable, switchMap } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
 import { UsersService } from 'src/app/auth/services/users.service';
 import { FirebaseExtendedService } from './firebase-ext.service';
 
@@ -14,10 +14,19 @@ export class UserUsagesService {
 		private users: UsersService,
 	) { }
 
-	getThisPeriodPrompts() {
-		return this._getCurrentUid$().pipe(
-			switchMap(uid => {
-				return this.db.getCol<{ count: number }>(`users/${uid}/protected/usages/bySubscription`, 'id', orderBy('createdAt', 'desc'), limit(1))
+	getTotalPrompts(uid?: string) {
+		return this._getCurrentUid$(uid).pipe(
+			switchMap(userUid => {
+				return this.db.getCol<{ count: number }>(`users/${userUid}/protected/usages/bySubscription`)
+			}),
+			map(docs => docs.reduce((acc, doc) => acc + (doc.count ?? 0), 0))
+		);
+	}
+
+	getThisPeriodPrompts(uid?: string) {
+		return this._getCurrentUid$(uid).pipe(
+			switchMap(userUid => {
+				return this.db.getCol<{ count: number }>(`users/${userUid}/protected/usages/bySubscription`, 'id', orderBy('createdAt', 'desc'), limit(1))
 					.pipe(
 						map(docs => {
 							const current = docs?.at(0);
@@ -29,20 +38,20 @@ export class UserUsagesService {
 		)
 	}
 
-	getAdditionalPromptCredits() {
-		return this._getCurrentUid$().pipe(
-			switchMap(uid => {
-				return this.db.getCol<{ chatCreditsUsed: number }>(`users/${uid}/protected/usages/bySubscription`, 'id', orderBy('createdAt', 'desc'), limit(1))
+	getAdditionalPromptCredits(uid?: string) {
+		return this._getCurrentUid$(uid).pipe(
+			switchMap(userId => {
+				return this.db.getCol<{ chatCreditsUsed: number }>(`users/${userId}/protected/usages/bySubscription`, 'id', orderBy('createdAt', 'desc'), limit(1))
 					.pipe(
 						map(docs => {
 							const current = docs?.at(0);
-							if (!current) return { used: 0, uid };
-							return { used: current.chatCreditsUsed ?? 0, uid };
+							if (!current) return { used: 0, userId };
+							return { used: current.chatCreditsUsed ?? 0, userId };
 						})
 					)
 			}),
-			switchMap(({ uid, used }) => {
-				return this.db.getDoc<{ chatCredits: number }>(`users/${uid}/protected/usages`)
+			switchMap(({ userId, used }) => {
+				return this.db.getDoc<{ chatCredits: number }>(`users/${userId}/protected/usages`)
 					.pipe(
 						map(doc => {
 							if (!doc) return { credits: 0 };
@@ -54,10 +63,19 @@ export class UserUsagesService {
 		)
 	}
 
-	getThisPeriodLern() {
-		return this._getCurrentUid$().pipe(
-			switchMap(uid => {
-				return this.db.getCol<{ lernCount: number }>(`users/${uid}/protected/usages/bySubscription`, 'id', orderBy('createdAt', 'desc'), limit(1))
+	getTotalLern(uid?: string) {
+		return this._getCurrentUid$(uid).pipe(
+			switchMap(userUid => {
+				return this.db.getCol<{ lernCount: number }>(`users/${userUid}/protected/usages/bySubscription`)
+			}),
+			map(docs => docs.reduce((acc, doc) => acc + (doc.lernCount ?? 0), 0))
+		);
+	}
+
+	getThisPeriodLern(uid?: string) {
+		return this._getCurrentUid$(uid).pipe(
+			switchMap(userId => {
+				return this.db.getCol<{ lernCount: number }>(`users/${userId}/protected/usages/bySubscription`, 'id', orderBy('createdAt', 'desc'), limit(1))
 					.pipe(
 						map(docs => {
 							const current = docs?.at(0);
@@ -69,20 +87,20 @@ export class UserUsagesService {
 		)
 	}
 
-	getAdditionalLernCredits() {
-		return this._getCurrentUid$().pipe(
-			switchMap(uid => {
-				return this.db.getCol<{ lernCreditsUsed: number }>(`users/${uid}/protected/usages/bySubscription`, 'id', orderBy('createdAt', 'desc'), limit(1))
+	getAdditionalLernCredits(uid?: string) {
+		return this._getCurrentUid$(uid).pipe(
+			switchMap(userUid => {
+				return this.db.getCol<{ lernCreditsUsed: number }>(`users/${userUid}/protected/usages/bySubscription`, 'id', orderBy('createdAt', 'desc'), limit(1))
 					.pipe(
 						map(docs => {
 							const current = docs?.at(0);
-							if (!current) return { used: 0, uid };
-							return { used: current.lernCreditsUsed ?? 0, uid };
+							if (!current) return { used: 0, userUid };
+							return { used: current.lernCreditsUsed ?? 0, userUid };
 						})
 					)
 			}),
-			switchMap(({ uid, used }) => {
-				return this.db.getDoc<{ lernCredits: number; lernDemoUsed: boolean }>(`users/${uid}/protected/usages`)
+			switchMap(({ userUid, used }) => {
+				return this.db.getDoc<{ lernCredits: number; lernDemoUsed: boolean }>(`users/${userUid}/protected/usages`)
 					.pipe(
 						map(doc => {
 							if (!doc) return { credits: 1 };
@@ -95,7 +113,7 @@ export class UserUsagesService {
 		)
 	}
 
-	private _getCurrentUid$(): Observable<string> {
-		return this.users.fireUser$.pipe(map((u) => u?.uid ?? ''))
+	private _getCurrentUid$(uid?: string): Observable<string> {
+		return uid ? of(uid) : this.users.fireUser$.pipe(map((u) => u?.uid ?? ''));
 	}
 }
