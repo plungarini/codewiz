@@ -44,7 +44,7 @@ export class StatsComponent implements OnDestroy {
 	) {
 		this.usersCountSub = this.db.getDoc<{ usersCount: number }>('stats/users')
 			.subscribe((data) => {
-				this.stats.usersCount = data?.usersCount || 0;
+				this.stats.usersCount = data?.usersCount ?? 0;
 				this.stats.updatedAt = new Date();
 				this.cdRef.markForCheck();
 			})
@@ -63,8 +63,8 @@ export class StatsComponent implements OnDestroy {
 			.subscribe(({ stats, repos }) => {
 				this.stats = {
 					...this.stats,
-					chatCount: stats.reduce((acc, stat) => acc + (stat.chatCount || 0), 0),
-					promptCount: stats.reduce((acc, stat) => acc + (stat.prompt?.count || 0), 0),
+					chatCount: stats.reduce((acc, stat) => acc + (stat.chatCount ?? 0), 0),
+					promptCount: stats.reduce((acc, stat) => acc + (stat.prompt?.count ?? 0), 0),
 					reposCount: repos.length,
 					updatedAt: new Date(),
 				};
@@ -78,14 +78,14 @@ export class StatsComponent implements OnDestroy {
 	}
 
 	formatNumber(number?: number): string {
-		if (!number) number = 0;
-    if (number < 1000) {
-      return number.toString();
-    } else if (number < 1000000) {
-      const roundedNumber = (number / 1000).toFixed(2);
-      return `${roundedNumber}K`;
+		if (!number) {
+			return '0';
+		}
+		
+    if (number < 1000000) {
+      return new Intl.NumberFormat().format(number);
     } else {
-      const millionNumber = (number / 1000000).toFixed(2);
+      const millionNumber = (number / 1000000).toFixed(1);
       return `${millionNumber}M`;
     }
   }

@@ -12,6 +12,7 @@ import { UserRolesComponent } from './components/user-roles/user-roles.component
 import { UserDetailsRoutingModule } from './user-details-routing.module';
 import { UserDetailsComponent } from './user-details.component';
 import { UserAddCreditsComponent } from './components/user-add-credits/user-add-credits.component';
+import { UserUsagesComponent } from './components/user-usages/user-usages.component';
 
 
 @NgModule({
@@ -23,6 +24,7 @@ import { UserAddCreditsComponent } from './components/user-add-credits/user-add-
   	UserRolesComponent,
    	UserChatsComponent,
     UserAddCreditsComponent,
+    UserUsagesComponent,
   ],
   imports: [
     CommonModule,

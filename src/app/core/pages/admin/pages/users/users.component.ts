@@ -9,7 +9,7 @@ import { PersonalMetaTagsService } from 'src/app/shared/services/personal-meta-t
   styles: [
     `
       :host {
-        @apply block w-full h-full;
+        @apply block w-full h-full md:overflow-y-auto md:max-h-full;
       }
     `
   ],

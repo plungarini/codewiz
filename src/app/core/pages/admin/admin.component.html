@@ -1,7 +1,9 @@
 <div class="relative flex flex-col h-full max-h-full pt-24 sm:flex-row md:pt-0">
-	<div class="block w-full sm:max-w-xs">
+	<div class="block w-full sm:max-w-xs shrink-0">
 		<app-admin-sidebar></app-admin-sidebar>
 	</div>
 
-	<router-outlet></router-outlet>
+	<div class="flex-1">
+		<router-outlet></router-outlet>
+	</div>
 </div>

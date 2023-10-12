@@ -19,6 +19,14 @@ export type AcContact = {
 			max?: number;
 			month?: number;
 			remaining?: number;
-		}
+			credits?: number;
+		};
+		lernUsage: {
+			total?: number;
+			max?: number;
+			month?: number;
+			remaining?: number;
+			credits?: number;
+		};
 	}
 }
