@@ -5,6 +5,7 @@ import { OnboardingData } from '../../models/user/onboarding.model';
 import { User, UserUsageDetails } from '../../models/user/user.model';
 import { firestore } from '../../utils';
 import { ActiveCampaign } from './ac';
+import { addContactToActiveCampaign, calculateMaxUsage, ensureContactInList, extractUserDetails, fetchProductFromSubscription, fetchUserFromFirestore, getCredits, syncActiveCampaignIdWithFirestore, validateInputs } from './ac/upsert';
 
 
 const getSubscriptions = async (uid: string) => {
@@ -17,117 +18,107 @@ const getOnboarding = async (uid: string) => {
 	return (await firestore.doc(`users/${uid}/onboarding/data`).get()).data() as OnboardingData | undefined;
 };
 
-const getUsedQueries = async (uid: string) => {
+const getUsage = async (uid: string, product?: StripeProduct) => {
 	const repos = (await firestore.collection('supported-docs').get()).docs.map((d) => d.id);
-	const usagesPromises = repos.map(async (repo) => {
+	const chatUsagesPromises = repos.map(async (repo) => {
 		return {
 			repoId: repo,
 			stats: (await firestore.collection(`users/${uid}/protected/usages/${repo}`).get()).docs.map((d) => ({ id: d.id, ...d.data() }) as UserUsageDetails),
 		};
 	});
-	const usages = (await Promise.allSettled(usagesPromises)).map((res) => {
+
+	const chatUsages = (await Promise.allSettled(chatUsagesPromises)).map((res) => {
 		if (res.status === 'rejected') {
 			warn('Promise rejected in usages', { cause: res.reason });
 			return undefined;
 		} else {
 			return res.value;
 		}
-	}).filter((s) => (s?.stats.length || 0) > 0);
-
-	warn({ usages });
+	}).filter((s) => (s?.stats.length ?? 0) > 0);
 
 	const thisMonthUsageRef = firestore
 		.collection(`users/${uid}/protected/usages/bySubscription`)
-		.orderBy('createdAt', 'desc')
-		.limit(1);
+		.orderBy('createdAt', 'desc');
 	const thisMonthDoc = await thisMonthUsageRef.get();
-	const thisMonthUsage = thisMonthDoc.docs.at(0)?.data()?.count || 0;
-	warn({ thisMonthUsage });
+	const thisMonthData = thisMonthDoc.docs.at(0)?.data();
 
-	const nonFiltered = usages.map((s) => {
-		return s?.stats.reduce((a, b) => a + (b.prompt?.count || 0), 0);
-	});
-	const totalSum = nonFiltered.reduce((a, b) => (a || 0) + (b || 0), 0);
-	return { month: thisMonthUsage, total: totalSum };
+	if (!thisMonthData) {
+		return {
+			usage: { month: 0, total: 0, max: 0, credits: 0, remaining: 0 },
+			lernUsage: { month: 0, total: 0, max: 0, credits: 0, remaining: 0 },
+		};
+	}
+
+	warn({ thisMonthUsage: thisMonthData });
+	const thisMonthChatUsage: number = thisMonthData.count ?? 0;
+	const thisMonthChatCreditsUsed: number = thisMonthData.chatCreditsUsed ?? 0;
+	const thisMonthLernUsage: number = thisMonthData.lernCount ?? 0;
+	const thisMonthLernCreditsUsed: number = thisMonthData.lernCreditsUsed ?? 0;
+	const maxUsage = calculateMaxUsage(product);
+	const credits = await getCredits(uid);
+
+	const totalChats = chatUsages.map((s) => {
+		return s?.stats.reduce((a, b) => a + (b.prompt?.count ?? 0), 0);
+	}).reduce((a, b) => (a ?? 0) + (b ?? 0), 0);
+
+	const totalLerns = thisMonthDoc.docs
+		.map((d) => (d.data()?.lernCount ?? 0) as number)
+		.reduce((a, b) => (a ?? 0) + (b ?? 0), 0);
+
+	const totalChatCredits = credits.chat + thisMonthChatCreditsUsed;
+	const totalLernCredits = credits.lern + thisMonthLernCreditsUsed;
+
+	const usages = {
+		usage: {
+			month: thisMonthChatUsage,
+			total: totalChats,
+			max: maxUsage.chat,
+			credits: totalChatCredits,
+			remaining: (maxUsage.chat + totalChatCredits) - thisMonthChatUsage,
+		},
+		lernUsage: {
+			month: thisMonthLernUsage,
+			total: totalLerns,
+			max: maxUsage.lern,
+			credits: totalLernCredits,
+			remaining: (maxUsage.lern + totalLernCredits) - thisMonthLernUsage,
+		},
+	};
+
+	warn({ result: usages });
+
+	return usages;
 };
 
 export const upsertAcUser = async (
 	uid: string,
 	user?: User,
 ) => {
-	if (!uid) throw new Error('Unable to retrieve uid');
-	if (!user) user = (await firestore.doc(`users/${uid}`).get()).data();
-	if (!user) throw new Error('Unable to retrieve user');
+	user = user ?? (await fetchUserFromFirestore(uid));
 
-	const subscriptions = await getSubscriptions(uid);
-	const onboarding = await getOnboarding(uid);
-	const usage = await getUsedQueries(uid);
+	validateInputs(uid, user);
 
-	const {
-		email,
-		name,
-		phone,
-		activeCampaignId,
-		stripeId,
-	} = user;
-	if (!email) throw new Error('User email is not defined.');
-
-	let firstName = '';
-	let lastName = '';
-	if (name) {
-		if (name.trim().includes(' ')) {
-			const sections = name.split(' ');
-			firstName = sections.slice(0, -1).join(' ');
-			lastName = sections.at(-1) || '';
-		} else {
-			firstName = name;
-		}
-	}
-
-	const product = (await subscriptions?.at(0)?.product?.get())?.data() as StripeProduct | undefined;
-	const maxUsage = parseInt(product?.metadata?.maxPromptCountMonth || '50') || 50;
+  const subscriptions = await getSubscriptions(uid);
+  const onboarding = await getOnboarding(uid);
+  const product = await fetchProductFromSubscription(subscriptions);
+	const usages = await getUsage(uid, product);
+  const { email, firstName, lastName, phone, activeCampaignId, stripeId } = extractUserDetails(user);
 
 	const sdk = new ActiveCampaign();
 
-	const addContact = await sdk.addContact({
-		email,
-		firstName,
-		lastName,
-		phone: phone,
-		attributes: {
-			appId: uid,
-			stripeId: stripeId,
-			membership: product?.role || 'apprentice',
-			onboarding: {
-				interests: onboarding?.codingInterests.join(', '),
-				experience: onboarding?.experience,
-				goals: onboarding?.goals.join(', '),
-				onboarded: onboarding?.onboarded,
-			},
-			usage: {
-				total: usage?.total || 0,
-				max: maxUsage,
-				month: usage?.month || 0,
-				remaining: maxUsage - (usage?.month || 0),
-			},
-		},
-	});
+  const addedId = await addContactToActiveCampaign(sdk, {
+    email,
+    firstName,
+    lastName,
+    phone,
+    uid,
+    stripeId,
+    product,
+    onboarding,
+    ...usages,
+  });
 
-	warn({ addContact });
-	const addedId = addContact?.contact?.id;
-	if (!addedId) return warn('User added to ActiveCampaign but id is undefined');
-	const lists = await sdk.getContactLists(addedId);
+  await syncActiveCampaignIdWithFirestore(uid, addedId, activeCampaignId);
 
-	if (!activeCampaignId || activeCampaignId !== addedId) {
-		await firestore.doc(`users/${uid}`).update({
-			activeCampaignId: addedId,
-			updatedAt: new Date(),
-		});
-	}
-
-	const hasList = lists?.contactLists.find((l) => l.id === '2');
-	if (hasList) return;
-
-	await sdk.addContactToList(addedId, '2', 'active');
-	warn('User added to Platform Users List.');
+  await ensureContactInList(sdk, addedId);
 };
