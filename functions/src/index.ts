@@ -268,6 +268,24 @@ export const canUserLern = onRequest({
 	}
 });
 
+export const onUserUsageCreditsUpdate = onDocumentWritten(
+	'users/{uid}/protected/usages',
+	async (event) => {
+		const uid = event.params.uid;
+		if (!uid) {
+			error('User id is undefined');
+			return;
+		}
+
+		try {
+			await upsertAcUser(uid);
+		} catch (err) {
+			error(err);
+			return;
+		}
+	}
+);
+
 export const onUserUsageUpdate = onDocumentWritten(
 	'users/{uid}/protected/usages/bySubscription/{periodId}',
 	async (event) => {
@@ -278,7 +296,6 @@ export const onUserUsageUpdate = onDocumentWritten(
 		}
 
 		try {
-			await checkUserData(uid);
 			await upsertAcUser(uid);
 		} catch (err) {
 			error(err);
