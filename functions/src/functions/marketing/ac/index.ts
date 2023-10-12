@@ -6,15 +6,15 @@ import { CreateTag, GetContact, GetContactLists, ListAllTags, SyncContact } from
 export class ActiveCampaign {
 	private _AC_URL = process.env.AC_URL;
 	private _AC_KEY = process.env.AC_KEY;
-	private _AC_HEADERS = {
-		'Api-Token': this._AC_KEY,
+	private _AC_HEADERS: HeadersInit = {
+		'Api-Token': this._AC_KEY ?? '',
 		'Accept': 'application/json',
 		'content-type': 'application/json',
 	};
 
 	private async api<T>(endPoint: string, options?: RequestInit, method = 'GET'): Promise<T | undefined> {
 		if (!production()) return;
-		const opt = Object.assign({ method: method, headers: this._AC_HEADERS }, options);
+		const opt: RequestInit = { method: method, headers: this._AC_HEADERS, ...options };
 		const res = await fetch(endPoint, opt);
 		return res.json();
 	}
@@ -89,22 +89,22 @@ export class ActiveCampaign {
 
 		const options = {
 			contact: {
-				email: email || '',
-				firstName: firstName || '',
-				lastName: lastName || '',
-				phone: phone || '',
+				email: email ?? '',
+				firstName: firstName ?? '',
+				lastName: lastName ?? '',
+				phone: phone ?? '',
 				fieldValues: [
 					{
 						field: 1,
-						value: appId || '',
+						value: appId ?? '',
 					},
 					{
 						field: 12,
-						value: stripeId || '',
+						value: stripeId ?? '',
 					},
 					{
 						field: 3,
-						value: membership || '',
+						value: membership ?? '',
 					},
 					{
 						field: 4,
@@ -112,31 +112,31 @@ export class ActiveCampaign {
 					},
 					{
 						field: 5,
-						value: onboarding?.interests || '',
+						value: onboarding?.interests ?? '',
 					},
 					{
 						field: 6,
-						value: onboarding?.experience || '',
+						value: onboarding?.experience ?? '',
 					},
 					{
 						field: 7,
-						value: onboarding?.goals || '',
+						value: onboarding?.goals ?? '',
 					},
 					{
 						field: 8,
-						value: usage?.total || 0,
+						value: usage?.total ?? 0,
 					},
 					{
 						field: 9,
-						value: usage?.max || 0,
+						value: usage?.max ?? 0,
 					},
 					{
 						field: 10,
-						value: usage?.month || 0,
+						value: usage?.month ?? 0,
 					},
 					{
 						field: 11,
-						value: usage?.remaining || 0,
+						value: usage?.remaining ?? 0,
 					},
 				],
 			},
