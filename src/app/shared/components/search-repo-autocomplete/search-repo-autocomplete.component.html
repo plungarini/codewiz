@@ -61,51 +61,64 @@
 			'top-10': size !== 'lg',
 			'top-12': size === 'lg',
 		}"
-		class="absolute left-0 z-10 flex flex-col w-full overflow-hidden transition-all duration-300 -translate-y-2 divide-y rounded-md shadow-md opacity-0 pointer-events-none divide-zinc-600 bg-zinc-800 shadow-black group-focus-within/menu:-translate-y-0 group-focus-within/menu:opacity-100 group-focus-within/menu:pointer-events-auto"
+		class="absolute left-0 z-[100] flex flex-col w-full overflow-hidden transition-all duration-300 -translate-y-2 divide-y rounded-md shadow-md opacity-0 pointer-events-none divide-zinc-600 bg-zinc-800 shadow-black group-focus-within/menu:-translate-y-0 group-focus-within/menu:opacity-100 group-focus-within/menu:pointer-events-auto"
 	>
 		<ng-container *ngIf="docsListLoaded; else docsListNotLoaded">
 
-			<div class="flex flex-col w-full h-full overflow-hidden overflow-y-auto divide-y max-h-72 divide-zinc-600" *ngIf="filteredDocs.length > 0; else noFilteredDocs">
-				<button
-					*ngFor="let doc of filteredDocs; let i = index"
-					#el
-					[ngClass]="{
-						'bg-zinc-700 cursor-default': doc.id === cacheRepo?.id,
-						'bg-transparent hover:bg-zinc-700/50 cursor-pointer': doc.id !== cacheRepo?.id && (i !== selectedIndex || !searchInput.value),
-						'bg-zinc-700/50 cursor-pointer': i === selectedIndex && doc.id !== cacheRepo?.id && searchInput.value,
-					}"
-					(click)="selectDoc(i)"
-					class="flex flex-row items-center w-full px-2 py-2 space-x-2 transition-colors duration-300 group"
-				>
-					<img
-						ixImg
-						[alt]="doc.name"
-						priority
-						loading="eager"
-						priority
-						[width]="1"
-						[height]="1"
-						[path]="doc.logo"
-						class="w-5 h-5 shrink-0"
-					>
+			<nav class="h-full overflow-y-auto max-h-72" aria-label="Supported Docs" *ngIf="filteredDocs.length > 0; else noFilteredDocs">
+				<ng-container *ngFor="let group of filteredDocsGroups">
+					<div *ngIf="group.repos.length > 0" class="relative">
+						<div class="sticky top-0 z-10 px-2 py-1 bg-zinc-900">
+							<p class="text-sm font-medium leading-6 tracking-wider truncate text-zinc-50">{{group.name}}</p>
+						</div>
+						<ul role="list">
+							<ng-container *ngFor="let doc of group.repos; let i = index">
+								<li *ngIf="doc.visibility === 'public' || (hasPermissions(doc, userRoles))">
+									<button
+										#el
+										[ngClass]="{
+											'bg-zinc-700 cursor-default': doc.id === cacheRepo?.id,
+											'bg-transparent hover:bg-zinc-700/50 cursor-pointer': doc.id !== cacheRepo?.id && (filteredDocs.at(selectedIndex)?.id !== doc.id || !searchInput.value),
+											'bg-zinc-700/50 cursor-pointer': filteredDocs.at(selectedIndex)?.id === doc.id && doc.id !== cacheRepo?.id && searchInput.value,
+										}"
+										(click)="selectDoc(undefined, doc.id)"
+										class="flex flex-row items-center w-full px-2 py-2 space-x-2 transition-colors duration-300 group"
+									>
+										<img
+											ixImg
+											[alt]="doc.name"
+											priority
+											loading="eager"
+											priority
+											[width]="1"
+											[height]="1"
+											[path]="doc.logo"
+											class="w-5 h-5 shrink-0"
+										>
+							
+										<p
+											[ngClass]="{
+												'text-zinc-200': doc.id === cacheRepo?.id,
+												'text-zinc-400': doc.id !== cacheRepo?.id,
+											}"
+											class="w-full text-left truncate duration-300 group-hover:text-zinc-200"
+										>{{doc.name}}</p>
 		
-					<p
-						[ngClass]="{
-							'text-zinc-200': doc.id === cacheRepo?.id,
-							'text-zinc-400': doc.id !== cacheRepo?.id,
-						}"
-						class="w-full text-left truncate duration-300 group-hover:text-zinc-200"
-					>{{doc.name}}</p>
-
-					<div *ngIf="(doc.id !== cacheRepo?.id) && i === selectedIndex && searchInput?.value">
-						<kbd class="p-0.5 bg-zinc-950/40 rounded-md px-1.5 inline-block mx-0.5 text-xs text-zinc-400">Enter</kbd>
+										<div *ngIf="(doc.id !== cacheRepo?.id) && filteredDocs.at(selectedIndex)?.id === doc.id && searchInput?.value">
+											<kbd class="p-0.5 bg-zinc-950/40 rounded-md px-1.5 inline-block mx-0.5 text-xs text-zinc-400">Enter</kbd>
+										</div>
+		
+										<div *ngIf="doc.id === cacheRepo?.id" class="pr-2 shrink-0">
+											<div class="w-2 h-2 rounded-full bg-sky-500"></div>
+										</div>
+									</button>
+								</li>
+							</ng-container>
+						</ul>
 					</div>
+				</ng-container>
+			</nav>
 
-					<div *ngIf="doc.id === cacheRepo?.id" class="pr-2 shrink-0">
-						<div class="w-2 h-2 rounded-full bg-sky-500"></div>
-					</div>
-				</button>
-			</div>
 			<ng-template #noFilteredDocs>
 				<p class="p-2 text-xs text-center truncate">No results<ng-container *ngIf="searchInput.value"> for <b class="text-zinc-300">{{searchInput.value}}</b></ng-container></p>
 			</ng-template>
