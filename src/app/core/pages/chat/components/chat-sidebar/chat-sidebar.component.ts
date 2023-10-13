@@ -22,15 +22,16 @@ import { Repo } from '../../../../../shared/models/repo.model';
 export class ChatSidebarComponent implements OnDestroy {
 
 	private _$selectedRepo = new BehaviorSubject<string>('angular');
-	private routerSub: Subscription;
 	private reposChats: AiUserRepoChat[] = [];
+
+	private _routerSub: Subscription;
 
 	$reposChats = this._$selectedRepo.asObservable().pipe(
 		switchMap((repo) => this.chatService.getRepoChats(repo)),
 		tap((chats) => {
 			this.reposChats = chats;
 			const url = this.router.url;
-			const name = this.reposChats.find((c) => url.includes(c.id))?.name || 'WizChat';
+			const name = this.reposChats.find((c) => url.includes(c.id))?.name ?? 'WizChat';
 			this.meta.update({
 				title: `CodeWiz | ${name}`,
 			})
@@ -44,9 +45,9 @@ export class ChatSidebarComponent implements OnDestroy {
 		private cdRef: ChangeDetectorRef,
 		private meta: PersonalMetaTagsService,
 	) {
-		this.routerSub = this.router.events.subscribe(() => {
+		this._routerSub = this.router.events.subscribe(() => {
 			const url = this.router.url;
-			const name = this.reposChats.find((c) => url.includes(c.id))?.name || 'WizChat';
+			const name = this.reposChats.find((c) => url.includes(c.id))?.name ?? 'WizChat';
 			this.meta.update({
 				title: `CodeWiz | ${name}`,
 			});
@@ -54,13 +55,13 @@ export class ChatSidebarComponent implements OnDestroy {
 	}
 	
 	ngOnDestroy(): void {
-		this.routerSub.unsubscribe();
+		this._routerSub.unsubscribe();
 	}
 
 	thisDate = () => Date.now();
 
 	startNewChat(): void {
-		this.router.navigateByUrl(`/app/chat/${this.selectedDoc?.id || 'angular'}/new`, { onSameUrlNavigation: 'reload' });
+		this.router.navigateByUrl(`/app/chat/${this.selectedDoc?.id ?? 'angular'}/new`, { onSameUrlNavigation: 'reload' });
 		this.cdRef.detectChanges();
 	}
 
@@ -70,7 +71,6 @@ export class ChatSidebarComponent implements OnDestroy {
 		
 		if (!this.router.url.includes(`/chat/${doc.id}/`)) {
 			this.router.navigateByUrl(`/app/chat/${doc.id}/new`);
-			this.cdRef.markForCheck();
 		}
 		this.cdRef.markForCheck();
 	}

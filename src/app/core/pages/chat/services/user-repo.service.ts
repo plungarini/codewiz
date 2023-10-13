@@ -14,7 +14,7 @@ export class UserRepoService {
 	
 	getAllSupportedDocs() {
 		return this.db.getCol<Repo>('supported-docs').pipe(
-			map(d => d.sort((a, b) => {
+			map(d => [...d].sort((a, b) => {
 				// Convert to uppercase for case-insensitive sorting
 				const nameA = a.name.toUpperCase();
 				const nameB = b.name.toUpperCase();

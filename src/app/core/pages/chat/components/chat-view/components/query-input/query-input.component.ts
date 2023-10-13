@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Even
 import { FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
+import { UserPermissionsService } from 'src/app/auth/services/user-permissions.service';
 import { Repo } from 'src/app/shared/models/repo.model';
 import { UserRepoService } from '../../../../services/user-repo.service';
 
@@ -40,18 +41,22 @@ export class QueryInputComponent implements OnInit, OnDestroy {
 		validators: Validators.required
 	});
 	repo: Repo | undefined;
+	userRoles: string[] = [];
 	
 	showSuggestions = false;
 	_showSuggestions = false;
+
 	private selectedRepoId$: BehaviorSubject<string> = new BehaviorSubject('angular');
 
 	private repoSub: Subscription;
+	private permissionsSub: Subscription;
 	private routerSub: Subscription;
 
 	constructor(
 		private cdRef: ChangeDetectorRef,
-		private repoService: UserRepoService,
 		private router: Router,
+		private permissions: UserPermissionsService,
+		private repoService: UserRepoService,
 	) {
 		this.repoSub = this.selectedRepoId$.asObservable().pipe(
 			switchMap((id) => {
@@ -67,6 +72,10 @@ export class QueryInputComponent implements OnInit, OnDestroy {
 			}, 1000);
 			this.cdRef.markForCheck();
 		});
+
+		this.permissionsSub = this.permissions.getPermissions$().subscribe(roles => {
+			this.userRoles = roles;
+		});
 		
 		this.routerSub = this.router.events.subscribe((e) => {
 			this.textAreaComponent?.nativeElement.focus();
@@ -79,6 +88,7 @@ export class QueryInputComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		this.repoSub.unsubscribe();
+		this.permissionsSub.unsubscribe();
 		this.routerSub.unsubscribe();
 	}
 
@@ -95,22 +105,20 @@ export class QueryInputComponent implements OnInit, OnDestroy {
 	handleKeypress(event: KeyboardEvent): void {
 		if (!this.textInput.value) return;
 
-		switch (event.key) {
-			case 'Enter':
-				if (event.shiftKey) return;
-				event.preventDefault();
-				event.stopImmediatePropagation();
+		if (event.key === 'Enter') {
+			if (event.shiftKey) return;
+			event.preventDefault();
+			event.stopImmediatePropagation();
 
-				this.submitMessage();
-				break;
-		
-			default:
-				return;
+			this.submitMessage();
 		}
 	}
 
 	submitSuggestion(value: string): void {
 		if (this.gettingQuery) return;
+		const condition = this.userRoles.some(role => this.repo?.visibilityRoles?.includes(role));
+		if (!condition) return;
+
 		this.showSuggestions = false;
 		this.onQuery.emit(value.trim());
 		this.resetTextInput();
@@ -120,6 +128,9 @@ export class QueryInputComponent implements OnInit, OnDestroy {
 
 	submitMessage(): void {
 		if (!this.textInput.valid || !this.textInput.value || this.gettingQuery) return;
+		const condition = this.userRoles.some(role => this.repo?.visibilityRoles?.includes(role));
+		if (!condition) return;
+
 		this.onQuery.emit(this.textInput.value.trim());
 		this.resetTextInput();
 		this.textAreaComponent?.nativeElement.blur();

@@ -23,7 +23,7 @@ export class ReposListComponent {
 	) {
 		this.repos = this.db.getCol<Repo>('supported-docs').pipe(
 			map((d) => {
-				const docs = d
+				const docs = [...d]
 					// Sort by name
 					.sort((a, b) => {
 						// Convert to uppercase for case-insensitive sorting
@@ -34,17 +34,6 @@ export class ReposListComponent {
 							return -1;
 						}
 						if (nameA > nameB) {
-							return 1;
-						}
-						return 0;
-					})
-					
-					// Sort by visibility
-					.sort((a, b) => {
-						if (a.hide && !b.hide) {
-							return -1;
-						}
-						if (!a.hide && b.hide) {
 							return 1;
 						}
 						return 0;

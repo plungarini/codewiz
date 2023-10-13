@@ -23,15 +23,15 @@
 		<div class="relative">
 			<div
 				[ngClass]="{
-					'opacity-0': !repo.hide,
-					'bg-amber-300 animate-ping opacity-100': repo.hide,
+					'opacity-0': repo.visibility === 'public',
+					'bg-amber-300 animate-ping opacity-100': repo.visibility !== 'public',
 				}"
 				class="absolute top-0 left-0 z-10 w-2 h-2 transition-all duration-300 rounded-full"
 			></div>
 			<div
 				[ngClass]="{
-					'bg-teal-500': !repo.hide,
-					'bg-amber-400': repo.hide,
+					'bg-teal-500': repo.visibility === 'public',
+					'bg-amber-400': repo.visibility !== 'public',
 				}"
 				class="relative z-20 w-2 h-2 rounded-full"
 			></div>

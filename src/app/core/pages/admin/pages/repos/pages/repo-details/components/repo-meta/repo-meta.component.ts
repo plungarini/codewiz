@@ -30,16 +30,24 @@ export class RepoMetaComponent {
 	
 	form = this.builder.group({
 		id: this.builder.control('', { nonNullable: true, validators: [Validators.required] }),
+		tableName: this.builder.control('', { nonNullable: true, validators: [Validators.required] }),
+		category: this.builder.control('', { nonNullable: true, validators: [Validators.required] }),
 		name: this.builder.control('', { nonNullable: true, validators: [Validators.required] }),
 		logo: this.builder.control('', { nonNullable: true, validators: [Validators.required] }),
 		url: this.builder.control('', { nonNullable: true, validators: [Validators.required] }),
-		hide: this.builder.control(false),
 		hostUrl: this.builder.control('', { nonNullable: true, validators: [Validators.required] }),
 		replaceUrl: this.builder.control('', { nonNullable: true }),
 		replaceStrings: this.builder.array<FormGroup<{ s: FormControl<string>, r: FormControl<string> }>>([]),
 		querySuggestions: this.builder.array<FormControl<string>>([]),
+		visibility: this.builder.control<'public' | 'restricted'>('restricted', { nonNullable: true, validators: [Validators.required] }),
 	});
 	dbRepo: Partial<Repo> | undefined;
+
+	visibilityRolesForm = this.builder.group({
+		control: this.builder.control('', { nonNullable: true, validators: Validators.required }),
+	});
+
+	visibilityRoles: Set<string> = new Set(['admin']);
 
 	constructor(
 		private cdRef: ChangeDetectorRef,
@@ -58,20 +66,27 @@ export class RepoMetaComponent {
 		const normReplaceStrings = this.form.controls.replaceStrings.controls.map((s) => s.value);
 		const newReplaceStrings = _uniqWith(
 			normReplaceStrings?.map((r) => ({
-				s: r.s || '', r: r.r || '',
-			})) || [],
+				s: r.s ?? '', r: r.r ?? '',
+			})) ?? [],
 			_isEqual
 		);
+
+		const normVisibility = formValue.visibility === 'restricted' && this.visibilityRoles.size <= 0 ? 'public' : formValue.visibility;
+		const normVisibilityRoles = normVisibility === 'public' ? [] : [...this.visibilityRoles];
+
 		const value: Partial<Repo> = {
 			id: formValue.id,
+			tableName: formValue.tableName,
 			name: formValue.name,
 			logo: formValue.logo,
 			url: formValue.url,
-			hide: !!formValue.hide,
 			hostUrl: formValue.hostUrl,
 			replaceUrl: formValue.replaceUrl,
 			replaceStrings: newReplaceStrings,
 			querySuggestions: normQuerySuggestions,
+			category: formValue.category,
+			visibility: normVisibility,
+			visibilityRoles: normVisibilityRoles,
 		};
 
 		try {
@@ -85,6 +100,30 @@ export class RepoMetaComponent {
 		}
 		this.loadingSave = false;
 		this.cdRef.markForCheck();
+	}
+
+	setVisibility(value: 'public' | 'restricted') {
+		this.form.patchValue({ visibility: value });
+		this.cdRef.markForCheck();
+	}
+
+	addNewVisibilityRole() {
+		const value = this.visibilityRolesForm.value.control?.trim().toLowerCase();
+		if (!value) return;
+		this.visibilityRoles.add(value);
+		this.visibilityRolesForm.controls.control.reset();
+		this.setVisibility('restricted');
+		this.cdRef.markForCheck();
+	}
+
+	removeVisibilityRole(role: string) {
+		if (!this.visibilityRoles.has(role)) return;
+		this.visibilityRoles.delete(role);
+		if (this.visibilityRoles.size <= 0) {
+			this.setVisibility('public');
+		} else {
+			this.setVisibility('restricted');
+		}
 	}
 
 	get disabledQuerySuggestions() {
@@ -122,32 +161,33 @@ export class RepoMetaComponent {
 		this.dbRepo = value;
 		this.form.reset(undefined, { emitEvent: false });
 		this.form.patchValue(value);
-		this.changeReplaceStrings(value.replaceStrings || []);
-		this.changeQuerySuggestions(value.querySuggestions || []);
+		this.visibilityRoles = new Set(value.visibilityRoles ?? []);
+		this.changeReplaceStrings(value.replaceStrings ?? []);
+		this.changeQuerySuggestions(value.querySuggestions ?? []);
 		this.cdRef.markForCheck();
 	}
 
 	private changeQuerySuggestions(querySuggestions: string[]) {
 		if (!querySuggestions || querySuggestions.length <= 0) return;
-		const normStrings = _uniqWith(querySuggestions || [], _isEqual);
+		const normStrings = _uniqWith(querySuggestions ?? [], _isEqual);
 		
 		this.form.controls.querySuggestions = this.builder.array<FormControl<string>>([]);
 		const querySuggestionsArray = this.form.controls.querySuggestions;
-		for (let i = 0; i < normStrings.length; i++) {
-			const query = normStrings[i];
+		for (const element of normStrings) {
+			const query = element;
 			querySuggestionsArray.push(new FormControl(query, { nonNullable: true }));
 		}
 	}
 
 	private changeReplaceStrings(replaceStrings: { s: string, r: string }[]) {
 		if (!replaceStrings || replaceStrings.length <= 0) return;
-		const normStrings = _uniqWith(replaceStrings || [], _isEqual);
+		const normStrings = _uniqWith(replaceStrings ?? [], _isEqual);
 		
 		const arr = this.builder.array<FormGroup<{ s: FormControl<string>, r: FormControl<string> }>>([]);
 		this.form.controls.replaceStrings = arr;
 		
-		for (let i = 0; i < normStrings.length; i++) {
-			const replacer = normStrings[i];
+		for (const element of normStrings) {
+			const replacer = element;
 			const group = this.builder.group({
 				s: this.builder.control(replacer.s, { nonNullable: true, validators: [Validators.required] }),
 				r: this.builder.control(replacer.r, { nonNullable: true, validators: [] }),
