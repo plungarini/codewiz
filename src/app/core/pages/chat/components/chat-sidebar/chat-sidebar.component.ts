@@ -66,6 +66,7 @@ export class ChatSidebarComponent implements OnDestroy {
 	}
 
 	updateSelectedDoc(doc: Repo): void {
+		if (!doc?.id) return;
 		this.selectedDoc = doc;
 		this._$selectedRepo.next(doc.id);
 		

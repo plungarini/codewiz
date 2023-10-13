@@ -137,6 +137,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		i = i ?? this.filteredDocs.findIndex(d => d.id === id);
 		if (i <= -1) this.selectedIndex = 0;
 		this.repo = this.filteredDocs[i];
+		if (!this.repo) return;
 		this.cacheRepo = this.filteredDocs[i];
 		this.onRepo.emit(this.filteredDocs[i])
 		this.searchDocsInputElement?.nativeElement.focus();
