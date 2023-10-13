@@ -28,21 +28,21 @@
       <dd class="flex items-baseline justify-between mt-1 md:block lg:flex" *ngIf="(users$ | async) as users; else noUserSkeleton">
         <div class="flex items-baseline text-2xl font-semibold text-indigo-500">
           {{users.length}}
-          <span class="ml-2 text-sm font-medium text-zinc-500">from {{users.length - getLastMonthUsers(users)}}</span>
+          <span class="ml-2 text-sm font-medium text-zinc-500">from {{users.length - getThisMonthUsers(users)}}</span>
         </div>
 
 				<div
 					[ngClass]="{
-						'bg-green-100 text-green-800': getLastMonthUsers(users) > 0,
-						'bg-amber-100 text-amber-800': getLastMonthUsers(users) <= 0,
+						'bg-green-100 text-green-800': getThisMonthUsers(users) > 0,
+						'bg-amber-100 text-amber-800': getThisMonthUsers(users) <= 0,
 					}"
 					class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
 				>
           <svg
 						class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-green-500"
 						[ngClass]="{
-							'text-green-500': getLastMonthUsers(users) > 0,
-							'text-amber-500': getLastMonthUsers(users) <= 0,
+							'text-green-500': getThisMonthUsers(users) > 0,
+							'text-amber-500': getThisMonthUsers(users) <= 0,
 						}"
 						viewBox="0 0 20 20"
 						fill="currentColor"
@@ -50,7 +50,7 @@
 					>
             <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
           </svg>
-          +{{getLastMonthUsers(users)}}
+          +{{getThisMonthUsers(users)}}
         </div>
       </dd>
     </div>
@@ -59,21 +59,21 @@
       <dd class="flex items-baseline justify-between mt-1 md:block lg:flex" *ngIf="(users$ | async) as users; else noUserSkeleton">
         <div class="flex items-baseline text-2xl font-semibold text-indigo-500">
           {{getTotalSubscribers(users)}}
-          <span class="ml-2 text-sm font-medium text-zinc-500">from {{getTotalSubscribers(users) - getLastMonthSubscribers(users)}}</span>
+          <span class="ml-2 text-sm font-medium text-zinc-500">from {{getTotalSubscribers(users) - getThisMonthSubscribers(users)}}</span>
         </div>
 
         <div
 					[ngClass]="{
-						'bg-green-100 text-green-800': getLastMonthSubscribers(users) > 0,
-						'bg-amber-100 text-amber-800': getLastMonthSubscribers(users) <= 0,
+						'bg-green-100 text-green-800': getThisMonthSubscribers(users) > 0,
+						'bg-amber-100 text-amber-800': getThisMonthSubscribers(users) <= 0,
 					}"
 					class="inline-flex items-baseline rounded-full px-2.5 py-0.5 text-sm font-medium md:mt-2 lg:mt-0"
 				>
           <svg
 						class="-ml-1 mr-0.5 h-5 w-5 flex-shrink-0 self-center text-green-500"
 						[ngClass]="{
-							'text-green-500': getLastMonthSubscribers(users) > 0,
-							'text-amber-500': getLastMonthSubscribers(users) <= 0,
+							'text-green-500': getThisMonthSubscribers(users) > 0,
+							'text-amber-500': getThisMonthSubscribers(users) <= 0,
 						}"
 						viewBox="0 0 20 20"
 						fill="currentColor"
@@ -81,7 +81,7 @@
 					>
             <path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd" />
           </svg>
-          +{{getLastMonthSubscribers(users)}}
+          +{{getThisMonthSubscribers(users)}}
         </div>
       </dd>
     </div>
