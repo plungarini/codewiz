@@ -74,8 +74,8 @@ private calculateUserRevenue(user?: User): User | undefined {
 			const invoiceMonth = invoiceNow.getMonth();
 			const invoiceDateId = `${invoiceMonth < 10 ? '0' : ''}${invoiceMonth}_${invoiceNow.getFullYear()}`;
 
-			if (dateId === invoiceDateId) currentTotalPaid += invoice.amount_paid
-			totalPaid += invoice.amount_paid;
+			if (dateId === invoiceDateId) currentTotalPaid += (invoice.amount_paid / 100)
+			totalPaid += (invoice.amount_paid / 100);
 		})
 	});
 
