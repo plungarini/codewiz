@@ -11,9 +11,9 @@ export type RepoPage = {
 export type Repo = {
 	id: string;
 	name: string;
+	category: string;
 	logo: string;
 	url: string;
-	hide: boolean;
 	hostUrl: string;
 	replaceUrl: string;
 	tableName: string;
@@ -27,6 +27,8 @@ export type Repo = {
 		folder: string[];
 		relativeLinksHost: string[];
 	};
+	visibility?: 'public' | 'restricted';
+	visibilityRoles?: string[];
 	embeddingsUpdatedAt?: Timestamp;
 	createdAt?: Timestamp;
 	updatedAt?: Timestamp;
