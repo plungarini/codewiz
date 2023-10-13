@@ -34,7 +34,8 @@ export class MessagesComponent {
 		)
 	);
 	repo$: Observable<Repo | undefined>;
-	private repoId = new BehaviorSubject('angular');
+
+	private _repoId = new BehaviorSubject('angular');
 
 	@Input('chat') set setChat(value: AiChatMessage[]) {
 		if (!value || value?.length < 0) return;
@@ -67,16 +68,16 @@ export class MessagesComponent {
 
 	@Input('repoId') set setRepoId(value: string) {
 		if (!value) return;
-		this.repoId.next(value);
+		this._repoId.next(value);
 	}
 
 	constructor(
+		private cdRef: ChangeDetectorRef,
 		private db: FirebaseExtendedService,
 		private usersService: UsersService,
-		private cdRef: ChangeDetectorRef,
-		private clipboardService: ClipboardService
+		private clipboardService: ClipboardService,
 	) {
-		this.repo$ = this.repoId.pipe(
+		this.repo$ = this._repoId.pipe(
 			switchMap((id) => this.db.getDoc<Repo>(`supported-docs/${id}`))
 		)
 	}
@@ -113,18 +114,18 @@ export class MessagesComponent {
 	}
 
 	trackBy(i: number, obj: AiChatMessage): string {
-		return obj?.id || i.toString();
+		return obj?.id ?? i.toString();
 	}
 
 	interpretError(err: AiChatMessage['error']): { code: string, message: string } {
-		const defaultMessage = err?.message || 'Apologies, but it seems we\'re experiencing some technical difficulties. Please try again in few minutes or reach out to the support.';
+		const defaultMessage = err?.message ?? 'Apologies, but it seems we\'re experiencing some technical difficulties. Please try again in few minutes or reach out to the support.';
 		const debug = err?.debug?.message;
 		let code = '';
 		if (typeof debug !== 'string') {
-			code = debug?.data?.['code'] || '';
+			code = debug?.data?.['code'] ?? '';
 		}
 		
-		let msg = defaultMessage;
+		let msg;
 		switch (code) {
 			case 'SUBSCRIPTION_LIMIT_REACHED':
 				msg = 'It seems you have reached the limit of questions for your plan. [Upgrade your plan](/app/settings/billing) to continue.';
