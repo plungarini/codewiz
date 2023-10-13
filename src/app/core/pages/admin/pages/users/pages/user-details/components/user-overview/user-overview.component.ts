@@ -32,7 +32,7 @@ export class UserOverviewComponent {
 	}
 
 	getRevenue(inEur: number, outUsd: number): number {
-		return (inEur * 1.10) - outUsd;
+		return inEur - (outUsd + 0.95);
 	}
 
 }
