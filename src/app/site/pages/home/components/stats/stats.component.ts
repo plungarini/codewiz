@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { where } from '@angular/fire/firestore';
 import { map, Subscription, switchMap } from 'rxjs';
 import { ChatStatsService } from 'src/app/shared/services/chat-stats.service';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
@@ -52,7 +53,7 @@ export class StatsComponent implements OnDestroy {
 		this.chatsSub = this.chatStats.getAllChatStats()
 			.pipe(
 				switchMap(stats => {
-					return this.chatStats.getAllSupportedRepos().pipe(
+					return this.chatStats.getAllSupportedRepos(where('visibility', '==', 'public')).pipe(
 						map(repos => ({
 							stats,
 							repos,
