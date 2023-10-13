@@ -25,10 +25,10 @@ export class UsersStatsComponent {
 		this.users$ = this.usersService.getAllWithSubscriptions();
 	}
 
-	getLastMonthUsers(users: User[]) {
+	getThisMonthUsers(users: User[]) {
 		return users
 			.filter(user => !!user.createdAt)
-			.filter(user => (user.createdAt?.toDate() ?? new Date()) > new Date(new Date().setDate(new Date().getDate() - 30)))
+			.filter(user => (user.createdAt?.toDate() ?? new Date()) > this._getLastDayOfLastMonth())
 			.length;
 	}
 
@@ -38,11 +38,19 @@ export class UsersStatsComponent {
 			.length;
 	}
 
-	getLastMonthSubscribers(users: User[]) {
+	getThisMonthSubscribers(users: User[]) {
 		return users
 			.filter(user => !!user.subscriptions?.at(0)?.created)
-			.filter(user => (user.subscriptions?.at(0)?.created?.toDate() ?? new Date()) > new Date(new Date().setDate(new Date().getDate() - 30)))
+			.filter(user => (user.subscriptions?.at(0)?.created?.toDate() ?? new Date()) > this._getLastDayOfLastMonth())
 			.length;
+	}
+
+	private _getLastDayOfLastMonth() {
+		let date = new Date();
+		date.setDate(1);  // Set to the first day of the current month
+		date.setDate(date.getDate() - 1);  // Subtract one day to go to the last day of the previous month
+
+		return date;
 	}
 
 }
