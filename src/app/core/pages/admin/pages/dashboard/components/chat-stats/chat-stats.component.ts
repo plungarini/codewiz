@@ -27,7 +27,7 @@ export class ChatStatsComponent {
 	getTotalCount(stats: RepoStat[]): number {
 		let totalCount: number = 0;
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth());
+			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate() > this._getLastDayOfLastMonth());
 			if (!historyItem) return;
 			const promptCount: number = historyItem.prompt?.count ?? 0;
 			const completionCount: number = historyItem.completion?.count ?? 0;
@@ -40,7 +40,7 @@ export class ChatStatsComponent {
 	getTotalCountLastMonth(stats: RepoStat[]): number {
 		let totalCount: number = 0;
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth() - 1);
+			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === this._getLastDayOfLastMonth().getMonth());
 			if (!historyItem) return;
 			const promptCount: number = historyItem.prompt?.count || 0;
 			const completionCount: number = historyItem.completion?.count || 0;
@@ -53,7 +53,7 @@ export class ChatStatsComponent {
 	getTotalCost(stats: RepoStat[]): number {
 		let totalCost: number = 0;
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth());
+			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate() > this._getLastDayOfLastMonth());
 			if (!historyItem) return;
 			const promptTotalUSD: number = historyItem.prompt?.totalUSD ?? 0;
 			const completionTotalUSD: number = historyItem.completion?.totalUSD ?? 0;
@@ -66,7 +66,7 @@ export class ChatStatsComponent {
 	getTotalCostLastMonth(stats: RepoStat[]): number {
 		let totalCost: number = 0;
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth() - 1);
+			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === this._getLastDayOfLastMonth().getMonth());
 			if (!historyItem) return;
 			const promptTotalUSD: number = historyItem.prompt?.totalUSD ?? 0;
 			const completionTotalUSD: number = historyItem.completion?.totalUSD ?? 0;
@@ -79,7 +79,7 @@ export class ChatStatsComponent {
 	getPricePerQuestion(stats: RepoStat[]): number {
 		let costs: number[] = [];
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth());
+			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate() > this._getLastDayOfLastMonth());
 			if (!historyItem) return;
 			const promptTotalUSD: number = historyItem.prompt?.averageUSDPerPrompt ?? 0;
 			const completionTotalUSD: number = historyItem.completion?.averageUSDPerCompletion ?? 0;
@@ -95,7 +95,7 @@ export class ChatStatsComponent {
 	getPricePerQuestionLastMonth(stats: RepoStat[]): number {
 		let costs: number[] = [];
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth() - 1);
+			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === this._getLastDayOfLastMonth().getMonth());
 			if (!historyItem) return;
 			const promptTotalUSD: number = historyItem.prompt?.averageUSDPerPrompt ?? 0;
 			const completionTotalUSD: number = historyItem.completion?.averageUSDPerCompletion ?? 0;
@@ -110,7 +110,7 @@ export class ChatStatsComponent {
 	getPricePerPrompt(stats: RepoStat[]): number {
 		let costs: number[] = [];
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth());
+			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate() > this._getLastDayOfLastMonth());
 			if (!historyItem) return;
 			costs.push(historyItem.prompt?.averageUSDPerPrompt ?? 0);
 		});
@@ -123,7 +123,7 @@ export class ChatStatsComponent {
 	getPricePerPromptLastMonth(stats: RepoStat[]): number {
 		let costs: number[] = [];
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth() - 1);
+			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === this._getLastDayOfLastMonth().getMonth());
 			if (!historyItem) return;
 			costs.push(historyItem.prompt?.averageUSDPerPrompt || 0);
 		});
@@ -135,7 +135,7 @@ export class ChatStatsComponent {
 	getPricePerCompletion(stats: RepoStat[]): number {
 		let costs: number[] = [];
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth());
+			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate() > this._getLastDayOfLastMonth());
 			if (!historyItem) return;
 			costs.push(historyItem.completion?.averageUSDPerCompletion ?? 0);
 		});
@@ -148,7 +148,7 @@ export class ChatStatsComponent {
 	getPricePerCompletionLastMonth(stats: RepoStat[]): number {
 		let costs: number[] = [];
 		stats.forEach((repoStat: RepoStat) => {
-			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === new Date().getMonth() - 1);
+			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === this._getLastDayOfLastMonth().getMonth());
 			if (!historyItem) return;
 			costs.push(historyItem.completion?.averageUSDPerCompletion ?? 0);
 		});
@@ -171,6 +171,14 @@ export class ChatStatsComponent {
 
 	trackBy(i: number, obj: RepoStat): string {
 		return obj.id ?? i.toString();
+	}
+
+	private _getLastDayOfLastMonth() {
+		let date = new Date();
+		date.setDate(1);  // Set to the first day of the current month
+		date.setDate(date.getDate() - 1);  // Subtract one day to go to the last day of the previous month
+
+		return date;
 	}
 
 }
