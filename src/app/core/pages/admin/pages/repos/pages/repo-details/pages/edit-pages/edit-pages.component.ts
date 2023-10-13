@@ -1,10 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, firstValueFrom, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable, Subscription, take } from 'rxjs';
+import { UserRepoService } from 'src/app/core/pages/chat/services/user-repo.service';
 import { Repo, RepoPage } from '../../../../../../../../../shared/models/repo.model';
 import { AdminRepoService } from '../../services/admin-repo.service';
 import { EmbeddingsService } from '../../services/embeddings.service';
+
+type HistoryProps = 'author' | 'folder' | 'relativeLinksHost';
 
 @Component({
   templateUrl: './edit-pages.component.html',
@@ -20,6 +23,7 @@ import { EmbeddingsService } from '../../services/embeddings.service';
 export class EditPagesComponent implements OnDestroy {
 
 	repoId: string;
+	repo: Repo | undefined;
 
 	buttonLoading: boolean = false;
 	buttonLoadingEmbeddings: boolean = false;
@@ -54,13 +58,18 @@ export class EditPagesComponent implements OnDestroy {
 	pages$: Observable<RepoPage[]> = this._pages$.asObservable();
 
 	constructor(
-		private route: ActivatedRoute,
-		private embeddingsService: EmbeddingsService,
-		private cdRef: ChangeDetectorRef,
 		private fb: FormBuilder,
+		private route: ActivatedRoute,
+		private cdRef: ChangeDetectorRef,
+		private repoService: UserRepoService,
+		private embeddingsService: EmbeddingsService,
 		private adminRepoService: AdminRepoService,
 	) { 
 		this.repoId = this.route.snapshot.params['id'];
+		this.repoService.getRepo(this.repoId).pipe(take(1)).subscribe((repo) => {
+			this.repo = repo;
+		});
+
 		this.repoHistorySub = this.adminRepoService.getEditPagesSearch(this.repoId).subscribe((repoHistory) => {
 			this.repoHistory = repoHistory;
 			this.cdRef.markForCheck();
@@ -71,7 +80,7 @@ export class EditPagesComponent implements OnDestroy {
 		this.repoHistorySub.unsubscribe();
 	}
 
-	showHistoryFn(id: 'author' | 'folder' | 'relativeLinksHost', value: boolean): void {
+	showHistoryFn(id: HistoryProps, value: boolean): void {
 		setTimeout(() => {
 			this.showHistory[id] = value;
 			this.cdRef.markForCheck();
@@ -118,7 +127,7 @@ export class EditPagesComponent implements OnDestroy {
     this.buttonLoadingEmbeddings = false;
 	} */
 
-	async removeRecentSearch(id: 'author' | 'folder' | 'relativeLinksHost', value: string): Promise<void> {
+	async removeRecentSearch(id: HistoryProps, value: string): Promise<void> {
 		await this.adminRepoService.removeEditPagesSearch(this.repoId, { [id]: [value] });
 	}
 
@@ -128,7 +137,7 @@ export class EditPagesComponent implements OnDestroy {
 		this.cdRef.markForCheck();
 	}
 
-	setValueFromHistorySearch(id: 'author' | 'folder' | 'relativeLinksHost', value: string): void {
+	setValueFromHistorySearch(id: HistoryProps, value: string): void {
 		this.scrapeRepoform.patchValue({ [id]: value });
 		this.cdRef.markForCheck();
 	}
@@ -143,9 +152,9 @@ export class EditPagesComponent implements OnDestroy {
 		this.cdRef.markForCheck();
 		try {
 			const files = await this.embeddingsService.fetchGitRepo({
-				author: this.scrapeRepoform.value.author || '',
-				folder: this.scrapeRepoform.value.folder || '',
-				relativeLinksHost: this.scrapeRepoform.value.relativeLinksHost || '',
+				author: this.scrapeRepoform.value.author ?? '',
+				folder: this.scrapeRepoform.value.folder ?? '',
+				relativeLinksHost: this.scrapeRepoform.value.relativeLinksHost ?? '',
 			});
 			this._pages$.next(files);
 			console.log({ files })
@@ -209,7 +218,7 @@ export class EditPagesComponent implements OnDestroy {
 			return console.error('Repo not found, id must be provided');
 		}
 
-		const files: RepoPage[] = inputFiles ? inputFiles : await firstValueFrom(this.pages$);
+		const files: RepoPage[] = inputFiles ?? await firstValueFrom(this.pages$);
 		const file = files.find(f => f.name === inputFile.name);
 		const author = this.scrapeRepoform.value.author;
 		const folder = this.scrapeRepoform.value.folder;
@@ -223,8 +232,8 @@ export class EditPagesComponent implements OnDestroy {
 
 		try {
 			await this.embeddingsService.generateEmbedding({
-				author: author || '',
-				table: this.repoId,
+				author: author ?? '',
+				table: this.repo?.tableName ?? this.repoId,
 				content: file.content,
 				link: file.path,
 				title: file.title,
