@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { orderBy } from '@angular/fire/firestore';
+import { orderBy, QueryConstraint } from '@angular/fire/firestore';
 import { combineLatest, filter, map, Observable, of, switchMap } from 'rxjs';
 import { FirebaseExtendedService } from 'src/app/shared/services/firebase-ext.service';
 import { CompletionStat, RepoStat } from '../models/chat-stats.model';
@@ -40,7 +40,7 @@ export class ChatStatsService {
 		)
 	}
 
-	getAllSupportedRepos(): Observable<Repo[]> {
-		return this.db.getCol<Repo>('supported-docs');
+	getAllSupportedRepos(...queryConstraints: QueryConstraint[]): Observable<Repo[]> {
+		return this.db.getCol<Repo>('supported-docs', 'id', ...queryConstraints);
 	}
 }
