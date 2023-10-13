@@ -38,7 +38,7 @@
 						'text-red-400': getRevenue(user.revenueDetails?.totalPaid || 0, user.revenueDetails?.totalCost || 0 ) < 0,
 						'text-amber-400': getRevenue(user.revenueDetails?.totalPaid || 0, user.revenueDetails?.totalCost || 0 ) === 0,
 					}"
-				>{{getRevenue(user.revenueDetails?.totalPaid || 0, user.revenueDetails?.totalCost || 0 ) | currency:'USD'}}</p>
+				>{{getRevenue(user.revenueDetails?.totalPaid || 0, user.revenueDetails?.totalCost || 0 ) | currency:'EUR'}}</p>
 			</div>
 		</div>
 
