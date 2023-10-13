@@ -42,11 +42,12 @@ export class ChatViewComponent implements OnDestroy {
 		indicator: AiChatStatusIndicator.None,
 	}
 	
-	statusSub: Subscription;
-	chatSub: Subscription | undefined;
 	selectedRepo: string = 'angular';
 	chatLoaded = false;
-	private chatId: string = '';
+
+	private _statusSub: Subscription;
+	private _chatSub: Subscription;
+	private _chatId: string = '';
 
 	constructor(
 		private ai: AiChatService,
@@ -55,12 +56,12 @@ export class ChatViewComponent implements OnDestroy {
 		private router: Router,
 		@Inject(DOCUMENT) private document: Document,
 	) {
-		this.statusSub = this.ai.getStatus().subscribe((s) => {
+		this._statusSub = this.ai.getStatus().subscribe((s) => {
 			this.status = s;
 			console.warn('New openai status', this.status);
 			this.cdRef.markForCheck();
 		});
-		this.chatSub = this.route.paramMap
+		this._chatSub = this.route.paramMap
 			.pipe(
 				switchMap((params) => {
 					const repo = params.get('repo');
@@ -70,8 +71,8 @@ export class ChatViewComponent implements OnDestroy {
 						this.selectedRepo = repo;
 					}
 
-					if (id && id !== this.chatId) {
-						this.chatId = id;
+					if (id && id !== this._chatId) {
+						this._chatId = id;
 						this.chatLoaded = false;
 						this.maxResultsLoaded = false;
 						this.oldChat = [];
@@ -95,7 +96,7 @@ export class ChatViewComponent implements OnDestroy {
 			
 			if (this.chat.length <= 0) {
 				const repo = this.route.snapshot.paramMap.get('repo');
-				this.router.navigateByUrl(`/app/chat/${repo}/new`);
+				this.router.navigateByUrl(`/app/chat/${repo ?? 'angular'}/new`);
 				this.cdRef.markForCheck();
 			}
 
@@ -114,8 +115,8 @@ export class ChatViewComponent implements OnDestroy {
 	}
 
 	ngOnDestroy(): void {
-		this.statusSub.unsubscribe();
-		this.chatSub?.unsubscribe();
+		this._statusSub.unsubscribe();
+		this._chatSub.unsubscribe();
 	}
 
 	get isChatEmpty(): boolean {
@@ -144,7 +145,7 @@ export class ChatViewComponent implements OnDestroy {
 			const lastId = this.oldChat.at(0)?.id ?? this.chat.at(0)?.id;
 			const lastDate = this.oldChat.at(0)?.createdAt?.toDate() ?? this.chat.at(0)?.createdAt?.toDate();
 			if (!lastDate) return;
-			const oldMessages = await this.ai.getChatMessagesPaginated(this.selectedRepo, this.chatId, lastDate, this.messageLimit);
+			const oldMessages = await this.ai.getChatMessagesPaginated(this.selectedRepo, this._chatId, lastDate, this.messageLimit);
 
 			if (oldMessages.length < (this.messageLimit - 1)) {
 				this.maxResultsLoaded = true;
@@ -187,14 +188,14 @@ export class ChatViewComponent implements OnDestroy {
 	private async deleteNextMessages(fromId: string): Promise<void> {
 		const msgIndex = this.chat.findIndex((m) => m.id === fromId);
 		const messagesToDelete = this.chat.slice(msgIndex + 1).map((m) => m.id).filter((id) => !!id) as string[];
-		await this.ai.deleteMultipleMessages(this.selectedRepo, this.chatId, messagesToDelete);
+		await this.ai.deleteMultipleMessages(this.selectedRepo, this._chatId, messagesToDelete);
 	}
 
 	async createQuery(query: string, refreshQueryId?: string): Promise<void> {
 		if (!query) return console.error('Query is required.');
 		if (this.gettingQuery) return console.error('Another query is already running...');
 
-		let newChatId = this.chatId;
+		let newChatId = this._chatId;
 		if (!newChatId || newChatId === 'new') {
 			newChatId = await this.ai.createNewChat(this.selectedRepo);
 			await this.router.navigate([`/app/chat/`, this.selectedRepo, newChatId]);
@@ -214,7 +215,7 @@ export class ChatViewComponent implements OnDestroy {
 				completed: true,
 			}
 	
-			await this.ai.saveNewMessage(this.selectedRepo, this.chatId, userQuery);
+			await this.ai.saveNewMessage(this.selectedRepo, this._chatId, userQuery);
 		}
 
 		this.onMessageScroll(true);
@@ -229,7 +230,7 @@ export class ChatViewComponent implements OnDestroy {
 			completed: false,
 		}
 
-		await this.ai.saveNewMessage(this.selectedRepo, this.chatId, assistantQuery, true);
+		await this.ai.saveNewMessage(this.selectedRepo, this._chatId, assistantQuery, true);
 
 		this.chat = [...this.chat];
 
@@ -372,13 +373,13 @@ export class ChatViewComponent implements OnDestroy {
 	}
 
 	private saveToLocalStorage(message: AiChatMessage): void {
-		const existing = JSON.parse(localStorage.getItem('ai_chat') ?? '[]') as AiChatMessage[];
+		const existing = JSON.parse(localStorage.getItem('wizchat_local') ?? '[]') as AiChatMessage[];
 		existing.push({ ...message, createdAt: Timestamp.fromDate(new Date()) });
-		localStorage.setItem('ai_chat', JSON.stringify(existing));
+		localStorage.setItem('wizchat_local', JSON.stringify(existing));
 	}
 
 	private getFromLocalStorage(messageId: string): AiChatMessage | undefined {
-		const existing = JSON.parse(localStorage.getItem('ai_chat') ?? '[]') as AiChatMessage[];
+		const existing = JSON.parse(localStorage.getItem('wizchat_local') ?? '[]') as AiChatMessage[];
 		const index = existing.findIndex((m) => m.id === messageId);
 		const res = index >= 0 ? existing[index] : undefined;
 		if (res) this.deleteFromLocalStorage(messageId);
@@ -386,11 +387,11 @@ export class ChatViewComponent implements OnDestroy {
 	}
 
 	private deleteFromLocalStorage(messageId: string): void {
-		const existing = JSON.parse(localStorage.getItem('ai_chat') ?? '[]') as AiChatMessage[];
+		const existing = JSON.parse(localStorage.getItem('wizchat_local') ?? '[]') as AiChatMessage[];
 		const index = existing.findIndex((m) => m.id === messageId);
 		if (index >= 0) {
 			existing.splice(index, 1);
-			localStorage.setItem('ai_chat', JSON.stringify(existing));
+			localStorage.setItem('wizchat_local', JSON.stringify(existing));
 		}
 	}
 }

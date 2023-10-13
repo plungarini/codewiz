@@ -9,7 +9,7 @@ import { Repo } from '../../../../../../../shared/models/repo.model';
   styles: [
     `
       :host {
-      	@apply block h-full max-h-full overflow-y-hidden sm:overflow-y-auto; 
+      	@apply block h-full md:max-h-full md:overflow-y-auto; 
       }
     `
   ],
@@ -26,7 +26,7 @@ export class RepoDetailsComponent {
 	) {
 		this.repo$ = this.route.paramMap.pipe(
 			switchMap((paramMap) => {
-				const id = (paramMap.get('id') || '').trim();
+				const id = (paramMap.get('id') ?? '').trim();
 				this.repoId = id;
 				if (!id) return of(undefined);
 				return this.db.getDoc<Repo>(`supported-docs/${id}`);

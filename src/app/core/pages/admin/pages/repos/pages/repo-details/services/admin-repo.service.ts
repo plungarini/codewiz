@@ -34,9 +34,9 @@ export class AdminRepoService {
 	async updateEditPagesSearch(id: string, data: Partial<Repo['editPagesSearch']>): Promise<void> {
 		if (!id) throw new Error('Repo id is required');
 		const doc = await firstValueFrom(this.db.getDoc<Repo>(`supported-docs/${id}`));
-		const author = new Set(doc?.editPagesSearch?.author || []);
-		const folder = new Set(doc?.editPagesSearch?.folder || []);
-		const relativeLinksHost = new Set(doc?.editPagesSearch?.relativeLinksHost || []);
+		const author = new Set(doc?.editPagesSearch?.author ?? []);
+		const folder = new Set(doc?.editPagesSearch?.folder ?? []);
+		const relativeLinksHost = new Set(doc?.editPagesSearch?.relativeLinksHost ?? []);
 
 		if (data?.author?.at(0)) author.add(data.author[0]);
 		if (data?.folder?.at(0)) folder.add(data.folder[0]);
@@ -48,9 +48,9 @@ export class AdminRepoService {
 	async removeEditPagesSearch(id: string, data: Partial<Repo['editPagesSearch']>): Promise<void> {
 		if (!id) throw new Error('Repo id is required');
 		const doc = await firstValueFrom(this.db.getDoc<Repo>(`supported-docs/${id}`));
-		const author = new Set(doc?.editPagesSearch?.author || []);
-		const folder = new Set(doc?.editPagesSearch?.folder || []);
-		const relativeLinksHost = new Set(doc?.editPagesSearch?.relativeLinksHost || []);
+		const author = new Set(doc?.editPagesSearch?.author ?? []);
+		const folder = new Set(doc?.editPagesSearch?.folder ?? []);
+		const relativeLinksHost = new Set(doc?.editPagesSearch?.relativeLinksHost ?? []);
 
 		if (data?.author?.at(0) && author.has(data.author[0])) author.delete(data.author[0]);
 		if (data?.folder?.at(0) && folder.has(data.folder[0])) folder.delete(data.folder[0]);

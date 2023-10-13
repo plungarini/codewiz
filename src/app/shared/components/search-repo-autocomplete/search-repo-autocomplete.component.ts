@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Even
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
+import { UserPermissionsService } from 'src/app/auth/services/user-permissions.service';
 import { Repo } from 'src/app/shared/models/repo.model';
 import { UserRepoService } from '../../../core/pages/chat/services/user-repo.service';
 
@@ -39,52 +40,33 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 	
 	@ViewChild('searchDocsInput') searchDocsInputElement: ElementRef<HTMLInputElement> | undefined;
 
+
 	searchInput = new FormControl();
 	selectedIndex = 0;
 	docs: Repo[] = [];
 	filteredDocs: Repo[] = [];
+	filteredDocsGroups: { name: string; repos: Repo[] }[] = [];
 	repo: Repo | undefined;
 	cacheRepo: Repo | undefined;
-	placeholder: string = 'Select a repo';
-	
+	placeholder: string = 'Pick a Documentation';
 	docsListLoaded: boolean = false;
-	searchInputSub: Subscription;
-	docsListSub: Subscription;
+	userRoles: string[] = [];
+	
+	private docsListSub: Subscription;
+	private searchInputSub: Subscription;
+	private permissionsSub: Subscription;
 
 	private setRepoQueue: string = '';
 
 	constructor(
 		private cdRef: ChangeDetectorRef,
-		private repoService: UserRepoService,
 		private route: ActivatedRoute,
+		private permissions: UserPermissionsService,
+		private repoService: UserRepoService,
 	) {
-		this.docsListSub = this.repoService.getAllSupportedDocs().subscribe(d => {
-			if (!this.docsListLoaded) this.docsListLoaded = true;
-			this.docs = d;
-
-			this.filteredDocs = this._filterDocs(this.searchInput.value);
-			const repoParam = this.route.snapshot.paramMap.get('repo');
-
-			if (!this.searchInput.value && !this.repo && !this.cacheRepo) {
-
-				if (!repoParam && this.autoSelect && !this.setRepoQueue) {
-					this.selectDoc(this.autoSelectIndex);
-				} else if (this.setRepoQueue) {
-					const index = this.docs.findIndex(d => d.id === this.setRepoQueue);
-					if (index < 0) return;
-					this.selectDoc(index);
-					this.setRepoQueue = '';
-				} else {
-					this.filteredDocs = this._filterDocs('');
-					const index = this.filteredDocs.findIndex(d => d.id === repoParam);
-					if (index < 0 && this.autoSelect) {
-						this.selectDoc(this.autoSelectIndex);
-					} else {
-						this.selectDoc(index);
-					}
-				}
-			}
-			this.cdRef.detectChanges();
+		this.docsListSub = this.repoService.getAllSupportedDocs().subscribe(docs => {
+			this._handleDocsList(docs);
+			this.cdRef.markForCheck();
 		});
 
 		this.searchInputSub = this.searchInput.valueChanges.subscribe(value => {
@@ -93,29 +75,41 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 			if (!value) {
 				setTimeout(() => {
 					this.filteredDocs = this._filterDocs(value);
-					this.cdRef.detectChanges();
+					this.filteredDocsGroups = this._groupDocsByCategory(this.filteredDocs);
+					this.cdRef.markForCheck();
 				}, 300);
 				return;
 			}
+
+			// Filter the categorized repos based on the search value
 			this.filteredDocs = this._filterDocs(value);
+			this.filteredDocsGroups = this._groupDocsByCategory(this.filteredDocs);
+		});
+
+		this.permissionsSub = this.permissions.getPermissions$().subscribe((p) => {
+			this.userRoles = p ?? [];
+			this._handleDocsList(this.docs);
+			this.cdRef.markForCheck();
 		})
 	}
 
 	ngOnDestroy(): void {
+		this.docsListSub.unsubscribe();
 		this.searchInputSub.unsubscribe();
+		this.permissionsSub.unsubscribe();
 	}
 
 	onFocus(): void {
 		this.cacheRepo = this.repo;
 		this.repo = undefined;
-		this.cdRef.detectChanges();
+		this.cdRef.markForCheck();
 	}
 
 	onBlur(): void {
 		this.repo = this.cacheRepo;
 		this.cacheRepo = undefined;
 		this.searchInput.setValue('');
-		this.cdRef.detectChanges();
+		this.cdRef.markForCheck();
 	}
 
 	handleKeypress(event: KeyboardEvent): void {
@@ -134,7 +128,13 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		}
 	}
 
-	selectDoc(i: number): void {
+	hasPermissions(repo: Repo, roles: string[]) {
+		return roles.some(role => repo.visibilityRoles?.includes(role));
+	}
+
+	selectDoc(i?: number, id?: string): void {
+		if (!id && i === undefined) return;
+		i = i ?? this.filteredDocs.findIndex(d => d.id === id);
 		if (i <= -1) this.selectedIndex = 0;
 		this.repo = this.filteredDocs[i];
 		this.cacheRepo = this.filteredDocs[i];
@@ -145,7 +145,49 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		});
 		this.selectedIndex = 0;
 		this.searchInput.setValue('');
-		this.cdRef.markForCheck();
+		this.cdRef.detectChanges();
+	}
+
+	private _handleDocsList(docs: Repo[]): void {
+		if (!this.docsListLoaded) {
+			this.docsListLoaded = true;
+		}
+
+		this.docs = docs.filter((repo) => {
+			if (repo.visibility === 'public') return true;
+			const condition = this.userRoles.some(role => repo?.visibilityRoles?.includes(role));
+			return condition;
+		});
+		this.filteredDocsGroups = this._groupDocsByCategory(this.docs);
+
+		if (!this.searchInput.value && !this.repo && !this.cacheRepo) {
+			this._handleRepoSelection();
+		} else {
+			this.filteredDocs = this._filterDocs(this.searchInput.value);
+		}
+	}
+
+	private _handleRepoSelection(): void {
+		const repoParam = this.route.snapshot.paramMap.get('repo');
+
+		if (!repoParam && this.autoSelect && !this.setRepoQueue) {
+			return this.selectDoc(this.autoSelectIndex);
+		}
+
+		if (this.setRepoQueue) {
+			this.selectDoc(undefined, this.setRepoQueue);
+			this.setRepoQueue = '';
+			return;
+		}
+
+		this.filteredDocs = this._filterDocs('');
+		const index = this.filteredDocs.findIndex(d => d.id === repoParam);
+
+		if (index < 0 && this.autoSelect) {
+			this.selectDoc(this.autoSelectIndex);
+		} else {
+			this.selectDoc(index);
+		}
 	}
 
 	private _filterDocs(value: string): Repo[] {
@@ -154,13 +196,35 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		return this.docs.filter(doc => {
 			const normedSearch = value.toLowerCase().split(' ');
 			let match = false;
-			for (let i = 0; i < normedSearch.length; i++) {
-				const s = normedSearch[i];
+			for (const element of normedSearch) {
+				const s = element;
 				if (match) continue;
 				match = doc.id.toLowerCase().includes(s) || doc.name.toLowerCase().includes(s);
 			}
 			return match;
 		})
+	}
+
+	private _groupDocsByCategory(docs: Repo[]): { name: string; repos: Repo[] }[] {
+    const categoriesMap = new Map<string, Repo[]>();
+
+		for (const repo of docs) {
+			const category = repo.category;
+
+			if (!categoriesMap.has(category)) {
+				categoriesMap.set(category, []);
+			}
+
+			categoriesMap.get(category)?.push(repo);
+		}
+
+		const categorizedRepos: { name: string; repos: Repo[] }[] = [];
+
+		categoriesMap.forEach((repos, category) => {
+			categorizedRepos.push({ name: category, repos });
+		});
+
+		return categorizedRepos;
 	}
 
 }

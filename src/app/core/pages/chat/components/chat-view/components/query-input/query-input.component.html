@@ -82,7 +82,7 @@
 						style="word-break: break-word;"
 					></div>
 					<ng-container *ngIf="!textInput.value">
-						<p class="absolute top-2.5 pt-0 mt-0 pointer-events-none select-none text-zinc-500 left-4 pl-[0.05rem] z-20">Ask something...</p>
+						<p class="absolute top-2.5 pt-0 mt-0 pointer-events-none select-none text-zinc-500 left-0 px-[1.05rem] z-20 truncate max-w-full">Ask something{{repo ? ' about ' + repo.name : ''}}...</p>
 					</ng-container>
 				</div>
 			</div>
