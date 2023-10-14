@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subscription, switchMap } from 'rxjs';
 import { UserPermissionsService } from 'src/app/auth/services/user-permissions.service';
 import { Repo } from 'src/app/shared/models/repo.model';
 import { UserRepoService } from '../../../core/pages/chat/services/user-repo.service';
@@ -54,7 +54,6 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 	
 	private docsListSub: Subscription;
 	private searchInputSub: Subscription;
-	private permissionsSub: Subscription;
 
 	private setRepoQueue: string = '';
 
@@ -64,7 +63,12 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		private permissions: UserPermissionsService,
 		private repoService: UserRepoService,
 	) {
-		this.docsListSub = this.repoService.getAllSupportedDocs().subscribe(docs => {
+		this.docsListSub = this.permissions.getPermissions$().pipe(
+			switchMap((permissions) => {
+				this.userRoles = permissions ?? [];
+				return this.repoService.getAllSupportedDocs()
+			}),
+		).subscribe(docs => {
 			this._handleDocsList(docs);
 			this.cdRef.markForCheck();
 		});
@@ -85,18 +89,11 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 			this.filteredDocs = this._filterDocs(value);
 			this.filteredDocsGroups = this._groupDocsByCategory(this.filteredDocs);
 		});
-
-		this.permissionsSub = this.permissions.getPermissions$().subscribe((p) => {
-			this.userRoles = p ?? [];
-			this._handleDocsList(this.docs);
-			this.cdRef.markForCheck();
-		})
 	}
 
 	ngOnDestroy(): void {
 		this.docsListSub.unsubscribe();
 		this.searchInputSub.unsubscribe();
-		this.permissionsSub.unsubscribe();
 	}
 
 	onFocus(): void {
@@ -149,7 +146,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		this.cdRef.detectChanges();
 	}
 
-	private _handleDocsList(docs: Repo[]): void {
+	private _handleDocsList(docs: Repo[], force?: boolean): void {
 		if (!this.docsListLoaded) {
 			this.docsListLoaded = true;
 		}
@@ -161,7 +158,7 @@ export class SearchRepoAutocompleteComponent implements OnDestroy {
 		});
 		this.filteredDocsGroups = this._groupDocsByCategory(this.docs);
 
-		if (!this.searchInput.value && !this.repo && !this.cacheRepo) {
+		if (force || (!this.searchInput.value && !this.repo && !this.cacheRepo)) {
 			this._handleRepoSelection();
 		} else {
 			this.filteredDocs = this._filterDocs(this.searchInput.value);
