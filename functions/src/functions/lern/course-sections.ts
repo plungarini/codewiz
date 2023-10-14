@@ -135,7 +135,8 @@ export const createLernCourseSection = async (
 
 		await setErrorToCourseSection(sectionRef, 'none');
 
-		const sections = await getPageSections(section, course.repo);
+		const repo = await getRepoById(course.repo);
+		const sections = await getPageSections(section, repo?.tableName ?? repo?.id ?? '');
 
 		const normName = user?.name.split(' ')[0] || 'User';
 		const userName = (/^[a-zA-Z0-9_-]{1,64}$/).test(normName) ? normName : 'User';
@@ -537,6 +538,17 @@ const getPreferencesBlock = (
 			${section.goals.map((g) => `\t> ${g}`).join('\n')}
 		`}
 	`;
+};
+
+/**
+ * Retrieves a repository by its ID.
+ *
+ * @param {string} repoId - The ID of the repository.
+ * @return {Promise} - The repository object, or undefined if it doesn't exist.
+ */
+const getRepoById = async (repoId: string): Promise<{ id: string; tableName: string } | undefined> => {
+	if (!repoId) throw new Error('No repo id provided');
+	return (await firestore.doc(`supported-docs/${repoId}`).get()).data() as { id: string; tableName: string } | undefined;
 };
 
 /**
