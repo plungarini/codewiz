@@ -239,15 +239,15 @@ export class AiChatService {
 				};
 
 				const uid = await this._getCurrentUid();
-				const repoHost = await firstValueFrom(this.db.getDoc<Repo>(`supported-docs/${repo}`).pipe(
-					map(doc => doc?.hostUrl)
+				const repoObject = await firstValueFrom(this.db.getDoc<Repo>(`supported-docs/${repo}`).pipe(
+					map(doc => ({ hostUrl: doc?.hostUrl, tableName: doc?.tableName ?? doc?.id }))
 				));
 			
 				const data: AiChatRequestData = {
 					uid: uid,
-					repoHost: repoHost ?? repo,
+					repoHost: repoObject.hostUrl ?? repo,
 					messages: normMessages,
-					repo,
+					repo: repoObject.tableName ?? repo,
 					onlyPrompt: false,
 					stream: true,
 					environment: this.production ? 'production' : 'development',
