@@ -3,7 +3,7 @@ import { error, warn } from 'firebase-functions/logger';
 import OpenAI from 'openai';
 
 const MAX_CHARS = 25_000;
-const MIN_SECTION_LENGTH = 100;
+const MIN_SECTION_LENGTH = 200;
 
 const openAiTokenSanitizer = (input: string): string[] => {
   const sections: string[] = [];
@@ -17,41 +17,45 @@ const openAiTokenSanitizer = (input: string): string[] => {
     }
   };
 
-  for (const element of lines) {
-    const line = element.trim();
+  const HASH_PATTERN = /^#+/; // Matches lines that start with 1 or more '#'
+	const EQUALS_PATTERN = /^={3,}/; // Matches lines that start with 3 or more '='
+	const DASH_PATTERN = /^-{3,}/; // Matches lines that start with 3 or more '-'
+	const ASTERISK_PATTERN = /^\*{3,}/; // Matches lines that start with 3 or more '*'
+	const ANY_DELIMITER_PATTERN = /(#+|={3,}|-{3,}|\*{3,}|\n)/g; // Matches any of the above delimiters
 
-    if (
-      (line.startsWith('#') || line.startsWith('======') || line.startsWith('-------')) &&
-      currentSection.length >= MIN_SECTION_LENGTH &&
-      currentSection.length <= MAX_CHARS
-    ) {
-      pushCurrentSection();
-      currentSection += line;
-    } else if (currentSection.length + line.length <= MAX_CHARS) {
-      currentSection += '\n' + line;
-    } else {
-      let breakIndex = -1;
+	for (const element of lines) {
+		const line = element.trim();
 
-      if (currentSection.lastIndexOf('#') !== -1) {
-        breakIndex = currentSection.lastIndexOf('#');
-      } else if (currentSection.lastIndexOf('=====') !== -1) {
-        breakIndex = currentSection.lastIndexOf('=====');
-      } else if (currentSection.lastIndexOf('---') !== -1) {
-        breakIndex = currentSection.lastIndexOf('---');
-      } else if (currentSection.lastIndexOf('\n') !== -1) {
-        breakIndex = currentSection.lastIndexOf('\n');
-      }
+		// Check if line starts with any of the specified patterns
+		if (
+			(HASH_PATTERN.test(line) || EQUALS_PATTERN.test(line) || DASH_PATTERN.test(line) || ASTERISK_PATTERN.test(line)) &&
+			currentSection.length >= MIN_SECTION_LENGTH &&
+			currentSection.length <= MAX_CHARS
+		) {
+			pushCurrentSection();
+			currentSection += line;
+		} else if (currentSection.length + line.length <= MAX_CHARS) {
+			currentSection += '\n' + line;
+		} else {
+			const matches = [...currentSection.matchAll(ANY_DELIMITER_PATTERN)].reverse();
+			let breakIndex = -1;
 
-      if (breakIndex !== -1 && breakIndex >= MIN_SECTION_LENGTH) {
-        sections.push(currentSection.substring(0, breakIndex).trim());
-        currentSection = currentSection.substring(breakIndex).trim();
-      } else {
-        sections.push(currentSection.trim());
-        currentSection = line;
-      }
-    }
-  }
+			for (const match of matches) {
+				if (match.index !== undefined && match.index >= MIN_SECTION_LENGTH) {
+					breakIndex = match.index;
+					break;
+				}
+			}
 
+			if (breakIndex !== -1) {
+				sections.push(currentSection.substring(0, breakIndex).trim());
+				currentSection = currentSection.substring(breakIndex).trim();
+			} else {
+				sections.push(currentSection.trim());
+				currentSection = line;
+			}
+		}
+	}
   pushCurrentSection();
 
 	sections.forEach((section) => {
