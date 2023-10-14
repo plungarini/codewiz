@@ -74,7 +74,7 @@ const elaborateTitle = (input: string, fileName: string): string => {
 	const markdownRegex = /^#\s*([^\n]+)/;
 
 	// Front Matter in Markdown
-	const frontMatterRegex = /---\ntitle:\s*([^\n]+)\n---/;
+	const frontMatterRegex = /-{3,}\ntitle:\s*([^\n]+)/;
 
 	// reStructuredText
 	const reSTRegex = /^={3,}\n(.+)\n={3,}/;
