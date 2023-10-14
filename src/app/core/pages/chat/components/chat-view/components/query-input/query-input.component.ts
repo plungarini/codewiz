@@ -117,7 +117,7 @@ export class QueryInputComponent implements OnInit, OnDestroy {
 	submitSuggestion(value: string): void {
 		if (this.gettingQuery) return;
 		const isPublic = this.repo?.visibility === 'public';
-		const condition = isPublic ?? this.userRoles.some(role => this.repo?.visibilityRoles?.includes(role));
+		const condition = isPublic || this.userRoles.some(role => this.repo?.visibilityRoles?.includes(role));
 		if (!condition) return;
 
 		this.showSuggestions = false;
@@ -130,7 +130,7 @@ export class QueryInputComponent implements OnInit, OnDestroy {
 	submitMessage(): void {
 		if (!this.textInput.valid || !this.textInput.value || this.gettingQuery) return;
 		const isPublic = this.repo?.visibility === 'public';
-		const condition = isPublic ?? this.userRoles.some(role => this.repo?.visibilityRoles?.includes(role));
+		const condition = isPublic || this.userRoles.some(role => this.repo?.visibilityRoles?.includes(role));
 		if (!condition) return;
 
 		this.onQuery.emit(this.textInput.value.trim());
