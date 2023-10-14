@@ -209,6 +209,24 @@ export class EditPagesComponent implements OnDestroy {
 		this.cdRef.markForCheck();
 	}
 
+	deletePage(page: RepoPage) {
+		const pages = this._pages$.getValue();
+		const index = pages.findIndex(f => f.name === page.name);
+		const findPage = pages.at(index ?? -1);
+		if (!page || index === -1 || !findPage) return;
+		pages.splice(index ?? -1, 1);
+		this._pages$.next(pages);
+	}
+
+	updatePage(page: RepoPage) {
+		const pages = this._pages$.getValue();
+		const index = pages.findIndex(f => f.name === page.name);
+		const findPage = pages.at(index ?? -1);
+		if (!page || index === -1 || !findPage) return;
+		pages[index ?? -1] = page;
+		this._pages$.next(pages);
+	}
+
 	async parseRepoFile(inputFile: RepoPage, inputFiles?: RepoPage[]): Promise<void> {
 		if (inputFile.status && inputFile.status === 'success') {
 			return;

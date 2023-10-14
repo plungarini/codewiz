@@ -71,7 +71,7 @@ const getTreeFiles = async (treeUrl: string, filter: 'tree' | 'blob'): Promise<T
 
 const elaborateTitle = (input: string, fileName: string): string => {
 	// Markdown #
-	const markdownRegex = /^#\s*([^\n]+)/;
+	const markdownRegex = /#\s([^\n]+)/;
 
 	// Front Matter in Markdown
 	const frontMatterRegex = /-{3,}\ntitle:\s*([^\n]+)/;
@@ -101,7 +101,10 @@ const elaborateTitle = (input: string, fileName: string): string => {
 	} else {
 		// If no title is found, fall back to the file name
 		const normTitle = fileName.replace(/[-_]/g, ' ');
-		title = normTitle[0].toUpperCase() + normTitle.substring(1).replace('.md', '');
+		title = normTitle[0].toUpperCase() + normTitle.substring(1);
+		for (const ext of SUPPORTED_EXTS) {
+			title = title.replace(ext, '');
+		}
 	}
 
 	return title;
@@ -127,10 +130,6 @@ const getMarkdown = async (fileUrl: string, fileName: string, host: string): Pro
     const relativeLinkRegex = /\[([^\]]+)\]\((?!https?:\/\/)([^)]+)\)/g;
     // Replace relative links with absolute links
 		decoded = decoded.replace(relativeLinkRegex, `[$1](${host}/$2)`);
-
-		for (const ext of SUPPORTED_EXTS) {
-			fileName = fileName.replace(ext, '');
-		}
 
 		return {
 			name: fileName,

@@ -159,6 +159,8 @@
 			[pages]="pages$"
 			(manualElaborate)="parseRepoFile($event)"
 			(previewContent)="onPreviewContent($event)"
+			(excludePage)="deletePage($event)"
+			(updatePage)="updatePage($event)"
 			class="block w-full overflow-x-hidden overflow-y-auto shrink"
 		></app-repo-pages>
 
