@@ -18,6 +18,8 @@ const axios = new Axios({
 	},
 });
 
+const SUPPORTED_EXTS = ['.md', '.markdown', '.rst'];
+
 /* const getLastModifiedFile = async (author: string, path: string) => {
 	const encodedPath = encodeURIComponent(path);
 	try {
@@ -68,19 +70,43 @@ const getTreeFiles = async (treeUrl: string, filter: 'tree' | 'blob'): Promise<T
 };
 
 const elaborateTitle = (input: string, fileName: string): string => {
-	const regex = /^#\s*([^{\n]+)/;
-	const match = input.match(regex);
+	// Markdown #
+	const markdownRegex = /^#\s*([^\n]+)/;
+
+	// Front Matter in Markdown
+	const frontMatterRegex = /---\ntitle:\s*([^\n]+)\n---/;
+
+	// reStructuredText
+	const reSTRegex = /^={3,}\n(.+)\n={3,}/;
+
+	// HTML
+	const htmlRegex = /<h1>(.*?)<\/h1>/;
+
+	// Try to match the input with each of the regex patterns
+	const markdownMatch = markdownRegex.exec(input);
+	const frontMatterMatch = frontMatterRegex.exec(input);
+	const reSTMatch = reSTRegex.exec(input);
+	const htmlMatch = htmlRegex.exec(input);
+
 	let title = '';
 
-	if (match && match[1]) {
-		title = match[1];
-		console.log(title);
+	if (markdownMatch?.at(1)) {
+		title = markdownMatch[1];
+	} else if (frontMatterMatch?.at(1)) {
+		title = frontMatterMatch[1];
+	} else if (reSTMatch?.at(1)) {
+		title = reSTMatch[1];
+	} else if (htmlMatch?.at(1)) {
+		title = htmlMatch[1];
 	} else {
-		const normTitle = fileName.replaceAll('-', ' ').replaceAll('_', ' ');
-		title = normTitle[0].toUpperCase() + normTitle.substring(1);
+		// If no title is found, fall back to the file name
+		const normTitle = fileName.replace(/[-_]/g, ' ');
+		title = normTitle[0].toUpperCase() + normTitle.substring(1).replace('.md', '');
 	}
-	return title.replace('.md', '');
+
+	return title;
 };
+
 
 const getMarkdown = async (fileUrl: string, fileName: string, host: string): Promise<{ name: string, content: string, title: string, path: string }> => {
 	try {
@@ -100,10 +126,14 @@ const getMarkdown = async (fileUrl: string, fileName: string, host: string): Pro
 		// Regular expression to match relative links
     const relativeLinkRegex = /\[([^\]]+)\]\((?!https?:\/\/)([^)]+)\)/g;
     // Replace relative links with absolute links
-    decoded = decoded.replace(relativeLinkRegex, `[$1](${host}/$2)`);
+		decoded = decoded.replace(relativeLinkRegex, `[$1](${host}/$2)`);
+
+		for (const ext of SUPPORTED_EXTS) {
+			fileName = fileName.replace(ext, '');
+		}
 
 		return {
-			name: fileName.replace('.md', ''),
+			name: fileName,
 			content: decoded,
 			path: fileUrl,
 			title,
@@ -171,9 +201,10 @@ export const githubFolderFetcher = async (req: {
 
 		const promises: Promise<{ name: string, content: string, title: string, path: string }>[] = [];
 
-		for (let i = 0; i < treeFiles.length; i++) {
-			const file = treeFiles[i];
-			if (!file || !file.url || !file.path.includes('.md')) continue;
+		for (const element of treeFiles) {
+			const file = element;
+			const hasSupportedExtension = SUPPORTED_EXTS.some((ext) => file?.path?.includes(ext));
+			if (!file?.url || !hasSupportedExtension) continue;
 			promises.push(getMarkdown(file.url, file.path, req.relativeLinksHost));
 		}
 
