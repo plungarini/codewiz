@@ -1,6 +1,6 @@
 {
   "name": "codewiz",
-  "version": "1.1.15",
+  "version": "1.1.16",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -15,7 +15,7 @@
 
     "generate-env:dev": "node ./replace-env-var.script.js dev",
     "generate-env:prod": "node ./replace-env-var.script.js prod",
-		
+
     "deploySupabase": "yarn updateSbSecrets && supabase functions deploy",
     "sb-chatTitle": "npx supabase functions deploy chat-title --project-ref rbikifjpcodmtsgggpbk",
     "sb-aiSearch": "npx supabase functions deploy ai-docs --project-ref rbikifjpcodmtsgggpbk",
