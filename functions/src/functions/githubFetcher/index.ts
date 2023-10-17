@@ -77,7 +77,10 @@ const elaborateTitle = (input: string, fileName: string): string => {
 	const frontMatterRegex = /-{3,}\ntitle:\s*([^\n]+)/;
 
 	// reStructuredText
-	const reSTRegex = /^={3,}\n(.+)\n={3,}/;
+	const reSTRegex = /={3,}\n(.+)\n={3,}/;
+
+	// reStructuredText 2
+	const reSTRegex2 = /\*{3,}\n(.+)\n\*{3,}/;
 
 	// HTML
 	const htmlRegex = /<h1>(.*?)<\/h1>/;
@@ -86,6 +89,7 @@ const elaborateTitle = (input: string, fileName: string): string => {
 	const markdownMatch = markdownRegex.exec(input);
 	const frontMatterMatch = frontMatterRegex.exec(input);
 	const reSTMatch = reSTRegex.exec(input);
+	const reST2Match = reSTRegex2.exec(input);
 	const htmlMatch = htmlRegex.exec(input);
 
 	const titles = [];
@@ -98,6 +102,9 @@ const elaborateTitle = (input: string, fileName: string): string => {
 	}
 	if (reSTMatch?.at(1)) {
 		titles.push({ title: reSTMatch[1], index: reSTMatch.index });
+	}
+	if (reST2Match?.at(1)) {
+		titles.push({ title: reST2Match[1], index: reST2Match.index });
 	}
 	if (htmlMatch?.at(1)) {
 		titles.push({ title: htmlMatch[1], index: htmlMatch.index });
