@@ -29,10 +29,7 @@ export class ChatStatsComponent {
 		stats.forEach((repoStat: RepoStat) => {
 			const historyItem = this.statTime === 'total' ? repoStat : repoStat.history.find((item) => item.updatedAt.toDate() > this._getLastDayOfLastMonth());
 			if (!historyItem) return;
-			const promptCount: number = historyItem.prompt?.count ?? 0;
-			const completionCount: number = historyItem.completion?.count ?? 0;
-			const itemTotalCount: number = promptCount + completionCount;
-			totalCount += itemTotalCount;
+			totalCount += historyItem.prompt?.count ?? 0;
 		});
 		return totalCount;
 	}
@@ -42,10 +39,7 @@ export class ChatStatsComponent {
 		stats.forEach((repoStat: RepoStat) => {
 			const historyItem = repoStat.history.find((item) => item.updatedAt.toDate().getMonth() === this._getLastDayOfLastMonth().getMonth());
 			if (!historyItem) return;
-			const promptCount: number = historyItem.prompt?.count || 0;
-			const completionCount: number = historyItem.completion?.count || 0;
-			const itemTotalCount: number = promptCount + completionCount;
-			totalCount += itemTotalCount;
+			totalCount += historyItem.prompt?.count || 0;
 		});
 		return totalCount;
 	}
