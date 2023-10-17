@@ -8,6 +8,7 @@ import { AdminRepoService } from '../../services/admin-repo.service';
 import { EmbeddingsService } from '../../services/embeddings.service';
 
 type HistoryProps = 'author' | 'folder' | 'relativeLinksHost';
+const SUPPORTED_EXTS = ['.md', '.markdown', '.rst', '.mdx'];
 
 @Component({
   templateUrl: './edit-pages.component.html',
@@ -246,7 +247,12 @@ export class EditPagesComponent implements OnDestroy {
 		file.status = 'loading';
 		this._pages$.next(files);
 
-		const id = `${author}/${folder}/${file.name.replace('.md', '').replaceAll(' ', '_').toLowerCase()}`;
+		let fileName = file.name;
+		for (const ext of SUPPORTED_EXTS) {
+			fileName = fileName.replace(ext, '');
+		}
+
+		const id = `${author}/${folder}/${fileName.replaceAll(' ', '_').toLowerCase()}`;
 
 		try {
 			await this.embeddingsService.generateEmbedding({
