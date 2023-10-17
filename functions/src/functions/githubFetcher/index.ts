@@ -88,24 +88,33 @@ const elaborateTitle = (input: string, fileName: string): string => {
 	const reSTMatch = reSTRegex.exec(input);
 	const htmlMatch = htmlRegex.exec(input);
 
-	let title = '';
+	const titles = [];
 
 	if (markdownMatch?.at(1)) {
-		title = markdownMatch[1];
-	} else if (frontMatterMatch?.at(1)) {
-		title = frontMatterMatch[1];
-	} else if (reSTMatch?.at(1)) {
-		title = reSTMatch[1];
-	} else if (htmlMatch?.at(1)) {
-		title = htmlMatch[1];
-	} else {
-		// If no title is found, fall back to the file name
-		const normTitle = fileName.replace(/[-_]/g, ' ');
-		title = normTitle[0].toUpperCase() + normTitle.substring(1);
-		for (const ext of SUPPORTED_EXTS) {
-			title = title.replace(ext, '');
-		}
+		titles.push({ title: markdownMatch[1], index: markdownMatch.index });
 	}
+	if (frontMatterMatch?.at(1)) {
+		titles.push({ title: frontMatterMatch[1], index: frontMatterMatch.index });
+	}
+	if (reSTMatch?.at(1)) {
+		titles.push({ title: reSTMatch[1], index: reSTMatch.index });
+	}
+	if (htmlMatch?.at(1)) {
+		titles.push({ title: htmlMatch[1], index: htmlMatch.index });
+	}
+
+	// Sort titles by index
+	titles.sort((a, b) => a.index - b.index);
+
+	// Use the first title (with the lowest index) or fallback to file name processing
+	const title = titles.length > 0 ? titles[0].title : (() => {
+		const normTitle = fileName.replace(/[-_]/g, ' ');
+		let fallbackTitle = normTitle[0].toUpperCase() + normTitle.substring(1);
+		for (const ext of SUPPORTED_EXTS) {
+			fallbackTitle = fallbackTitle.replace(ext, '');
+		}
+		return fallbackTitle;
+	})();
 
 	return title;
 };
