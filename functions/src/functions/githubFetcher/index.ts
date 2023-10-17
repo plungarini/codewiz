@@ -18,7 +18,7 @@ const axios = new Axios({
 	},
 });
 
-const SUPPORTED_EXTS = ['.md', '.markdown', '.rst'];
+const SUPPORTED_EXTS = ['.md', '.markdown', '.rst', '.mdx'];
 
 /* const getLastModifiedFile = async (author: string, path: string) => {
 	const encodedPath = encodeURIComponent(path);
