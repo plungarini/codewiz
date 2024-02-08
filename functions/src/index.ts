@@ -139,7 +139,7 @@ export const calculateOpenaiTokensOnReply = onDocumentUpdated(
 			warn('New message at', `users/${uid}/repos/${repo}/chats/${chatId}/messages/${messageId}`, message);
 			await calculateTokens({
 				messages: [{ role: message.role, content: message.content }],
-				model: 'gpt-3.5-turbo-0613',
+				model: 'gpt-3.5-turbo-0125',
 				repo, uid, chatId, messageId,
 				type: 'completion',
 			});

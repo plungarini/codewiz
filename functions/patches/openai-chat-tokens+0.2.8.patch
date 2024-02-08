@@ -1,0 +1,20 @@
+diff --git a/node_modules/openai-chat-tokens/dist/index.d.ts b/node_modules/openai-chat-tokens/dist/index.d.ts
+index 5229040..e60e73f 100644
+--- a/node_modules/openai-chat-tokens/dist/index.d.ts
++++ b/node_modules/openai-chat-tokens/dist/index.d.ts
+@@ -2,7 +2,7 @@ import OpenAI from "openai";
+ import { FunctionDef } from "./functions";
+ type Message = OpenAI.Chat.ChatCompletionMessageParam;
+ type Function = OpenAI.Chat.ChatCompletionCreateParams.Function;
+-type FunctionCall = OpenAI.Chat.ChatCompletionCreateParams.FunctionCallOption;
++type FunctionCall = OpenAI.Chat.ChatCompletionCreateParams.Function;
+ /**
+  * Estimate the number of tokens a prompt will use.
+  * @param {Object} prompt OpenAI prompt data
+@@ -35,4 +35,5 @@ export declare function messageTokensEstimate(message: Message): number;
+  * @returns An estimate for the number of tokens the function definitions will use
+  */
+ export declare function functionsTokensEstimate(funcs: FunctionDef[]): number;
+-export {};
++export { };
++
