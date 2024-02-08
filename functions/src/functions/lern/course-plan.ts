@@ -1,10 +1,10 @@
-import { Pezzo, PezzoOpenAI } from '@pezzo/client';
 import { codeBlock, oneLine } from 'common-tags';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { error, warn } from 'firebase-functions/logger';
+import { OpenAI } from 'openai';
 import { CompletionUsage } from 'openai/resources';
 import { ChatCompletionCreateParams, ChatCompletionMessageParam } from 'openai/resources/chat';
-import { firestore, production } from '../../utils';
+import { firestore } from '../../utils';
 import { cappedContextMessages, setGlobalLernStatus, setGlobalLernUsage } from './common/utils';
 import { normalizeSections, validateCoursePlanArgs } from './common/validate-plan-args';
 import { addUsedLernGenerationCredit, canGenerateLernCourse } from './lern-usage';
@@ -20,8 +20,6 @@ import {
 
 const OPENAI_KEY = process.env.OPENAI_KEY;
 const OPENAI_ORG = process.env.OPENAI_ORG;
-const PEZZO_API_KEY = process.env.PEZZO_API_KEY;
-const PEZZO_PROJECT_ID = process.env.PEZZO_PROJECT_ID;
 
 const validateCourse = (course?: LernCourse) => {
 	const hasPages = (course?.topic?.pages?.length ?? 0) > 0;
@@ -94,13 +92,7 @@ const resetCoursePlan = async (docRef: DocumentReference) => {
 };
 
 const getOpenAi = () => {
-	const pezzo = new Pezzo({
-		apiKey: PEZZO_API_KEY,
-		environment: production() ? 'Production' : 'Development',
-		projectId: PEZZO_PROJECT_ID,
-	});
-
-	return new PezzoOpenAI(pezzo, {
+	return new OpenAI({
 		apiKey: OPENAI_KEY,
 		organization: OPENAI_ORG,
 		maxRetries: 2,
@@ -165,9 +157,8 @@ export const createLernCoursePlan = async (uid: string, id: string, course?: Ler
 
 		const chatCompletion = await openai.chat.completions.create(params, {
 			stream: false,
-			properties: {
+			body: {
 				uid,
-				prompt: 'createCoursePlan',
 			},
 		});
 
@@ -419,7 +410,7 @@ const getCompletionParams = (data: {
 	topic: LernStepTopic;
 	preferences: LernStepPreferences;
 	normPreferences: string;
-}) => {
+}): OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming => {
 	const {
 		uid,
 		repo,
@@ -535,7 +526,7 @@ const getCompletionParams = (data: {
 		},
 	];
 
-	const model = 'gpt-3.5-turbo-0613';
+	const model = 'gpt-3.5-turbo-0125';
 	const maxCompletionTokenCount = 1024;
 
 	const preParams = cappedContextMessages({
