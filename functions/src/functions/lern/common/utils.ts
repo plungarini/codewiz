@@ -11,7 +11,7 @@ import { getMaxTokenCount } from './tokenizer';
 
 type PartialParams = {
 	messages: ChatCompletionMessageParam[];
-	function_call: 'none' | 'auto' | ChatCompletionCreateParams.FunctionCallOption | undefined;
+	function_call: 'none' | 'auto' | ChatCompletionCreateParams.Function | undefined;
 	functions: ChatCompletionCreateParams.Function[];
 	model: string;
 }
@@ -26,7 +26,7 @@ export const cappedContextMessages = (
 
 	// Clone messages array to ensure original isn't affected
 	const cappedInitMessages = [...messages];
-	const index = cappedInitMessages.findIndex((message) => message.content?.includes('{{contextText}}'));
+	const index = cappedInitMessages.findIndex((message) => (message.content as string | null | undefined)?.includes('{{contextText}}'));
 
 	if (index <= -1) {
 		return {
@@ -44,7 +44,7 @@ export const cappedContextMessages = (
 
 	const updateContent = () => {
 		contextText = oneLine(sections.map((section) => (`${section.title}\n${section.content}`).trim()).join('---').trim());
-		cappedInitMessages[index].content = originalFormat?.replace('{{contextText}}', contextText) ?? null;
+		cappedInitMessages[index].content = (originalFormat as string | null | undefined)?.replace('{{contextText}}', contextText) ?? null;
 	};
 
 	updateContent(); // Initial update

@@ -1,19 +1,17 @@
-import { Pezzo, PezzoOpenAI } from '@pezzo/client';
 import { createClient } from '@supabase/supabase-js';
 import { codeBlock, oneLine } from 'common-tags';
 import { DocumentReference } from 'firebase-admin/firestore';
 import { warn } from 'firebase-functions/logger';
+import { OpenAI } from 'openai';
 import { CompletionUsage } from 'openai/resources';
 import { ChatCompletionCreateParams, ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam } from 'openai/resources/chat';
-import { firestore, production } from '../../utils';
+import { firestore } from '../../utils';
 import { cappedContextMessages, setGlobalLernStatus, setGlobalLernUsage } from './common/utils';
 import { validateCourseSectionArgs } from './common/validate-section-args';
 import { LernCourse, LernCourseGenerationSection, LernCoursePlanGenerationSection, LernGenerationStatus, LernStepPreferences, LernUsage } from './models/lern.model';
 
 const OPENAI_KEY = process.env.OPENAI_KEY;
 const OPENAI_ORG = process.env.OPENAI_ORG;
-const PEZZO_API_KEY = process.env.PEZZO_API_KEY;
-const PEZZO_PROJECT_ID = process.env.PEZZO_PROJECT_ID;
 const supabasePublicUrl = process.env.SUPABASE_PUBLIC_URL;
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -80,13 +78,7 @@ const canGenerateSection = async (ref: DocumentReference, section: LernCoursePla
 };
 
 const getOpenAi = () => {
-	const pezzo = new Pezzo({
-		apiKey: PEZZO_API_KEY,
-		environment: production() ? 'Production' : 'Development',
-		projectId: PEZZO_PROJECT_ID,
-	});
-
-	return new PezzoOpenAI(pezzo, {
+	return new OpenAI({
 		apiKey: OPENAI_KEY,
 		organization: OPENAI_ORG,
 		maxRetries: 2,
@@ -154,9 +146,8 @@ export const createLernCourseSection = async (
 
 		const chatCompletion = await openai.chat.completions.create(params, {
 			stream: false,
-			properties: {
+			body: {
 				uid,
-				prompt: 'createCourseSection',
 			},
 		});
 		warn({ message: chatCompletion.choices[0].message, usage: chatCompletion.usage });
@@ -460,7 +451,7 @@ const getCompletionParams = (data: {
 
 	warn({ functions });
 
-	const model = 'gpt-3.5-turbo-0613';
+	const model = 'gpt-3.5-turbo-0125';
 	const maxCompletionTokenCount = 1500;
 
 	const preParams = cappedContextMessages({

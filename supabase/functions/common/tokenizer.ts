@@ -1,26 +1,14 @@
-import { init, Tiktoken } from 'https://esm.sh/@dqbd/tiktoken@1.0.2/lite/init'
+import { getEncoding } from 'https://esm.sh/js-tiktoken@1.0.10'
 import { ChatCompletionRequestMessage } from 'https://esm.sh/v113/openai@3.2.1'
 
-const encoderResponse = await fetch('https://esm.sh/@dqbd/tiktoken@1.0.2/encoders/cl100k_base.json')
-const cl100kBase = await encoderResponse.json()
-
-await init(async (imports) => {
-  const req = await fetch('https://esm.sh/@dqbd/tiktoken/lite/tiktoken_bg.wasm')
-  return WebAssembly.instantiate(await req.arrayBuffer(), imports)
-})
-
-export const tokenizer = new Tiktoken(
-  cl100kBase.bpe_ranks,
-  cl100kBase.special_tokens,
-  cl100kBase.pat_str
-)
+export const tokenizer = getEncoding('cl100k_base')
 
 /**
  * Count the tokens for multi-message chat completion requests
  */
 export function getChatRequestTokenCount(
   messages: ChatCompletionRequestMessage[],
-  model = 'gpt-3.5-turbo-0613'
+  model = 'gpt-3.5-turbo-0301'
 ): number {
   const tokensPerRequest = 3 // every reply is primed with <|im_start|>assistant<|im_sep|>
   const numTokens = messages.reduce((acc, message) => acc + getMessageTokenCount(message, model), 0)
@@ -36,7 +24,7 @@ export function getChatRequestTokenCount(
  */
 export function getMessageTokenCount(
   message: ChatCompletionRequestMessage,
-  model = 'gpt-3.5-turbo-0613'
+  model = 'gpt-3.5-turbo-0125'
 ): number {
   let tokensPerMessage: number
   let tokensPerName: number
@@ -44,17 +32,17 @@ export function getMessageTokenCount(
   switch (model) {
     case 'gpt-3.5-turbo':
       console.warn(
-        'Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0613.'
+        'Warning: gpt-3.5-turbo may change over time. Returning num tokens assuming gpt-3.5-turbo-0125.'
       )
-      return getMessageTokenCount(message, 'gpt-3.5-turbo-0613')
+      return getMessageTokenCount(message, 'gpt-3.5-turbo-0125')
     case 'gpt-4':
-      console.warn('Warning: gpt-4 may change over time. Returning num tokens assuming gpt-4-0314.')
-      return getMessageTokenCount(message, 'gpt-4-0314')
-    case 'gpt-3.5-turbo-0613':
+      console.warn('Warning: gpt-4 may change over time. Returning num tokens assuming gpt-4-0613.')
+      return getMessageTokenCount(message, 'gpt-4-0613')
+    case 'gpt-3.5-turbo-0125':
       tokensPerMessage = 4 // every message follows <|start|>{role/name}\n{content}<|end|>\n
       tokensPerName = -1 // if there's a name, the role is omitted
       break
-    case 'gpt-4-0314':
+    case 'gpt-4-0613':
       tokensPerMessage = 3
       tokensPerName = 1
       break
@@ -82,18 +70,18 @@ export function getMaxTokenCount(model: string): number {
   switch (model) {
     case 'gpt-3.5-turbo':
       console.warn(
-        'Warning: gpt-3.5-turbo may change over time. Returning max num tokens assuming gpt-3.5-turbo-0613.'
+        'Warning: gpt-3.5-turbo may change over time. Returning max num tokens assuming gpt-3.5-turbo-0125.'
       )
-      return getMaxTokenCount('gpt-3.5-turbo-0613')
+      return getMaxTokenCount('gpt-3.5-turbo-0125')
     case 'gpt-4':
       console.warn(
-        'Warning: gpt-4 may change over time. Returning max num tokens assuming gpt-4-0314.'
+        'Warning: gpt-4 may change over time. Returning max num tokens assuming gpt-4-0613.'
       )
-      return getMaxTokenCount('gpt-4-0314')
-    case 'gpt-3.5-turbo-0613':
-      return 4097
-    case 'gpt-4-0314':
-      return 4097
+      return getMaxTokenCount('gpt-4-0613')
+    case 'gpt-3.5-turbo-0125':
+      return 4096
+    case 'gpt-4-0613':
+      return 4096
     default:
       throw new Error(`Unknown model '${model}'`)
   }
